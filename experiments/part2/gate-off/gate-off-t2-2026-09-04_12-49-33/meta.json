@@ -1,0 +1,60 @@
+{
+  "runId": "gate-off-t2-2026-09-04_12-49-33",
+  "part": 2,
+  "condition": "gate-off",
+  "trial": 2,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "df8c09afd41347375d37cd4d0e0d7fd9643d5cc2"
+  },
+  "branch": "run/p2-gate-off-t2-2026-09-04_12-49-33",
+  "resultSha": "9d6b34dd64fceb70c4c7552b16648bb1178fa964",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/part2-gate-off.settings.json",
+  "agent": {
+    "skipped": false,
+    "exitCode": 0,
+    "isError": false,
+    "subtype": "success",
+    "numTurns": 33,
+    "costUsd": 0.20934769999999994,
+    "durationMs": 126949,
+    "parseError": false,
+    "argsUsed": [
+      "--print",
+      "--model",
+      "haiku",
+      "--output-format",
+      "json",
+      "--permission-mode",
+      "bypassPermissions",
+      "--mcp-config",
+      ".mcp.json",
+      "--settings",
+      "harness/gate/part2-gate-off.settings.json"
+    ]
+  },
+  "diffEmpty": false,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 0,
+      "all": 0
+    }
+  },
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-04T12:51:45.981Z"
+}

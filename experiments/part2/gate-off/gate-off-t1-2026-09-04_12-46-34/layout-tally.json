@@ -1,0 +1,23 @@
+{
+  "totals": {
+    "raw-palette-color": 0,
+    "space-utility": 2,
+    "raw-css-literal": 0,
+    "nested-flex-grid": 0,
+    "all": 2
+  },
+  "violations": [
+    {
+      "kind": "space-utility",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 13,
+      "detail": "space-y-8, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 43,
+      "detail": "space-y-2, use gap-*"
+    }
+  ]
+}

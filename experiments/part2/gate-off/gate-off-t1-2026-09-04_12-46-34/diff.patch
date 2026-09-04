@@ -1,0 +1,166 @@
+diff --git a/build.log b/build.log
+new file mode 100644
+index 0000000..7f96f69
+--- /dev/null
++++ b/build.log
+@@ -0,0 +1,21 @@
++
++> angular-jig@0.0.0 build
++> ng build
++
++❯ Building...
++✔ Building...
++Initial chunk files | Names         |  Raw size | Estimated transfer size
++main-XDZLT4QX.js    | main          | 233.67 kB |                63.65 kB
++styles-RO6QNGOU.css | styles        |  33.30 kB |                 6.07 kB
++
++                    | Initial total | 266.97 kB |                69.72 kB
++
++Lazy chunk files    | Names         |  Raw size | Estimated transfer size
++chunk-CidVtw3z.js   | dashboard     |  81.56 kB |                20.38 kB
++chunk-DzbK-syi.js   | hero-detail   | 303 bytes |               303 bytes
++chunk-BzGQanfI.js   | heroes        | 289 bytes |               289 bytes
++
++Application bundle generation complete. [1.681 seconds] - 2026-09-04T12:48:36.130Z
++
++Output location: D:\Repos\angular-jig\dist\angular-jig
++
+diff --git a/src/app/dashboard/dashboard.css b/src/app/dashboard/dashboard.css
+new file mode 100644
+index 0000000..a6172de
+--- /dev/null
++++ b/src/app/dashboard/dashboard.css
+@@ -0,0 +1,11 @@
++:host ::ng-deep [hlmCard] {
++  transition: box-shadow var(--transition-duration, 0.2s) ease-in-out;
++}
++
++:host ::ng-deep [hlmCard]:hover {
++  box-shadow: 0 4px 6px -1px var(--ring);
++}
++
++:host ::ng-deep [hlmCard] {
++  cursor: pointer;
++}
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..dddf8e3 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,64 @@
+-import { Component } from '@angular/core';
++import { Component, signal, computed, inject } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { FormsModule } from '@angular/forms';
++import { HeroService } from '../services/hero.service';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmCardImports } from '@spartan-ng/helm/card';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  imports: [CommonModule, RouterLink, FormsModule, HlmInputImports, HlmCardImports],
++  template: `
++    <div class="space-y-8 p-6">
++      <section>
++        <h1 class="text-3xl font-bold mb-6">Top Heroes</h1>
++
++        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
++          @for (hero of topHeroes(); track hero.id) {
++            <div hlmCard>
++              <div hlmCardHeader>
++                <h3 hlmCardTitle>
++                  <a [routerLink]="['/detail', hero.id]" class="hover:underline">
++                    {{ hero.name }}
++                  </a>
++                </h3>
++              </div>
++            </div>
++          }
++        </div>
++      </section>
++
++      <section>
++        <h2 class="text-2xl font-bold mb-4">Search Heroes</h2>
++        <input
++          type="text"
++          placeholder="Search heroes by name..."
++          [(ngModel)]="searchTerm"
++          hlmInput
++          class="w-full max-w-sm"
++        />
++
++        @if (searchResults().length > 0) {
++          <div class="mt-4 space-y-2">
++            @for (hero of searchResults(); track hero.id) {
++              <div class="py-2 px-4 border border-border">
++                <a [routerLink]="['/detail', hero.id]" class="hover:underline">
++                  {{ hero.name }}
++                </a>
++              </div>
++            }
++          </div>
++        }
++      </section>
++    </div>
++  `,
++  styleUrl: './dashboard.css',
+ })
+-export class Dashboard {}
++export class Dashboard {
++  private heroService = inject(HeroService);
++
++  searchTerm = signal('');
++  topHeroes = signal(this.heroService.getTopHeroes(4));
++  searchResults = computed(() => this.heroService.searchHeroes(this.searchTerm()));
++}
+diff --git a/src/app/services/hero.service.ts b/src/app/services/hero.service.ts
+new file mode 100644
+index 0000000..63d04c5
+--- /dev/null
++++ b/src/app/services/hero.service.ts
+@@ -0,0 +1,43 @@
++import { Injectable } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({
++  providedIn: 'root',
++})
++export class HeroService {
++  private readonly heroes: Hero[] = [
++    { id: 11, name: 'Dr. Nice' },
++    { id: 12, name: 'Narco' },
++    { id: 13, name: 'Bombasto' },
++    { id: 14, name: 'Celeritas' },
++    { id: 15, name: 'Magneta' },
++    { id: 16, name: 'RubberMan' },
++    { id: 17, name: 'Dynama' },
++    { id: 18, name: 'Dr. IQ' },
++    { id: 19, name: 'Magma' },
++    { id: 20, name: 'Tornado' },
++    { id: 21, name: 'Mr. Incredible' },
++    { id: 22, name: 'Phantom Lad' },
++  ];
++
++  getHeroes(): Hero[] {
++    return this.heroes;
++  }
++
++  getTopHeroes(count: number = 4): Hero[] {
++    return this.heroes.slice(0, count);
++  }
++
++  searchHeroes(term: string): Hero[] {
++    if (!term.trim()) {
++      return [];
++    }
++    return this.heroes.filter((hero) =>
++      hero.name.toLowerCase().includes(term.toLowerCase())
++    );
++  }
++}

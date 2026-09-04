@@ -1,0 +1,227 @@
+diff --git a/src/app/dashboard/dashboard.css b/src/app/dashboard/dashboard.css
+new file mode 100644
+index 0000000..ef632cf
+--- /dev/null
++++ b/src/app/dashboard/dashboard.css
+@@ -0,0 +1,99 @@
++.dashboard {
++  display: grid;
++  gap: var(--spacing-lg, 2rem);
++  padding: var(--spacing-lg, 2rem);
++}
++
++h1 {
++  margin: 0;
++  font-size: 2rem;
++  font-weight: bold;
++}
++
++h2 {
++  margin: 0 0 var(--spacing-md, 1rem) 0;
++  font-size: 1.5rem;
++  font-weight: 600;
++}
++
++.search-section {
++  display: grid;
++  gap: var(--spacing-md, 1rem);
++}
++
++input[hlmInput] {
++  max-width: 100%;
++}
++
++.search-results {
++  display: flex;
++  flex-direction: column;
++  gap: var(--spacing-xs, 0.5rem);
++  border: 1px solid var(--border-color, #e5e7eb);
++  border-radius: var(--radius, 0.5rem);
++  padding: var(--spacing-md, 1rem);
++  background-color: var(--background, #f9fafb);
++}
++
++.search-result-link {
++  padding: var(--spacing-xs, 0.5rem);
++  color: var(--link-color, #3b82f6);
++  text-decoration: none;
++  border-radius: var(--radius, 0.5rem);
++  transition: background-color 0.2s;
++}
++
++.search-result-link:hover {
++  background-color: var(--hover-bg, #f3f4f6);
++  text-decoration: underline;
++}
++
++.search-result-link:focus-visible {
++  outline: 2px solid var(--focus-ring, #3b82f6);
++  outline-offset: 2px;
++}
++
++.no-results {
++  color: var(--text-muted, #6b7280);
++  margin: 0;
++}
++
++.top-heroes-section {
++  display: grid;
++  gap: var(--spacing-md, 1rem);
++}
++
++.heroes-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
++  gap: var(--spacing-md, 1rem);
++}
++
++.hero-link {
++  text-decoration: none;
++  color: inherit;
++  transition: transform 0.2s, box-shadow 0.2s;
++}
++
++.hero-link:hover {
++  transform: translateY(-2px);
++}
++
++.hero-link:focus-visible {
++  outline: 2px solid var(--focus-ring, #3b82f6);
++  outline-offset: 2px;
++}
++
++.hero-card {
++  cursor: pointer;
++}
++
++.hero-card:hover {
++  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
++}
++
++.hero-id {
++  margin: 0;
++  font-size: 0.875rem;
++  color: var(--text-muted, #6b7280);
++}
+diff --git a/src/app/dashboard/dashboard.html b/src/app/dashboard/dashboard.html
+new file mode 100644
+index 0000000..b400b99
+--- /dev/null
++++ b/src/app/dashboard/dashboard.html
+@@ -0,0 +1,43 @@
++<div class="dashboard">
++  <h1>Dashboard</h1>
++
++  <div class="search-section">
++    <h2>Search Heroes</h2>
++    <input
++      hlmInput
++      type="text"
++      placeholder="Search by hero name..."
++      [value]="searchTerm()"
++      (input)="searchTerm.set($event.target.value)"
++    />
++    @if (searchTerm() && searchResults().length > 0) {
++      <div class="search-results">
++        @for (hero of searchResults(); track hero.id) {
++          <a [routerLink]="['/detail', hero.id]" class="search-result-link">
++            {{ hero.name }}
++          </a>
++        }
++      </div>
++    } @else if (searchTerm() && searchResults().length === 0) {
++      <p class="no-results">No heroes found matching "{{ searchTerm() }}"</p>
++    }
++  </div>
++
++  <div class="top-heroes-section">
++    <h2>Top Heroes</h2>
++    <div class="heroes-grid">
++      @for (hero of topHeroes(); track hero.id) {
++        <a [routerLink]="['/detail', hero.id]" class="hero-link">
++          <div hlmCard class="hero-card">
++            <div hlmCardHeader>
++              <h3 hlmCardTitle>{{ hero.name }}</h3>
++            </div>
++            <div hlmCardContent>
++              <p class="hero-id">ID: {{ hero.id }}</p>
++            </div>
++          </div>
++        </a>
++      }
++    </div>
++  </div>
++</div>
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..3caa560 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,26 @@
+-import { Component } from '@angular/core';
++import { Component, computed, inject, signal } from '@angular/core';
++import { RouterLink } from '@angular/router';
++import { HeroService } from '../hero.service';
++import { HlmInputImports } from '../../../libs/ui/input/src';
++import { HlmCardImports } from '../../../libs/ui/card/src';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  imports: [RouterLink, HlmInputImports, HlmCardImports],
++  templateUrl: './dashboard.html',
++  styleUrl: './dashboard.css',
+ })
+-export class Dashboard {}
++export class Dashboard {
++  private heroService = inject(HeroService);
++
++  searchTerm = signal('');
++  allHeroes = this.heroService.getHeroes();
++
++  topHeroes = computed(() => this.allHeroes.slice(0, 4));
++
++  searchResults = computed(() => {
++    const term = this.searchTerm().toLowerCase();
++    if (!term) return [];
++    return this.allHeroes.filter(h => h.name.toLowerCase().includes(term));
++  });
++}
+diff --git a/src/app/hero.service.ts b/src/app/hero.service.ts
+new file mode 100644
+index 0000000..3342971
+--- /dev/null
++++ b/src/app/hero.service.ts
+@@ -0,0 +1,32 @@
++import { Injectable } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({ providedIn: 'root' })
++export class HeroService {
++  private heroesData: Hero[] = [
++    { id: 1, name: 'Mr. Nice' },
++    { id: 2, name: 'Narco' },
++    { id: 3, name: 'Bombasto' },
++    { id: 4, name: 'Celeritas' },
++    { id: 5, name: 'Magneta' },
++    { id: 6, name: 'RubberMan' },
++    { id: 7, name: 'Dynama' },
++    { id: 8, name: 'Dr. IQ' },
++    { id: 9, name: 'Magma' },
++    { id: 10, name: 'Tornado' },
++    { id: 11, name: 'Captain Planet' },
++    { id: 12, name: 'Wonder Woman' },
++  ];
++
++  getHeroes() {
++    return this.heroesData;
++  }
++
++  getHero(id: number) {
++    return this.heroesData.find(h => h.id === id);
++  }
++}
