@@ -72,23 +72,24 @@ function runAgent(condition) {
     '.mcp.json',
   ];
   if (condition === 'gate-on') args.push('--settings', GATE_ON_SETTINGS);
-  args.push(prompt);
 
-  // Capture stdout even on a non-zero exit; the JSON result is the artifact.
+  // The prompt goes on stdin, NOT as a trailing positional: --mcp-config is a
+  // variadic flag and would otherwise swallow the prompt as another config path.
   let stdout = '';
   let exitCode = 0;
   try {
     stdout = execFileSync('claude', args, {
       cwd: ROOT,
+      input: prompt,
       encoding: 'utf8',
       maxBuffer: 64 * 1024 * 1024,
-      stdio: ['ignore', 'pipe', 'inherit'],
+      stdio: ['pipe', 'pipe', 'inherit'],
     });
   } catch (err) {
     stdout = err.stdout ?? '';
     exitCode = err.status ?? 1;
   }
-  return { stdout, exitCode, argsUsed: args.slice(0, -1) };
+  return { stdout, exitCode, argsUsed: args };
 }
 
 function main() {
@@ -123,8 +124,14 @@ function main() {
         modelUsed =
           parsed.model ??
           (parsed.modelUsage ? Object.keys(parsed.modelUsage)[0] : null);
+        agent.isError = parsed.is_error ?? null;
+        agent.subtype = parsed.subtype ?? null;
+        agent.numTurns = parsed.num_turns ?? null;
+        agent.costUsd = parsed.total_cost_usd ?? null;
+        agent.durationMs = parsed.duration_ms ?? null;
       } catch {
         modelUsed = null;
+        agent.parseError = true;
       }
     }
 
@@ -159,17 +166,39 @@ function main() {
   writeFileSync(join(outDir, 'diff.patch'), diff + '\n');
   if (!dryRun) writeFileSync(join(outDir, 'claude-output.json'), agent.stdout || '{}');
 
+  // A real trial that changed nothing, errored, or produced no parseable result
+  // is void, not zero-drift. Never let a null run masquerade as clean evidence.
+  const agentOk =
+    dryRun ||
+    (agent.exitCode === 0 &&
+      agent.isError !== true &&
+      agent.subtype === 'success' &&
+      !agent.parseError &&
+      diff.trim() !== '');
+
   const meta = {
     runId,
     condition,
     trial: Number(trial),
     dryRun,
+    ok: agentOk,
     substrate: { ref: SUBSTRATE, sha: substrateSha },
     branch: dryRun ? null : branch,
     resultSha,
     model: { alias: MODEL, resolved: modelUsed },
     gateSettings: condition === 'gate-on' ? GATE_ON_SETTINGS : null,
-    agent: { skipped: agent.skipped, exitCode: agent.exitCode, argsUsed: agent.argsUsed },
+    agent: {
+      skipped: agent.skipped,
+      exitCode: agent.exitCode,
+      isError: agent.isError ?? null,
+      subtype: agent.subtype ?? null,
+      numTurns: agent.numTurns ?? null,
+      costUsd: agent.costUsd ?? null,
+      durationMs: agent.durationMs ?? null,
+      parseError: agent.parseError ?? false,
+      argsUsed: agent.argsUsed,
+    },
+    diffEmpty: diff.trim() === '',
     counterTotals: tallyResult.totals,
     startedFromBranch: startBranch,
     finishedAt: new Date().toISOString(),
@@ -179,11 +208,20 @@ function main() {
   if (dryRun) git(['branch', '-D', branch]);
 
   process.stdout.write(
-    `\n[run-trial] ${runId}\n` +
+    `\n[run-trial] ${runId}  ${agentOk ? 'OK' : 'VOID'}\n` +
       `  branch:  ${dryRun ? '(deleted, dry run)' : branch}\n` +
       `  totals:  ${JSON.stringify(tallyResult.totals)}\n` +
       `  output:  experiments/${condition}/${runId}/\n`,
   );
+
+  if (!agentOk) {
+    process.stderr.write(
+      `[run-trial] VOID: the agent did not produce a valid build ` +
+        `(exit ${agent.exitCode}, isError ${agent.isError}, subtype ${agent.subtype}, ` +
+        `diffEmpty ${diff.trim() === ''}). This is not a zero-drift result.\n`,
+    );
+    process.exitCode = 1;
+  }
 }
 
 main();
