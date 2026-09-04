@@ -1,0 +1,256 @@
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..7ba23c9 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,118 @@
+-import { Component } from '@angular/core';
++import { Component, OnInit, inject, signal } from '@angular/core';
++import { ActivatedRoute, Router } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { form, validateStandardSchema } from '@angular/forms/signals';
++import { HeroService, Hero } from '../services/hero.service';
++import { heroSchema, type HeroModel } from './hero.schema';
++import { formMeta } from '../forms/zod-meta';
++import { HlmButton } from '@spartan-ng/helm/button';
++import { HlmInput } from '@spartan-ng/helm/input';
++import { HlmCardImports } from '@spartan-ng/helm/card';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  standalone: true,
++  imports: [CommonModule, HlmButton, HlmInput, HlmCardImports],
++  template: `
++    <div class="grid gap-6 p-6">
++      <h1 class="text-3xl font-bold">Hero Detail</h1>
++
++      @if (hero(); as heroData) {
++        <div class="grid gap-6 max-w-2xl">
++          <!-- Detail Card -->
++          <div hlmCard>
++            <div hlmCardHeader>
++              <h2 hlmCardTitle>{{ heroData.name }}</h2>
++            </div>
++            <div hlmCardContent>
++              <div class="grid gap-2 text-sm">
++                <p><strong>ID:</strong> {{ heroData.id }}</p>
++                <p><strong>Name:</strong> {{ heroData.name }}</p>
++              </div>
++            </div>
++          </div>
++
++          <!-- Edit Form -->
++          <div hlmCard>
++            <div hlmCardHeader>
++              <h2 hlmCardTitle>Edit Hero</h2>
++            </div>
++            <div hlmCardContent>
++              <div class="grid gap-4">
++                <div class="grid gap-2">
++                  <label for="name" class="text-sm font-medium">
++                    {{ meta['name'].label }}
++                  </label>
++                  <input
++                    id="name"
++                    type="text"
++                    hlmInput
++                    [value]="model().name"
++                    (input)="model.update(m => ({...m, name: $any($event.target).value}))"
++                    [placeholder]="meta['name'].placeholder || 'Enter hero name'"
++                  />
++                </div>
++                <div class="flex gap-3">
++                  <button
++                    type="button"
++                    hlmBtn
++                    variant="default"
++                    (click)="onSave()"
++                  >
++                    Save
++                  </button>
++                  <button
++                    type="button"
++                    hlmBtn
++                    variant="outline"
++                    (click)="onCancel()"
++                  >
++                    Cancel
++                  </button>
++                </div>
++              </div>
++            </div>
++          </div>
++        </div>
++      } @else {
++        <div class="p-4 rounded-md bg-destructive/10 text-destructive">
++          Hero not found.
++        </div>
++      }
++    </div>
++  `,
+ })
+-export class HeroDetail {}
++export class HeroDetail implements OnInit {
++  private readonly route = inject(ActivatedRoute);
++  private readonly router = inject(Router);
++  private readonly heroService = inject(HeroService);
++
++  protected readonly hero = signal<Hero | undefined>(undefined);
++  protected readonly model = signal<HeroModel>({ name: '' });
++  protected readonly form = form(this.model, (path) => validateStandardSchema(path, heroSchema));
++  protected readonly meta = formMeta(heroSchema);
++
++  ngOnInit(): void {
++    const id = this.route.snapshot.paramMap.get('id');
++    if (id) {
++      const heroId = parseInt(id, 10);
++      const foundHero = this.heroService.getHero(heroId);
++      if (foundHero) {
++        this.hero.set(foundHero);
++        this.model.set({ name: foundHero.name });
++      }
++    }
++  }
++
++  onSave(): void {
++    const heroData = this.hero();
++    if (heroData) {
++      this.heroService.updateHero(heroData.id, this.model().name);
++      this.router.navigate(['/heroes']);
++    }
++  }
++
++  onCancel(): void {
++    this.router.navigate(['/heroes']);
++  }
++}
+diff --git a/src/app/hero-detail/hero.schema.ts b/src/app/hero-detail/hero.schema.ts
+new file mode 100644
+index 0000000..973bbeb
+--- /dev/null
++++ b/src/app/hero-detail/hero.schema.ts
+@@ -0,0 +1,8 @@
++import { z } from 'zod';
++import type { FormFieldMeta } from '../forms/form-field-meta';
++
++export const heroSchema = z.object({
++  name: z.string().min(1, 'Name is required').meta({ label: 'Hero Name', control: 'text' } satisfies FormFieldMeta),
++});
++
++export type HeroModel = z.infer<typeof heroSchema>;
+diff --git a/src/app/heroes/heroes.ts b/src/app/heroes/heroes.ts
+index cbc73c6..e5263ed 100644
+--- a/src/app/heroes/heroes.ts
++++ b/src/app/heroes/heroes.ts
+@@ -1,8 +1,24 @@
+-import { Component } from '@angular/core';
++import { Component, inject } from '@angular/core';
++import { RouterLink } from '@angular/router';
++import { HeroService } from '../services/hero.service';
+ 
+-// Placeholder. The hero list screen is built here.
+ @Component({
+   selector: 'app-heroes',
+-  template: `<h1>Heroes</h1>`,
++  standalone: true,
++  imports: [RouterLink],
++  template: `
++    <div class="p-6">
++      <h1 class="text-3xl font-bold mb-6">Heroes</h1>
++      <div class="grid gap-2">
++        @for (hero of heroService.getHeroes(); track hero.id) {
++          <a [routerLink]="['/detail', hero.id]" class="p-4 bg-card rounded-md border border-border hover:bg-muted transition-colors">
++            {{ hero.name }}
++          </a>
++        }
++      </div>
++    </div>
++  `,
+ })
+-export class Heroes {}
++export class Heroes {
++  readonly heroService = inject(HeroService);
++}
+diff --git a/src/app/services/hero.service.ts b/src/app/services/hero.service.ts
+new file mode 100644
+index 0000000..6eab896
+--- /dev/null
++++ b/src/app/services/hero.service.ts
+@@ -0,0 +1,41 @@
++import { Injectable } from '@angular/core';
++import { signal } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({
++  providedIn: 'root',
++})
++export class HeroService {
++  private heroes = signal<Hero[]>([
++    { id: 1, name: 'Superman' },
++    { id: 2, name: 'Batman' },
++    { id: 3, name: 'Wonder Woman' },
++    { id: 4, name: 'The Flash' },
++    { id: 5, name: 'Green Lantern' },
++    { id: 6, name: 'Aquaman' },
++    { id: 7, name: 'Hawkeye' },
++    { id: 8, name: 'Black Widow' },
++    { id: 9, name: 'Iron Man' },
++    { id: 10, name: 'Captain America' },
++    { id: 11, name: 'Thor' },
++    { id: 12, name: 'Hulk' },
++  ]);
++
++  getHeroes(): Hero[] {
++    return this.heroes();
++  }
++
++  getHero(id: number): Hero | undefined {
++    return this.heroes().find((h) => h.id === id);
++  }
++
++  updateHero(id: number, name: string): void {
++    this.heroes.update((heroes) =>
++      heroes.map((h) => (h.id === id ? { ...h, name } : h))
++    );
++  }
++}
+diff --git a/tsconfig.json b/tsconfig.json
+index d49f08c..23f700f 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,16 +12,25 @@
+     "target": "ES2022",
+     "module": "preserve",
+     "paths": {
+-      "@spartan-ng/helm/button": ["./libs/ui/button/src/index.ts"],
+-      "@spartan-ng/helm/utils": ["./libs/ui/utils/src/index.ts"],
+-      "@spartan-ng/helm/card": ["./libs/ui/card/src/index.ts"],
+-      "@spartan-ng/helm/input": ["./libs/ui/input/src/index.ts"]
++      "@spartan-ng/helm/button": [
++        "./libs/ui/button/src/index.ts"
++      ],
++      "@spartan-ng/helm/utils": [
++        "./libs/ui/utils/src/index.ts"
++      ],
++      "@spartan-ng/helm/card": [
++        "./libs/ui/card/src/index.ts"
++      ],
++      "@spartan-ng/helm/input": [
++        "./libs/ui/input/src/index.ts"
++      ]
+     }
+   },
+   "angularCompilerOptions": {
+     "enableI18nLegacyMessageIdFormat": false,
+     "strictInjectionParameters": true,
+-    "strictInputAccessModifiers": true
++    "strictInputAccessModifiers": true,
++    "strictTemplates": true
+   },
+   "files": [],
+   "references": [

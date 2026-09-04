@@ -1,0 +1,84 @@
+{
+  "runId": "detail-form-gate-off-t3-2026-09-04_20-24-28",
+  "part": 4,
+  "task": "detail-form",
+  "promptFile": "task-prompt-detail-form.md",
+  "condition": "gate-off",
+  "trial": 3,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "a6592de582653f20e3e8468e0332faaac5463835"
+  },
+  "branch": "run/p4-detail-form-gate-off-t3-2026-09-04_20-24-28",
+  "resultSha": "98a39650fac522b5fbe31e017a51f49e66babba2",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/part4-gate-off.settings.json",
+  "agent": {
+    "skipped": false,
+    "exitCode": 0,
+    "isError": false,
+    "subtype": "success",
+    "numTurns": 57,
+    "costUsd": 0.468505,
+    "durationMs": 306072,
+    "parseError": false,
+    "argsUsed": [
+      "--print",
+      "--model",
+      "haiku",
+      "--output-format",
+      "json",
+      "--permission-mode",
+      "bypassPermissions",
+      "--mcp-config",
+      ".mcp.json",
+      "--settings",
+      "harness/gate/part4-gate-off.settings.json"
+    ]
+  },
+  "diffEmpty": false,
+  "hookFirings": 6,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 0,
+      "all": 0
+    },
+    "shape": {
+      "hand-set-change-detection": 0,
+      "component-subscribe": 0,
+      "template-driven-form": 0,
+      "restated-validator": 0,
+      "presentational-injects-data": 0,
+      "reactive-form": 0,
+      "hand-written-form-model": 0,
+      "dumb-holds-state": 0,
+      "all": 0
+    },
+    "freeloader": {
+      "legacy-control-flow": 0,
+      "ng-class-style": 0,
+      "all": 0
+    }
+  },
+  "strictTemplates": {
+    "passed": true,
+    "errorCount": 0,
+    "sample": []
+  },
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-04T20:29:43.573Z"
+}
