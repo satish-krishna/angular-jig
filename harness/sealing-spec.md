@@ -2,9 +2,9 @@
 
 The single written contract that both the gate and the structural counter encode, independently and in different engines. The gate parses templates with angular-eslint; the counter parses them with Angular's own compiler (`@angular/compiler`). Neither shares code with the other. This document is the only place the rules are stated in prose; if the two encodings ever disagree on a fixture, this file is the arbiter, and one of the encodings is wrong.
 
-## Why this exists
+## The rules are the docs, mechanized
 
-A vocabulary of primitives with an open passthrough is not a vocabulary, it is a suggestion. `hlmBtn` carries its own full styling through the `classes()` helper, but that same helper merges any raw `class` you put on the element, so nothing stops an agent from reaching straight past the primitive. Sealing is the load-bearing move of Part 1: it is what gives every later gate something decidable to check against. The three rules below are the seal.
+Every rule here comes from a doc in the agent's baseline: SpartanNG's own documentation (the spartan skill, `rules/styling.md` and `rules/composition.md`), Angular's generated `CLAUDE.md`, and this repo's house-style skill (`.claude/skills/house-style`, the grid/flex grammar and no-raw-literals rule that extend spartan where it is silent). The gate enforces exactly what those docs say and permits everything they permit; where two baseline docs pull differently (Angular endorses style bindings, spartan wants appearance in tokens), the rule is drawn so it fights neither. This is not our stricter opinion bolted on top: the whole thesis is that the model drifts even with those docs in its context, so the gate is only an honest test if it blocks what the docs block and nothing more. Each rule below cites the docs line it mechanizes and lists the docs' own good and bad examples, which are the test cases the counter and gate must satisfy.
 
 ## The vocabulary, as installed
 
@@ -12,78 +12,60 @@ Read from source, not from memory. The primitive selectors present in `libs/ui` 
 
 - `button[hlmBtn], a[hlmBtn]` (the button directive)
 - `[hlmInput]` (the input directive)
-- `[hlmCard], hlm-card`
-- `[hlmCardHeader], hlm-card-header`
-- `[hlmCardFooter], hlm-card-footer`
-- `[hlmCardTitle]`
-- `[hlmCardDescription]`
-- `[hlmCardContent]`
-- `[hlmCardAction]`
+- `[hlmCard], hlm-card` and the card parts (`hlmCardHeader`, `hlmCardFooter`, `hlmCardTitle`, `hlmCardDescription`, `hlmCardContent`, `hlmCardAction`)
 
-The set of primitive attribute names, used by rules 1 and 2:
-
-`hlmBtn, hlmInput, hlmCard, hlmCardHeader, hlmCardFooter, hlmCardTitle, hlmCardDescription, hlmCardContent, hlmCardAction`
-
-The set of primitive element names (spartan component selectors):
-
-`hlm-card, hlm-card-header, hlm-card-footer`
+The set of primitive attribute names and element names is used by rules 1 and 2 to decide whether an element is a primitive.
 
 ## The three rules
 
-Every violation is one of exactly three kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides:
+Every Part 1 violation is one of exactly three kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
 
-### 1. `raw-control`: a native control element where a primitive exists
+### 1. `raw-control`: a native control where a primitive directive exists
 
-A native control element that a primitive already covers, used without the primitive directive, is a violation. For the vocabulary as installed, the covered controls are:
+Docs: composition.md, "use components, not custom markup," and the primitives are directives on native elements. A native control that a primitive directive already covers, used without the directive, is a violation. For the vocabulary as installed:
 
-- a `<button>` element that does not carry the `hlmBtn` attribute
-- an `<input>` element that does not carry the `hlmInput` attribute
+- a `<button>` element without `hlmBtn`
+- an `<input>` element without `hlmInput`
 
-A bare `<a>` is not a violation: the anchor is a legitimate navigation element, and `hlmBtn` on an anchor is opt-in styling, not a required seal. Only elements whose native role duplicates a primitive are covered. `<textarea>` and `<select>` are not counted at this substrate because no primitive covers them yet; when a primitive is added, its native element joins this list and both encodings extend together.
+Good (passes): `<button hlmBtn>Save</button>`, `<input hlmInput />`. Bad (fails): `<button>Save</button>`, `<input />`. A bare `<a>` is fine; the anchor is a real navigation element, and `hlmBtn` on an anchor is opt-in. Composed components you would otherwise hand-roll from a `<div>` (a card, a badge, an alert, a separator) are Part 3's territory (component shape, "use the component"), not Part 1's; Part 1 covers the atomic controls with a direct directive twin.
 
-### 2. `class-on-primitive`: an arbitrary class string on a primitive
+### 2. `appearance-on-primitive`: an appearance-override class on a primitive
 
-A `class` attribute, an `[attr.class]` binding, a `[class]` binding, a `[ngClass]` binding, or any `[class.foo]` shorthand, applied to an element that carries a primitive (a primitive attribute from the set above, or a primitive element name), is a violation. The primitive owns its appearance; a class reaching onto it is the passthrough the seal closes.
+Docs: styling.md, "`class` is for layout only. Use the `class` attribute to position and space components (flex, grid, gap, margins, widths). Do not use it to override a component's own colors, typography, or internal padding, change the copied Helm file or a CSS variable instead." So a class on a primitive is a violation only when it overrides appearance. Layout and spacing classes on a primitive are allowed and idiomatic.
 
-Class strings on non-primitive elements (a plain layout `<div>`, for example) are NOT a rule-1-through-3 violation here. That is deliberate and is the one deferral this spec makes explicit below.
+- Banned on a primitive (appearance override): background (`bg-*`), text color and typography (`text-*`, `font-*`, `leading-*`, `tracking-*`, `italic`, `underline`, `uppercase`, ...), border and decoration (`border`, `border-*`, `rounded*`, `shadow*`, `ring*`), and internal padding (`p-*`, `px-*`, `py-*`, `pt-*`, ...).
+- Allowed on a primitive (layout, position, spacing): display (`flex`, `grid`, `inline*`, `block`, `hidden`), flex and grid arrangement (`gap-*`, `justify-*`, `items-*`, `self-*`, `col-*`, `row-*`, `order-*`, `basis-*`, `grow`, `shrink`), dimensions (`w-*`, `min-w-*`, `max-w-*`, `h-*`, `size-*`), margins (`m-*`, `mx-*`, `mt-*`, ...), and position (`absolute`, `relative`, `top-*`, `inset-*`, ...). Responsive and state prefixes (`sm:`, `md:`, `hover:`, `dark:`, ...) are stripped before classifying the base utility.
 
-### 3. `style-attribute`: an inline style anywhere
+Good (passes, straight from the docs): `<div hlmCardFooter class="justify-between">`, `<hlm-dialog-content class="sm:max-w-[425px]">`, `<button hlmBtn class="w-full">`. Bad (fails): `<button hlmBtn class="bg-blue-600 rounded-none">`, `<input hlmInput class="p-4 text-lg">`. The escape route the seal closes is appearance reaching past the primitive; the way to change a primitive's look is its `variant`/`size` inputs or the owned Helm file in `libs/ui`, which the gate leaves untouched.
 
-A `style` attribute, a `[style]` binding, any `[style.foo]` shorthand, or an `[ngStyle]` binding, on any element at all, is a violation. Inline style is the rawest possible reach past both the vocabulary and the layout grammar, so it is banned outright rather than only on primitives.
+### 3. `style-attribute`: a static inline style attribute
 
-## The one deferral, stated out loud
+Careful here, because the baseline holds a rule that pulls the other way. Angular's own `CLAUDE.md` in the baseline says to use `[style]` bindings over `[ngStyle]`, so the gate must NOT ban style bindings; that would fight a doc the agent is reading. What no baseline doc endorses is a STATIC `style="..."` attribute: a raw inline literal that bypasses the token system, against spartan's "semantic tokens only" and the house "no raw literals" rule. So this rule is narrow.
 
-The Part 1 resumption brief phrased rule 2 as "no arbitrary class strings on primitives and no layout `<div>` abuse." The primitive half is decidable now and is rule 2 above. The "layout `<div>` abuse" half is NOT decidable at Part 1, because there is no layout grammar yet to measure a `<div>` against: a `<div class="flex gap-2">` is only abuse relative to a rule that says how layout is allowed to be expressed, and that rule is Part 2 (layout as a grammar). Counting it now would mean inventing an ad hoc definition of abuse that Part 2 would then have to overwrite. So Part 1 seals the primitives and leaves general class-on-container to Part 2. This is a scope line, drawn on purpose, not an oversight. Both the gate and the counter honor it: neither flags a class on a non-primitive element.
+- Violation: a static `style="..."` attribute (a raw inline literal). Good (passes): `[style.width.%]="pct()"`, a computed style binding, which Angular's baseline doc endorses. Bad (fails): `<div style="color: red; padding: 8px">`.
 
-## The owned boundary (decided by the Part 1 measured run)
+`[ngStyle]` and `[ngClass]` are also discouraged by the Angular baseline doc, but banning them is a component-shape lint rule for a later Part, not part of the Part 1 seal, so they are out of scope here.
 
-The first measured run (`experiments/part-1-report.md`) confirmed a boundary, and the author decided to own it rather than close it. Sealing catches a raw control that has a primitive twin: the search `<input>` becomes `hlmInput` under the gate, reliably, in every gated trial. It does NOT catch a screen that avoids the vocabulary wholesale by hand-rolling structural composition. A hero card built as a `<div class="hero-card">` instead of `hlm-card` is invisible to all three rules, because there is no raw "card" element to flag, a bare `<a>` is a legitimate element, and container classes are deferred to Part 2.
+## Where customization goes (why the seal is with the grain, not against it)
 
-This is Part 1's honest boundary, on purpose. It is deliberately NOT patched with a fourth rule such as "no raw structural element where a block primitive exists," because that rule needs a definition of structural intent that only Part 2 (layout as a grammar) and Part 3 (component shape) make decidable. Part 1 seals the primitives; the later planes catch the composition that routes around the seal. If a future Part adds a rule here, it does so with that Part's evidence, not pre-baked now.
+Because Helm code is copied into the project, the documented way to customize a component is to edit its file in `libs/ui` (adjust the `cva` variants, change classes, add inputs) or to use its `variant`/`size` inputs, never to reach past it at the call site. The gate ignores `libs/**` entirely, so that customization path is fully open. Rule 2 does not fight the framework; it enforces the framework's own "class is for layout only," and it points appearance changes at the place the docs point them.
 
 ## The tally shape (the counter's output contract)
 
-The counter emits one JSON object. The gate does not emit JSON (it exits non-zero with a message), but it reports the same three `messageId`s that map one-to-one onto these kinds. Shape:
-
 ```json
 {
-  "totals": { "raw-control": 0, "class-on-primitive": 0, "style-attribute": 0, "all": 0 },
+  "totals": { "raw-control": 0, "appearance-on-primitive": 0, "style-attribute": 0, "all": 0 },
   "violations": [
-    {
-      "kind": "raw-control",
-      "file": "src/app/dashboard/dashboard.ts",
-      "line": 12,
-      "detail": "button without hlmBtn"
-    }
+    { "kind": "raw-control", "file": "src/app/dashboard/dashboard.ts", "line": 12, "detail": "button without hlmBtn" }
   ]
 }
 ```
 
-`totals.all` is the sum of the three kind totals. `violations` is ordered by file, then line, then kind, so the same input always serializes to byte-identical output. That ordering is what makes the determinism self-test (same committed diff in, identical tally out) meaningful rather than accidental.
+`totals.all` is the sum of the three kinds. `violations` is ordered by file, then line, then kind, so the same input always serializes byte-identically. That ordering is what makes the determinism self-test (same committed diff in, identical tally out) meaningful.
 
 ## What each engine parses
 
-- The gate loads angular-eslint's template parser and runs three custom rules over the template AST, one per kind. It runs on `.html` templates and on inline `template:` strings in `@Component` decorators, via angular-eslint's inline-template processor.
-- The counter loads `@angular/compiler`'s `parseTemplate` and walks the resulting AST. It reads `.html` files directly and extracts inline `template:` strings from `.ts` component files using the TypeScript compiler API. It shares no rule code, no parser, and no AST types with the gate.
+- The gate loads angular-eslint's template parser and runs three custom rules over the template AST, on `.html` templates and inline `template:` strings.
+- The counter loads `@angular/compiler`'s `parseTemplate` and walks the AST, reading `.html` files and extracting inline `template:` strings from `.ts` with the TypeScript compiler API. It shares no rule code, no parser, and no AST types with the gate.
 
-Two engines, one spec. If they ever disagree, that disagreement is the finding, and it is reported, not smoothed over.
+Two engines, one spec, and the spec is the docs. If they ever disagree, that disagreement is the finding.

@@ -43,6 +43,10 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Keep state transformations pure and predictable
 - Do NOT use `mutate` on signals, use `update` or `set` instead
 
+## House frontend conventions
+
+- Follow the `house-style` skill (`.claude/skills/house-style`) for layout and stylesheets, on top of the SpartanNG (`spartan` skill) docs. In short: grid for regions, flex for inline runs, never nest flex to fake a grid; and in any hand-written component stylesheet, colors and lengths are design tokens (`var(--...)`), never raw hex or `px`.
+
 ## Templates
 
 - Keep templates simple and avoid complex logic
