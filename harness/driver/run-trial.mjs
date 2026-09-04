@@ -96,10 +96,15 @@ function main() {
   const { condition, trial, dryRun } = parseArgs(process.argv.slice(2));
 
   const startBranch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
-  const dirty = git(['status', '--porcelain']);
+  // The driver's own experiment output accumulates in experiments/ and must not
+  // block the next trial; everything else must be committed first.
+  const dirty = git(['status', '--porcelain'])
+    .split('\n')
+    .filter((l) => l.trim() && !l.slice(3).startsWith('experiments/'))
+    .join('\n');
   if (dirty) {
     throw new Error(
-      `working tree is not clean; commit or stash before a trial.\n${dirty}`,
+      `working tree is not clean outside experiments/; commit or stash before a trial.\n${dirty}`,
     );
   }
 
@@ -135,8 +140,10 @@ function main() {
       }
     }
 
-    // Commit whatever the agent produced (allow-empty so a dry run still records).
-    git(['add', '-A']);
+    // Commit whatever the agent produced (allow-empty so a dry run still
+    // records). Exclude experiments/ so prior trials' records, which ride along
+    // as untracked files on the working tree, never leak into a run commit.
+    git(['add', '-A', '--', ':(exclude)experiments']);
     git(['commit', '--allow-empty', '-m', `run(${condition}): ${runId}`]);
     resultSha = git(['rev-parse', 'HEAD']);
 
