@@ -54,6 +54,16 @@ The hook is committed but NOT registered in `../.claude/settings.json`. That is 
 
 Everything else (the spartan skill, both MCP servers, Angular's `CLAUDE.md`) is identical in both conditions. Only the hook registration differs.
 
+## Corrective messages hand back the fix
+
+A gate rejection is the highest-salience teaching moment the agent gets, so it does not just name the violation, it shows the documented right pattern. Part 3's `gate-on-guided` A/B measured this: with the same rules and only the exit-2 message changed from a prose reminder to the signal-forms worked example, the agent's use of the house forms pattern went from 0 of 3 to 3 of 3 (see `../experiments/part3/detail-form/gate-on-guided`). So the convention, and the default for any new hook (Parts 4-6 included):
+
+- The exit-2 message ends with the documented good/bad shape, or a short worked example, drawn from the docs the gate mechanizes, never new guidance invented at the gate.
+- Shared worked examples live in a module beside the hooks (for example `../.claude/hooks/shape-guidance.mjs`), imported by every hook that needs them, so the message and the doc never drift.
+- Tailor the example to what fired: the forms worked example is appended only when a forms rule trips, while a subscribe or change-detection violation carries its own one-line fix from the rule message.
+
+Hooks also record their firings for the run record: when `HOOK_LOG` is set (the driver sets it per run), each hook appends a JSON line via `../.claude/hooks/_hook-log.mjs`, and the driver folds the file into `../experiments/.../hook-firings.jsonl` with a count in `meta.json`. Off-harness, during an ordinary edit, `HOOK_LOG` is unset and logging is a no-op. This is what makes "the gate fired, and what it said" a recorded fact rather than an inference.
+
 ## Running the harness self-tests
 
 ```
@@ -65,5 +75,5 @@ This runs the counter tests and the gate tests under a vitest config (`vitest.co
 ## What is deferred, on purpose
 
 - **Layout `<div>` abuse** is not counted at Part 1. It only becomes decidable once Part 2 defines the layout grammar, so the counter and gate flag class strings on primitives but not on plain containers. See the deferral section in `sealing-spec.md`.
-- **The run driver** (checks out the substrate on a fresh branch, runs `claude -p --model haiku` under one condition, commits, counts, writes to `../experiments/`) is the next phase and is not built yet.
+- **The run driver** is built: `driver/run-trial.mjs` checks out the substrate on a fresh branch, runs the Haiku agent under one condition, commits, counts with all three counters, and writes the run record (including `hook-firings.jsonl`) to `../experiments/`.
 - **Plane 2 (Playwright responsive checks)** and **Plane 3 (the Haiku aesthetic reviewer)** arrive with Parts 5 and 6.
