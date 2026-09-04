@@ -27,7 +27,7 @@ export default [
     linterOptions: { noInlineConfig: true },
     rules: {
       'seal/no-raw-control': 'error',
-      'seal/no-class-on-primitive': 'error',
+      'seal/no-appearance-on-primitive': 'error',
       'seal/no-style-attribute': 'error',
     },
   },

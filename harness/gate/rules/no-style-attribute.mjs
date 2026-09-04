@@ -1,33 +1,25 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 
-// Rule 3 of the sealing spec: no inline style on any element. See
-// ../../sealing-spec.md. messageId `styleAttribute` maps to the counter's
-// `style-attribute` kind. Covers the static style attribute, [style] and
-// [style.x] bindings, and [ngStyle].
-function isStyleBearing(node) {
-  if (node.attributes.some((a) => a.name === 'style')) return true;
-  return node.inputs.some(
-    (i) => i.name === 'style' || i.name === 'ngStyle' || i.keySpan?.details?.includes('style.'),
-  );
-}
-
+// Part 1, rule 3 (narrowed): no static inline style attribute. A static
+// style="..." is a raw literal that bypasses the token system. It is narrow on
+// purpose: Angular's baseline CLAUDE.md endorses [style] bindings over [ngStyle],
+// so the gate must NOT ban style bindings, only the static literal attribute.
 export default {
   meta: {
     type: 'problem',
-    docs: {
-      description: 'Disallow inline style attributes and bindings on any element.',
-    },
+    docs: { description: 'Disallow a static inline style attribute.' },
     schema: [],
     messages: {
       styleAttribute:
-        'Sealed vocabulary: inline style on <{{element}}> is banned. Style belongs in the primitive or a token, never inline.',
+        'Sealed vocabulary: a static style attribute on <{{element}}> is a raw literal. Style belongs in a token or the primitive; a computed [style.x] binding is fine, a hardcoded style attribute is not.',
     },
   },
   create(context) {
     const parserServices = getTemplateParserServices(context);
     return {
       Element(node) {
-        if (!isStyleBearing(node)) return;
+        const hasStaticStyle = node.attributes.some((a) => a.name === 'style');
+        if (!hasStaticStyle) return;
         context.report({
           loc: parserServices.convertElementSourceSpanToLoc(context, node),
           messageId: 'styleAttribute',

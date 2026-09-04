@@ -8,7 +8,7 @@
 // closes the circularity objection, so keep it that way. Do not import anything
 // the gate imports here.
 
-import { parseTemplate, BindingType } from '@angular/compiler';
+import { parseTemplate } from '@angular/compiler';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { relative, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -34,26 +34,30 @@ const CONTROL_PRIMITIVE = { button: 'hlmBtn', input: 'hlmInput' };
 
 const emptyTotals = () => ({
   'raw-control': 0,
-  'class-on-primitive': 0,
+  'appearance-on-primitive': 0,
   'style-attribute': 0,
   all: 0,
 });
 
 const norm = (p) => p.replaceAll('\\', '/');
 
-function isClassBearing(el) {
-  if (el.attributes.some((a) => a.name === 'class')) return true;
-  return el.inputs.some(
-    (i) => i.type === BindingType.Class || i.name === 'class' || i.name === 'ngClass',
-  );
+// Static class attribute tokens. Dynamic [class]/[ngClass] bindings are out of
+// scope: Angular's baseline CLAUDE.md endorses class bindings, and their values
+// are not statically decidable here.
+function classTokens(el) {
+  const attr = el.attributes.find((a) => a.name === 'class');
+  return attr && typeof attr.value === 'string' ? attr.value.split(/\s+/).filter(Boolean) : [];
 }
 
-function isStyleBearing(el) {
-  if (el.attributes.some((a) => a.name === 'style')) return true;
-  return el.inputs.some(
-    (i) => i.type === BindingType.Style || i.name === 'style' || i.name === 'ngStyle',
-  );
-}
+// Strip responsive/state prefixes (sm:, hover:, dark:, ...) to the base utility.
+const baseUtil = (t) => (t.includes(':') ? t.slice(t.lastIndexOf(':') + 1) : t);
+
+// Appearance = color, typography, decoration, and internal padding. Layout,
+// spacing (margin/gap), dimensions, and position are NOT appearance and are
+// allowed on a primitive, per spartan's "class is for layout only".
+const APPEARANCE_RE =
+  /^(bg-|text-(?!left$|center$|right$|justify$|start$|end$|wrap$|nowrap$|balance$|pretty$|ellipsis$|clip$)|font-|leading-|tracking-|border($|-)|rounded($|-)|shadow($|-)|ring($|-)|p[xytblrse]?-)/;
+const isAppearance = (t) => APPEARANCE_RE.test(baseUtil(t));
 
 function elementViolations(el, file, lineOffset) {
   const out = [];
@@ -69,19 +73,24 @@ function elementViolations(el, file, lineOffset) {
   const isPrimitive =
     PRIMITIVE_ELEMENTS.has(el.name) || [...attrNames].some((n) => PRIMITIVE_ATTRS.has(n));
 
-  // Rule 2: class-on-primitive.
-  if (isPrimitive && isClassBearing(el)) {
-    out.push({
-      kind: 'class-on-primitive',
-      file,
-      line,
-      detail: `class applied to primitive ${el.name}`,
-    });
+  // Rule 2: appearance-on-primitive. Layout classes on a primitive are fine;
+  // only an appearance-override class is a violation.
+  if (isPrimitive) {
+    const offender = classTokens(el).find(isAppearance);
+    if (offender) {
+      out.push({
+        kind: 'appearance-on-primitive',
+        file,
+        line,
+        detail: `appearance class ${offender} on primitive ${el.name}`,
+      });
+    }
   }
 
-  // Rule 3: style-attribute (any element).
-  if (isStyleBearing(el)) {
-    out.push({ kind: 'style-attribute', file, line, detail: `inline style on ${el.name}` });
+  // Rule 3: style-attribute (a static inline style literal, any element). A
+  // [style.x] binding is allowed; Angular's baseline doc endorses style bindings.
+  if (el.attributes.some((a) => a.name === 'style')) {
+    out.push({ kind: 'style-attribute', file, line, detail: `static style attribute on ${el.name}` });
   }
 
   return out;

@@ -1,10 +1,9 @@
 <button>Save</button>
 <input />
-<button hlmBtn class="mt-4">Ok</button>
-<button hlmBtn [ngClass]="x">Go</button>
-<hlm-card class="shadow">card</hlm-card>
-<input hlmInput style="color: red" />
-<div style="padding: 8px">boxed</div>
-<span [style.color]="c">bound style</span>
+<button hlmBtn class="bg-blue-600 rounded-none">Ok</button>
+<input hlmInput class="p-4 text-lg" />
+<div hlmCardFooter class="justify-between">layout on a primitive is fine</div>
+<button hlmBtn class="w-full">layout on a primitive is fine</button>
+<div style="color: red">static inline style</div>
+<span [style.width.%]="pct">style binding is allowed</span>
 <a routerLink="/x">nav</a>
-<div class="flex gap-2">layout</div>

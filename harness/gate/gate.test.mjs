@@ -22,7 +22,7 @@ function lintHtml(code) {
       linterOptions: { noInlineConfig: true },
       rules: {
         'seal/no-raw-control': 'error',
-        'seal/no-class-on-primitive': 'error',
+        'seal/no-appearance-on-primitive': 'error',
         'seal/no-style-attribute': 'error',
       },
     },
@@ -42,8 +42,8 @@ describe('sealing gate: template rules', () => {
     expect(messages.some((m) => m.fatal)).toBe(false);
     expect(countByMessageId(messages)).toEqual({
       rawControl: 2,
-      classOnPrimitive: 3,
-      styleAttribute: 3,
+      appearanceOnPrimitive: 2,
+      styleAttribute: 1,
     });
   });
 

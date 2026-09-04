@@ -10,30 +10,30 @@ describe('structural counter: external templates', () => {
   it('tallies the dirty fixture by exact kind', () => {
     const result = tally([fx('dirty.html')]);
     // Hand-counted from fixtures/dirty.html:
-    //   raw-control:        <button>Save, <input />                       = 2
-    //   class-on-primitive: class on hlmBtn, [ngClass] on hlmBtn,
-    //                       class on <hlm-card>                           = 3
-    //   style-attribute:    style on <input hlmInput>, style on <div>,
-    //                       [style.color] on <span>                       = 3
+    //   raw-control:             <button>Save, <input />                    = 2
+    //   appearance-on-primitive: bg- on hlmBtn, p- on hlmInput             = 2
+    //   style-attribute:         static style="" on <div>                  = 1
+    // NOT flagged: layout class on a primitive (justify-between, w-full),
+    // a [style.width] binding, a bare <a>.
     expect(result.totals).toEqual({
       'raw-control': 2,
-      'class-on-primitive': 3,
-      'style-attribute': 3,
-      all: 8,
+      'appearance-on-primitive': 2,
+      'style-attribute': 1,
+      all: 5,
     });
   });
 
-  it('finds zero violations in the clean fixture', () => {
+  it('finds zero violations in the clean fixture (all docs-good patterns)', () => {
     const result = tally([fx('clean.html')]);
     expect(result.totals).toEqual({
       'raw-control': 0,
-      'class-on-primitive': 0,
+      'appearance-on-primitive': 0,
       'style-attribute': 0,
       all: 0,
     });
   });
 
-  it('does not flag a bare anchor or a class on a plain div', () => {
+  it('does not flag layout classes on a primitive, or a token-styled div', () => {
     const violations = countFile(fx('clean.html'));
     expect(violations).toEqual([]);
   });
@@ -42,10 +42,10 @@ describe('structural counter: external templates', () => {
 describe('structural counter: inline templates in .ts components', () => {
   it('extracts and tallies an inline @Component template', () => {
     const result = tally([fx('dirty.component.ts')]);
-    // <button>Inline (raw-control) + style on <input hlmInput> (style-attribute)
+    // <button>Inline (raw-control) + static style on <input hlmInput> (style-attribute)
     expect(result.totals).toEqual({
       'raw-control': 1,
-      'class-on-primitive': 0,
+      'appearance-on-primitive': 0,
       'style-attribute': 1,
       all: 2,
     });
