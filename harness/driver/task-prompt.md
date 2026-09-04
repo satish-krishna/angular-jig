@@ -8,4 +8,4 @@ There is no backend: define a small in-memory list of heroes (an id and a name e
 
 Wire the screen into the existing routes and use the project as it is set up.
 
-Before you finish, build the app and confirm it compiles.
+Before you finish, build the app with `ng build` and confirm it compiles. Do not start a dev server (`ng serve` or `npm start`); a one-off build is all that is needed, and a dev server would hang.

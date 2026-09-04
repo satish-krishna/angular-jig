@@ -130,6 +130,28 @@ function runAgent(settingsPath, promptFile, logPath) {
   return { stdout, exitCode, argsUsed: args };
 }
 
+// Best-effort: an agent that runs `ng serve` instead of `ng build` leaves a
+// detached dev server that survives the trial, because a branch checkout does not
+// reap child processes. Kill any Angular dev server for THIS repo. Scoped to an
+// `ng.js ... serve` command line that references ROOT, so it never touches
+// unrelated node (a tsserver, another project's server). Wrapped so it can never
+// fail a trial.
+function killStrayDevServers() {
+  try {
+    if (process.platform === 'win32') {
+      const ps =
+        `Get-CimInstance Win32_Process -Filter "Name='node.exe'" | ` +
+        `Where-Object { $_.CommandLine -like '*ng.js*' -and $_.CommandLine -like '*serve*' -and $_.CommandLine -like '*${ROOT}*' } | ` +
+        `ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`;
+      execFileSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], { stdio: 'ignore' });
+    } else {
+      execFileSync('pkill', ['-f', `${ROOT}.*ng.*serve`], { stdio: 'ignore' });
+    }
+  } catch {
+    // best-effort cleanup; never fail a trial over it
+  }
+}
+
 function main() {
   const { condition, trial, dryRun, part, task } = parseArgs(process.argv.slice(2));
   const settingsPath = SETTINGS[part][condition];
@@ -212,7 +234,9 @@ function main() {
     if (part === 4 && !dryRun) strictResult = strictTemplateCheck({ restore: true });
     diff = git(['diff', `${substrateSha}..HEAD`]);
   } finally {
-    // Always return to where we started, even if the trial threw.
+    // Reap any dev server the agent spawned (it should not, per the task prompt),
+    // then always return to where we started, even if the trial threw.
+    killStrayDevServers();
     try {
       git(['checkout', '--force', startBranch]);
     } catch (e) {
