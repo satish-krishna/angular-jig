@@ -48,6 +48,7 @@ const SETTINGS = {
   3: {
     'gate-off': 'harness/gate/part3-gate-off.settings.json',
     'gate-on': 'harness/gate/part3-gate-on.settings.json',
+    'gate-on-guided': 'harness/gate/part3-gate-on-guided.settings.json',
   },
 };
 
@@ -71,8 +72,8 @@ function parseArgs(argv) {
     else if (a === '--dry-run') out.dryRun = true;
     else throw new Error(`unknown arg: ${a}`);
   }
-  if (out.condition !== 'gate-off' && out.condition !== 'gate-on') {
-    throw new Error("--condition must be 'gate-off' or 'gate-on'");
+  if (!['gate-off', 'gate-on', 'gate-on-guided'].includes(out.condition)) {
+    throw new Error("--condition must be 'gate-off', 'gate-on', or 'gate-on-guided'");
   }
   if (out.trial === undefined) throw new Error('--trial <n> is required');
   out.part = out.part ? Number(out.part) : 1;
