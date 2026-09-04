@@ -38,6 +38,7 @@ const shapeEslintConfig = [
       'shape/no-forms-module': 'error',
       'shape/no-restated-validator': 'error',
       'shape/no-presentational-inject': 'error',
+      'shape/no-reactive-form': 'error',
     },
   },
   {

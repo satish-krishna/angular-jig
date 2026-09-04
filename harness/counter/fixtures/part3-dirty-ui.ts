@@ -2,10 +2,11 @@
 // presentational-injects-data rule (which keys on src/app/ui/) can fire.
 //
 // Contrived to carry exactly one of each Part 3 kind:
-//   gated (5): hand-set-change-detection, template-driven-form (FormsModule),
-//              presentational-injects-data, restated-validator, component-subscribe
-//   heuristic (3): hand-written-form-model, dumb-holds-state, reactive-form
-// So totals.all (gated only) is 5; the gate reports 5 messages on the same bytes.
+//   gated (6): hand-set-change-detection, template-driven-form (FormsModule),
+//              presentational-injects-data, restated-validator, component-subscribe,
+//              reactive-form
+//   heuristic (2): hand-written-form-model, dumb-holds-state
+// So totals.all (gated only) is 6; the gate reports 6 messages on the same bytes.
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule, FormGroup, FormControl } from '@angular/forms';
 import { form, required } from '@angular/forms/signals';

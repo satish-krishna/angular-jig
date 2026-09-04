@@ -14,6 +14,7 @@ const GATED = new Set([
   'template-driven-form',
   'restated-validator',
   'presentational-injects-data',
+  'reactive-form',
 ]);
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -26,6 +27,7 @@ const TS_RULES = {
   'shape/no-forms-module': 'error',
   'shape/no-restated-validator': 'error',
   'shape/no-presentational-inject': 'error',
+  'shape/no-reactive-form': 'error',
 };
 
 function lintTs(code, filename) {
@@ -74,6 +76,7 @@ describe('component-shape gate: TS rules', () => {
       formsModule: 1,
       restatedValidator: 1,
       presentationalInject: 1,
+      reactiveForm: 1,
     });
   });
 

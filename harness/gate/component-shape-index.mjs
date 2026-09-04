@@ -3,6 +3,7 @@ import noComponentSubscribe from './rules/no-component-subscribe.mjs';
 import noFormsModule from './rules/no-forms-module.mjs';
 import noRestatedValidator from './rules/no-restated-validator.mjs';
 import noPresentationalInject from './rules/no-presentational-inject.mjs';
+import noReactiveForm from './rules/no-reactive-form.mjs';
 import noNgModel from './rules/no-ng-model.mjs';
 
 // The `shape` eslint plugin: the Part 3 component-shape rules, encoding the
@@ -16,8 +17,9 @@ import noNgModel from './rules/no-ng-model.mjs';
 //   ngModel                -> template-driven-form  (template half)
 //   restatedValidator      -> restated-validator
 //   presentationalInject   -> presentational-injects-data
-// The three heuristics (hand-written-form-model, reactive-form, dumb-holds-state)
-// are counter-only and deliberately have no gate rule.
+//   reactiveForm           -> reactive-form
+// The two heuristics (hand-written-form-model, dumb-holds-state) are counter-only
+// and deliberately have no gate rule.
 const plugin = {
   meta: { name: 'shape', version: '1.0.0' },
   rules: {
@@ -26,6 +28,7 @@ const plugin = {
     'no-forms-module': noFormsModule,
     'no-restated-validator': noRestatedValidator,
     'no-presentational-inject': noPresentationalInject,
+    'no-reactive-form': noReactiveForm,
     'no-ng-model': noNgModel,
   },
 };

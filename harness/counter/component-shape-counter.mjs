@@ -25,8 +25,9 @@ const GATED_KINDS = [
   'template-driven-form',
   'restated-validator',
   'presentational-injects-data',
+  'reactive-form',
 ];
-const HEURISTIC_KINDS = ['hand-written-form-model', 'reactive-form', 'dumb-holds-state'];
+const HEURISTIC_KINDS = ['hand-written-form-model', 'dumb-holds-state'];
 const isGated = (k) => GATED_KINDS.includes(k);
 
 const emptyTotals = () => {
@@ -113,6 +114,7 @@ export function countTsSource(sourceText, { file }) {
     const call = componentCall(classNode);
     if (!call) return; // only @Component classes are in scope
     const obj = decoratorObject(call);
+    let reactiveLine = null; // reactive-form is flagged once per component (import or new-expression)
 
     // Decorator-level kinds.
     if (obj) {
@@ -126,7 +128,7 @@ export function countTsSource(sourceText, { file }) {
             out.push({ kind: 'template-driven-form', file, line: lineOf(el), detail: 'FormsModule in imports' });
           }
           if (ts.isIdentifier(el) && el.text === 'ReactiveFormsModule') {
-            out.push({ kind: 'reactive-form', file, line: lineOf(el), detail: 'ReactiveFormsModule in imports' });
+            reactiveLine ??= lineOf(el);
           }
         }
       }
@@ -135,7 +137,6 @@ export function countTsSource(sourceText, { file }) {
     // Member-level kinds: walk the class members only, so the decorator is not re-scanned.
     let hasFormCall = false;
     const modelSignals = []; // signal<LocalType>() nodes
-    let reactiveFlagged = false;
 
     const walk = (node) => {
       if (ts.isCallExpression(node)) {
@@ -166,10 +167,7 @@ export function countTsSource(sourceText, { file }) {
         }
       }
       if (ts.isNewExpression(node) && ts.isIdentifier(node.expression) && REACTIVE_SYMBOLS.has(node.expression.text)) {
-        if (!reactiveFlagged) {
-          out.push({ kind: 'reactive-form', file, line: lineOf(node), detail: `${node.expression.text} (reactive forms)` });
-          reactiveFlagged = true;
-        }
+        reactiveLine ??= lineOf(node);
       }
       // dumb-holds-state: a writable signal() field in a ui/ component (not input/model).
       if (ui && ts.isPropertyDeclaration(node) && node.initializer && ts.isCallExpression(node.initializer)) {
@@ -186,6 +184,9 @@ export function countTsSource(sourceText, { file }) {
       for (const m of modelSignals) {
         out.push({ kind: 'hand-written-form-model', file, line: lineOf(m.node), detail: `signal<${m.type}> model instead of z.infer` });
       }
+    }
+    if (reactiveLine !== null) {
+      out.push({ kind: 'reactive-form', file, line: reactiveLine, detail: 'reactive forms (FormGroup/FormControl/ReactiveFormsModule)' });
     }
   };
 
