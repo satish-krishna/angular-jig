@@ -1,0 +1,62 @@
+{
+  "runId": "detail-form-gate-on-t3-2026-09-04_13-45-45",
+  "part": 2,
+  "task": "detail-form",
+  "promptFile": "task-prompt-detail-form.md",
+  "condition": "gate-on",
+  "trial": 3,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "a1fd7739bca029a26a50bdbc61da025ece1c77c7"
+  },
+  "branch": "run/p2-detail-form-gate-on-t3-2026-09-04_13-45-45",
+  "resultSha": "c94691379cca9f0695b809b0d938c52ec293f26a",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/part2-gate-on.settings.json",
+  "agent": {
+    "skipped": false,
+    "exitCode": 0,
+    "isError": false,
+    "subtype": "success",
+    "numTurns": 57,
+    "costUsd": 0.4456398,
+    "durationMs": 352219,
+    "parseError": false,
+    "argsUsed": [
+      "--print",
+      "--model",
+      "haiku",
+      "--output-format",
+      "json",
+      "--permission-mode",
+      "bypassPermissions",
+      "--mcp-config",
+      ".mcp.json",
+      "--settings",
+      "harness/gate/part2-gate-on.settings.json"
+    ]
+  },
+  "diffEmpty": false,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 0,
+      "all": 0
+    }
+  },
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-04T13:51:42.416Z"
+}
