@@ -55,6 +55,12 @@ A `style` attribute, a `[style]` binding, any `[style.foo]` shorthand, or an `[n
 
 The Part 1 resumption brief phrased rule 2 as "no arbitrary class strings on primitives and no layout `<div>` abuse." The primitive half is decidable now and is rule 2 above. The "layout `<div>` abuse" half is NOT decidable at Part 1, because there is no layout grammar yet to measure a `<div>` against: a `<div class="flex gap-2">` is only abuse relative to a rule that says how layout is allowed to be expressed, and that rule is Part 2 (layout as a grammar). Counting it now would mean inventing an ad hoc definition of abuse that Part 2 would then have to overwrite. So Part 1 seals the primitives and leaves general class-on-container to Part 2. This is a scope line, drawn on purpose, not an oversight. Both the gate and the counter honor it: neither flags a class on a non-primitive element.
 
+## The owned boundary (decided by the Part 1 measured run)
+
+The first measured run (`experiments/part-1-report.md`) confirmed a boundary, and the author decided to own it rather than close it. Sealing catches a raw control that has a primitive twin: the search `<input>` becomes `hlmInput` under the gate, reliably, in every gated trial. It does NOT catch a screen that avoids the vocabulary wholesale by hand-rolling structural composition. A hero card built as a `<div class="hero-card">` instead of `hlm-card` is invisible to all three rules, because there is no raw "card" element to flag, a bare `<a>` is a legitimate element, and container classes are deferred to Part 2.
+
+This is Part 1's honest boundary, on purpose. It is deliberately NOT patched with a fourth rule such as "no raw structural element where a block primitive exists," because that rule needs a definition of structural intent that only Part 2 (layout as a grammar) and Part 3 (component shape) make decidable. Part 1 seals the primitives; the later planes catch the composition that routes around the seal. If a future Part adds a rule here, it does so with that Part's evidence, not pre-baked now.
+
 ## The tally shape (the counter's output contract)
 
 The counter emits one JSON object. The gate does not emit JSON (it exits non-zero with a message), but it reports the same three `messageId`s that map one-to-one onto these kinds. Shape:

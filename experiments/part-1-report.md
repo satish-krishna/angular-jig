@@ -63,3 +63,5 @@ Three real bugs were found and fixed while running, not swept under:
 ## The design question this run puts on the table
 
 The gate forces `hlmInput` and does nothing about the hand-rolled `<div>` cards. That is either the honest boundary of Part 1 (seal the primitives, and let Part 2's layout grammar and Part 3's component shape catch the rest) or a gap to close now with a fourth rule, something like "no raw structural element where a block primitive exists" (a `<div>` doing a card's job). Deciding that is the next call, and it is a spec decision, not a code one.
+
+Decision: own the boundary (option a). No fourth rule is added at Part 1. The residue is left for Part 2's layout grammar and Part 3's component shape, and it is recorded as the deliberate boundary in `harness/sealing-spec.md`. This run's div-card residue becomes the motivating example the later Parts point back to.
