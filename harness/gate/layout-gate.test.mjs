@@ -3,8 +3,10 @@ import { Linter } from 'eslint';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import stylelint from 'stylelint';
 import angular from 'angular-eslint';
 import layout from './layout-index.mjs';
+import styleConfig from '../../stylelint.config.mjs';
 import { layoutTally } from '../counter/layout-counter.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -53,5 +55,21 @@ describe('layout gate: template rules', () => {
     const t = layoutTally([fx('layout-dirty.html')]).totals;
     const counterTemplateTotal = t['literal-value'] + t['presentation-on-raw'];
     expect(gateTotal).toBe(counterTemplateTotal);
+  });
+});
+
+describe('layout gate: stylesheet surface (stylelint)', () => {
+  it('flags hex and px literals in a stylesheet, passing tokens', async () => {
+    const css = '.card {\n  background: #3b82f6;\n  padding: 16px;\n  border-radius: var(--radius);\n}';
+    const result = await stylelint.lint({ code: css, config: styleConfig });
+    const warnings = result.results.flatMap((r) => r.warnings);
+    expect(warnings).toHaveLength(2);
+  });
+
+  it('agrees with the counter on the CSS surface of the component fixture', () => {
+    // The counter's independent CSS scan and stylelint should land on the same
+    // literal count for the component stylesheet fixture.
+    const cssOnly = layoutTally([fx('layout-dirty.component.ts')]).totals['literal-value'];
+    expect(cssOnly).toBe(2);
   });
 });
