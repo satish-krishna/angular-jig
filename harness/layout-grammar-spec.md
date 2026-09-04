@@ -35,14 +35,14 @@ The whole point is that Tailwind's named scale (`p-4`, `gap-2`, `bg-primary`) is
 
 A raw element (an element carrying no primitive from the sealing spec) that wears presentational utility classes is a container pretending to be a styled component. Layout is allowed on containers; appearance is not.
 
-- Flagged (appearance): `bg-*`, `border`, `border-*`, `rounded`, `rounded-*`, `shadow`, `shadow-*`, `ring`, `ring-*`, and text-color utilities (`text-<color>`), on any element that is not a primitive.
+- Flagged (appearance): `bg-*`, `border`, `border-*`, `rounded`, `rounded-*`, `shadow`, `shadow-*`, `ring`, `ring-*`, on any element that is not a primitive. Text-color utilities are intentionally excluded: `text-*` tangles color with font size (`text-sm`) and alignment (`text-center`), and keeping the rule cleanly decidable is worth more than catching a stray text color.
 - Not flagged (the allowed grammar): layout and spacing utilities, `flex`, `grid`, `gap-*`, `p-*`, `m-*`, `w-*`, `h-*`, `items-*`, `justify-*`, `col-*`, `row-*`, `hidden`, `block`. Containers are for arranging; that is what a container is for.
 
 This names the naive hand-rolled card, the `<div class="bg-blue-50 border rounded-lg shadow">` that Part 1's gate-off shipped in every trial. It is the half of the div-card residue that Part 2 can decide.
 
 ### 3. `nested-flex-grid` (heuristic, stated): a two-dimensional layout built from nested flex
 
-Grid is for regions, flex is for a single inline run. A two-dimensional arrangement built by nesting flex containers is the layout smell Part 2 wants to name, but unlike the first two rules this one is not cleanly decidable from classes alone, and the spec will not pretend it is. The heuristic: a `flex` container whose direct element children are themselves `flex` containers, which is the common shape of a nested-flex grid. It will have false positives (a legitimate toolbar of flex rows) and false negatives (a grid faked another way), so it is reported as a lower-confidence kind, counted separately, and never used as the headline number. If the measured run shows the heuristic is more noise than signal, it is cut, and that cut is a finding.
+Grid is for regions, flex is for a single inline run. A two-dimensional arrangement built by nesting flex containers is the layout smell Part 2 wants to name, but unlike the first two rules this one is not cleanly decidable from classes alone, and the spec will not pretend it is. The heuristic: a `flex` container whose direct element children are themselves `flex` containers, which is the common shape of a nested-flex grid. It will have false positives (a legitimate toolbar of flex rows) and false negatives (a grid faked another way), so it is reported as a lower-confidence kind, counted separately, and never used as the headline number. If the measured run shows the heuristic is more noise than signal, it is cut, and that cut is a finding. The gate does not enforce this kind: a low-confidence heuristic must not hard-block an edit, so `nested-flex-grid` is counter-only, measured but never gated.
 
 ## The honest limit Part 2 does NOT close
 
