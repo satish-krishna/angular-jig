@@ -46,6 +46,17 @@ describe('layout counter: stylesheet pass', () => {
   });
 });
 
+describe('layout counter: no double count, comments ignored', () => {
+  it('counts a styleUrl stylesheet once and skips a px in a comment', () => {
+    // The .ts references the .css via styleUrl; tallying both must count the
+    // one real literal (8px) once, not twice, and must ignore the 16px that
+    // lives in a CSS comment.
+    const result = layoutTally([fx('layout-styleurl.component.ts'), fx('layout-styleurl.css')]);
+    expect(result.totals['literal-value']).toBe(1);
+    expect(result.totals.all).toBe(1);
+  });
+});
+
 describe('layout counter: output contract', () => {
   it('is deterministic across repeated runs', () => {
     const a = JSON.stringify(layoutTally([fx('layout-dirty.html'), fx('layout-dirty.component.ts')]));

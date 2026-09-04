@@ -7,8 +7,8 @@
 // with the gate.
 
 import { parseTemplate } from '@angular/compiler';
-import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
-import { relative, join, dirname } from 'node:path';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { relative, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
@@ -119,9 +119,12 @@ export function countTemplateSource(template, { file, lineOffset = 0 }) {
 // A literal color or raw px length in CSS, outside a var(...) token reference.
 export function countCssSource(css, { file, lineOffset = 0 }) {
   const acc = [];
-  // Mask var(...) spans so token references never register as literals, while
-  // keeping character positions intact for line numbers.
-  const masked = css.replace(/var\([^)]*\)/g, (m) => ' '.repeat(m.length));
+  // Mask comments and var(...) spans so a token reference or a value inside a
+  // comment never registers as a literal, while keeping character positions
+  // intact for line numbers.
+  const masked = css
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+    .replace(/var\([^)]*\)/g, (m) => ' '.repeat(m.length));
   const patterns = [
     { re: /#[0-9a-fA-F]{3,8}\b/g, what: 'hex color' },
     { re: /\b\d+(?:\.\d+)?px\b/g, what: 'raw px length' },
@@ -182,16 +185,11 @@ export function layoutCountFile(absPath, { root } = {}) {
   } else if (absPath.endsWith('.css')) {
     acc.push(...countCssSource(text, { file, lineOffset: 0 }));
   } else if (absPath.endsWith('.ts')) {
-    const { templates, styles, styleUrls } = extractFromComponent(text);
+    const { templates, styles } = extractFromComponent(text);
     for (const t of templates) acc.push(...countTemplateSource(t.text, { file, lineOffset: t.lineOffset }));
     for (const s of styles) acc.push(...countCssSource(s.text, { file, lineOffset: s.lineOffset }));
-    for (const url of styleUrls) {
-      const cssPath = join(dirname(absPath), url);
-      if (existsSync(cssPath)) {
-        const cssFile = root ? norm(relative(root, cssPath)) : norm(cssPath);
-        acc.push(...countCssSource(readFileSync(cssPath, 'utf8'), { file: cssFile, lineOffset: 0 }));
-      }
-    }
+    // A styleUrl .css file is scanned standalone by the directory walk, so it is
+    // NOT followed from the .ts here: doing both double-counts the same file.
   }
   return acc;
 }
