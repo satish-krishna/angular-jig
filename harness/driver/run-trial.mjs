@@ -57,6 +57,7 @@ function parseArgs(argv) {
     if (a === '--condition') out.condition = argv[++i];
     else if (a === '--trial') out.trial = argv[++i];
     else if (a === '--part') out.part = argv[++i];
+    else if (a === '--task') out.task = argv[++i];
     else if (a === '--dry-run') out.dryRun = true;
     else throw new Error(`unknown arg: ${a}`);
   }
@@ -65,6 +66,7 @@ function parseArgs(argv) {
   }
   if (out.trial === undefined) throw new Error('--trial <n> is required');
   out.part = out.part ? Number(out.part) : 1;
+  out.task = out.task ?? 'dashboard';
   if (!SETTINGS[out.part]) {
     throw new Error(`--part must be one of: ${Object.keys(SETTINGS).join(', ')}`);
   }
@@ -75,8 +77,8 @@ function stamp() {
   return new Date().toISOString().replaceAll(/[:.]/g, '-').replace('T', '_').slice(0, 19);
 }
 
-function runAgent(settingsPath) {
-  const prompt = readFileSync(join(here, 'task-prompt.md'), 'utf8');
+function runAgent(settingsPath, promptFile) {
+  const prompt = readFileSync(join(here, promptFile), 'utf8');
   const args = [
     '--print',
     '--model',
@@ -110,8 +112,9 @@ function runAgent(settingsPath) {
 }
 
 function main() {
-  const { condition, trial, dryRun, part } = parseArgs(process.argv.slice(2));
+  const { condition, trial, dryRun, part, task } = parseArgs(process.argv.slice(2));
   const settingsPath = SETTINGS[part][condition];
+  const promptFile = task === 'dashboard' ? 'task-prompt.md' : `task-prompt-${task}.md`;
 
   const startBranch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
   // The driver's own experiment output accumulates in experiments/ and must not
@@ -127,9 +130,9 @@ function main() {
   }
 
   const substrateSha = git(['rev-parse', SUBSTRATE]);
-  const runId = `${condition}-t${trial}-${stamp()}${dryRun ? '-dry' : ''}`;
+  const runId = `${task}-${condition}-t${trial}-${stamp()}${dryRun ? '-dry' : ''}`;
   const branch = `run/p${part}-${runId}`;
-  const outRel = join('experiments', `part${part}`, condition, runId);
+  const outRel = join('experiments', `part${part}`, task, condition, runId);
   const outDir = join(ROOT, outRel);
 
   let agent = { stdout: '', exitCode: 0, argsUsed: [], skipped: true };
@@ -143,7 +146,7 @@ function main() {
     git(['checkout', '-b', branch, substrateSha]);
 
     if (!dryRun) {
-      agent = { ...runAgent(settingsPath), skipped: false };
+      agent = { ...runAgent(settingsPath, promptFile), skipped: false };
       try {
         const parsed = JSON.parse(agent.stdout);
         modelUsed =
@@ -208,6 +211,8 @@ function main() {
   const meta = {
     runId,
     part,
+    task,
+    promptFile,
     condition,
     trial: Number(trial),
     dryRun,
