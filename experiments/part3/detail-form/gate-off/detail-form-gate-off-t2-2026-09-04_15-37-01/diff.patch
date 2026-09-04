@@ -1,0 +1,185 @@
+diff --git a/src/app/hero-detail/hero-detail.css b/src/app/hero-detail/hero-detail.css
+new file mode 100644
+index 0000000..1597cde
+--- /dev/null
++++ b/src/app/hero-detail/hero-detail.css
+@@ -0,0 +1,42 @@
++:host {
++  --spacing-sm: 0.5rem;
++  --spacing-md: 1rem;
++  --spacing-lg: 1.5rem;
++  --spacing-xl: 2rem;
++}
++
++.hero-detail-container {
++  max-width: 600px;
++  margin: var(--spacing-xl) auto;
++  padding: 0 var(--spacing-md);
++}
++
++.hero-card {
++  margin-bottom: var(--spacing-xl);
++}
++
++.edit-form {
++  display: flex;
++  flex-direction: column;
++  gap: var(--spacing-lg);
++}
++
++.form-group {
++  display: flex;
++  flex-direction: column;
++  gap: var(--spacing-sm);
++}
++
++.form-group label {
++  font-weight: 500;
++}
++
++.form-actions {
++  display: flex;
++  gap: var(--spacing-md);
++  justify-content: flex-start;
++}
++
++button {
++  min-width: 100px;
++}
+diff --git a/src/app/hero-detail/hero-detail.html b/src/app/hero-detail/hero-detail.html
+new file mode 100644
+index 0000000..069714a
+--- /dev/null
++++ b/src/app/hero-detail/hero-detail.html
+@@ -0,0 +1,36 @@
++<div class="hero-detail-container">
++  <h1>Hero Detail</h1>
++
++  @if (hero()) {
++    <div hlm-card class="hero-card">
++      <div hlmCardHeader>
++        <h2 hlmCardTitle>{{ hero()!.name }}</h2>
++      </div>
++      <div hlmCardContent>
++        <p><strong>ID:</strong> {{ hero()!.id }}</p>
++      </div>
++    </div>
++
++    <form class="edit-form" (ngSubmit)="onSave()">
++      <div class="form-group">
++        <label for="heroName">Hero Name</label>
++        <input
++          id="heroName"
++          type="text"
++          hlmInput
++          [ngModel]="editedName()"
++          (ngModelChange)="editedName.set($event)"
++          name="heroName"
++          required
++        />
++      </div>
++
++      <div class="form-actions">
++        <button type="submit" hlmBtn>Save</button>
++        <button type="button" hlmBtn (click)="onCancel()">Cancel</button>
++      </div>
++    </form>
++  } @else {
++    <p>Hero not found.</p>
++  }
++</div>
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..d41c16f 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,45 @@
+-import { Component } from '@angular/core';
++import { Component, inject, signal, effect } from '@angular/core';
++import { ActivatedRoute, Router } from '@angular/router';
++import { FormsModule } from '@angular/forms';
++import { HeroService, type Hero } from '../heroes/hero.service';
++import { HlmCardImports } from '@spartan-ng/helm/card';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  imports: [FormsModule, HlmCardImports, HlmInputImports, HlmButtonImports],
++  templateUrl: './hero-detail.html',
++  styleUrl: './hero-detail.css',
+ })
+-export class HeroDetail {}
++export class HeroDetail {
++  private route = inject(ActivatedRoute);
++  private router = inject(Router);
++  private heroService = inject(HeroService);
++
++  hero = signal<Hero | undefined>(undefined);
++  editedName = signal('');
++
++  constructor() {
++    effect(() => {
++      const id = Number(this.route.snapshot.paramMap.get('id'));
++      const loadedHero = this.heroService.getHero(id);
++      this.hero.set(loadedHero);
++      if (loadedHero) {
++        this.editedName.set(loadedHero.name);
++      }
++    });
++  }
++
++  onSave(): void {
++    if (this.hero() && this.editedName()) {
++      this.heroService.updateHero(this.hero()!.id, this.editedName());
++      this.hero.set({ ...this.hero()!, name: this.editedName() });
++      this.router.navigate(['/heroes']);
++    }
++  }
++
++  onCancel(): void {
++    this.router.navigate(['/heroes']);
++  }
++}
+diff --git a/src/app/heroes/hero.service.ts b/src/app/heroes/hero.service.ts
+new file mode 100644
+index 0000000..6cd7710
+--- /dev/null
++++ b/src/app/heroes/hero.service.ts
+@@ -0,0 +1,35 @@
++import { Injectable } from '@angular/core';
++import { signal } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({ providedIn: 'root' })
++export class HeroService {
++  private heroes = signal<Hero[]>([
++    { id: 1, name: 'Mr. Nice' },
++    { id: 2, name: 'Narco' },
++    { id: 3, name: 'Windstorm' },
++    { id: 4, name: 'Bombasto' },
++    { id: 5, name: 'Celeritas' },
++    { id: 6, name: 'Magneta' },
++    { id: 7, name: 'RubberMan' },
++    { id: 8, name: 'Dynama' },
++    { id: 9, name: 'Dr IQ' },
++    { id: 10, name: 'Magma' },
++    { id: 11, name: 'Tornado' },
++    { id: 12, name: 'Dr. Quantum' },
++  ]);
++
++  getHero(id: number): Hero | undefined {
++    return this.heroes().find((h) => h.id === id);
++  }
++
++  updateHero(id: number, name: string): void {
++    this.heroes.update((heroes) =>
++      heroes.map((h) => (h.id === id ? { ...h, name } : h))
++    );
++  }
++}
