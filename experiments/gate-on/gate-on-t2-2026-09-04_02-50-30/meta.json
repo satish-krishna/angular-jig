@@ -1,0 +1,50 @@
+{
+  "runId": "gate-on-t2-2026-09-04_02-50-30",
+  "condition": "gate-on",
+  "trial": 2,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "db8555f34854c6ce5a4a0e6e9d6edd26ff0d43ba"
+  },
+  "branch": "run/gate-on-t2-2026-09-04_02-50-30",
+  "resultSha": "295cca5fb20c95713214b40d1f44149784f48932",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/gate-on.settings.json",
+  "agent": {
+    "skipped": false,
+    "exitCode": 0,
+    "isError": false,
+    "subtype": "success",
+    "numTurns": 42,
+    "costUsd": 0.2634267,
+    "durationMs": 161738,
+    "parseError": false,
+    "argsUsed": [
+      "--print",
+      "--model",
+      "haiku",
+      "--output-format",
+      "json",
+      "--permission-mode",
+      "bypassPermissions",
+      "--mcp-config",
+      ".mcp.json",
+      "--settings",
+      "harness/gate/gate-on.settings.json"
+    ]
+  },
+  "diffEmpty": false,
+  "counterTotals": {
+    "raw-control": 0,
+    "class-on-primitive": 0,
+    "style-attribute": 0,
+    "all": 0
+  },
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-04T02:53:16.937Z"
+}

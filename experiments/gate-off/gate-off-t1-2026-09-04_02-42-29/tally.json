@@ -1,0 +1,16 @@
+{
+  "totals": {
+    "raw-control": 1,
+    "class-on-primitive": 0,
+    "style-attribute": 0,
+    "all": 1
+  },
+  "violations": [
+    {
+      "kind": "raw-control",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 15,
+      "detail": "input without hlmInput"
+    }
+  ]
+}

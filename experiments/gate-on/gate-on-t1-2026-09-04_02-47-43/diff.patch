@@ -1,0 +1,251 @@
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..c1e5f15 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,135 @@
+-import { Component } from '@angular/core';
++import { Component, signal, computed, inject } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HeroService, Hero } from '../services/hero.service';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  imports: [CommonModule, RouterLink, HlmInputImports, HlmButtonImports],
++  template: `
++    <div class="dashboard-container">
++      <h1>Dashboard</h1>
++
++      <div class="search-section">
++        <h2>Hero Search</h2>
++        <input
++          type="text"
++          hlmInput
++          placeholder="Search heroes..."
++          (input)="onSearch($event)"
++        />
++        @if (searchResults().length > 0) {
++          <ul class="search-results">
++            @for (hero of searchResults(); track hero.id) {
++              <li>
++                <a [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
++              </li>
++            }
++          </ul>
++        }
++      </div>
++
++      <div class="top-heroes-section">
++        <h2>Top Heroes</h2>
++        <div class="heroes-grid">
++          @for (hero of topHeroes(); track hero.id) {
++            <div class="hero-card">
++              <h3>{{ hero.name }}</h3>
++              <a [routerLink]="['/detail', hero.id]" class="hero-link">View Details</a>
++            </div>
++          }
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [`
++    .dashboard-container {
++      padding: 20px;
++    }
++
++    .search-section {
++      margin-bottom: 40px;
++    }
++
++    .search-results {
++      list-style: none;
++      padding: 10px 0;
++      margin: 10px 0;
++      max-width: 400px;
++    }
++
++    .search-results li {
++      padding: 8px;
++      border-bottom: 1px solid var(--border);
++    }
++
++    .search-results a {
++      color: var(--primary);
++      text-decoration: none;
++      cursor: pointer;
++    }
++
++    .search-results a:hover {
++      text-decoration: underline;
++    }
++
++    .top-heroes-section {
++      margin-top: 40px;
++    }
++
++    .heroes-grid {
++      display: grid;
++      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
++      gap: 20px;
++      margin-top: 20px;
++    }
++
++    .hero-card {
++      border: 1px solid var(--border);
++      border-radius: 8px;
++      padding: 20px;
++      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
++      background-color: var(--card);
++    }
++
++    .hero-card h3 {
++      margin: 0 0 15px 0;
++      color: var(--foreground);
++    }
++
++    .hero-link {
++      display: inline-block;
++      color: var(--primary);
++      text-decoration: none;
++      border: 1px solid var(--primary);
++      padding: 8px 16px;
++      border-radius: 4px;
++      transition: all 0.3s ease;
++    }
++
++    .hero-link:hover {
++      background-color: var(--primary);
++      color: var(--primary-foreground);
++    }
++  `]
+ })
+-export class Dashboard {}
++export class Dashboard {
++  private heroService = inject(HeroService);
++  searchTerm = signal('');
++  topHeroes = signal<Hero[]>([]);
++  searchResults = computed(() => {
++    const term = this.searchTerm();
++    return term.trim() ? this.heroService.searchHeroes(term) : [];
++  });
++
++  constructor() {
++    this.topHeroes.set(this.heroService.getTopHeroes(4));
++  }
++
++  onSearch(event: Event) {
++    const input = event.target as HTMLInputElement;
++    this.searchTerm.set(input.value);
++  }
++}
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..746e0d9 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,45 @@
+-import { Component } from '@angular/core';
++import { Component, computed, inject } from '@angular/core';
++import { ActivatedRoute, RouterLink } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { HeroService } from '../services/hero.service';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  imports: [CommonModule, RouterLink],
++  template: `
++    <div class="detail-container">
++      <div>
++        <a [routerLink]="['/dashboard']">Back to Dashboard</a>
++      </div>
++      @if (hero(); as selectedHero) {
++        <h1>{{ selectedHero.name }}</h1>
++        <p>ID: {{ selectedHero.id }}</p>
++      } @else {
++        <p>Hero not found</p>
++      }
++    </div>
++  `,
++  styles: [`
++    .detail-container {
++      padding: 20px;
++    }
++    a {
++      color: var(--primary);
++      text-decoration: none;
++      margin-bottom: 20px;
++      display: inline-block;
++    }
++    a:hover {
++      text-decoration: underline;
++    }
++  `]
+ })
+-export class HeroDetail {}
++export class HeroDetail {
++  private route = inject(ActivatedRoute);
++  private heroService = inject(HeroService);
++
++  hero = computed(() => {
++    const id = this.route.snapshot.params['id'];
++    return id ? this.heroService.getHero(parseInt(id, 10)) : undefined;
++  });
++}
+diff --git a/src/app/services/hero.service.ts b/src/app/services/hero.service.ts
+new file mode 100644
+index 0000000..db9b2c9
+--- /dev/null
++++ b/src/app/services/hero.service.ts
+@@ -0,0 +1,47 @@
++import { Injectable } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({
++  providedIn: 'root'
++})
++export class HeroService {
++  private heroes: Hero[] = [
++    { id: 1, name: 'Mr. Nice' },
++    { id: 2, name: 'Narco' },
++    { id: 3, name: 'Bombasto' },
++    { id: 4, name: 'Celeritas' },
++    { id: 5, name: 'Magneta' },
++    { id: 6, name: 'RubberMan' },
++    { id: 7, name: 'Dynama' },
++    { id: 8, name: 'Dr IQ' },
++    { id: 9, name: 'Magma' },
++    { id: 10, name: 'Tornado' },
++    { id: 11, name: 'Dr Strange' },
++    { id: 12, name: 'Black Widow' }
++  ];
++
++  getHeroes(): Hero[] {
++    return this.heroes;
++  }
++
++  getHero(id: number): Hero | undefined {
++    return this.heroes.find(h => h.id === id);
++  }
++
++  getTopHeroes(count: number): Hero[] {
++    return this.heroes.slice(0, count);
++  }
++
++  searchHeroes(term: string): Hero[] {
++    if (!term.trim()) {
++      return [];
++    }
++    return this.heroes.filter(h =>
++      h.name.toLowerCase().includes(term.toLowerCase())
++    );
++  }
++}

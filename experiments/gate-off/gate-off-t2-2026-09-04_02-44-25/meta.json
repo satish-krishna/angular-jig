@@ -1,0 +1,48 @@
+{
+  "runId": "gate-off-t2-2026-09-04_02-44-25",
+  "condition": "gate-off",
+  "trial": 2,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "db8555f34854c6ce5a4a0e6e9d6edd26ff0d43ba"
+  },
+  "branch": "run/gate-off-t2-2026-09-04_02-44-25",
+  "resultSha": "e582687fc7600c72f5094f73fb7bfed2d7f4a509",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": null,
+  "agent": {
+    "skipped": false,
+    "exitCode": 0,
+    "isError": false,
+    "subtype": "success",
+    "numTurns": 23,
+    "costUsd": 0.20462465,
+    "durationMs": 101617,
+    "parseError": false,
+    "argsUsed": [
+      "--print",
+      "--model",
+      "haiku",
+      "--output-format",
+      "json",
+      "--permission-mode",
+      "bypassPermissions",
+      "--mcp-config",
+      ".mcp.json"
+    ]
+  },
+  "diffEmpty": false,
+  "counterTotals": {
+    "raw-control": 1,
+    "class-on-primitive": 0,
+    "style-attribute": 0,
+    "all": 1
+  },
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-04T02:46:12.436Z"
+}

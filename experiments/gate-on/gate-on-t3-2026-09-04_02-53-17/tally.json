@@ -1,0 +1,9 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "class-on-primitive": 0,
+    "style-attribute": 0,
+    "all": 0
+  },
+  "violations": []
+}
