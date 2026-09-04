@@ -27,12 +27,24 @@ import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tally } from '../counter/counter.mjs';
+import { layoutTally } from '../counter/layout-counter.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
 const SUBSTRATE = 'main';
 const MODEL = 'haiku';
-const GATE_ON_SETTINGS = 'harness/gate/gate-on.settings.json';
+
+// Which settings each Part layers per condition. The cumulative model: by Part 2
+// the Part 1 sealing hook is baseline (on in both conditions), and the Part being
+// measured adds its own hook only in gate-on. Each file fully lists its hooks, so
+// this never depends on settings-merge behavior.
+const SETTINGS = {
+  1: { 'gate-off': null, 'gate-on': 'harness/gate/gate-on.settings.json' },
+  2: {
+    'gate-off': 'harness/gate/part2-gate-off.settings.json',
+    'gate-on': 'harness/gate/part2-gate-on.settings.json',
+  },
+};
 
 function git(args, opts = {}) {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', ...opts }).trim();
@@ -44,6 +56,7 @@ function parseArgs(argv) {
     const a = argv[i];
     if (a === '--condition') out.condition = argv[++i];
     else if (a === '--trial') out.trial = argv[++i];
+    else if (a === '--part') out.part = argv[++i];
     else if (a === '--dry-run') out.dryRun = true;
     else throw new Error(`unknown arg: ${a}`);
   }
@@ -51,6 +64,10 @@ function parseArgs(argv) {
     throw new Error("--condition must be 'gate-off' or 'gate-on'");
   }
   if (out.trial === undefined) throw new Error('--trial <n> is required');
+  out.part = out.part ? Number(out.part) : 1;
+  if (!SETTINGS[out.part]) {
+    throw new Error(`--part must be one of: ${Object.keys(SETTINGS).join(', ')}`);
+  }
   return out;
 }
 
@@ -58,7 +75,7 @@ function stamp() {
   return new Date().toISOString().replaceAll(/[:.]/g, '-').replace('T', '_').slice(0, 19);
 }
 
-function runAgent(condition) {
+function runAgent(settingsPath) {
   const prompt = readFileSync(join(here, 'task-prompt.md'), 'utf8');
   const args = [
     '--print',
@@ -71,7 +88,7 @@ function runAgent(condition) {
     '--mcp-config',
     '.mcp.json',
   ];
-  if (condition === 'gate-on') args.push('--settings', GATE_ON_SETTINGS);
+  if (settingsPath) args.push('--settings', settingsPath);
 
   // The prompt goes on stdin, NOT as a trailing positional: --mcp-config is a
   // variadic flag and would otherwise swallow the prompt as another config path.
@@ -93,7 +110,8 @@ function runAgent(condition) {
 }
 
 function main() {
-  const { condition, trial, dryRun } = parseArgs(process.argv.slice(2));
+  const { condition, trial, dryRun, part } = parseArgs(process.argv.slice(2));
+  const settingsPath = SETTINGS[part][condition];
 
   const startBranch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
   // The driver's own experiment output accumulates in experiments/ and must not
@@ -110,12 +128,14 @@ function main() {
 
   const substrateSha = git(['rev-parse', SUBSTRATE]);
   const runId = `${condition}-t${trial}-${stamp()}${dryRun ? '-dry' : ''}`;
-  const branch = `run/${runId}`;
-  const outDir = join(ROOT, 'experiments', condition, runId);
+  const branch = `run/p${part}-${runId}`;
+  const outRel = join('experiments', `part${part}`, condition, runId);
+  const outDir = join(ROOT, outRel);
 
   let agent = { stdout: '', exitCode: 0, argsUsed: [], skipped: true };
   let modelUsed = null;
   let tallyResult;
+  let layoutResult;
   let diff = '';
   let resultSha = substrateSha;
 
@@ -123,7 +143,7 @@ function main() {
     git(['checkout', '-b', branch, substrateSha]);
 
     if (!dryRun) {
-      agent = { ...runAgent(condition), skipped: false };
+      agent = { ...runAgent(settingsPath), skipped: false };
       try {
         const parsed = JSON.parse(agent.stdout);
         modelUsed =
@@ -151,6 +171,7 @@ function main() {
     // where the agent's edits live, then capture the diff. Both are held in
     // memory across the branch switch below.
     tallyResult = tally([join(ROOT, 'src')], { root: ROOT });
+    layoutResult = layoutTally([join(ROOT, 'src')], { root: ROOT });
     diff = git(['diff', `${substrateSha}..HEAD`]);
   } finally {
     // Always return to where we started, even if the trial threw.
@@ -170,6 +191,7 @@ function main() {
   if (!tallyResult) return;
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, 'tally.json'), JSON.stringify(tallyResult, null, 2) + '\n');
+  writeFileSync(join(outDir, 'layout-tally.json'), JSON.stringify(layoutResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'diff.patch'), diff + '\n');
   if (!dryRun) writeFileSync(join(outDir, 'claude-output.json'), agent.stdout || '{}');
 
@@ -185,6 +207,7 @@ function main() {
 
   const meta = {
     runId,
+    part,
     condition,
     trial: Number(trial),
     dryRun,
@@ -193,7 +216,7 @@ function main() {
     branch: dryRun ? null : branch,
     resultSha,
     model: { alias: MODEL, resolved: modelUsed },
-    gateSettings: condition === 'gate-on' ? GATE_ON_SETTINGS : null,
+    gateSettings: settingsPath,
     agent: {
       skipped: agent.skipped,
       exitCode: agent.exitCode,
@@ -206,7 +229,7 @@ function main() {
       argsUsed: agent.argsUsed,
     },
     diffEmpty: diff.trim() === '',
-    counterTotals: tallyResult.totals,
+    counterTotals: { seal: tallyResult.totals, layout: layoutResult.totals },
     startedFromBranch: startBranch,
     finishedAt: new Date().toISOString(),
   };
@@ -215,10 +238,11 @@ function main() {
   if (dryRun) git(['branch', '-D', branch]);
 
   process.stdout.write(
-    `\n[run-trial] ${runId}  ${agentOk ? 'OK' : 'VOID'}\n` +
+    `\n[run-trial] part ${part} ${runId}  ${agentOk ? 'OK' : 'VOID'}\n` +
       `  branch:  ${dryRun ? '(deleted, dry run)' : branch}\n` +
-      `  totals:  ${JSON.stringify(tallyResult.totals)}\n` +
-      `  output:  experiments/${condition}/${runId}/\n`,
+      `  seal:    ${JSON.stringify(tallyResult.totals)}\n` +
+      `  layout:  ${JSON.stringify(layoutResult.totals)}\n` +
+      `  output:  ${outRel.replaceAll('\\', '/')}/\n`,
   );
 
   if (!agentOk) {
