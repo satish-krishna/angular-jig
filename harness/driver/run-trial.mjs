@@ -30,6 +30,8 @@ import { tmpdir } from 'node:os';
 import { tally } from '../counter/counter.mjs';
 import { layoutTally } from '../counter/layout-counter.mjs';
 import { tally as shapeTally } from '../counter/component-shape-counter.mjs';
+import { tally as freeloaderTally } from '../counter/freeloader-counter.mjs';
+import { strictTemplateCheck, setStrictTemplatesOption } from '../counter/strict-template-check.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
@@ -50,6 +52,10 @@ const SETTINGS = {
     'gate-off': 'harness/gate/part3-gate-off.settings.json',
     'gate-on': 'harness/gate/part3-gate-on.settings.json',
     'gate-on-guided': 'harness/gate/part3-gate-on-guided.settings.json',
+  },
+  4: {
+    'gate-off': 'harness/gate/part4-gate-off.settings.json',
+    'gate-on': 'harness/gate/part4-gate-on.settings.json',
   },
 };
 
@@ -155,11 +161,17 @@ function main() {
   let tallyResult;
   let layoutResult;
   let shapeResult;
+  let freeloaderResult;
+  let strictResult = null;
   let diff = '';
   let resultSha = substrateSha;
 
   try {
     git(['checkout', '-b', branch, substrateSha]);
+
+    // Part 4 gate-on: put the tree into strictTemplates before the agent builds,
+    // so its own `ng build` fails on a template type error and it must fix it.
+    if (part === 4 && condition === 'gate-on' && !dryRun) setStrictTemplatesOption(true);
 
     if (!dryRun) {
       writeFileSync(logPath, '');
@@ -194,6 +206,10 @@ function main() {
     tallyResult = tally([join(ROOT, 'src')], { root: ROOT });
     layoutResult = layoutTally([join(ROOT, 'src')], { root: ROOT });
     shapeResult = shapeTally([join(ROOT, 'src')], { root: ROOT });
+    freeloaderResult = freeloaderTally([join(ROOT, 'src')], { root: ROOT });
+    // The strictTemplates freeloader is audited by the compiler, and only for
+    // Part 4 (it runs a build, so it is not free). Restores tsconfig afterward.
+    if (part === 4 && !dryRun) strictResult = strictTemplateCheck({ restore: true });
     diff = git(['diff', `${substrateSha}..HEAD`]);
   } finally {
     // Always return to where we started, even if the trial threw.
@@ -215,6 +231,8 @@ function main() {
   writeFileSync(join(outDir, 'tally.json'), JSON.stringify(tallyResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'layout-tally.json'), JSON.stringify(layoutResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'shape-tally.json'), JSON.stringify(shapeResult, null, 2) + '\n');
+  writeFileSync(join(outDir, 'freeloader-tally.json'), JSON.stringify(freeloaderResult, null, 2) + '\n');
+  if (strictResult) writeFileSync(join(outDir, 'strict-tally.json'), JSON.stringify(strictResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'diff.patch'), diff + '\n');
   if (!dryRun) writeFileSync(join(outDir, 'claude-output.json'), agent.stdout || '{}');
   if (!dryRun && hookFirings.trim()) writeFileSync(join(outDir, 'hook-firings.jsonl'), hookFirings);
@@ -261,7 +279,13 @@ function main() {
     },
     diffEmpty: diff.trim() === '',
     hookFirings: hookFirings.trim() ? hookFirings.trim().split('\n').length : 0,
-    counterTotals: { seal: tallyResult.totals, layout: layoutResult.totals, shape: shapeResult.totals },
+    counterTotals: {
+      seal: tallyResult.totals,
+      layout: layoutResult.totals,
+      shape: shapeResult.totals,
+      freeloader: freeloaderResult.totals,
+    },
+    strictTemplates: strictResult,
     startedFromBranch: startBranch,
     finishedAt: new Date().toISOString(),
   };
@@ -295,6 +319,8 @@ function main() {
       `  seal:    ${JSON.stringify(tallyResult.totals)}\n` +
       `  layout:  ${JSON.stringify(layoutResult.totals)}\n` +
       `  shape:   ${JSON.stringify(shapeResult.totals)}\n` +
+      `  freeload:${JSON.stringify(freeloaderResult.totals)}\n` +
+      (strictResult ? `  strict:  ${JSON.stringify(strictResult)}\n` : '') +
       `  output:  ${outRel.replaceAll('\\', '/')}/\n`,
   );
 
