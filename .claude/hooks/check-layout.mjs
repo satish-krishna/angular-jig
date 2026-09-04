@@ -22,6 +22,7 @@ import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import layout from '../../harness/gate/layout-index.mjs';
 import styleConfig from '../../stylelint.config.mjs';
+import { logFiring } from './_hook-log.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -142,11 +143,16 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
+  logFiring('check-layout', normalized, messages);
+
   process.stderr.write(
     `Layout gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
-      `\n\nLayout is a grammar (see harness/layout-grammar-spec.md): grid and flex and spacing tokens on containers, ` +
-      `appearance in the primitives, and colors and sizes as tokens, not literal hex or px. Fix the above before continuing.\n`,
+      `\n\nLayout is a grammar (see harness/layout-grammar-spec.md): grid for regions, flex for inline runs, ` +
+      `spacing with gap, and colors and sizes as tokens. The documented shape:\n` +
+      `  Good: <div class="grid grid-cols-2 gap-4">   <div class="flex items-center gap-2">   background: var(--card)\n` +
+      `  Bad:  class="space-y-4"   class="bg-blue-500"   background: #3b82f6   padding: 16px\n` +
+      `Fix the above before continuing.\n`,
   );
   process.exit(2);
 }

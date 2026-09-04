@@ -4,7 +4,10 @@
 // hands the agent the exact signal-forms worked example instead of a prose
 // reminder. This isolates one variable: does pointing the rejection at the right
 // implementation move the agent from a hand-rolled form onto Angular signal-forms?
-// See experiments/part3/detail-form/gate-on-guided vs gate-on.
+// See experiments/part3/detail-form/gate-on-guided vs gate-on. Retained as the
+// experiment apparatus: the default check-component-shape.mjs now also appends
+// this worked example when a forms rule fires, so the two are equivalent for a
+// forms task, and this file exists to reproduce the original A/B.
 //
 // Fails closed on an unparseable payload.
 
@@ -14,6 +17,8 @@ import { fileURLToPath } from 'node:url';
 import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import shape from '../../harness/gate/component-shape-index.mjs';
+import { logFiring } from './_hook-log.mjs';
+import { SHAPE_FORMS_GUIDANCE } from './shape-guidance.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -43,29 +48,6 @@ const shapeEslintConfig = [
     rules: { 'shape/no-ng-model': 'error' },
   },
 ];
-
-const GUIDANCE = [
-  '',
-  'Use the house forms pattern: Angular signal-forms driven by a zod schema.',
-  'Do NOT hand-roll a form with a plain signal, a manual (change) handler, and a',
-  'safeParse on submit; that passes the rules but is not the pattern. Copy this exact shape:',
-  '',
-  '  // hero.schema.ts',
-  "  import { z } from 'zod';",
-  '  export const heroSchema = z.object({ name: z.string().min(1) });',
-  '  export type HeroModel = z.infer<typeof heroSchema>;',
-  '',
-  '  // hero-detail.ts',
-  "  import { form, submit, validateStandardSchema } from '@angular/forms/signals';",
-  '  protected readonly model = signal<HeroModel>({ name: loadedHero.name });',
-  '  protected readonly heroForm = form(this.model, (path) => validateStandardSchema(path, heroSchema));',
-  '',
-  '  <!-- template -->',
-  '  <input hlmInput [formField]="heroForm.name" />',
-  '  @for (e of heroForm.name().errors(); track e.kind) { <hlm-field-error>{{ e.message }}</hlm-field-error> }',
-  '',
-  "Read the house-style skill's Forms section for the full example. Fix the above before continuing.",
-].join('\n');
 
 async function main() {
   let raw = '';
@@ -101,11 +83,13 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
+  logFiring('component-shape-guided', normalized, messages);
+
   process.stderr.write(
     `Component-shape gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
       '\n' +
-      GUIDANCE +
+      SHAPE_FORMS_GUIDANCE +
       '\n',
   );
   process.exit(2);

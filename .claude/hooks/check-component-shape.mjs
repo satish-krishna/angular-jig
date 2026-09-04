@@ -20,6 +20,8 @@ import { fileURLToPath } from 'node:url';
 import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import shape from '../../harness/gate/component-shape-index.mjs';
+import { logFiring } from './_hook-log.mjs';
+import { SHAPE_FORMS_GUIDANCE, FORMS_RULE_IDS } from './shape-guidance.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -69,12 +71,16 @@ async function main() {
   if (!/(^|\/)src\//.test(normalized)) process.exit(0);
 
   const messages = [];
+  const ruleIds = new Set();
   try {
     const eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: shapeEslintConfig });
     const results = await eslint.lintFiles([file]);
     for (const r of results) {
       for (const m of r.messages) {
-        if (m.severity === 2) messages.push(`${normalized}:${m.line}:${m.column}  ${m.message}`);
+        if (m.severity === 2) {
+          messages.push(`${normalized}:${m.line}:${m.column}  ${m.message}`);
+          if (m.ruleId) ruleIds.add(m.ruleId);
+        }
       }
     }
   } catch (err) {
@@ -84,13 +90,17 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
+  logFiring('component-shape', normalized, messages);
+
+  const formsFired = [...ruleIds].some((id) => FORMS_RULE_IDS.has(id));
   process.stderr.write(
     `Component-shape gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
       `\n\nComponent shape (see harness/component-shape-spec.md): no hand-set changeDetection (OnPush is the v22 default), ` +
       `no .subscribe in a component (use the async pipe or toSignal), template-driven forms are not used (no FormsModule, no ngModel), ` +
       `validation lives in the zod schema (validateStandardSchema, not a restated per-field validator), and a presentational ` +
-      `(src/app/ui/) component injects no data service. Fix the above before continuing.\n`,
+      `(src/app/ui/) component injects no data service.` +
+      (formsFired ? '\n' + SHAPE_FORMS_GUIDANCE + '\n' : '\n\nFix the above before continuing.\n'),
   );
   process.exit(2);
 }

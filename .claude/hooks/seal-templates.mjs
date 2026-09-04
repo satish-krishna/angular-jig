@@ -15,6 +15,7 @@
 // through, matching the repo's hook convention.
 
 import { ESLint } from 'eslint';
+import { logFiring } from './_hook-log.mjs';
 
 async function readStdin() {
   let raw = '';
@@ -64,11 +65,15 @@ const errors = results
 if (errors.length === 0) process.exit(0);
 
 const lines = errors.map((m) => `  ${normalized}:${m.line}:${m.column}  ${m.message}`);
+logFiring('seal-templates', normalized, lines);
 process.stderr.write(
   `Sealing gate blocked this edit: ${errors.length} violation(s).\n` +
     `${lines.join('\n')}\n\n` +
-    `The primitive vocabulary is sealed (see harness/sealing-spec.md). ` +
-    `Compose from spartan primitives, keep classes and inline styles off them, ` +
-    `and fix the above before continuing. eslint-disable has no effect here.\n`,
+    `The primitive vocabulary is sealed (see harness/sealing-spec.md). Compose from spartan ` +
+    `primitives, and change a primitive's look with its variant/size inputs or its Helm file in ` +
+    `libs/ui, never a class at the call site. The documented shape:\n` +
+    `  Good: <button hlmBtn variant="ghost">Save</button>   <input hlmInput />\n` +
+    `  Bad:  <button>Save</button>   <button hlmBtn class="bg-blue-600">   <div style="padding:8px">\n` +
+    `Fix the above before continuing. eslint-disable has no effect here.\n`,
 );
 process.exit(2);

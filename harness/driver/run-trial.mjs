@@ -23,9 +23,10 @@
 // counter, records, branch restore) without spending tokens.
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
 import { tally } from '../counter/counter.mjs';
 import { layoutTally } from '../counter/layout-counter.mjs';
 import { tally as shapeTally } from '../counter/component-shape-counter.mjs';
@@ -88,7 +89,7 @@ function stamp() {
   return new Date().toISOString().replaceAll(/[:.]/g, '-').replace('T', '_').slice(0, 19);
 }
 
-function runAgent(settingsPath, promptFile) {
+function runAgent(settingsPath, promptFile, logPath) {
   const prompt = readFileSync(join(here, promptFile), 'utf8');
   const args = [
     '--print',
@@ -114,6 +115,7 @@ function runAgent(settingsPath, promptFile) {
       encoding: 'utf8',
       maxBuffer: 64 * 1024 * 1024,
       stdio: ['pipe', 'pipe', 'inherit'],
+      env: { ...process.env, HOOK_LOG: logPath },
     });
   } catch (err) {
     stdout = err.stdout ?? '';
@@ -145,8 +147,10 @@ function main() {
   const branch = `run/p${part}-${runId}`;
   const outRel = join('experiments', `part${part}`, task, condition, runId);
   const outDir = join(ROOT, outRel);
+  const logPath = join(tmpdir(), `hook-firings-${runId}.jsonl`);
 
   let agent = { stdout: '', exitCode: 0, argsUsed: [], skipped: true };
+  let hookFirings = '';
   let modelUsed = null;
   let tallyResult;
   let layoutResult;
@@ -158,7 +162,9 @@ function main() {
     git(['checkout', '-b', branch, substrateSha]);
 
     if (!dryRun) {
-      agent = { ...runAgent(settingsPath, promptFile), skipped: false };
+      writeFileSync(logPath, '');
+      agent = { ...runAgent(settingsPath, promptFile, logPath), skipped: false };
+      if (existsSync(logPath)) hookFirings = readFileSync(logPath, 'utf8');
       try {
         const parsed = JSON.parse(agent.stdout);
         modelUsed =
@@ -211,6 +217,12 @@ function main() {
   writeFileSync(join(outDir, 'shape-tally.json'), JSON.stringify(shapeResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'diff.patch'), diff + '\n');
   if (!dryRun) writeFileSync(join(outDir, 'claude-output.json'), agent.stdout || '{}');
+  if (!dryRun && hookFirings.trim()) writeFileSync(join(outDir, 'hook-firings.jsonl'), hookFirings);
+  try {
+    if (existsSync(logPath)) unlinkSync(logPath);
+  } catch {
+    // temp log cleanup is best-effort
+  }
 
   // A real trial that changed nothing, errored, or produced no parseable result
   // is void, not zero-drift. Never let a null run masquerade as clean evidence.
@@ -248,6 +260,7 @@ function main() {
       argsUsed: agent.argsUsed,
     },
     diffEmpty: diff.trim() === '',
+    hookFirings: hookFirings.trim() ? hookFirings.trim().split('\n').length : 0,
     counterTotals: { seal: tallyResult.totals, layout: layoutResult.totals, shape: shapeResult.totals },
     startedFromBranch: startBranch,
     finishedAt: new Date().toISOString(),
