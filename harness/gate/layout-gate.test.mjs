@@ -23,8 +23,8 @@ function lintHtml(code) {
       languageOptions: { parser: angular.templateParser },
       linterOptions: { noInlineConfig: true },
       rules: {
-        'layout/no-literal-value': 'error',
-        'layout/no-presentation-on-raw': 'error',
+        'layout/no-raw-palette-color': 'error',
+        'layout/no-space-utility': 'error',
       },
     },
     { filename: 'x.html' },
@@ -38,10 +38,10 @@ const byMessageId = (messages) => {
 };
 
 describe('layout gate: template rules', () => {
-  it('flags literal values and presentation on raw with the exact spread', () => {
+  it('flags raw palette colors and space utilities with the exact spread', () => {
     const messages = lintHtml(readFileSync(fx('layout-dirty.html'), 'utf8'));
     expect(messages.some((m) => m.fatal)).toBe(false);
-    expect(byMessageId(messages)).toEqual({ literalValue: 3, presentationOnRaw: 1 });
+    expect(byMessageId(messages)).toEqual({ rawPaletteColor: 3, spaceUtility: 1 });
   });
 
   it('passes the clean grammar template', () => {
@@ -53,7 +53,7 @@ describe('layout gate: template rules', () => {
     // nested-flex heuristic and the CSS pass (which the template rules do not cover).
     const gateTotal = lintHtml(readFileSync(fx('layout-dirty.html'), 'utf8')).length;
     const t = layoutTally([fx('layout-dirty.html')]).totals;
-    const counterTemplateTotal = t['literal-value'] + t['presentation-on-raw'];
+    const counterTemplateTotal = t['raw-palette-color'] + t['space-utility'];
     expect(gateTotal).toBe(counterTemplateTotal);
   });
 });
@@ -69,7 +69,7 @@ describe('layout gate: stylesheet surface (stylelint)', () => {
   it('agrees with the counter on the CSS surface of the component fixture', () => {
     // The counter's independent CSS scan and stylelint should land on the same
     // literal count for the component stylesheet fixture.
-    const cssOnly = layoutTally([fx('layout-dirty.component.ts')]).totals['literal-value'];
+    const cssOnly = layoutTally([fx('layout-dirty.component.ts')]).totals['raw-css-literal'];
     expect(cssOnly).toBe(2);
   });
 });

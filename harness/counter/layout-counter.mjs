@@ -1,10 +1,11 @@
-// The independent structural counter for Part 2 (layout as a grammar).
+// The independent structural counter for Part 2 (layout and tokens).
 //
-// Encodes the layout-grammar spec (../layout-grammar-spec.md) as a second
-// engine, separate from the gate: templates via @angular/compiler, stylesheets
-// via a small deterministic text pass. Three kinds: literal-value,
-// presentation-on-raw, and the stated-heuristic nested-flex-grid. Shares no code
-// with the gate.
+// Encodes the layout-grammar spec (../layout-grammar-spec.md), which is the
+// spartan styling docs plus the house-style skill, mechanized. Four kinds:
+// raw-palette-color and space-utility (spartan), raw-css-literal (house, CSS),
+// and the counter-only heuristic nested-flex-grid (house). Templates are parsed
+// with @angular/compiler; stylesheets with a property-aware text scan that
+// mirrors the gate's stylelint property list. Shares no code with the gate.
 
 import { parseTemplate } from '@angular/compiler';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -12,49 +13,43 @@ import { relative, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
-const PRIMITIVE_ATTRS = new Set([
-  'hlmBtn',
-  'hlmInput',
-  'hlmCard',
-  'hlmCardHeader',
-  'hlmCardFooter',
-  'hlmCardTitle',
-  'hlmCardDescription',
-  'hlmCardContent',
-  'hlmCardAction',
-]);
-const PRIMITIVE_ELEMENTS = new Set(['hlm-card', 'hlm-card-header', 'hlm-card-footer']);
-
 const norm = (p) => p.replaceAll('\\', '/');
 const emptyTotals = () => ({
-  'literal-value': 0,
-  'presentation-on-raw': 0,
+  'raw-palette-color': 0,
+  'space-utility': 0,
+  'raw-css-literal': 0,
   'nested-flex-grid': 0,
   all: 0,
 });
 
-const isBracket = (t) => t.includes('[') && t.includes(']');
-const isAppearance = (t) =>
-  !isBracket(t) &&
-  (t.startsWith('bg-') ||
-    t === 'border' ||
-    t.startsWith('border-') ||
-    t === 'rounded' ||
-    t.startsWith('rounded-') ||
-    t === 'shadow' ||
-    t.startsWith('shadow-') ||
-    t === 'ring' ||
-    t.startsWith('ring-'));
+const baseUtil = (t) => (t.includes(':') ? t.slice(t.lastIndexOf(':') + 1) : t);
 
-function isPrimitive(el) {
-  if (PRIMITIVE_ELEMENTS.has(el.name)) return true;
-  return el.attributes.some((a) => PRIMITIVE_ATTRS.has(a.name));
+// A raw Tailwind palette color (blue-500, gray-700) or an arbitrary hex color,
+// on a color utility. Semantic tokens (card, primary, muted-foreground) pass.
+const PALETTE = new Set([
+  'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow',
+  'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet',
+  'purple', 'fuchsia', 'pink', 'rose',
+]);
+const COLOR_PREFIX_RE =
+  /^(bg|text|border|ring|fill|stroke|from|via|to|divide|outline|decoration|placeholder|caret|accent)-/;
+
+function isRawPaletteColor(token) {
+  const t = baseUtil(token);
+  const m = t.match(COLOR_PREFIX_RE);
+  if (!m) return false;
+  const rest = t.slice(m[0].length);
+  if (rest.startsWith('[') && rest.includes('#')) return true; // bg-[#0af]
+  if (rest === 'white' || rest === 'black') return true;
+  const seg = rest.split('-');
+  return PALETTE.has(seg[0]) && seg.length >= 2 && /^\d+$/.test(seg[1]);
 }
+
+const isSpaceUtil = (token) => /^space-(x|y)-/.test(baseUtil(token));
 
 function classTokens(el) {
   const attr = el.attributes.find((a) => a.name === 'class');
-  if (!attr || typeof attr.value !== 'string') return [];
-  return attr.value.split(/\s+/).filter(Boolean);
+  return attr && typeof attr.value === 'string' ? attr.value.split(/\s+/).filter(Boolean) : [];
 }
 
 function elementChildren(el) {
@@ -65,34 +60,22 @@ function elementChildren(el) {
 
 function templateViolations(el, file, lineOffset, acc) {
   const line = (el.sourceSpan?.start?.line ?? 0) + 1 + lineOffset;
-  const tokens = classTokens(el);
-  const primitive = isPrimitive(el);
-
-  if (!primitive) {
-    for (const t of tokens) {
-      if (isBracket(t)) {
-        acc.push({ kind: 'literal-value', file, line, detail: `arbitrary value ${t}` });
-      }
-    }
-    if (tokens.some(isAppearance)) {
-      acc.push({
-        kind: 'presentation-on-raw',
-        file,
-        line,
-        detail: `appearance classes on <${el.name}>`,
-      });
+  for (const token of classTokens(el)) {
+    if (isRawPaletteColor(token)) {
+      acc.push({ kind: 'raw-palette-color', file, line, detail: token });
+    } else if (isSpaceUtil(token)) {
+      acc.push({ kind: 'space-utility', file, line, detail: `${token}, use gap-*` });
     }
   }
-
-  // nested-flex heuristic: a flex container with two or more flex children.
-  if (tokens.includes('flex')) {
-    const flexChildren = elementChildren(el).filter((c) => classTokens(c).includes('flex'));
-    if (flexChildren.length >= 2) {
+  // nested-flex heuristic (counter-only): a flex container with 2+ flex children.
+  if (classTokens(el).includes('flex')) {
+    const flexKids = elementChildren(el).filter((c) => classTokens(c).includes('flex'));
+    if (flexKids.length >= 2) {
       acc.push({
         kind: 'nested-flex-grid',
         file,
         line,
-        detail: `flex container with ${flexChildren.length} flex children (heuristic)`,
+        detail: `flex with ${flexKids.length} flex children (heuristic)`,
       });
     }
   }
@@ -116,70 +99,66 @@ export function countTemplateSource(template, { file, lineOffset = 0 }) {
   return acc;
 }
 
-// A literal color or raw px length in CSS, outside a var(...) token reference.
+// A raw color or px literal in a hand-written stylesheet, property-aware so it
+// mirrors the gate's stylelint property list: colors flagged in color and
+// background properties, raw px flagged in padding/margin/gap/border-radius.
+// A value expressed as var(--token) passes.
+const isColorProp = (p) => p.includes('color') || p === 'background';
+const isSpaceProp = (p) => /padding|margin/.test(p) || p === 'gap' || p === 'border-radius';
+
 export function countCssSource(css, { file, lineOffset = 0 }) {
   const acc = [];
-  // Mask comments and var(...) spans so a token reference or a value inside a
-  // comment never registers as a literal, while keeping character positions
-  // intact for line numbers.
-  const masked = css
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-    .replace(/var\([^)]*\)/g, (m) => ' '.repeat(m.length));
-  const patterns = [
-    { re: /#[0-9a-fA-F]{3,8}\b/g, what: 'hex color' },
-    { re: /\b\d+(?:\.\d+)?px\b/g, what: 'raw px length' },
-    { re: /\b(?:rgb|rgba|hsl|hsla)\(/g, what: 'literal color function' },
-  ];
-  for (const { re, what } of patterns) {
-    let m;
-    while ((m = re.exec(masked)) !== null) {
-      const line = css.slice(0, m.index).split('\n').length + lineOffset;
-      acc.push({ kind: 'literal-value', file, line, detail: `${what} ${m[0].trim()}` });
+  const noComments = css.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
+  const declRe = /([\w-]+)\s*:\s*([^;{}]+)/g;
+  let m;
+  while ((m = declRe.exec(noComments)) !== null) {
+    const prop = m[1].toLowerCase();
+    const value = m[2].replace(/var\([^)]*\)/g, (s) => ' '.repeat(s.length));
+    const line = lineOffset + noComments.slice(0, m.index).split('\n').length;
+    if (isColorProp(prop)) {
+      for (const c of value.match(/#[0-9a-fA-F]{3,8}\b|(?:rgb|rgba|hsl|hsla)\(/g) ?? []) {
+        acc.push({ kind: 'raw-css-literal', file, line, detail: `literal color ${c.trim()} in ${prop}` });
+      }
+    }
+    if (isSpaceProp(prop)) {
+      for (const px of value.match(/\b\d+(?:\.\d+)?px\b/g) ?? []) {
+        acc.push({ kind: 'raw-css-literal', file, line, detail: `raw px ${px} in ${prop}` });
+      }
     }
   }
   return acc;
 }
 
-// Extract inline template, inline styles, and styleUrl(s) from a component .ts.
+// Extract inline template and inline styles from a component .ts. styleUrl files
+// are scanned standalone by the directory walk, not followed here (double count).
 function extractFromComponent(sourceText) {
   const sf = ts.createSourceFile('component.ts', sourceText, ts.ScriptTarget.Latest, true);
   const templates = [];
   const styles = [];
-  const styleUrls = [];
-  const litText = (node) =>
-    ts.isNoSubstitutionTemplateLiteral(node) || ts.isStringLiteral(node) ? node : null;
-
+  const lit = (n) => (ts.isNoSubstitutionTemplateLiteral(n) || ts.isStringLiteral(n) ? n : null);
   const visit = (node) => {
     if (ts.isPropertyAssignment(node) && node.name) {
       const key = node.name.getText(sf);
       const init = node.initializer;
-      if (key === 'template' && litText(init)) {
+      if (key === 'template' && lit(init)) {
         templates.push({ text: init.text, lineOffset: sf.getLineAndCharacterOfPosition(init.getStart(sf)).line });
-      } else if ((key === 'styles' || key === 'styleUrls') && ts.isArrayLiteralExpression(init)) {
+      } else if (key === 'styles' && ts.isArrayLiteralExpression(init)) {
         for (const el of init.elements) {
-          const lit = litText(el);
-          if (!lit) continue;
-          if (key === 'styles') {
-            styles.push({ text: lit.text, lineOffset: sf.getLineAndCharacterOfPosition(lit.getStart(sf)).line });
-          } else {
-            styleUrls.push(lit.text);
-          }
+          const l = lit(el);
+          if (l) styles.push({ text: l.text, lineOffset: sf.getLineAndCharacterOfPosition(l.getStart(sf)).line });
         }
-      } else if (key === 'styleUrl' && litText(init)) {
-        styleUrls.push(init.text);
       }
     }
     ts.forEachChild(node, visit);
   };
   visit(sf);
-  return { templates, styles, styleUrls };
+  return { templates, styles };
 }
 
 export function layoutCountFile(absPath, { root } = {}) {
   const file = root ? norm(relative(root, absPath)) : norm(absPath);
   const text = readFileSync(absPath, 'utf8');
   const acc = [];
-
   if (absPath.endsWith('.html')) {
     acc.push(...countTemplateSource(text, { file, lineOffset: 0 }));
   } else if (absPath.endsWith('.css')) {
@@ -188,8 +167,6 @@ export function layoutCountFile(absPath, { root } = {}) {
     const { templates, styles } = extractFromComponent(text);
     for (const t of templates) acc.push(...countTemplateSource(t.text, { file, lineOffset: t.lineOffset }));
     for (const s of styles) acc.push(...countCssSource(s.text, { file, lineOffset: s.lineOffset }));
-    // A styleUrl .css file is scanned standalone by the directory walk, so it is
-    // NOT followed from the .ts here: doing both double-counts the same file.
   }
   return acc;
 }

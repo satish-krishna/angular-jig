@@ -40,8 +40,8 @@ const layoutEslintConfig = [
     plugins: { layout },
     linterOptions: { noInlineConfig: true },
     rules: {
-      'layout/no-literal-value': 'error',
-      'layout/no-presentation-on-raw': 'error',
+      'layout/no-raw-palette-color': 'error',
+      'layout/no-space-utility': 'error',
     },
   },
 ];
