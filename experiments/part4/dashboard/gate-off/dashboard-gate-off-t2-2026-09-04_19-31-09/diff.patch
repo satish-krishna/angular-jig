@@ -1,0 +1,363 @@
+diff --git a/libs/ui/input/src/lib/hlm-input.ts b/libs/ui/input/src/lib/hlm-input.ts
+index d09e338..c715767 100644
+--- a/libs/ui/input/src/lib/hlm-input.ts
++++ b/libs/ui/input/src/lib/hlm-input.ts
+@@ -1,4 +1,4 @@
+-import { Directive } from '@angular/core';
++import { Directive, ElementRef, effect, input } from '@angular/core';
+ import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
+ import { BrnInput } from '@spartan-ng/brain/input';
+ import { classes } from '@spartan-ng/helm/utils';
+@@ -12,10 +12,22 @@ import { classes } from '@spartan-ng/helm/utils';
+   host: { 'data-slot': 'input' },
+ })
+ export class HlmInput {
+-  constructor() {
++  readonly formField = input<any>(undefined);
++
++  constructor(private elementRef: ElementRef<HTMLInputElement>) {
+     classes(
+       () =>
+         'dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 data-[matches-spartan-invalid=true]:ring-destructive/20 dark:data-[matches-spartan-invalid=true]:ring-destructive/40 data-[matches-spartan-invalid=true]:border-destructive dark:data-[matches-spartan-invalid=true]:border-destructive/50 h-9 rounded-md border bg-transparent px-2.5 py-1 text-base shadow-xs transition-[color,box-shadow] file:h-7 file:text-sm file:font-medium focus-visible:ring-3 data-[matches-spartan-invalid=true]:ring-3 md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+     );
++
++    effect(() => {
++      const field = this.formField();
++      if (field) {
++        this.elementRef.nativeElement.value = String(field.value() || '');
++        if (field.disabled) {
++          this.elementRef.nativeElement.disabled = field.disabled();
++        }
++      }
++    });
+   }
+ }
+diff --git a/src/app/dashboard/dashboard.css b/src/app/dashboard/dashboard.css
+new file mode 100644
+index 0000000..6123b32
+--- /dev/null
++++ b/src/app/dashboard/dashboard.css
+@@ -0,0 +1,95 @@
++.dashboard-container {
++  display: grid;
++  gap: var(--spacing-6);
++  padding: var(--spacing-4);
++  max-width: var(--max-width-lg);
++  margin-inline: auto;
++}
++
++h1 {
++  margin: 0;
++  font-size: var(--font-size-2xl);
++  font-weight: 700;
++}
++
++h2 {
++  margin: 0 0 var(--spacing-4) 0;
++  font-size: var(--font-size-xl);
++  font-weight: 600;
++}
++
++.search-section {
++  display: grid;
++  gap: var(--spacing-3);
++  padding: var(--spacing-4);
++  background: var(--surface);
++  border-radius: var(--radius-md);
++  border: 1px solid var(--border);
++}
++
++.search-input {
++  width: 100%;
++}
++
++.search-results {
++  display: flex;
++  flex-direction: column;
++  gap: var(--spacing-1);
++  padding: var(--spacing-3) 0;
++}
++
++.search-result-link {
++  padding: var(--spacing-2) var(--spacing-3);
++  text-decoration: none;
++  border-radius: var(--radius-sm);
++  transition: background-color 0.2s;
++  color: inherit;
++}
++
++.search-result-link:hover {
++  background-color: var(--accent-light);
++}
++
++.top-heroes-section {
++  display: grid;
++  gap: var(--spacing-4);
++}
++
++.heroes-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(var(--hero-card-min-width), 1fr));
++  gap: var(--spacing-4);
++}
++
++.hero-card {
++  border: 1px solid var(--border);
++  border-radius: var(--radius-md);
++  overflow: hidden;
++  transition: box-shadow 0.2s, transform 0.2s;
++  background: var(--card-bg);
++}
++
++.hero-card:hover {
++  box-shadow: var(--shadow-md);
++  transform: translateY(var(--transform-y-hover));
++}
++
++.hero-card a {
++  display: flex;
++  flex-direction: column;
++  gap: var(--spacing-3);
++  padding: var(--spacing-4);
++  text-decoration: none;
++  color: inherit;
++  height: 100%;
++}
++
++.hero-name {
++  font-size: var(--font-size-lg);
++  font-weight: 600;
++}
++
++.hero-id {
++  font-size: var(--font-size-sm);
++  color: var(--text-secondary);
++}
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..3ebb7c0 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,62 @@
+-import { Component } from '@angular/core';
++import { Component, computed, inject, signal } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { form, validateStandardSchema } from '@angular/forms/signals';
++import { HlmInput } from '../../../libs/ui/input/src';
++import { HeroService } from '../hero.service';
++import { searchSchema, type SearchModel } from './search.schema';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  imports: [CommonModule, RouterLink, HlmInput],
++  template: `
++    <div class="dashboard-container">
++      <h1>Dashboard</h1>
++
++      <div class="search-section">
++        <h2>Hero Search</h2>
++        <input
++          type="text"
++          hlmInput
++          placeholder="Search heroes..."
++          [formField]="searchForm.searchTerm"
++        />
++        @if (searchResults().length > 0) {
++          <nav class="search-results">
++            @for (hero of searchResults(); track hero.id) {
++              <a [routerLink]="['/detail', hero.id]" class="search-result-link">
++                {{ hero.name }}
++              </a>
++            }
++          </nav>
++        }
++      </div>
++
++      <div class="top-heroes-section">
++        <h2>Top Heroes</h2>
++        <div class="heroes-grid">
++          @for (hero of topHeroes(); track hero.id) {
++            <div class="hero-card">
++              <a [routerLink]="['/detail', hero.id]">
++                <div class="hero-name">{{ hero.name }}</div>
++                <div class="hero-id">ID: {{ hero.id }}</div>
++              </a>
++            </div>
++          }
++        </div>
++      </div>
++    </div>
++  `,
++  styleUrl: './dashboard.css',
+ })
+-export class Dashboard {}
++export class Dashboard {
++  private heroService = inject(HeroService);
++  private model = signal<SearchModel>({ searchTerm: '' });
++  protected readonly searchForm = form(this.model, (path) =>
++    validateStandardSchema(path, searchSchema)
++  );
++  protected readonly topHeroes = computed(() => this.heroService.getTopHeroes(4));
++  protected readonly searchResults = computed(() =>
++    this.heroService.searchHeroes(this.model().searchTerm)
++  );
++}
+diff --git a/src/app/dashboard/search.schema.ts b/src/app/dashboard/search.schema.ts
+new file mode 100644
+index 0000000..caf80c6
+--- /dev/null
++++ b/src/app/dashboard/search.schema.ts
+@@ -0,0 +1,11 @@
++import { z } from 'zod';
++
++export const searchSchema = z.object({
++  searchTerm: z.string().meta({
++    label: 'Search',
++    control: 'text',
++    placeholder: 'Search heroes...',
++  }),
++});
++
++export type SearchModel = z.infer<typeof searchSchema>;
+diff --git a/src/app/hero-detail/hero-detail.css b/src/app/hero-detail/hero-detail.css
+new file mode 100644
+index 0000000..8be403c
+--- /dev/null
++++ b/src/app/hero-detail/hero-detail.css
+@@ -0,0 +1,40 @@
++.detail-container {
++  display: grid;
++  gap: var(--spacing-4);
++  padding: var(--spacing-4);
++  max-width: var(--max-width-md);
++  margin-inline: auto;
++}
++
++h1 {
++  margin: 0;
++  font-size: var(--font-size-2xl);
++  font-weight: 700;
++}
++
++.detail-content {
++  display: grid;
++  gap: var(--spacing-3);
++}
++
++p {
++  margin: 0;
++  font-size: var(--font-size-base);
++  color: var(--text-primary);
++}
++
++.back-link {
++  display: inline-block;
++  padding: var(--spacing-2) var(--spacing-3);
++  background: var(--background-secondary);
++  color: inherit;
++  text-decoration: none;
++  border-radius: var(--radius-md);
++  border: 1px solid var(--border);
++  transition: background-color 0.2s;
++  width: fit-content;
++}
++
++.back-link:hover {
++  background-color: var(--background-tertiary);
++}
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..5317e96 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,36 @@
+-import { Component } from '@angular/core';
++import { Component, computed, inject } from '@angular/core';
++import { ActivatedRoute, RouterLink } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { HeroService } from '../hero.service';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  imports: [CommonModule, RouterLink],
++  template: `
++    <div class="detail-container">
++      @if (hero(); as hero) {
++        <h1>{{ hero.name }}</h1>
++        <div class="detail-content">
++          <p>ID: {{ hero.id }}</p>
++          <a routerLink="/dashboard" class="back-link">Back to Dashboard</a>
++        </div>
++      } @else {
++        <p>Hero not found</p>
++      }
++    </div>
++  `,
++  styleUrl: './hero-detail.css',
+ })
+-export class HeroDetail {}
++export class HeroDetail {
++  private heroService = inject(HeroService);
++  private route = inject(ActivatedRoute);
++  private heroId = computed(() => {
++    const id = this.route.snapshot.paramMap.get('id');
++    return id ? parseInt(id, 10) : null;
++  });
++  protected readonly hero = computed(() => {
++    const id = this.heroId();
++    if (!id) return null;
++    return this.heroService.getHeroes().find((h) => h.id === id);
++  });
++}
+diff --git a/src/app/hero.service.ts b/src/app/hero.service.ts
+new file mode 100644
+index 0000000..1914b0d
+--- /dev/null
++++ b/src/app/hero.service.ts
+@@ -0,0 +1,43 @@
++import { Injectable } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({
++  providedIn: 'root',
++})
++export class HeroService {
++  private heroes: Hero[] = [
++    { id: 11, name: 'Mr. Nice' },
++    { id: 12, name: 'Narco' },
++    { id: 13, name: 'Bombasto' },
++    { id: 14, name: 'Celeritas' },
++    { id: 15, name: 'Magneta' },
++    { id: 16, name: 'RubberMan' },
++    { id: 17, name: 'Dynama' },
++    { id: 18, name: 'Dr IQ' },
++    { id: 19, name: 'Magma' },
++    { id: 20, name: 'Tornado' },
++    { id: 21, name: 'Nightcrawler' },
++    { id: 22, name: 'Windstorm' },
++  ];
++
++  getHeroes(): Hero[] {
++    return this.heroes;
++  }
++
++  getTopHeroes(count: number = 4): Hero[] {
++    return this.heroes.slice(0, count);
++  }
++
++  searchHeroes(term: string): Hero[] {
++    if (!term.trim()) {
++      return [];
++    }
++    return this.heroes.filter((hero) =>
++      hero.name.toLowerCase().includes(term.toLowerCase())
++    );
++  }
++}

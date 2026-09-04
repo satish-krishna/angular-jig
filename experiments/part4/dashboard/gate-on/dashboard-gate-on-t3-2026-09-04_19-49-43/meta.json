@@ -1,0 +1,84 @@
+{
+  "runId": "dashboard-gate-on-t3-2026-09-04_19-49-43",
+  "part": 4,
+  "task": "dashboard",
+  "promptFile": "task-prompt.md",
+  "condition": "gate-on",
+  "trial": 3,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "142e87b9a5f3b64d28fcbd83b14c78778abcbd46"
+  },
+  "branch": "run/p4-dashboard-gate-on-t3-2026-09-04_19-49-43",
+  "resultSha": "1c384acd55ab116e09201176c7a12b20aaeaa03c",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/part4-gate-on.settings.json",
+  "agent": {
+    "skipped": false,
+    "exitCode": 0,
+    "isError": false,
+    "subtype": "success",
+    "numTurns": 59,
+    "costUsd": 0.4128804000000001,
+    "durationMs": 254830,
+    "parseError": false,
+    "argsUsed": [
+      "--print",
+      "--model",
+      "haiku",
+      "--output-format",
+      "json",
+      "--permission-mode",
+      "bypassPermissions",
+      "--mcp-config",
+      ".mcp.json",
+      "--settings",
+      "harness/gate/part4-gate-on.settings.json"
+    ]
+  },
+  "diffEmpty": false,
+  "hookFirings": 6,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 0,
+      "all": 0
+    },
+    "shape": {
+      "hand-set-change-detection": 0,
+      "component-subscribe": 0,
+      "template-driven-form": 0,
+      "restated-validator": 0,
+      "presentational-injects-data": 0,
+      "reactive-form": 0,
+      "hand-written-form-model": 0,
+      "dumb-holds-state": 0,
+      "all": 0
+    },
+    "freeloader": {
+      "legacy-control-flow": 0,
+      "ng-class-style": 0,
+      "all": 0
+    }
+  },
+  "strictTemplates": {
+    "passed": true,
+    "errorCount": 0,
+    "sample": []
+  },
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-04T19:54:09.957Z"
+}

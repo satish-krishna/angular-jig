@@ -1,0 +1,262 @@
+diff --git a/src/app/dashboard/dashboard.css b/src/app/dashboard/dashboard.css
+new file mode 100644
+index 0000000..fc4bab4
+--- /dev/null
++++ b/src/app/dashboard/dashboard.css
+@@ -0,0 +1,35 @@
++.search-results {
++  list-style: none;
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  overflow: hidden;
++}
++
++.search-results li {
++  border-bottom: 1px solid var(--border);
++}
++
++.search-results li:last-child {
++  border-bottom: none;
++}
++
++.search-results a {
++  display: block;
++  color: var(--primary);
++  text-decoration: none;
++  transition: background-color 150ms;
++}
++
++.search-results a:hover {
++  background-color: var(--muted);
++}
++
++.hero-card {
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  transition: all 150ms;
++}
++
++.hero-card:hover {
++  border-color: var(--primary);
++}
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..4ddbe49 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,70 @@
+-import { Component } from '@angular/core';
++import { Component, inject, signal, computed } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { HlmInput } from '@spartan-ng/helm/input';
++import { HeroesService, Hero } from '../heroes.service';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  imports: [CommonModule, RouterLink, HlmInput],
++  template: `
++    <div class="p-8">
++      <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
++
++      <div class="mb-12">
++        <h2 class="text-xl font-semibold mb-4">Hero Search</h2>
++        <div class="max-w-md">
++          <input
++            hlmInput
++            type="text"
++            placeholder="Hero name"
++            [value]="searchTerm()"
++            (input)="onSearchChange($event.target?.value || '')"
++          />
++
++          @if (searchResults().length > 0) {
++            <ul class="search-results mt-4">
++              @for (hero of searchResults() | slice: 0: 10; track hero.id) {
++                <li>
++                  <a [routerLink]="['/detail', hero.id]" class="px-4 py-3 block">{{ hero.name }}</a>
++                </li>
++              }
++            </ul>
++          }
++        </div>
++      </div>
++
++      <div>
++        <h2 class="text-xl font-semibold mb-6">Top Heroes</h2>
++        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
++          @for (hero of topHeroes; track hero.id) {
++            <div class="hero-card p-6">
++              <h3 class="text-base font-semibold mb-4">{{ hero.name }}</h3>
++              <a [routerLink]="['/detail', hero.id]" class="inline-block px-4 py-2 bg-primary text-primary-foreground rounded transition-colors hover:opacity-90">View Details</a>
++            </div>
++          }
++        </div>
++      </div>
++    </div>
++  `,
++  styleUrl: './dashboard.css',
+ })
+-export class Dashboard {}
++export class Dashboard {
++  private heroesService = inject(HeroesService);
++  topHeroes: Hero[];
++
++  protected readonly searchTerm = signal('');
++
++  searchResults = computed(() =>
++    this.heroesService.searchHeroes(this.searchTerm())
++  );
++
++  constructor() {
++    this.topHeroes = this.heroesService.getTopHeroes(4);
++  }
++
++  onSearchChange(value: string): void {
++    this.searchTerm.set(value);
++  }
++}
++
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..f64c4ea 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,45 @@
+-import { Component } from '@angular/core';
++import { Component, inject, OnInit } from '@angular/core';
++import { ActivatedRoute, RouterLink } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { HeroesService, Hero } from '../heroes.service';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  imports: [CommonModule, RouterLink],
++  template: `
++    <div class="p-8">
++      @if (hero) {
++        <div class="max-w-2xl">
++          <a [routerLink]="['/dashboard']" class="text-primary hover:underline mb-6 inline-block">&larr; Back to Dashboard</a>
++          <h1 class="text-4xl font-bold mb-6">{{ hero.name }}</h1>
++          <div class="border border-border rounded-lg p-6">
++            <p class="text-lg mb-4">
++              <span class="font-semibold">ID:</span> {{ hero.id }}
++            </p>
++            <p class="text-lg">
++              <span class="font-semibold">Name:</span> {{ hero.name }}
++            </p>
++          </div>
++        </div>
++      } @else {
++        <div class="p-8">
++          <p class="text-lg">Hero not found</p>
++          <a [routerLink]="['/dashboard']" class="text-primary hover:underline">Back to Dashboard</a>
++        </div>
++      }
++    </div>
++  `,
+ })
+-export class HeroDetail {}
++export class HeroDetail implements OnInit {
++  private route = inject(ActivatedRoute);
++  private heroesService = inject(HeroesService);
++
++  hero: Hero | undefined;
++
++  ngOnInit(): void {
++    const id = this.route.snapshot.paramMap.get('id');
++    if (id) {
++      this.hero = this.heroesService.getHero(parseInt(id, 10));
++    }
++  }
++}
+diff --git a/src/app/heroes.service.ts b/src/app/heroes.service.ts
+new file mode 100644
+index 0000000..d7b684e
+--- /dev/null
++++ b/src/app/heroes.service.ts
+@@ -0,0 +1,47 @@
++import { Injectable } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++@Injectable({
++  providedIn: 'root',
++})
++export class HeroesService {
++  private heroes: Hero[] = [
++    { id: 1, name: 'Dr Nice' },
++    { id: 2, name: 'Narco' },
++    { id: 3, name: 'Bombasto' },
++    { id: 4, name: 'Celeritas' },
++    { id: 5, name: 'Magneta' },
++    { id: 6, name: 'RubberMan' },
++    { id: 7, name: 'Dynama' },
++    { id: 8, name: 'Dr IQ' },
++    { id: 9, name: 'Magma' },
++    { id: 10, name: 'Tornado' },
++    { id: 11, name: 'Storm' },
++    { id: 12, name: 'Shadow' },
++  ];
++
++  getHeroes(): Hero[] {
++    return this.heroes;
++  }
++
++  getHero(id: number): Hero | undefined {
++    return this.heroes.find((h) => h.id === id);
++  }
++
++  getTopHeroes(count: number = 4): Hero[] {
++    return this.heroes.slice(0, count);
++  }
++
++  searchHeroes(term: string): Hero[] {
++    if (!term.trim()) {
++      return [];
++    }
++    return this.heroes.filter((h) =>
++      h.name.toLowerCase().includes(term.toLowerCase())
++    );
++  }
++}
+diff --git a/tsconfig.json b/tsconfig.json
+index d49f08c..23f700f 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,16 +12,25 @@
+     "target": "ES2022",
+     "module": "preserve",
+     "paths": {
+-      "@spartan-ng/helm/button": ["./libs/ui/button/src/index.ts"],
+-      "@spartan-ng/helm/utils": ["./libs/ui/utils/src/index.ts"],
+-      "@spartan-ng/helm/card": ["./libs/ui/card/src/index.ts"],
+-      "@spartan-ng/helm/input": ["./libs/ui/input/src/index.ts"]
++      "@spartan-ng/helm/button": [
++        "./libs/ui/button/src/index.ts"
++      ],
++      "@spartan-ng/helm/utils": [
++        "./libs/ui/utils/src/index.ts"
++      ],
++      "@spartan-ng/helm/card": [
++        "./libs/ui/card/src/index.ts"
++      ],
++      "@spartan-ng/helm/input": [
++        "./libs/ui/input/src/index.ts"
++      ]
+     }
+   },
+   "angularCompilerOptions": {
+     "enableI18nLegacyMessageIdFormat": false,
+     "strictInjectionParameters": true,
+-    "strictInputAccessModifiers": true
++    "strictInputAccessModifiers": true,
++    "strictTemplates": true
+   },
+   "files": [],
+   "references": [

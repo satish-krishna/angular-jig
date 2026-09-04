@@ -1,0 +1,206 @@
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..1599d3b 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,76 @@
+-import { Component } from '@angular/core';
++import { Component, inject, signal, computed } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { HlmInput } from '@spartan-ng/helm/input';
++import { HeroService } from '../heroes/hero.service';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  imports: [CommonModule, RouterLink, HlmInput],
++  template: `
++    <div class="p-6 max-w-6xl mx-auto">
++      <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
++
++      <div class="mb-8">
++        <h2 class="text-xl font-semibold mb-4">Hero Search</h2>
++        <input
++          hlmInput
++          type="text"
++          placeholder="Search heroes..."
++          [value]="searchInput()"
++          (input)="onSearchInput($event)"
++        />
++
++        @if (filteredHeroes().length > 0) {
++          <ul class="mt-4 max-w-md border border-border rounded-md bg-card divide-y divide-border">
++            @for (hero of filteredHeroes(); track hero.id) {
++              <li class="p-2 hover:bg-secondary hover:text-secondary-foreground transition-colors">
++                <a [routerLink]="['/detail', hero.id]" class="block">
++                  {{ hero.name }}
++                </a>
++              </li>
++            }
++          </ul>
++        }
++      </div>
++
++      <div class="mb-8">
++        <h2 class="text-xl font-semibold mb-4">Top Heroes</h2>
++        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
++          @for (hero of topHeroes(); track hero.id) {
++            <a [routerLink]="['/detail', hero.id]">
++              <div class="p-6 bg-card border border-border rounded-lg hover:shadow-lg hover:bg-secondary transition-all cursor-pointer">
++                <h3 class="text-lg font-semibold">{{ hero.name }}</h3>
++                <p class="text-sm text-muted-foreground mt-2">ID: {{ hero.id }}</p>
++              </div>
++            </a>
++          }
++        </div>
++      </div>
++    </div>
++  `,
+ })
+-export class Dashboard {}
++export class Dashboard {
++  private readonly heroService = inject(HeroService);
++
++  searchInput = signal('');
++
++  private heroes = signal(this.heroService.getHeroes());
++
++  filteredHeroes = computed(() => {
++    const search = this.searchInput().toLowerCase().trim();
++    if (!search) {
++      return [];
++    }
++    return this.heroes().filter(h => h.name.toLowerCase().includes(search));
++  });
++
++  topHeroes = computed(() => {
++    return this.heroes().slice(0, 4);
++  });
++
++  onSearchInput(event: Event) {
++    const input = event.target as HTMLInputElement;
++    this.searchInput.set(input.value);
++  }
++}
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..28d5c2b 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,37 @@
+-import { Component } from '@angular/core';
++import { Component, inject, computed } from '@angular/core';
++import { ActivatedRoute } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { HeroService } from '../heroes/hero.service';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  imports: [CommonModule],
++  template: `
++    <div class="p-6 max-w-2xl mx-auto">
++      @if (hero(); as hero) {
++        <h1 class="text-3xl font-bold mb-4">{{ hero.name }}</h1>
++        <div class="bg-card border border-border rounded-lg p-6">
++          <p class="text-lg">
++            <span class="font-semibold">ID:</span> {{ hero.id }}
++          </p>
++          <p class="text-lg mt-2">
++            <span class="font-semibold">Name:</span> {{ hero.name }}
++          </p>
++        </div>
++      } @else {
++        <h1 class="text-3xl font-bold mb-4">Hero Not Found</h1>
++        <p class="text-muted-foreground">The hero you're looking for could not be found.</p>
++      }
++    </div>
++  `,
+ })
+-export class HeroDetail {}
++export class HeroDetail {
++  private readonly route = inject(ActivatedRoute);
++  private readonly heroService = inject(HeroService);
++
++  protected hero = computed(() => {
++    const id = this.route.snapshot.paramMap.get('id');
++    if (!id) return undefined;
++    return this.heroService.getHero(parseInt(id, 10));
++  });
++}
+diff --git a/src/app/heroes/hero.service.ts b/src/app/heroes/hero.service.ts
+new file mode 100644
+index 0000000..1243f15
+--- /dev/null
++++ b/src/app/heroes/hero.service.ts
+@@ -0,0 +1,34 @@
++import { Injectable } from '@angular/core';
++
++export interface Hero {
++  id: number;
++  name: string;
++}
++
++const HEROES: Hero[] = [
++  { id: 1, name: 'Superman' },
++  { id: 2, name: 'Batman' },
++  { id: 3, name: 'Wonder Woman' },
++  { id: 4, name: 'Flash' },
++  { id: 5, name: 'Aquaman' },
++  { id: 6, name: 'Green Lantern' },
++  { id: 7, name: 'Hawkman' },
++  { id: 8, name: 'Cyborg' },
++  { id: 9, name: 'Martian Manhunter' },
++  { id: 10, name: 'Green Arrow' },
++  { id: 11, name: 'Black Widow' },
++  { id: 12, name: 'Hawkeye' },
++];
++
++@Injectable({
++  providedIn: 'root',
++})
++export class HeroService {
++  getHeroes() {
++    return HEROES;
++  }
++
++  getHero(id: number): Hero | undefined {
++    return HEROES.find(h => h.id === id);
++  }
++}
+diff --git a/tsconfig.json b/tsconfig.json
+index d49f08c..23f700f 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,16 +12,25 @@
+     "target": "ES2022",
+     "module": "preserve",
+     "paths": {
+-      "@spartan-ng/helm/button": ["./libs/ui/button/src/index.ts"],
+-      "@spartan-ng/helm/utils": ["./libs/ui/utils/src/index.ts"],
+-      "@spartan-ng/helm/card": ["./libs/ui/card/src/index.ts"],
+-      "@spartan-ng/helm/input": ["./libs/ui/input/src/index.ts"]
++      "@spartan-ng/helm/button": [
++        "./libs/ui/button/src/index.ts"
++      ],
++      "@spartan-ng/helm/utils": [
++        "./libs/ui/utils/src/index.ts"
++      ],
++      "@spartan-ng/helm/card": [
++        "./libs/ui/card/src/index.ts"
++      ],
++      "@spartan-ng/helm/input": [
++        "./libs/ui/input/src/index.ts"
++      ]
+     }
+   },
+   "angularCompilerOptions": {
+     "enableI18nLegacyMessageIdFormat": false,
+     "strictInjectionParameters": true,
+-    "strictInputAccessModifiers": true
++    "strictInputAccessModifiers": true,
++    "strictTemplates": true
+   },
+   "files": [],
+   "references": [
