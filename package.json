@@ -26,7 +26,8 @@
     "clsx": "^2.1.1",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.5.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@angular/build": "^22.1.7",

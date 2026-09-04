@@ -28,6 +28,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tally } from '../counter/counter.mjs';
 import { layoutTally } from '../counter/layout-counter.mjs';
+import { tally as shapeTally } from '../counter/component-shape-counter.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
@@ -43,6 +44,10 @@ const SETTINGS = {
   2: {
     'gate-off': 'harness/gate/part2-gate-off.settings.json',
     'gate-on': 'harness/gate/part2-gate-on.settings.json',
+  },
+  3: {
+    'gate-off': 'harness/gate/part3-gate-off.settings.json',
+    'gate-on': 'harness/gate/part3-gate-on.settings.json',
   },
 };
 
@@ -144,6 +149,7 @@ function main() {
   let modelUsed = null;
   let tallyResult;
   let layoutResult;
+  let shapeResult;
   let diff = '';
   let resultSha = substrateSha;
 
@@ -180,6 +186,7 @@ function main() {
     // memory across the branch switch below.
     tallyResult = tally([join(ROOT, 'src')], { root: ROOT });
     layoutResult = layoutTally([join(ROOT, 'src')], { root: ROOT });
+    shapeResult = shapeTally([join(ROOT, 'src')], { root: ROOT });
     diff = git(['diff', `${substrateSha}..HEAD`]);
   } finally {
     // Always return to where we started, even if the trial threw.
@@ -200,6 +207,7 @@ function main() {
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, 'tally.json'), JSON.stringify(tallyResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'layout-tally.json'), JSON.stringify(layoutResult, null, 2) + '\n');
+  writeFileSync(join(outDir, 'shape-tally.json'), JSON.stringify(shapeResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'diff.patch'), diff + '\n');
   if (!dryRun) writeFileSync(join(outDir, 'claude-output.json'), agent.stdout || '{}');
 
@@ -239,7 +247,7 @@ function main() {
       argsUsed: agent.argsUsed,
     },
     diffEmpty: diff.trim() === '',
-    counterTotals: { seal: tallyResult.totals, layout: layoutResult.totals },
+    counterTotals: { seal: tallyResult.totals, layout: layoutResult.totals, shape: shapeResult.totals },
     startedFromBranch: startBranch,
     finishedAt: new Date().toISOString(),
   };
@@ -272,6 +280,7 @@ function main() {
       `  branch:  ${dryRun ? '(deleted, dry run)' : branch}\n` +
       `  seal:    ${JSON.stringify(tallyResult.totals)}\n` +
       `  layout:  ${JSON.stringify(layoutResult.totals)}\n` +
+      `  shape:   ${JSON.stringify(shapeResult.totals)}\n` +
       `  output:  ${outRel.replaceAll('\\', '/')}/\n`,
   );
 
