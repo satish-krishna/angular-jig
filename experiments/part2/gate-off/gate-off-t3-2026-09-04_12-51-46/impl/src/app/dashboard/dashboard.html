@@ -1,0 +1,40 @@
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+
+  <section class="search-section">
+    <h2>Hero Search</h2>
+    <input
+      hlmInput
+      type="text"
+      placeholder="Search heroes..."
+      [value]="searchTerm()"
+      (input)="onSearchInput($event)"
+      class="w-full"
+    />
+
+    @if (searchResults().length > 0) {
+      <div class="search-results">
+        <ul>
+          @for (hero of searchResults(); track hero.id) {
+            <li>
+              <a [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
+
+  <section class="top-heroes-section">
+    <h2>Top Heroes</h2>
+    <div class="heroes-grid">
+      @for (hero of topHeroes(); track hero.id) {
+        <div class="hero-card">
+          <h3>
+            <a [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+          </h3>
+        </div>
+      }
+    </div>
+  </section>
+</div>

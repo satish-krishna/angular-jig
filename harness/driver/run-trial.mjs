@@ -50,6 +50,11 @@ function git(args, opts = {}) {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', ...opts }).trim();
 }
 
+// Like git(), but does not trim: for reading file contents verbatim.
+function gitRaw(args) {
+  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+}
+
 function parseArgs(argv) {
   const out = { dryRun: false };
   for (let i = 0; i < argv.length; i++) {
@@ -239,6 +244,26 @@ function main() {
     finishedAt: new Date().toISOString(),
   };
   writeFileSync(join(outDir, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
+
+  // Save the actual built files so a reader can open the real implementation,
+  // not just apply the patch. The substrate is the "before"; this is the "after".
+  if (!dryRun) {
+    const changed = git(['diff', '--name-only', `${substrateSha}..${resultSha}`])
+      .split('\n')
+      .map((s) => s.trim())
+      .filter((s) => s && !s.startsWith('experiments/'));
+    for (const f of changed) {
+      let content;
+      try {
+        content = gitRaw(['show', `${resultSha}:${f}`]);
+      } catch {
+        continue;
+      }
+      const dest = join(outDir, 'impl', f);
+      mkdirSync(dirname(dest), { recursive: true });
+      writeFileSync(dest, content);
+    }
+  }
 
   if (dryRun) git(['branch', '-D', branch]);
 

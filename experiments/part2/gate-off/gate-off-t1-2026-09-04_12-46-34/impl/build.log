@@ -1,0 +1,21 @@
+
+> angular-jig@0.0.0 build
+> ng build
+
+❯ Building...
+✔ Building...
+Initial chunk files | Names         |  Raw size | Estimated transfer size
+main-XDZLT4QX.js    | main          | 233.67 kB |                63.65 kB
+styles-RO6QNGOU.css | styles        |  33.30 kB |                 6.07 kB
+
+                    | Initial total | 266.97 kB |                69.72 kB
+
+Lazy chunk files    | Names         |  Raw size | Estimated transfer size
+chunk-CidVtw3z.js   | dashboard     |  81.56 kB |                20.38 kB
+chunk-DzbK-syi.js   | hero-detail   | 303 bytes |               303 bytes
+chunk-BzGQanfI.js   | heroes        | 289 bytes |               289 bytes
+
+Application bundle generation complete. [1.681 seconds] - 2026-09-04T12:48:36.130Z
+
+Output location: D:\Repos\angular-jig\dist\angular-jig
+

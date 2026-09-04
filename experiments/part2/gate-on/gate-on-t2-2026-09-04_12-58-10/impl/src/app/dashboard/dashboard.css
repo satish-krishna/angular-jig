@@ -1,0 +1,97 @@
+.dashboard-container {
+  display: grid;
+  gap: var(--radius);
+  padding: var(--radius);
+}
+
+.search-section {
+  display: grid;
+  gap: var(--radius);
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: calc(var(--radius) / 2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--radius);
+}
+
+.search-results li {
+  margin: 0;
+}
+
+.search-results a {
+  display: block;
+  padding: calc(var(--radius) / 2);
+  color: var(--foreground);
+  text-decoration: none;
+  border-radius: calc(var(--radius) / 2);
+  transition: background-color 0.2s;
+}
+
+.search-results a:hover {
+  background-color: var(--muted);
+}
+
+.search-results a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.no-results {
+  color: var(--muted-foreground);
+  padding: var(--radius);
+}
+
+.top-heroes-section {
+  display: grid;
+  gap: var(--radius);
+}
+
+.heroes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--radius);
+}
+
+.hero-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s, border-color 0.2s;
+  height: 100%;
+}
+
+.card-link:hover {
+  background-color: var(--muted);
+}
+
+.card-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.card-content {
+  padding: var(--radius);
+}
+
+.card-content h3 {
+  margin: 0 0 calc(var(--radius) / 2) 0;
+  font-weight: 600;
+}
+
+.card-content p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
