@@ -9,6 +9,7 @@
     "test": "ng test",
     "lint": "eslint src",
     "test:harness": "vitest run --config harness/vitest.config.mjs",
+    "check:responsive": "node harness/gate/check-responsive.mjs",
     "count": "node harness/counter/counter.mjs --root . src"
   },
   "private": true,
@@ -38,6 +39,7 @@
     "angular-eslint": "^22.2.0",
     "eslint": "^10.9.1",
     "jsdom": "^28.0.0",
+    "playwright": "^1.63.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "stylelint": "^17.14.1",
