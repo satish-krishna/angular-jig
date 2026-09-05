@@ -1,0 +1,87 @@
+{
+  "runId": "capstone-gate-on-t1-2026-09-05_21-13-55-dry",
+  "part": "capstone",
+  "condition": "gate-on",
+  "trial": 1,
+  "dryRun": true,
+  "ok": true,
+  "substrate": {
+    "ref": "clean-build",
+    "sha": "75aebaba7b83799d6f4182dd24307b95440ed5d9"
+  },
+  "branch": null,
+  "resultSha": "3819452df3bf8df1a15988b7470a6b5e83a7fc1f",
+  "model": {
+    "alias": "haiku",
+    "resolved": null
+  },
+  "gateSettings": ".claude/gates.settings.json",
+  "stages": [],
+  "cost": {
+    "stages": 0,
+    "costUsd": 0,
+    "numTurns": 0,
+    "durationMs": 0,
+    "wallMs": 0,
+    "stagesOk": 0
+  },
+  "buildOk": null,
+  "boot": null,
+  "diffEmpty": true,
+  "tampered": false,
+  "tamperedFiles": [],
+  "changedFiles": [],
+  "guardBlocks": 0,
+  "hookFirings": 0,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "raw-icon": 0,
+      "unknown-primitive": 0,
+      "missing-composition-part": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 0,
+      "all": 0
+    },
+    "shape": {
+      "hand-set-change-detection": 0,
+      "component-subscribe": 0,
+      "template-driven-form": 0,
+      "restated-validator": 0,
+      "presentational-injects-data": 0,
+      "reactive-form": 0,
+      "vm-not-component-scoped": 0,
+      "state-outside-vm": 0,
+      "feature-injects-data": 0,
+      "vm-not-provided": 0,
+      "explicit-standalone": 0,
+      "legacy-icon-module": 0,
+      "unregistered-icon": 0,
+      "orphan-ng-submit": 0,
+      "hand-written-form-model": 0,
+      "dumb-holds-state": 0,
+      "all": 0
+    },
+    "freeloader": {
+      "legacy-control-flow": 0,
+      "ng-class-style": 0,
+      "all": 0
+    }
+  },
+  "responsive": null,
+  "auditAnchor": "body",
+  "auditRoutes": [
+    "dashboard",
+    "roster",
+    "detail/11"
+  ],
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-05T21:13:57.532Z"
+}

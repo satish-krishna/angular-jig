@@ -1,0 +1,14 @@
+{
+  "model": "haiku",
+  "condition": "gate-on",
+  "trial": 1,
+  "stages": [],
+  "totals": {
+    "stages": 0,
+    "costUsd": 0,
+    "numTurns": 0,
+    "durationMs": 0,
+    "wallMs": 0,
+    "stagesOk": 0
+  }
+}
