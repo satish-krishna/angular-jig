@@ -240,6 +240,26 @@ function findTamperedFiles(changedFiles) {
   return changedFiles.filter((f) => ENFORCEMENT_PATHS.some((p) => f === p || f.startsWith(p)));
 }
 
+// tsconfig.json is protected AND the driver edits it itself: setStrictTemplates
+// writes strictTemplates as an experimental control, and does it by round-tripping
+// the file through JSON.stringify, which reformats every line. The first re-run
+// duly flagged the harness for tampering with itself and voided a perfectly good
+// trial.
+//
+// So the comparison is against the file as the DRIVER left it, not against the
+// substrate. Byte-identical to the post-control snapshot means the agent never
+// touched it; anything else is real and stays flagged. The alternative was to
+// drop tsconfig.json from the protected set, which would have traded a false
+// positive for a false negative on a file that controls strictTemplates.
+function tsconfigUntouchedSinceControl(snapshot) {
+  if (snapshot === null) return false;
+  try {
+    return readFileSync(join(ROOT, 'tsconfig.json'), 'utf8') === snapshot;
+  } catch {
+    return false;
+  }
+}
+
 function main() {
   const { condition, trial, dryRun, stageList, substrate } = parseArgs(process.argv.slice(2));
   const settingsPath = SETTINGS[condition];
@@ -271,6 +291,7 @@ function main() {
   let responsiveOutTmp = null;
   let buildOk = null;
   let bootResult = null;
+  let tsconfigAfterControl = null;
   let changedFiles = [];
   let tampered = [];
   let diff = '';
@@ -281,7 +302,16 @@ function main() {
     // strictTemplates is on in BOTH conditions: it is a tsconfig property of the
     // substrate the agent inherits, not a hook we register. See the settings
     // files and capstone-spec.md.
-    if (!dryRun) setStrictTemplatesOption(true);
+    if (!dryRun) {
+      setStrictTemplatesOption(true);
+      // Snapshot the file as the control left it, so the tamper check can tell
+      // the driver's own edit apart from the agent's.
+      try {
+        tsconfigAfterControl = readFileSync(join(ROOT, 'tsconfig.json'), 'utf8');
+      } catch {
+        tsconfigAfterControl = null;
+      }
+    }
 
     if (!dryRun) {
       writeFileSync(logPath, '');
@@ -319,7 +349,9 @@ function main() {
       .split('\n')
       .map((s) => s.trim())
       .filter((s) => s && !s.startsWith('experiments/'));
-    tampered = findTamperedFiles(changedFiles);
+    tampered = findTamperedFiles(changedFiles).filter(
+      (f) => !(f === 'tsconfig.json' && tsconfigUntouchedSinceControl(tsconfigAfterControl)),
+    );
 
     if (!dryRun) {
       // Plane 2. The capstone audits every screen, not one slice, and anchors on

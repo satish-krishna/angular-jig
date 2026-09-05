@@ -33,6 +33,13 @@ function loadRuns(condition) {
     // averaged in with complete ones: it would drag the cost mean down by
     // five sixths of a build. Full six-stage runs only.
     .filter((r) => (r.cost?.totals?.stages ?? 0) === 6)
+    // A VOID run is not a result either. The driver voids a trial whose stages
+    // failed, whose tree did not change, whose build broke, whose app does not
+    // boot, or that touched enforcement config, and every one of those means the
+    // numbers describe something other than a completed build. Averaging them in
+    // is the same class of mistake as reporting an errored responsive audit as
+    // zero. Void runs stay on disk as evidence and are excluded from the tables.
+    .filter((r) => r.meta.ok !== false)
     .sort((a, b) => a.runId.localeCompare(b.runId));
 }
 
