@@ -271,8 +271,15 @@ function hasDescendantWithAttr(nodes, attrName) {
     if (n && Array.isArray(n.attributes) && n.attributes.some((a) => a.name === attrName)) {
       return true;
     }
-    for (const key of ['children', 'branches', 'cases', 'empty']) {
-      if (Array.isArray(n?.[key]) && hasDescendantWithAttr(n[key], attrName)) return true;
+    // See the block-AST note on the main walk below: @switch exposes `groups`,
+    // and @empty / @defer's sub-blocks are objects rather than arrays.
+    for (const key of ['children', 'branches', 'cases', 'groups', 'empty', 'placeholder', 'loading', 'error']) {
+      const v = n?.[key];
+      if (Array.isArray(v)) {
+        if (hasDescendantWithAttr(v, attrName)) return true;
+      } else if (v && typeof v === 'object') {
+        if (hasDescendantWithAttr([v], attrName)) return true;
+      }
     }
   }
   return false;
@@ -389,8 +396,17 @@ function walk(nodes, file, lineOffset, acc, ancestors) {
       acc.push(...elementViolations(n, file, lineOffset, ancestors));
     }
     const nextAncestors = isElement ? [...ancestors, n] : ancestors;
-    for (const key of ['children', 'branches', 'cases', 'empty']) {
-      if (Array.isArray(n?.[key])) walk(n[key], file, lineOffset, acc, nextAncestors);
+    // Angular block-AST child keys, verified against @angular/compiler: a
+    // SwitchBlock exposes `groups` (NOT `cases`; the group then carries both),
+    // and ForLoopBlock.empty plus DeferredBlock.placeholder/loading/error are
+    // OBJECTS rather than arrays. The original list was children/branches/
+    // cases/empty guarded on Array.isArray, so it descended into no @switch,
+    // @empty or @defer body at all: violations inside them went uncounted, and
+    // the gate, which does walk them, silently disagreed.
+    for (const key of ['children', 'branches', 'cases', 'groups', 'empty', 'placeholder', 'loading', 'error']) {
+      const v = n?.[key];
+      if (Array.isArray(v)) walk(v, file, lineOffset, acc, nextAncestors);
+      else if (v && typeof v === 'object') walk([v], file, lineOffset, acc, nextAncestors);
     }
   }
 }

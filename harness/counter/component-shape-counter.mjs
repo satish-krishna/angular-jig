@@ -192,10 +192,12 @@ export function countTsSource(sourceText, { file }) {
         }
       }
     }
-    // Rule 13: NgIcon in imports with no provideIcons(...) registration.
-    if (ngIconInImports && !hasProvideIcons && !providersHasSpread) {
-      out.push({ kind: 'unregistered-icon', file, line: lineOf(call), detail: 'NgIcon imported without provideIcons(...)' });
-    }
+    // Rule 13 is NOT here. It was drafted as a per-component check (NgIcon in
+    // imports without provideIcons in providers) and that was wrong: spartan's
+    // icons doc says "provided to the component (or app)", and app-level
+    // registration is a documented pattern under which a correct component has
+    // no provideIcons of its own. The draft fired on exactly the capstone
+    // builds whose icons worked. It is now a file-level check, below.
     const injectedViewModels = []; // { token, line } for inject(XViewModel) calls
 
     // Member-level kinds: walk the class members only, so the decorator is not re-scanned.
@@ -381,6 +383,48 @@ export function countTsSource(sourceText, { file }) {
     ts.forEachChild(node, visit);
   };
   visit(sf);
+
+  // Rule 13, `unregistered-icon`, is a FILE-level property: glyph symbols
+  // imported from @ng-icons/lucide into a file that never calls provideIcons.
+  // Once per file, at the first offending import. A file relying on app-level
+  // registration imports no glyph at all and is silent here; a file that
+  // imports a glyph and routes it to a custom token is not.
+  const lucideImports = [];
+  for (const st of sf.statements) {
+    if (
+      ts.isImportDeclaration(st) &&
+      ts.isStringLiteral(st.moduleSpecifier) &&
+      st.moduleSpecifier.text === '@ng-icons/lucide' &&
+      st.importClause?.namedBindings &&
+      ts.isNamedImports(st.importClause.namedBindings) &&
+      st.importClause.namedBindings.elements.length > 0
+    ) {
+      lucideImports.push(st);
+    }
+  }
+  if (lucideImports.length > 0) {
+    let callsProvideIcons = false;
+    const scanForProvideIcons = (node) => {
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === 'provideIcons'
+      ) {
+        callsProvideIcons = true;
+      }
+      ts.forEachChild(node, scanForProvideIcons);
+    };
+    scanForProvideIcons(sf);
+    if (!callsProvideIcons) {
+      out.push({
+        kind: 'unregistered-icon',
+        file,
+        line: lineOf(lucideImports[0]),
+        detail: 'lucide symbols imported without a provideIcons(...) registration',
+      });
+    }
+  }
+
   return out;
 }
 
@@ -407,8 +451,17 @@ function walkTemplateForNgModel(nodes, file, lineOffset, acc) {
         }
       }
     }
-    for (const key of ['children', 'branches', 'cases', 'empty']) {
-      if (Array.isArray(n?.[key])) walkTemplateForNgModel(n[key], file, lineOffset, acc);
+    // Angular block-AST child keys, verified against @angular/compiler: a
+    // SwitchBlock exposes `groups` (NOT `cases`; the group then carries both),
+    // and ForLoopBlock.empty plus DeferredBlock.placeholder/loading/error are
+    // OBJECTS rather than arrays. The original list was children/branches/
+    // cases/empty guarded on Array.isArray, so it descended into no @switch,
+    // @empty or @defer body at all: violations inside them went uncounted, and
+    // the gate, which does walk them, silently disagreed.
+    for (const key of ['children', 'branches', 'cases', 'groups', 'empty', 'placeholder', 'loading', 'error']) {
+      const v = n?.[key];
+      if (Array.isArray(v)) walkTemplateForNgModel(v, file, lineOffset, acc);
+      else if (v && typeof v === 'object') walkTemplateForNgModel([v], file, lineOffset, acc);
     }
   }
 }

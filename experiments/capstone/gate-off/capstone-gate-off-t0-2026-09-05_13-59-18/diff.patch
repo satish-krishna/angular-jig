@@ -1,0 +1,618 @@
+diff --git a/src/app/app.config.ts b/src/app/app.config.ts
+index e60fc79..6c69f19 100644
+--- a/src/app/app.config.ts
++++ b/src/app/app.config.ts
+@@ -1,10 +1,25 @@
+ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+ import { provideRouter } from '@angular/router';
++import { provideSpartanHlm } from '@spartan-ng/helm/utils';
++import { provideIcons } from '@ng-icons/core';
++import {
++  lucideLayoutDashboard, lucideUsers, lucideTarget, lucideShieldAlert, lucideUserPlus, lucideSettings,
++  lucideSun, lucideMoon, lucideSearch, lucideBell, lucidePencil, lucideTrash2, lucideCrosshair,
++  lucideChevronLeft, lucideChevronDown, lucideUserCheck, lucideActivity, lucideZap, lucideCheck, lucideTriangleAlert,
++  lucideMenu, lucideX
++} from '@ng-icons/lucide';
+ import { routes } from './app.routes';
+ 
+ export const appConfig: ApplicationConfig = {
+   providers: [
+     provideBrowserGlobalErrorListeners(),
+-    provideRouter(routes)
++    provideRouter(routes),
++    provideSpartanHlm(),
++    provideIcons({
++      lucideLayoutDashboard, lucideUsers, lucideTarget, lucideShieldAlert, lucideUserPlus, lucideSettings,
++      lucideSun, lucideMoon, lucideSearch, lucideBell, lucidePencil, lucideTrash2, lucideCrosshair,
++      lucideChevronLeft, lucideChevronDown, lucideUserCheck, lucideActivity, lucideZap, lucideCheck, lucideTriangleAlert,
++      lucideMenu, lucideX
++    })
+   ]
+ };
+diff --git a/src/app/app.css b/src/app/app.css
+index e69de29..0941dfa 100644
+--- a/src/app/app.css
++++ b/src/app/app.css
+@@ -0,0 +1,57 @@
++.mobile-only {
++  display: none;
++}
++
++.desktop-only {
++  display: block;
++}
++
++@media (max-width: 1023px) {
++  .mobile-only {
++    display: block;
++  }
++
++  .desktop-only {
++    display: none;
++  }
++}
++
++hlm-sidebar {
++  display: flex;
++}
++
++@media (max-width: 1023px) {
++  hlm-sidebar {
++    display: none;
++  }
++
++  hlm-sidebar[data-state='open'] {
++    display: flex;
++  }
++}
++
++hlm-sidebar-inset {
++  display: flex;
++  flex-direction: column;
++}
++
++header {
++  position: sticky;
++  top: 0;
++  z-index: 40;
++}
++
++main {
++  background-color: var(--background);
++}
++
++hlm-sidebar-wrapper {
++  display: grid;
++  grid-template-columns: auto 1fr;
++}
++
++@media (max-width: 1023px) {
++  hlm-sidebar-wrapper {
++    grid-template-columns: 1fr;
++  }
++}
+diff --git a/src/app/app.html b/src/app/app.html
+index 4023545..9cd7a15 100644
+--- a/src/app/app.html
++++ b/src/app/app.html
+@@ -1,7 +1,124 @@
+-<!-- Shell plumbing only. The screens are built into the placeholder components. -->
+-<nav>
+-  <a routerLink="/dashboard">Dashboard</a>
+-  <a routerLink="/heroes">Heroes</a>
+-</nav>
++<div hlmSidebarWrapper>
++  <!-- Navigation Rail -->
++  <hlm-sidebar>
++    <!-- Header/Logo -->
++    <div hlmSidebarHeader class="flex items-center justify-between px-4 py-6">
++      <span class="text-lg font-bold text-sidebar-foreground">HO</span>
++      <button hlmSidebarTrigger class="mobile-only"></button>
++    </div>
+ 
+-<router-outlet />
++    <div hlmSidebarSeparator></div>
++
++    <!-- Navigation Menu -->
++    <div hlmSidebarContent>
++      <nav hlmSidebarMenu>
++        <div hlmSidebarMenuItem>
++          <button hlmSidebarMenuButton routerLink="/dashboard" routerLinkActive="active">
++            <ng-icon name="lucideLayoutDashboard" class="mr-2 size-4" />
++            <span>Dashboard</span>
++          </button>
++        </div>
++        <div hlmSidebarMenuItem>
++          <button hlmSidebarMenuButton routerLink="/roster" routerLinkActive="active">
++            <ng-icon name="lucideUsers" class="mr-2 size-4" />
++            <span>Roster</span>
++          </button>
++        </div>
++        <div hlmSidebarMenuItem>
++          <button hlmSidebarMenuButton routerLink="/missions" routerLinkActive="active">
++            <ng-icon name="lucideTarget" class="mr-2 size-4" />
++            <span>Missions</span>
++          </button>
++        </div>
++        <div hlmSidebarMenuItem>
++          <button hlmSidebarMenuButton routerLink="/threats" routerLinkActive="active">
++            <ng-icon name="lucideShieldAlert" class="mr-2 size-4" />
++            <span>Threats</span>
++          </button>
++        </div>
++        <div hlmSidebarMenuItem>
++          <button hlmSidebarMenuButton routerLink="/recruit" routerLinkActive="active">
++            <ng-icon name="lucideUserPlus" class="mr-2 size-4" />
++            <span>Recruit</span>
++          </button>
++        </div>
++        <div hlmSidebarMenuItem>
++          <button hlmSidebarMenuButton routerLink="/settings" routerLinkActive="active">
++            <ng-icon name="lucideSettings" class="mr-2 size-4" />
++            <span>Settings</span>
++          </button>
++        </div>
++      </nav>
++    </div>
++
++    <div hlmSidebarSeparator></div>
++
++    <!-- User Footer -->
++    <div hlmSidebarFooter class="flex items-center gap-2 px-4 py-4">
++      <hlm-avatar class="size-8">
++        <img hlmAvatarImage src="https://github.com/shadcn.png" alt="user" />
++        <div hlmAvatarFallback>SK</div>
++      </hlm-avatar>
++      <div class="hidden flex-1">
++        <p class="text-sm font-medium text-sidebar-foreground">User</p>
++        <p class="text-xs text-sidebar-muted">user@example.com</p>
++      </div>
++    </div>
++  </hlm-sidebar>
++
++  <!-- Main Content -->
++  <main hlmSidebarInset>
++    <!-- Top Bar -->
++    <header class="border-b border-border bg-card px-4 py-4 flex items-center justify-between gap-4">
++      <div class="flex flex-1 items-center gap-4">
++        <!-- Menu trigger for mobile -->
++        <button hlmSidebarTrigger class="mobile-only"></button>
++      </div>
++
++      <!-- Right side controls -->
++      <div class="flex items-center gap-2">
++        <!-- Search -->
++        <div class="desktop-only">
++          <input
++            type="search"
++            placeholder="Search..."
++            class="hlm-input max-w-xs"
++          />
++        </div>
++
++        <!-- Notifications -->
++        <button hlmBtn size="icon" variant="ghost">
++          <ng-icon name="lucideBell" class="size-5" />
++          <span class="sr-only">Notifications</span>
++        </button>
++
++        <!-- Theme Toggle -->
++        <button
++          hlmBtn
++          size="icon"
++          variant="ghost"
++          (click)="toggleTheme()"
++        >
++          @if (isDarkMode()) {
++            <ng-icon name="lucideSun" class="size-5" />
++            <span class="sr-only">Light mode</span>
++          } @else {
++            <ng-icon name="lucideMoon" class="size-5" />
++            <span class="sr-only">Dark mode</span>
++          }
++        </button>
++
++        <!-- Account Avatar -->
++        <hlm-avatar class="size-8 cursor-pointer">
++          <img hlmAvatarImage src="https://github.com/shadcn.png" alt="user" />
++          <div hlmAvatarFallback>SK</div>
++        </hlm-avatar>
++      </div>
++    </header>
++
++    <!-- Routed Content -->
++    <div class="flex-1 overflow-y-auto">
++      <router-outlet />
++    </div>
++  </main>
++</div>
+diff --git a/src/app/app.routes.ts b/src/app/app.routes.ts
+index 8557fdb..a41c872 100644
+--- a/src/app/app.routes.ts
++++ b/src/app/app.routes.ts
+@@ -7,11 +7,27 @@ export const routes: Routes = [
+     loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
+   },
+   {
+-    path: 'heroes',
++    path: 'roster',
+     loadComponent: () => import('./heroes/heroes').then((m) => m.Heroes),
+   },
+   {
+     path: 'detail/:id',
+     loadComponent: () => import('./hero-detail/hero-detail').then((m) => m.HeroDetail),
+   },
++  {
++    path: 'recruit',
++    loadComponent: () => import('./recruit/recruit').then((m) => m.Recruit),
++  },
++  {
++    path: 'missions',
++    loadComponent: () => import('./missions/missions').then((m) => m.Missions),
++  },
++  {
++    path: 'threats',
++    loadComponent: () => import('./threats/threats').then((m) => m.Threats),
++  },
++  {
++    path: 'settings',
++    loadComponent: () => import('./settings/settings').then((m) => m.Settings),
++  },
+ ];
+diff --git a/src/app/app.ts b/src/app/app.ts
+index 43d7fd6..e82283d 100644
+--- a/src/app/app.ts
++++ b/src/app/app.ts
+@@ -1,10 +1,69 @@
+-import { Component } from '@angular/core';
+-import { RouterOutlet, RouterLink } from '@angular/router';
++import { Component, effect, signal } from '@angular/core';
++import { RouterOutlet, RouterLinkActive } from '@angular/router';
++import { NgIcon } from '@ng-icons/core';
++import {
++  HlmSidebar,
++  HlmSidebarContent,
++  HlmSidebarFooter,
++  HlmSidebarHeader,
++  HlmSidebarInset,
++  HlmSidebarMenuButton,
++  HlmSidebarSeparator,
++  HlmSidebarTrigger,
++} from '@spartan-ng/helm/sidebar';
++import {
++  HlmAvatar,
++  HlmAvatarFallback,
++  HlmAvatarImage,
++} from '@spartan-ng/helm/avatar';
++import { HlmButton } from '@spartan-ng/helm/button';
+ 
+ @Component({
+   selector: 'app-root',
+-  imports: [RouterOutlet, RouterLink],
++  imports: [
++    RouterOutlet,
++    RouterLinkActive,
++    NgIcon,
++    HlmSidebar,
++    HlmSidebarContent,
++    HlmSidebarFooter,
++    HlmSidebarHeader,
++    HlmSidebarInset,
++    HlmSidebarMenuButton,
++    HlmSidebarSeparator,
++    HlmSidebarTrigger,
++    HlmAvatar,
++    HlmAvatarFallback,
++    HlmAvatarImage,
++    HlmButton,
++  ],
+   templateUrl: './app.html',
+   styleUrl: './app.css',
+ })
+-export class App {}
++export class App {
++  isDarkMode = signal<boolean>(this.getInitialTheme());
++
++  constructor() {
++    effect(() => {
++      const isDark = this.isDarkMode();
++      if (isDark) {
++        document.documentElement.classList.add('dark');
++      } else {
++        document.documentElement.classList.remove('dark');
++      }
++      localStorage.setItem('theme', isDark ? 'dark' : 'light');
++    });
++  }
++
++  private getInitialTheme(): boolean {
++    const stored = localStorage.getItem('theme');
++    if (stored === 'dark' || stored === 'light') {
++      return stored === 'dark';
++    }
++    return window.matchMedia('(prefers-color-scheme: dark)').matches;
++  }
++
++  toggleTheme(): void {
++    this.isDarkMode.update((v) => !v);
++  }
++}
+diff --git a/src/app/missions/missions.ts b/src/app/missions/missions.ts
+new file mode 100644
+index 0000000..5236f21
+--- /dev/null
++++ b/src/app/missions/missions.ts
+@@ -0,0 +1,7 @@
++import { Component } from '@angular/core';
++
++@Component({
++  selector: 'app-missions',
++  template: '<div class="p-8"><h1 class="text-2xl font-bold">Missions</h1></div>',
++})
++export class Missions {}
+diff --git a/src/app/recruit/recruit.ts b/src/app/recruit/recruit.ts
+new file mode 100644
+index 0000000..8c9c882
+--- /dev/null
++++ b/src/app/recruit/recruit.ts
+@@ -0,0 +1,7 @@
++import { Component } from '@angular/core';
++
++@Component({
++  selector: 'app-recruit',
++  template: '<div class="p-8"><h1 class="text-2xl font-bold">Recruit</h1></div>',
++})
++export class Recruit {}
+diff --git a/src/app/settings/settings.ts b/src/app/settings/settings.ts
+new file mode 100644
+index 0000000..8316dc1
+--- /dev/null
++++ b/src/app/settings/settings.ts
+@@ -0,0 +1,7 @@
++import { Component } from '@angular/core';
++
++@Component({
++  selector: 'app-settings',
++  template: '<div class="p-8"><h1 class="text-2xl font-bold">Settings</h1></div>',
++})
++export class Settings {}
+diff --git a/src/app/threats/threats.ts b/src/app/threats/threats.ts
+new file mode 100644
+index 0000000..c441a6e
+--- /dev/null
++++ b/src/app/threats/threats.ts
+@@ -0,0 +1,7 @@
++import { Component } from '@angular/core';
++
++@Component({
++  selector: 'app-threats',
++  template: '<div class="p-8"><h1 class="text-2xl font-bold">Threats</h1></div>',
++})
++export class Threats {}
+diff --git a/src/styles.css b/src/styles.css
+index 0497040..7efba1e 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -19,32 +19,38 @@
+   --chart-4: oklch(0.828 0.189 84.429);
+   --chart-5: oklch(0.769 0.188 70.08);
+   --radius: 0.625rem;
+-  --background: oklch(1 0 0);
+-  --foreground: oklch(0.145 0 0);
++  --background: oklch(0.975 0.003 280);
++  --foreground: oklch(0.135 0.010 280);
+   --card: oklch(1 0 0);
+-  --card-foreground: oklch(0.145 0 0);
++  --card-foreground: oklch(0.135 0.010 280);
+   --popover: oklch(1 0 0);
+-  --popover-foreground: oklch(0.145 0 0);
+-  --primary: oklch(0.205 0 0);
+-  --primary-foreground: oklch(0.985 0 0);
+-  --secondary: oklch(0.97 0 0);
+-  --secondary-foreground: oklch(0.205 0 0);
+-  --muted: oklch(0.97 0 0);
+-  --muted-foreground: oklch(0.556 0 0);
+-  --accent: oklch(0.97 0 0);
+-  --accent-foreground: oklch(0.205 0 0);
+-  --destructive: oklch(0.577 0.245 27.325);
+-  --border: oklch(0.922 0 0);
+-  --input: oklch(0.922 0 0);
+-  --ring: oklch(0.708 0 0);
+-  --sidebar: oklch(0.985 0 0);
+-  --sidebar-foreground: oklch(0.145 0 0);
+-  --sidebar-primary: oklch(0.205 0 0);
+-  --sidebar-primary-foreground: oklch(0.985 0 0);
+-  --sidebar-accent: oklch(0.97 0 0);
+-  --sidebar-accent-foreground: oklch(0.205 0 0);
+-  --sidebar-border: oklch(0.922 0 0);
+-  --sidebar-ring: oklch(0.708 0 0);
++  --popover-foreground: oklch(0.135 0.010 280);
++  --primary: oklch(0.61 0.18 54);
++  --primary-foreground: oklch(1 0 0);
++  --secondary: oklch(0.948 0.010 280);
++  --secondary-foreground: oklch(0.135 0.010 280);
++  --muted: oklch(0.948 0.010 280);
++  --muted-foreground: oklch(0.410 0.015 280);
++  --accent: oklch(0.948 0.010 280);
++  --accent-foreground: oklch(0.135 0.010 280);
++  --destructive: oklch(0.578 0.245 27);
++  --border: oklch(0.918 0.012 280);
++  --input: oklch(0.918 0.012 280);
++  --ring: oklch(0.61 0.18 54 / 0.35);
++  --sidebar: oklch(0.150 0.010 280);
++  --sidebar-foreground: oklch(0.948 0.010 280);
++  --sidebar-primary: oklch(0.197 0.012 280);
++  --sidebar-primary-foreground: oklch(0.948 0.010 280);
++  --sidebar-accent: oklch(0.197 0.012 280);
++  --sidebar-accent-foreground: oklch(0.948 0.010 280);
++  --sidebar-border: oklch(0.135 0.010 280);
++  --sidebar-ring: oklch(0.61 0.18 54 / 0.35);
++  --success: oklch(0.590 0.160 151);
++  --success-foreground: oklch(1 0 0);
++  --warning: oklch(0.600 0.180 36);
++  --warning-foreground: oklch(1 0 0);
++  --info: oklch(0.560 0.220 265);
++  --info-foreground: oklch(1 0 0);
+ }
+ 
+ :root.dark {
+@@ -55,32 +61,38 @@
+   --chart-3: oklch(0.769 0.188 70.08);
+   --chart-4: oklch(0.627 0.265 303.9);
+   --chart-5: oklch(0.645 0.246 16.439);
+-  --background: oklch(0.145 0 0);
+-  --foreground: oklch(0.985 0 0);
+-  --card: oklch(0.205 0 0);
+-  --card-foreground: oklch(0.985 0 0);
+-  --popover: oklch(0.205 0 0);
+-  --popover-foreground: oklch(0.985 0 0);
+-  --primary: oklch(0.922 0 0);
+-  --primary-foreground: oklch(0.205 0 0);
+-  --secondary: oklch(0.269 0 0);
+-  --secondary-foreground: oklch(0.985 0 0);
+-  --muted: oklch(0.269 0 0);
+-  --muted-foreground: oklch(0.708 0 0);
+-  --accent: oklch(0.269 0 0);
+-  --accent-foreground: oklch(0.985 0 0);
+-  --destructive: oklch(0.704 0.191 22.216);
+-  --border: oklch(1 0 0 / 10%);
+-  --input: oklch(1 0 0 / 15%);
+-  --ring: oklch(0.556 0 0);
+-  --sidebar: oklch(0.205 0 0);
+-  --sidebar-foreground: oklch(0.985 0 0);
+-  --sidebar-primary: oklch(0.985 0 0);
+-  --sidebar-primary-foreground: oklch(0.205 0 0);
+-  --sidebar-accent: oklch(0.269 0 0);
+-  --sidebar-accent-foreground: oklch(0.985 0 0);
+-  --sidebar-border: oklch(1 0 0 / 10%);
+-  --sidebar-ring: oklch(0.556 0 0);
++  --background: oklch(0.066 0.008 280);
++  --foreground: oklch(0.945 0.012 280);
++  --card: oklch(0.107 0.010 280);
++  --card-foreground: oklch(0.945 0.012 280);
++  --popover: oklch(0.107 0.010 280);
++  --popover-foreground: oklch(0.945 0.012 280);
++  --primary: oklch(0.691 0.172 60);
++  --primary-foreground: oklch(0.145 0.030 50);
++  --secondary: oklch(0.150 0.010 280);
++  --secondary-foreground: oklch(0.945 0.012 280);
++  --muted: oklch(0.150 0.010 280);
++  --muted-foreground: oklch(0.650 0.015 280);
++  --accent: oklch(0.150 0.010 280);
++  --accent-foreground: oklch(0.945 0.012 280);
++  --destructive: oklch(0.621 0.249 20);
++  --border: oklch(0.175 0.010 280);
++  --input: oklch(0.175 0.010 280);
++  --ring: oklch(0.691 0.172 60 / 0.40);
++  --sidebar: oklch(0.077 0.008 280);
++  --sidebar-foreground: oklch(0.948 0.010 280);
++  --sidebar-primary: oklch(0.160 0.010 280);
++  --sidebar-primary-foreground: oklch(0.948 0.010 280);
++  --sidebar-accent: oklch(0.160 0.010 280);
++  --sidebar-accent-foreground: oklch(0.948 0.010 280);
++  --sidebar-border: oklch(0.160 0.010 280);
++  --sidebar-ring: oklch(0.691 0.172 60 / 0.40);
++  --success: oklch(0.704 0.191 140);
++  --success-foreground: oklch(1 0 0);
++  --warning: oklch(0.666 0.195 40);
++  --warning-foreground: oklch(1 0 0);
++  --info: oklch(0.641 0.228 260);
++  --info-foreground: oklch(1 0 0);
+ }
+ 
+ @layer base {
+diff --git a/tsconfig.json b/tsconfig.json
+index 88d1ca0..447fc5c 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,31 +12,70 @@
+     "target": "ES2022",
+     "module": "preserve",
+     "paths": {
+-      "@spartan-ng/helm/button": ["./libs/ui/button/src/index.ts"],
+-      "@spartan-ng/helm/utils": ["./libs/ui/utils/src/index.ts"],
+-      "@spartan-ng/helm/card": ["./libs/ui/card/src/index.ts"],
+-      "@spartan-ng/helm/input": ["./libs/ui/input/src/index.ts"],
+-      "@spartan-ng/helm/table": ["./libs/ui/table/src/index.ts"],
+-      "@spartan-ng/helm/select": ["./libs/ui/select/src/index.ts"],
+-      "@spartan-ng/helm/dialog": ["./libs/ui/dialog/src/index.ts"],
+-      "@spartan-ng/helm/tabs": ["./libs/ui/tabs/src/index.ts"],
+-      "@spartan-ng/helm/badge": ["./libs/ui/badge/src/index.ts"],
+-      "@spartan-ng/helm/avatar": ["./libs/ui/avatar/src/index.ts"],
+-      "@spartan-ng/helm/tooltip": ["./libs/ui/tooltip/src/index.ts"],
+-      "@spartan-ng/helm/switch": ["./libs/ui/switch/src/index.ts"],
+-      "@spartan-ng/helm/textarea": ["./libs/ui/textarea/src/index.ts"],
+-      "@spartan-ng/helm/field": ["./libs/ui/field/src/index.ts"],
+-      "@spartan-ng/helm/label": ["./libs/ui/label/src/index.ts"],
+-      "@spartan-ng/helm/separator": ["./libs/ui/separator/src/index.ts"],
+-      "@spartan-ng/helm/sidebar": ["./libs/ui/sidebar/src/index.ts"],
+-      "@spartan-ng/helm/sheet": ["./libs/ui/sheet/src/index.ts"],
+-      "@spartan-ng/helm/skeleton": ["./libs/ui/skeleton/src/index.ts"]
++      "@spartan-ng/helm/button": [
++        "./libs/ui/button/src/index.ts"
++      ],
++      "@spartan-ng/helm/utils": [
++        "./libs/ui/utils/src/index.ts"
++      ],
++      "@spartan-ng/helm/card": [
++        "./libs/ui/card/src/index.ts"
++      ],
++      "@spartan-ng/helm/input": [
++        "./libs/ui/input/src/index.ts"
++      ],
++      "@spartan-ng/helm/table": [
++        "./libs/ui/table/src/index.ts"
++      ],
++      "@spartan-ng/helm/select": [
++        "./libs/ui/select/src/index.ts"
++      ],
++      "@spartan-ng/helm/dialog": [
++        "./libs/ui/dialog/src/index.ts"
++      ],
++      "@spartan-ng/helm/tabs": [
++        "./libs/ui/tabs/src/index.ts"
++      ],
++      "@spartan-ng/helm/badge": [
++        "./libs/ui/badge/src/index.ts"
++      ],
++      "@spartan-ng/helm/avatar": [
++        "./libs/ui/avatar/src/index.ts"
++      ],
++      "@spartan-ng/helm/tooltip": [
++        "./libs/ui/tooltip/src/index.ts"
++      ],
++      "@spartan-ng/helm/switch": [
++        "./libs/ui/switch/src/index.ts"
++      ],
++      "@spartan-ng/helm/textarea": [
++        "./libs/ui/textarea/src/index.ts"
++      ],
++      "@spartan-ng/helm/field": [
++        "./libs/ui/field/src/index.ts"
++      ],
++      "@spartan-ng/helm/label": [
++        "./libs/ui/label/src/index.ts"
++      ],
++      "@spartan-ng/helm/separator": [
++        "./libs/ui/separator/src/index.ts"
++      ],
++      "@spartan-ng/helm/sidebar": [
++        "./libs/ui/sidebar/src/index.ts"
++      ],
++      "@spartan-ng/helm/sheet": [
++        "./libs/ui/sheet/src/index.ts"
++      ],
++      "@spartan-ng/helm/skeleton": [
++        "./libs/ui/skeleton/src/index.ts"
++      ]
+     }
+   },
+   "angularCompilerOptions": {
+     "enableI18nLegacyMessageIdFormat": false,
+     "strictInjectionParameters": true,
+-    "strictInputAccessModifiers": true
++    "strictInputAccessModifiers": true,
++    "strictTemplates": true
+   },
+   "files": [],
+   "references": [

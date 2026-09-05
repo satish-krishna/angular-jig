@@ -1,0 +1,258 @@
+<div class="flex flex-col gap-6 p-4 sm:p-6">
+  <!-- Page header -->
+  <div class="flex flex-col gap-2">
+    <h1 class="text-3xl font-bold text-foreground">Roster</h1>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-card rounded-lg p-4 border border-border">
+    <div class="flex flex-col gap-3 sm:flex-row sm:gap-3 flex-1">
+      <!-- Search input -->
+      <input
+        hlmInput
+        type="text"
+        placeholder="Search heroes by name, alias, or ID..."
+        [value]="vm.searchQuery()"
+        (input)="vm.updateSearch($event.target.value)"
+        class="flex-1"
+        aria-label="Search heroes"
+      />
+
+      <!-- Class filter select -->
+      <hlm-select
+        [ngModel]="vm.selectedClass()"
+        (ngModelChange)="vm.updateClassFilter($event)"
+      >
+        <button hlmSelectTrigger class="w-full sm:w-48">
+          <hlm-select-value placeholder="All classes" />
+        </button>
+        <hlm-select-content>
+          <hlm-select-item value="All">All classes</hlm-select-item>
+          @for (powerClass of vm.powerClasses(); track powerClass) {
+            <hlm-select-item [value]="powerClass">
+              {{ powerClass }}
+            </hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <!-- Recruit button -->
+    <button
+      hlmBtn
+      class="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
+      routerLink="/recruit"
+    >
+      <ng-icon name="lucideUserPlus" class="size-4 mr-2" />
+      Recruit
+    </button>
+  </div>
+
+  <!-- Table view (>= 768px) -->
+  <div class="hidden sm:block bg-card rounded-lg border border-border overflow-hidden">
+    <div class="overflow-x-auto">
+      <table hlmTable>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh>Hero</th>
+            <th hlmTh class="text-center">Class</th>
+            <th hlmTh class="text-center">Power</th>
+            <th hlmTh class="text-center">Status</th>
+            <th hlmTh class="text-center">Clearance</th>
+            <th hlmTh class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (hero of vm.filteredHeroes(); track hero.id) {
+            <tr hlmTr>
+              <!-- Hero name/ID with avatar -->
+              <td hlmTd class="font-medium">
+                <div class="flex items-center gap-3">
+                  <div hlmAvatar>
+                    <div
+                      hlmAvatarFallback
+                      class="bg-primary text-primary-foreground font-bold text-xs"
+                    >
+                      {{ hero.name.substring(0, 2).toUpperCase() }}
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <div class="font-semibold text-foreground">{{ hero.name }}</div>
+                    <div class="text-xs text-muted-foreground">{{ hero.id }}</div>
+                  </div>
+                </div>
+              </td>
+              <!-- Power class badge -->
+              <td hlmTd class="text-center">
+                <span hlmBadge variant="outline" class="text-xs">
+                  {{ hero.powerClass }}
+                </span>
+              </td>
+              <!-- Power index -->
+              <td hlmTd class="text-center font-bold text-primary">
+                {{ hero.powerIndex }}
+              </td>
+              <!-- Status badge -->
+              <td hlmTd class="text-center">
+                <span
+                  hlmBadge
+                  [variant]="statusVariant(hero.status)"
+                  class="text-xs"
+                >
+                  {{ hero.status }}
+                </span>
+              </td>
+              <!-- Clearance tier -->
+              <td hlmTd class="text-center text-sm font-medium">
+                {{ hero.clearanceTier }}
+              </td>
+              <!-- Actions -->
+              <td hlmTd class="text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="sm"
+                    [routerLink]="['/detail', hero.id]"
+                    class="h-8 w-8 p-0"
+                    aria-label="Edit hero"
+                  >
+                    <ng-icon name="lucidePencil" class="size-4" />
+                  </button>
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="sm"
+                    class="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                    aria-label="Retire hero"
+                  >
+                    <ng-icon name="lucideTrash2" class="size-4" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table footer -->
+    <div class="flex items-center justify-between px-4 py-3 border-t border-border text-sm text-muted-foreground">
+      <span>{{ vm.heroCount() }} of {{ vm.totalHeroes() }} heroes</span>
+      <span>Sorted by power</span>
+    </div>
+  </div>
+
+  <!-- Card view (<= 640px) -->
+  <div class="grid grid-cols-1 sm:hidden gap-4">
+    @for (hero of vm.filteredHeroes(); track hero.id) {
+      <div hlmCard class="bg-card">
+        <div hlmCardContent class="flex flex-col gap-4 p-4">
+          <!-- Hero header -->
+          <div class="flex items-start gap-3">
+            <div hlmAvatar class="flex-shrink-0">
+              <div
+                hlmAvatarFallback
+                class="bg-primary text-primary-foreground font-bold"
+              >
+                {{ hero.name.substring(0, 2).toUpperCase() }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-1 flex-1 min-w-0">
+              <div class="font-bold text-foreground truncate">{{ hero.name }}</div>
+              <div class="text-xs text-muted-foreground truncate">{{ hero.alias }}</div>
+              <div class="text-xs text-muted-foreground">ID: {{ hero.id }}</div>
+            </div>
+          </div>
+
+          <!-- Power and status -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center gap-2 bg-muted/50 rounded p-2">
+              <ng-icon name="lucideZap" class="size-4 text-primary flex-shrink-0" />
+              <span class="font-bold text-primary">{{ hero.powerIndex }}</span>
+            </div>
+            <div class="flex items-center gap-2 bg-muted/50 rounded p-2">
+              <span hlmBadge [variant]="statusVariant(hero.status)" class="text-xs">
+                {{ hero.status }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Badges row -->
+          <div class="flex gap-2 flex-wrap">
+            <span hlmBadge variant="outline" class="text-xs">
+              {{ hero.powerClass }}
+            </span>
+            <span hlmBadge variant="secondary" class="text-xs">
+              {{ hero.clearanceTier }}
+            </span>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 gap-2 text-xs text-muted-foreground border-t border-border pt-3">
+            <div>
+              <div class="font-semibold text-foreground">{{ hero.missionCount }}</div>
+              <div>Missions</div>
+            </div>
+            <div>
+              <div class="font-semibold text-foreground">{{ (hero.successRate * 100).toFixed(0) }}%</div>
+              <div>Success rate</div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-2">
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              [routerLink]="['/detail', hero.id]"
+              class="flex-1"
+            >
+              <ng-icon name="lucidePencil" class="size-4 mr-2" />
+              Edit
+            </button>
+            <button
+              hlmBtn
+              variant="ghost"
+              size="sm"
+              class="text-destructive hover:text-destructive"
+            >
+              <ng-icon name="lucideTrash2" class="size-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (vm.filteredHeroes().length === 0) {
+      <div class="text-center py-8 text-muted-foreground">
+        <ng-icon name="lucideUsers" class="size-12 mx-auto mb-2 opacity-50" />
+        <p>No heroes match your search criteria</p>
+      </div>
+    }
+  </div>
+
+  <!-- Empty state for desktop table -->
+  @if (vm.filteredHeroes().length === 0 && (vm.searchQuery() !== '' || vm.selectedClass() !== 'All')) {
+    <div class="hidden sm:block text-center py-12 text-muted-foreground bg-card rounded-lg border border-border">
+      <ng-icon name="lucideUsers" class="size-12 mx-auto mb-2 opacity-50" />
+      <p>No heroes match your search criteria</p>
+    </div>
+  }
+
+  <!-- Summary footer (desktop) -->
+  @if (vm.filteredHeroes().length > 0) {
+    <div class="hidden sm:flex items-center justify-between text-sm text-muted-foreground px-4">
+      <span>{{ vm.heroCount() }} of {{ vm.totalHeroes() }} heroes</span>
+      <span>Sorted by power</span>
+    </div>
+  }
+
+  <!-- Summary footer (mobile) -->
+  @if (vm.filteredHeroes().length > 0) {
+    <div class="sm:hidden flex items-center justify-between text-xs text-muted-foreground px-2 py-2">
+      <span>{{ vm.heroCount() }} of {{ vm.totalHeroes() }} heroes</span>
+    </div>
+  }
+</div>

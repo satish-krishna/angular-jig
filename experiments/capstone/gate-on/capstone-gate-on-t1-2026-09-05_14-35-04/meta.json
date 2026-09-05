@@ -1,0 +1,423 @@
+{
+  "runId": "capstone-gate-on-t1-2026-09-05_14-35-04",
+  "part": "capstone",
+  "condition": "gate-on",
+  "trial": 1,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "1a69e7e4b54f4aa0a7f3e3505fd2e06dc8eb4073"
+  },
+  "branch": "run/capstone-capstone-gate-on-t1-2026-09-05_14-35-04",
+  "resultSha": "4bb2ff4232caffe443d2df3312f9e74ca6d37953",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/capstone-gate-on.settings.json",
+  "stages": [
+    {
+      "stage": 1,
+      "name": "shell",
+      "promptFile": "capstone/stage-1-shell.md",
+      "promptBytes": 2382,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 75,
+      "costUsd": 0.7124496000000001,
+      "durationMs": 404157,
+      "durationApiMs": 308981,
+      "sessionId": "eff32cd6-1b34-4719-9326-c164cf6685fe",
+      "usage": {
+        "input_tokens": 409,
+        "cache_creation_input_tokens": 86537,
+        "cache_read_input_tokens": 3661166,
+        "output_tokens": 34570,
+        "output_tokens_details": {
+          "thinking_tokens": 11884
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 86537,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 667,
+            "cache_read_input_tokens": 103817,
+            "cache_creation_input_tokens": 449,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 449
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 408997,
+      "ok": true,
+      "hookFiringsAfter": 11
+    },
+    {
+      "stage": 2,
+      "name": "domain",
+      "promptFile": "capstone/stage-2-domain.md",
+      "promptBytes": 1919,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 15,
+      "costUsd": 0.0999424,
+      "durationMs": 65059,
+      "durationApiMs": 52945,
+      "sessionId": "ac2a5931-7dc7-471b-a93e-a0913f23d35a",
+      "usage": {
+        "input_tokens": 65,
+        "cache_creation_input_tokens": 23631,
+        "cache_read_input_tokens": 272704,
+        "output_tokens": 5069,
+        "output_tokens_details": {
+          "thinking_tokens": 1093
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 23631,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 600,
+            "cache_read_input_tokens": 40726,
+            "cache_creation_input_tokens": 634,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 634
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 69930,
+      "ok": true,
+      "hookFiringsAfter": 11
+    },
+    {
+      "stage": 3,
+      "name": "dashboard",
+      "promptFile": "capstone/stage-3-dashboard.md",
+      "promptBytes": 1637,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 38,
+      "costUsd": 0.3003712,
+      "durationMs": 194650,
+      "durationApiMs": 144080,
+      "sessionId": "e7b6b03b-a877-48bf-92d7-41422cad28f7",
+      "usage": {
+        "input_tokens": 233,
+        "cache_creation_input_tokens": 44844,
+        "cache_read_input_tokens": 1430902,
+        "output_tokens": 13472,
+        "output_tokens_details": {
+          "thinking_tokens": 3153
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 44844,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 778,
+            "cache_read_input_tokens": 62349,
+            "cache_creation_input_tokens": 224,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 224
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 200349,
+      "ok": true,
+      "hookFiringsAfter": 14
+    },
+    {
+      "stage": 4,
+      "name": "roster",
+      "promptFile": "capstone/stage-4-roster.md",
+      "promptBytes": 1634,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 58,
+      "costUsd": 0.5276697000000001,
+      "durationMs": 321269,
+      "durationApiMs": 220516,
+      "sessionId": "9235168b-3a2d-4337-aa3e-e4e1b238172c",
+      "usage": {
+        "input_tokens": 377,
+        "cache_creation_input_tokens": 63783,
+        "cache_read_input_tokens": 2924167,
+        "output_tokens": 21462,
+        "output_tokens_details": {
+          "thinking_tokens": 4044
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 63783,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 772,
+            "cache_read_input_tokens": 81184,
+            "cache_creation_input_tokens": 328,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 328
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 325946,
+      "ok": true,
+      "hookFiringsAfter": 21
+    },
+    {
+      "stage": 5,
+      "name": "detail",
+      "promptFile": "capstone/stage-5-detail.md",
+      "promptBytes": 1754,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 58,
+      "costUsd": 0.6404780999999999,
+      "durationMs": 387322,
+      "durationApiMs": 318256,
+      "sessionId": "7ebf3bbf-1eb9-4106-a81b-996b80c4f989",
+      "usage": {
+        "input_tokens": 363,
+        "cache_creation_input_tokens": 82430,
+        "cache_read_input_tokens": 3085451,
+        "output_tokens": 33342,
+        "output_tokens_details": {
+          "thinking_tokens": 3403
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 82430,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 937,
+            "cache_read_input_tokens": 98787,
+            "cache_creation_input_tokens": 1372,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1372
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 392649,
+      "ok": true,
+      "hookFiringsAfter": 33
+    },
+    {
+      "stage": 6,
+      "name": "integrate",
+      "promptFile": "capstone/stage-6-integrate.md",
+      "promptBytes": 2155,
+      "responsiveGateApplied": true,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 91,
+      "costUsd": 1.1149029,
+      "durationMs": 791517,
+      "durationApiMs": 509529,
+      "sessionId": "74dbb9d7-2597-4f9b-af05-84dee2b40cfc",
+      "usage": {
+        "input_tokens": 577,
+        "cache_creation_input_tokens": 115360,
+        "cache_read_input_tokens": 6415959,
+        "output_tokens": 48402,
+        "output_tokens_details": {
+          "thinking_tokens": 17547
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 115360,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 989,
+            "cache_read_input_tokens": 131749,
+            "cache_creation_input_tokens": 1340,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1340
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 796351,
+      "ok": true,
+      "hookFiringsAfter": 39
+    }
+  ],
+  "cost": {
+    "stages": 6,
+    "costUsd": 3.395814,
+    "numTurns": 335,
+    "durationMs": 2163974,
+    "wallMs": 2194222,
+    "stagesOk": 6
+  },
+  "buildOk": true,
+  "diffEmpty": false,
+  "hookFirings": 39,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "raw-icon": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 13,
+      "all": 13
+    },
+    "shape": {
+      "hand-set-change-detection": 0,
+      "component-subscribe": 0,
+      "template-driven-form": 0,
+      "restated-validator": 0,
+      "presentational-injects-data": 0,
+      "reactive-form": 0,
+      "vm-not-component-scoped": 0,
+      "state-outside-vm": 0,
+      "feature-injects-data": 0,
+      "vm-not-provided": 0,
+      "hand-written-form-model": 0,
+      "dumb-holds-state": 0,
+      "all": 0
+    },
+    "freeloader": {
+      "legacy-control-flow": 0,
+      "ng-class-style": 0,
+      "all": 0
+    }
+  },
+  "responsive": {
+    "dashboard": {
+      "error": "Command failed: node harness/counter/responsive-auditor.mjs --dist dist/angular-jig/browser --route dashboard --anchor body --out C:\\Users\\psati\\AppData\\Local\\Temp\\responsive-capstone-gate-on-t1-2026-09-05_14-35-04\\dashboard"
+    },
+    "roster": {
+      "error": "Command failed: node harness/counter/responsive-auditor.mjs --dist dist/angular-jig/browser --route roster --anchor body --out C:\\Users\\psati\\AppData\\Local\\Temp\\responsive-capstone-gate-on-t1-2026-09-05_14-35-04\\roster"
+    },
+    "detail/11": {
+      "error": "Command failed: node harness/counter/responsive-auditor.mjs --dist dist/angular-jig/browser --route detail/11 --anchor body --out C:\\Users\\psati\\AppData\\Local\\Temp\\responsive-capstone-gate-on-t1-2026-09-05_14-35-04\\detail_11"
+    }
+  },
+  "auditAnchor": "body",
+  "auditRoutes": [
+    "dashboard",
+    "roster",
+    "detail/11"
+  ],
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-05T15:11:49.378Z"
+}

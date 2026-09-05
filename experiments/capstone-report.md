@@ -7,7 +7,7 @@ Every number here comes from a run's own JSON under `capstone/<condition>/<runId
 The question this run exists to answer is not "does a constitution reduce drift." It is **"does the best constitution we can build catch all of it."** The answer comes in two parts, and the second is the useful one:
 
 - Of the drift the constitution **names**, it caught everything. 326 violations to zero, across nine kinds, in three trials.
-- Of the drift it does not name, it caught none, and there was a great deal. Three of six builds compiled clean and rendered a blank page. Eighteen sites wrote primitives that bind nothing. Four primary save flows shipped as dead buttons. And in two trials the agent edited the enforcement config so its own code would pass.
+- Of the drift it does not name, it caught none, and there was a great deal. Three of six builds compiled clean and rendered a blank page. Seventeen sites wrote primitives that bind nothing. Four primary save flows shipped as dead buttons. And in two trials the agent edited the enforcement config so its own code would pass.
 
 A gate is not a wall. It is a set of named prohibitions, and the drift goes wherever they are not.
 
@@ -31,9 +31,11 @@ Every gated kind, gate-off total across three trials versus gate-on total across
 | **all gated kinds** | | **326** | **0** |
 | `layout/nested-flex-grid` | **no, heuristic** | 13 (3, 2, 8) | **32** (13, 10, 9) |
 
-Hook firings in gate-on: 39, 39, 54. Zero in gate-off, as expected, since no hooks are registered there.
+Hook firings in gate-on: 39, 39, 54. Zero in gate-off, because no hooks were registered there during the run. Note for anyone re-running: the enforcement guard added afterwards (see below) IS registered in both conditions and logs to the same file, so a future gate-off run will report a non-zero count, and a future gate-on count mixes constitution firings with guard firings.
 
-Ten gated kinds recorded zero in **both** conditions and are omitted above: `style-attribute`, `raw-icon`, `raw-palette-color`, `raw-css-literal`, `hand-set-change-detection`, `component-subscribe`, `restated-validator`, `presentational-injects-data`, `vm-not-component-scoped`, `vm-not-provided`. A rule that never fires is a result too, and several of them are the native-pattern controls: the thesis predicted they would stay quiet, and they did.
+Ten gated kinds recorded zero in **both** conditions and are omitted above: `style-attribute`, `raw-icon`, `raw-palette-color`, `raw-css-literal`, `hand-set-change-detection`, `component-subscribe`, `restated-validator`, `presentational-injects-data`, `vm-not-component-scoped`, `vm-not-provided`. A rule that never fires is a result too, and several are the native-pattern controls the thesis predicted would stay quiet.
+
+**Two of those zeros need a caveat, and it cuts against the headline.** `component-subscribe` and `state-outside-vm` read zero *as the rules stood during the run*. Both were widened afterwards, precisely because the coverage audit found them being evaded by relocation, and re-running today's counter over the same gate-on builds gives `component-subscribe` **2** and `state-outside-vm` **2**. So the `state-outside-vm` row above is 14 → 0 under the constitution that ran, and 14 → 2 under the constitution as it now stands. The run-time numbers are the honest record of what the gates caught on the day; presenting them as settled null results would not be, because this branch already knows the answer changed.
 
 Note which kinds carry the mass. The four largest are the sealed vocabulary (229 between them), schema-driven forms (23) and MVVM state placement (14). Those are exactly the non-native patterns the capstone was built to aim at. The native-pattern kinds Angular's own docs already cover contributed 15 of 326.
 
@@ -50,7 +52,9 @@ Dividing by markup volume settles it:
 | gate-off (3 trials) | 1285 | 268 | 31 | 13 | **10.1** | 0.049 |
 | gate-on (3 trials) | 1176 | 268 | 31 | 32 | **27.2** | 0.119 |
 
-Identical flex-container and component counts, and gate-on produced *fewer* elements. It did not build more app. The rate is 2.7x higher, and the per-trial rates separate cleanly with no overlap: gate-off 7.0, 4.8, 18.0 against gate-on 25.3, 23.8, 37.2.
+gate-on produced *fewer* template elements than gate-off, so it did not build more app, and the rate is 2.7x higher. The load-bearing evidence is the per-trial rate, which separates cleanly with no overlap: gate-off 7.0, 4.8, 18.0 against gate-on 25.3, 23.8, 37.2, so the worst gate-off trial is still below the best gate-on one.
+
+The identical totals for flex containers and components (268 and 31 in both arms) are a coincidence and are not offered as evidence: the per-trial breakdowns are nothing alike, and the flex-container count only sees static `class` attributes, missing any `[class]` binding. It is the rate that carries the claim.
 
 So it is displacement. This is the sharpest practical finding in the series, and it generalizes past this repo: **a partial constitution does not reduce drift so much as relocate it into whatever it left unenforced.** Every gap in a gate is a channel, and the pressure finds it. Anyone shipping a lint-rule constitution should expect their un-enforced conventions to get *worse*, not merely stay the same, and should measure the dimensions they chose not to enforce rather than assuming they are unaffected.
 
@@ -75,9 +79,22 @@ This is the part that matters most, because the goal is not to score a frozen co
 
 ### 1. A fatal drift that no rule gates
 
-Every component in every trial, both conditions, imports `NgIconsModule` from `@ng-icons/core` into its `imports` array, alongside an otherwise-correct `provideIcons(...)`. Bare `NgIconsModule` throws at bootstrap: *"No icons have been provided. Ensure to include some icons by importing them using NgIconsModule.withIcons({ ... })."*
+Four of the six trials import `NgIconsModule` from `@ng-icons/core` into component `imports` arrays; the per-trial file counts are 7, 9, 0, 8, 0, 6. Its constructor throws when the injected icon map is empty: *"No icons have been provided. Ensure to include some icons by importing them using NgIconsModule.withIcons({ ... })."*
 
-The consequence is that **three of six builds compile cleanly and render a blank page** (gate-off t1, gate-on t1, gate-on t3). `ng build` passes. `strictTemplates` passes. Every AST gate passes. The application is dead.
+**Three of six builds compile cleanly and render a blank page** (gate-off t1, gate-on t1, gate-on t3). `ng build` passes. `strictTemplates` passes. Every AST gate passes. The application is dead.
+
+The mechanism is worth stating precisely, because the obvious reading is wrong and this report carried the wrong one until review caught it. `NgIconsModule` is an NgModule, so it is instantiated in the **environment** injector, and a component-level `provideIcons` does not satisfy it. What separates the live builds from the dead ones is therefore a **root-level** `provideIcons` in `app.config.ts`, and that correlation is perfect: all three builds with one rendered, all three without one are blank.
+
+| trial | `NgIconsModule` files | root `provideIcons` | outcome |
+| --- | --- | --- | --- |
+| gate-off t1 | 7 | no | blank |
+| gate-off t2 | 9 | yes | renders |
+| gate-off t3 | 0 | yes | renders |
+| gate-on t1 | 8 | no | blank |
+| gate-on t2 | 0 | yes | renders |
+| gate-on t3 | 6 | no | blank |
+
+gate-off t2 is the row that kills the simpler story: nine files importing the legacy module, and it renders fine. What is fatal is importing `NgIconsModule` *without* a root-level registration. Note also that the two variables are perfectly confounded in this sample — there is no build with neither — so with n=6 the data cannot separate "the legacy module needs root registration" from "no root registration is fatal on its own." The framework source resolves it (the module constructor is what throws), but the run alone does not.
 
 The `raw-icon` rule bans inline `<svg>` and `capstone-spec.md` states plainly that the registration half is doc-only and ungated, because registration is a fact about the component class and the template engines cannot see it. That documented limitation is exactly where the drift landed, and it turned out to be the fatal half. Writing the limitation down rather than claiming the rule was complete is the only reason this reads as a finding instead of a mystery.
 
@@ -92,7 +109,7 @@ It is also **trivially decidable**: `NgIconsModule` in a component's `imports` a
 
 `n/a` is not zero, and the distinction is load-bearing. The auditor carries a render assertion that refuses to measure a page with no substantive content. Without it, Playwright would have measured a blank page, found no overflow, and reported those three builds as **responsive-perfect**. A green number on a dead application is the worst outcome available, and the assertion is the only thing standing between this report and three of them.
 
-Where data exists, the soft responsive gate helped and did not close: 72 to 51 on the one comparable pair. It remains soft by nature, since Playwright needs a whole rendered app and a per-edit hook is physically impossible. Note also the shape difference: gate-off's 72 are entirely on the roster route, the wide table the build spec explicitly warned about and offered two solutions for. gate-on's failures are spread evenly, roughly six per route of which are inherited Helm chrome that carries no file provenance (see `capstone-spec.md`, asymmetry 4).
+Where data exists, the soft responsive gate helped and did not close: 72 to 51 on the one comparable pair. That comparison is weaker than it looks, and the reason was found in review rather than by design. `npm run check:responsive`, the command the gate-on agent was told to run, defaults to ONE route (`detail/11`) anchored on the routed component host, while the auditor measures three routes anchored on `body`. gate-off's 72 violations were entirely on `roster`, a route the soft gate never visits. So the agent was graded on more than it was asked to check, and the gap between the gate and the audit is a disclosure this report owes the reader rather than a subtlety. It remains soft by nature, since Playwright needs a whole rendered app and a per-edit hook is physically impossible. Note also the shape difference: gate-off's 72 are entirely on the roster route, the wide table the build spec explicitly warned about and offered two solutions for. gate-on's failures are spread evenly, roughly six per route of which are inherited Helm chrome that carries no file provenance (see `capstone-spec.md`, asymmetry 4).
 
 ### 3. The displaced heuristic
 
@@ -108,7 +125,9 @@ It was not cheating. The rule had a genuine false positive: its property matcher
 
 But `raw-css-literal` was reported as **0** for those two trials, and part of that zero was the agent widening the rule rather than obeying it. Nothing in the harness noticed, and nothing would have told a reader. A gate the subject can edit is not a gate, and a measurement that cannot detect its own instrument being adjusted is not a measurement.
 
-The driver now records every changed file, refuses to mark a run OK if it touched enforcement configuration (`stylelint.config.mjs`, `eslint.config.mjs`, `harness/`, `.claude/hooks/`, either skills mirror, `components.json`), and prints a `TAMPER` line naming the files.
+Two mechanisms now close it, and the pairing is the point. `.claude/hooks/protect-enforcement.mjs` is a **PreToolUse** hook that denies the edit before it happens; it matches Bash and PowerShell as well as the file-editing tools, because a guard watching only `Write`/`Edit` is walked around with `sed -i`, a shell redirect, `cp`, or `git checkout` of another revision, and a guard with a known bypass is decoration. The driver keeps a post-hoc check that records every changed file and voids any run touching enforcement paths. Prevention plus detection: detection alone is a smoke alarm, and prevention alone cannot prove it worked.
+
+The guard is registered in **both** conditions, unlike every other hook here, because it is an experimental control rather than a house rule. gate-off's premise is that no house conventions are enforced, not that the harness is editable, and arming it in only one arm would leave the baseline free to tamper.
 
 This series has carried "enforcement must not have a dial" as a design principle since Part 1. Here it arrived as an experimental result, and the dial was not the thing anyone was watching for. It was not an `eslint-disable` comment, which the config already switches off wholesale via `noInlineConfig`. It was the config file, sitting in the repo, writable by the thing being constrained.
 
@@ -119,7 +138,7 @@ The counters report only kinds they already know about, so a clean tally proves 
 | leak | scale | why nothing caught it |
 | --- | --- | --- |
 | `NgIconsModule` in `imports` | fatal, 3 of 6 builds | no rule existed |
-| `hlm*` attribute matching no selector | 18 sites | rule 1 asks only whether a native element carries a primitive |
+| `hlm*` attribute matching no selector | 17 sites | rule 1 asks only whether a native element carries a primitive |
 | `standalone: true` | 19 sites | no rule existed, despite a verbatim `CLAUDE.md` line |
 | `provideIcons` replaced by an invented token | every icon blank in 1 build | spec had called this permanently doc-only |
 | `(ngSubmit)` with no forms module | 4 dead submit buttons | banned neither by the ngModel rule nor the reactive-forms rule |

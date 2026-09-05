@@ -185,6 +185,13 @@ describe('component-shape gate: capstone-residue rules (11-14, plus the two wide
     });
   });
 
+it('does not flag the app-level icon registration pattern (rule 13 regression guard)', () => {
+    // NgIcon imported, no glyph symbols, no provideIcons: the documented
+    // 'or app' pattern. An earlier draft of rule 13 flagged this and would
+    // have blocked the only capstone builds whose icons worked.
+    expect(lintTs(readFileSync(fx('capstone-residue-icon-applevel.ts'), 'utf8'), 'src/app/hero-detail/hero-detail.ts')).toEqual([]);
+  });
+
   it('passes the clean residue fixture with zero reports, at a non-ui feature path', () => {
     expect(lintTs(clean, 'src/app/roster/roster.ts')).toEqual([]);
   });

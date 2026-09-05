@@ -1,0 +1,17 @@
+{
+  "totals": {
+    "raw-palette-color": 0,
+    "space-utility": 0,
+    "raw-css-literal": 0,
+    "nested-flex-grid": 1,
+    "all": 1
+  },
+  "violations": [
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/app.html",
+      "line": 72,
+      "detail": "flex with 2 flex children (heuristic)"
+    }
+  ]
+}

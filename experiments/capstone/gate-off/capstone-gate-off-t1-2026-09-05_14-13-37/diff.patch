@@ -1,0 +1,2748 @@
+diff --git a/src/app/app.html b/src/app/app.html
+index 4023545..d0401b6 100644
+--- a/src/app/app.html
++++ b/src/app/app.html
+@@ -1,7 +1,95 @@
+-<!-- Shell plumbing only. The screens are built into the placeholder components. -->
+-<nav>
+-  <a routerLink="/dashboard">Dashboard</a>
+-  <a routerLink="/heroes">Heroes</a>
+-</nav>
++<div class="flex h-screen bg-background text-foreground">
++  <!-- Navigation Rail -->
++  <hlm-sidebar class="w-64 flex-shrink-0 border-r border-sidebar-border">
++    <div hlmSidebarGroup class="px-4 py-6">
++      <div class="font-semibold text-sidebar-foreground mb-8">Hero Ops</div>
++    </div>
++    <div hlmSidebarGroup class="space-y-1 px-2">
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/dashboard')" [class.bg-sidebar-accent]="isActive('/dashboard')">
++          <ng-icon name="lucideLayoutDashboard" class="w-5 h-5" />
++          <span>Dashboard</span>
++        </button>
++      </li>
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/roster')" [class.bg-sidebar-accent]="isActive('/roster')">
++          <ng-icon name="lucideUsers" class="w-5 h-5" />
++          <span>Roster</span>
++        </button>
++      </li>
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/missions')" [class.bg-sidebar-accent]="isActive('/missions')">
++          <ng-icon name="lucideTarget" class="w-5 h-5" />
++          <span>Missions</span>
++        </button>
++      </li>
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/threats')" [class.bg-sidebar-accent]="isActive('/threats')">
++          <ng-icon name="lucideShieldAlert" class="w-5 h-5" />
++          <span>Threats</span>
++        </button>
++      </li>
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/recruit')" [class.bg-sidebar-accent]="isActive('/recruit')">
++          <ng-icon name="lucideUserPlus" class="w-5 h-5" />
++          <span>Recruit</span>
++        </button>
++      </li>
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/settings')" [class.bg-sidebar-accent]="isActive('/settings')">
++          <ng-icon name="lucideSettings" class="w-5 h-5" />
++          <span>Settings</span>
++        </button>
++      </li>
++    </div>
++    <div hlmSidebarGroup class="mt-auto px-2 py-4 border-t border-sidebar-border">
++      <li hlmSidebarMenuItem>
++        <button hlmBtn variant="ghost" size="icon" class="w-full" (click)="toggleTheme()">
++          <ng-icon *ngIf="isDarkTheme()" name="lucideSun" class="w-5 h-5" />
++          <ng-icon *ngIf="!isDarkTheme()" name="lucideMoon" class="w-5 h-5" />
++        </button>
++      </li>
++    </div>
++  </hlm-sidebar>
+ 
+-<router-outlet />
++  <!-- Main Content -->
++  <div class="flex-1 flex flex-col overflow-hidden">
++    <!-- Top Bar -->
++    <header class="flex items-center justify-between px-6 py-4 border-b border-border bg-background">
++      <div class="flex items-center gap-4 flex-1">
++        <button hlmBtn variant="ghost" size="icon" (click)="openMobileMenu()">
++          <ng-icon name="lucideMenu" class="w-5 h-5" />
++        </button>
++        <nav class="flex items-center gap-2 text-sm text-muted-foreground">
++          <span>Hero Ops</span>
++          <ng-icon name="lucideChevronRight" class="w-4 h-4" />
++          <span>{{ getCurrentPageTitle() }}</span>
++        </nav>
++      </div>
++      <div class="flex items-center gap-3">
++        <div class="hidden sm:flex">
++          <input hlmInput type="search" placeholder="Search heroes..." class="w-48" />
++        </div>
++        <button hlmBtn variant="ghost" size="icon">
++          <ng-icon name="lucideSearch" class="w-5 h-5" />
++        </button>
++        <button hlmBtn variant="ghost" size="icon" [hlmTooltip]="'Notifications'">
++          <ng-icon name="lucideBell" class="w-5 h-5" />
++        </button>
++        <button hlmBtn variant="ghost" size="icon" (click)="toggleTheme()" [hlmTooltip]="isDarkTheme() ? 'Light mode' : 'Dark mode'">
++          <ng-icon *ngIf="isDarkTheme()" name="lucideSun" class="w-5 h-5" />
++          <ng-icon *ngIf="!isDarkTheme()" name="lucideMoon" class="w-5 h-5" />
++        </button>
++        <hlm-avatar class="cursor-pointer">
++          <img hlmAvatarImage src="https://github.com/shadcn.png" alt="User" />
++          <span hlmAvatarFallback>SK</span>
++        </hlm-avatar>
++      </div>
++    </header>
++
++    <!-- Routed Content -->
++    <main class="flex-1 overflow-auto">
++      <router-outlet />
++    </main>
++  </div>
++</div>
+diff --git a/src/app/app.routes.ts b/src/app/app.routes.ts
+index 8557fdb..833f1cd 100644
+--- a/src/app/app.routes.ts
++++ b/src/app/app.routes.ts
+@@ -7,11 +7,32 @@ export const routes: Routes = [
+     loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
+   },
+   {
+-    path: 'heroes',
+-    loadComponent: () => import('./heroes/heroes').then((m) => m.Heroes),
++    path: 'roster',
++    loadComponent: () => import('./roster/roster').then((m) => m.Roster),
+   },
+   {
+     path: 'detail/:id',
+     loadComponent: () => import('./hero-detail/hero-detail').then((m) => m.HeroDetail),
+   },
++  {
++    path: 'recruit',
++    loadComponent: () => import('./recruit/recruit').then((m) => m.Recruit),
++  },
++  {
++    path: 'threats',
++    loadComponent: () => import('./threats/threats').then((m) => m.Threats),
++  },
++  {
++    path: 'missions',
++    loadComponent: () => import('./missions/missions').then((m) => m.Missions),
++  },
++  {
++    path: 'settings',
++    loadComponent: () => import('./settings/settings').then((m) => m.Settings),
++  },
++  // Redirect legacy 'heroes' path to 'roster'
++  {
++    path: 'heroes',
++    loadComponent: () => import('./roster/roster').then((m) => m.Roster),
++  },
+ ];
+diff --git a/src/app/app.ts b/src/app/app.ts
+index 43d7fd6..365c920 100644
+--- a/src/app/app.ts
++++ b/src/app/app.ts
+@@ -1,10 +1,128 @@
+-import { Component } from '@angular/core';
+-import { RouterOutlet, RouterLink } from '@angular/router';
++import { Component, OnInit, signal, effect } from '@angular/core';
++import { RouterOutlet, Router } from '@angular/router';
++import { CommonModule } from '@angular/common';
++import { NgIconsModule, provideIcons } from '@ng-icons/core';
++import {
++  lucideLayoutDashboard,
++  lucideUsers,
++  lucideTarget,
++  lucideShieldAlert,
++  lucideUserPlus,
++  lucideSettings,
++  lucideSun,
++  lucideMoon,
++  lucideSearch,
++  lucideBell,
++  lucideChevronRight,
++  lucideMenu,
++  lucidePencil,
++  lucideTrash2,
++} from '@ng-icons/lucide';
++import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
++import { HlmButton } from '@spartan-ng/helm/button';
++import { HlmInput } from '@spartan-ng/helm/input';
++import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
+ 
+ @Component({
+   selector: 'app-root',
+-  imports: [RouterOutlet, RouterLink],
++  standalone: true,
++  imports: [
++    RouterOutlet,
++    CommonModule,
++    NgIconsModule,
++    HlmSidebarImports,
++    HlmButton,
++    HlmInput,
++    HlmTooltipImports,
++    HlmAvatarImports,
++  ],
++  providers: [
++    provideIcons({
++      lucideLayoutDashboard,
++      lucideUsers,
++      lucideTarget,
++      lucideShieldAlert,
++      lucideUserPlus,
++      lucideSettings,
++      lucideSun,
++      lucideMoon,
++      lucideSearch,
++      lucideBell,
++      lucideChevronRight,
++      lucideMenu,
++      lucidePencil,
++      lucideTrash2,
++    }),
++  ],
+   templateUrl: './app.html',
+   styleUrl: './app.css',
+ })
+-export class App {}
++export class App implements OnInit {
++  private darkMode = signal<boolean | null>(null);
++
++  constructor(private router: Router) {}
++
++  ngOnInit(): void {
++    this.initTheme();
++  }
++
++  private initTheme(): void {
++    const stored = localStorage.getItem('theme');
++    if (stored === 'dark' || stored === 'light') {
++      this.darkMode.set(stored === 'dark');
++    } else {
++      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
++      this.darkMode.set(prefersDark);
++    }
++    this.applyTheme();
++
++    effect(() => {
++      this.applyTheme();
++      localStorage.setItem('theme', this.darkMode() ? 'dark' : 'light');
++    });
++  }
++
++  private applyTheme(): void {
++    if (this.darkMode()) {
++      document.documentElement.classList.add('dark');
++    } else {
++      document.documentElement.classList.remove('dark');
++    }
++  }
++
++  isDarkTheme(): boolean {
++    return this.darkMode() ?? false;
++  }
++
++  toggleTheme(): void {
++    this.darkMode.update((v) => !v);
++  }
++
++  navigate(route: string): void {
++    this.router.navigateByUrl(route);
++  }
++
++  isActive(route: string): boolean {
++    return this.router.url === route;
++  }
++
++  getCurrentPageTitle(): string {
++    const segments = this.router.url.split('/').filter((s) => s);
++    if (!segments.length) return 'Dashboard';
++    const pageMap: Record<string, string> = {
++      dashboard: 'Dashboard',
++      roster: 'Roster',
++      missions: 'Missions',
++      threats: 'Threats',
++      recruit: 'Recruit',
++      settings: 'Settings',
++      detail: 'Hero Detail',
++    };
++    return pageMap[segments[0]] || segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
++  }
++
++  openMobileMenu(): void {
++    // TODO: Trigger mobile sidebar. This will be handled by spartan's sidebar mobile behavior.
++  }
++}
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index 1eb6863..a7e3996 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,8 +1,239 @@
+-import { Component } from '@angular/core';
++import { Component, inject } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { NgIconsModule, provideIcons } from '@ng-icons/core';
++import {
++  lucideUserCheck,
++  lucideActivity,
++  lucideZap,
++  lucideShieldAlert,
++  lucidePencil,
++  lucideTrash2,
++} from '@ng-icons/lucide';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmTableImports } from '@spartan-ng/helm/table';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
++import { DashboardViewModel } from './dashboard.viewmodel';
++import { StatTile } from '../ui/stat-tile';
++import { HeroCard } from '../ui/hero-card';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
+-  template: `<h1>Dashboard</h1>`,
++  standalone: true,
++  imports: [
++    CommonModule,
++    RouterLink,
++    NgIconsModule,
++    HlmButtonImports,
++    HlmTableImports,
++    HlmBadgeImports,
++    HlmAvatarImports,
++    HlmTooltipImports,
++    StatTile,
++    HeroCard,
++  ],
++  providers: [
++    DashboardViewModel,
++    provideIcons({
++      lucideUserCheck,
++      lucideActivity,
++      lucideZap,
++      lucideShieldAlert,
++      lucidePencil,
++      lucideTrash2,
++    }),
++  ],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      <!-- Page Header -->
++      <div class="px-6 py-6 border-b border-border bg-background">
++        <div class="flex items-center justify-between mb-1">
++          <h1 class="text-3xl font-bold text-foreground">Operations Dashboard</h1>
++          <a hlmBtn variant="default" routerLink="/recruit" class="flex items-center gap-2">
++            <span>+</span>
++            <span>Recruit</span>
++          </a>
++        </div>
++        <p class="text-sm text-muted-foreground">Real-time hero roster and threat monitoring</p>
++      </div>
++
++      <!-- Content -->
++      <div class="flex-1 overflow-auto">
++        <div class="px-6 py-6">
++          <!-- Stat Tiles Grid -->
++          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
++            <app-stat-tile
++              [label]="'Heroes'"
++              [value]="vm.heroCount()"
++              icon="lucideUserCheck"
++              [trend]="5"
++            />
++            <app-stat-tile
++              [label]="'Active Missions'"
++              [value]="vm.activeMissions()"
++              icon="lucideActivity"
++              [trend]="12"
++            />
++            <app-stat-tile
++              [label]="'Avg Power'"
++              [value]="vm.avgPower()"
++              icon="lucideZap"
++              [trend]="-3"
++            />
++            <app-stat-tile
++              [label]="'Threats'"
++              [value]="vm.threatCount()"
++              icon="lucideShieldAlert"
++              [trend]="2"
++            />
++          </div>
++
++          <!-- Top Heroes Section -->
++          <div class="mb-8">
++            <div class="flex items-center justify-between mb-4">
++              <h2 class="text-xl font-bold text-foreground">Top Heroes This Cycle</h2>
++              <a routerLink="/roster" class="text-sm text-primary hover:underline">
++                View all roster
++              </a>
++            </div>
++            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
++              <app-hero-card
++                *ngFor="let hero of vm.topHeroes()"
++                [hero]="hero"
++                [routerLink]="['/detail', hero.id]"
++                class="cursor-pointer"
++              />
++            </div>
++          </div>
++
++          <!-- Roster Section -->
++          <div class="mb-8">
++            <div class="flex items-center justify-between mb-4">
++              <h2 class="text-xl font-bold text-foreground">Roster</h2>
++              <span class="text-sm text-muted-foreground">{{ vm.heroCount() }} heroes</span>
++            </div>
++
++            <!-- Roster Table -->
++            <div class="overflow-x-auto border rounded-lg border-border">
++              <table hlmTable class="w-full">
++                <thead hlmTableHead>
++                  <tr hlmTableRow class="border-b border-border">
++                    <th hlmTableHeader class="text-left px-6 py-3 font-semibold text-foreground min-w-[200px]">
++                      HERO
++                    </th>
++                    <th hlmTableHeader class="text-left px-6 py-3 font-semibold text-foreground min-w-[100px]">
++                      CLASS
++                    </th>
++                    <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[80px]">
++                      POWER
++                    </th>
++                    <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[100px]">
++                      STATUS
++                    </th>
++                    <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[80px]">
++                      CLEAR
++                    </th>
++                    <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[100px]">
++                      ACTIONS
++                    </th>
++                  </tr>
++                </thead>
++                <tbody hlmTableBody>
++                  <tr *ngFor="let hero of vm.heroes()" hlmTableRow class="border-b border-border hover:bg-muted">
++                    <!-- Hero Name & Avatar -->
++                    <td hlmTableCell class="px-6 py-4">
++                      <div class="flex items-center gap-3">
++                        <hlm-avatar class="h-8 w-8">
++                          <span hlmAvatarFallback class="text-xs">{{ hero.name.substring(0, 2).toUpperCase() }}</span>
++                        </hlm-avatar>
++                        <div>
++                          <div class="font-semibold text-foreground">{{ hero.name }}</div>
++                          <div class="text-xs text-muted-foreground">{{ hero.id }}</div>
++                        </div>
++                      </div>
++                    </td>
++
++                    <!-- Class Badge -->
++                    <td hlmTableCell class="px-6 py-4 text-center">
++                      <span hlmBadge variant="secondary" class="inline-block">
++                        {{ hero.powerClass }}
++                      </span>
++                    </td>
++
++                    <!-- Power Index -->
++                    <td hlmTableCell class="px-6 py-4 text-center font-semibold">
++                      {{ hero.powerIndex }}
++                    </td>
++
++                    <!-- Status Pill -->
++                    <td hlmTableCell class="px-6 py-4 text-center">
++                      <span
++                        hlmBadge
++                        [ngStyle]="getStatusStyle(hero.status)"
++                        class="inline-block font-medium"
++                      >
++                        {{ hero.status }}
++                      </span>
++                    </td>
++
++                    <!-- Clearance Tier -->
++                    <td hlmTableCell class="px-6 py-4 text-center text-sm text-muted-foreground">
++                      {{ hero.clearanceTier }}
++                    </td>
++
++                    <!-- Actions -->
++                    <td hlmTableCell class="px-6 py-4 text-center">
++                      <div class="flex items-center justify-center gap-2">
++                        <a
++                          [routerLink]="['/detail', hero.id]"
++                          hlmBtn
++                          variant="ghost"
++                          size="icon"
++                          [hlmTooltip]="'View'"
++                          class="h-8 w-8"
++                        >
++                          <ng-icon name="lucidePencil" class="w-4 h-4" />
++                        </a>
++                      </div>
++                    </td>
++                  </tr>
++                </tbody>
++              </table>
++            </div>
++
++            <!-- Summary Footer -->
++            <div class="flex items-center justify-between mt-6 px-4 py-3 text-sm text-muted-foreground border-t border-border">
++              <span>{{ vm.heroCount() }} heroes</span>
++              <span>sorted by power</span>
++            </div>
++          </div>
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [
++    `
++      :host {
++        display: flex;
++        flex-direction: column;
++        height: 100%;
++      }
++    `,
++  ],
+ })
+-export class Dashboard {}
++export class Dashboard {
++  vm = inject(DashboardViewModel);
++
++  getStatusStyle(status: string): { [key: string]: string } {
++    const styles: { [key: string]: { color: string; bg: string } } = {
++      Active: { color: 'var(--success)', bg: 'rgba(47, 181, 116, 0.1)' },
++      Injured: { color: 'var(--warning)', bg: 'rgba(228, 128, 43, 0.1)' },
++      Reserve: { color: 'var(--muted-foreground)', bg: 'rgba(91, 96, 114, 0.1)' },
++      MIA: { color: 'var(--destructive)', bg: 'rgba(229, 72, 77, 0.1)' },
++    };
++    const style = styles[status] || { color: 'var(--foreground)', bg: 'transparent' };
++    return { color: style.color, backgroundColor: style.bg };
++  }
++}
+diff --git a/src/app/dashboard/dashboard.viewmodel.ts b/src/app/dashboard/dashboard.viewmodel.ts
+new file mode 100644
+index 0000000..e1b50f2
+--- /dev/null
++++ b/src/app/dashboard/dashboard.viewmodel.ts
+@@ -0,0 +1,34 @@
++import { Injectable, inject, computed } from '@angular/core';
++import { HeroService } from '../domain/hero.service';
++
++@Injectable()
++export class DashboardViewModel {
++  private heroService = inject(HeroService);
++
++  heroes = this.heroService.all;
++  heroCount = this.heroService.count;
++
++  topHeroes = computed(() => {
++    const sorted = [...this.heroes()].sort((a, b) => b.powerIndex - a.powerIndex);
++    return sorted.slice(0, 4);
++  });
++
++  activeMissions = computed(() => {
++    return this.heroes().filter((h) => h.status === 'Active').length;
++  });
++
++  avgPower = computed(() => {
++    const heroes = this.heroes();
++    if (heroes.length === 0) return 0;
++    const sum = heroes.reduce((acc, h) => acc + h.powerIndex, 0);
++    return Math.round(sum / heroes.length);
++  });
++
++  threatCount = computed(() => {
++    return this.heroes().filter((h) => h.status === 'Injured' || h.status === 'MIA').length;
++  });
++
++  navigateToRecruit(): void {
++    // This will be called from the component
++  }
++}
+diff --git a/src/app/domain/hero.model.ts b/src/app/domain/hero.model.ts
+new file mode 100644
+index 0000000..884bc88
+--- /dev/null
++++ b/src/app/domain/hero.model.ts
+@@ -0,0 +1,12 @@
++export interface Hero {
++  id: string;
++  name: string;
++  alias: string;
++  powerClass: string;
++  powerIndex: number;
++  status: 'Active' | 'Injured' | 'Reserve' | 'MIA';
++  clearanceTier: string;
++  missionCount: number;
++  successRate: number;
++  bio?: string;
++}
+diff --git a/src/app/domain/hero.schema.ts b/src/app/domain/hero.schema.ts
+new file mode 100644
+index 0000000..c6e0100
+--- /dev/null
++++ b/src/app/domain/hero.schema.ts
+@@ -0,0 +1,46 @@
++import { z } from 'zod';
++
++const powerClassOptions = [
++  { value: 'Aerial', label: 'Aerial' },
++  { value: 'Energy', label: 'Energy' },
++  { value: 'Psionic', label: 'Psionic' },
++  { value: 'Tech', label: 'Tech' },
++  { value: 'Mutant', label: 'Mutant' },
++  { value: 'Cosmic', label: 'Cosmic' },
++  { value: 'Enhanced', label: 'Enhanced' },
++] as const;
++
++const statusOptions = [
++  { value: 'Active', label: 'Active' },
++  { value: 'Injured', label: 'Injured' },
++  { value: 'Reserve', label: 'Reserve' },
++  { value: 'MIA', label: 'MIA' },
++] as const;
++
++export const heroSchema = z.object({
++  name: z
++    .string()
++    .min(1, 'Hero name is required')
++    .meta({ label: 'Codename', control: 'text', placeholder: 'Hero name' }),
++  alias: z
++    .string()
++    .min(1, 'Alter ego is required')
++    .meta({ label: 'Alter ego', control: 'text', placeholder: 'Real name or alias' }),
++  powerClass: z
++    .enum(['Aerial', 'Energy', 'Psionic', 'Tech', 'Mutant', 'Cosmic', 'Enhanced'])
++    .meta({ label: 'Power class', control: 'select', options: powerClassOptions }),
++  powerIndex: z
++    .number()
++    .min(0, 'Power must be at least 0')
++    .max(100, 'Power cannot exceed 100')
++    .meta({ label: 'Power index (0-100)', control: 'number', placeholder: '0-100' }),
++  bio: z
++    .string()
++    .optional()
++    .meta({ label: 'Field notes', control: 'textarea', placeholder: 'Field observations and notes' }),
++  status: z
++    .enum(['Active', 'Injured', 'Reserve', 'MIA'])
++    .meta({ label: 'Status', control: 'select', options: statusOptions }),
++});
++
++export type HeroModel = z.infer<typeof heroSchema>;
+diff --git a/src/app/domain/hero.service.ts b/src/app/domain/hero.service.ts
+new file mode 100644
+index 0000000..63766c3
+--- /dev/null
++++ b/src/app/domain/hero.service.ts
+@@ -0,0 +1,184 @@
++import { Injectable, signal, computed } from '@angular/core';
++import { Hero } from './hero.model';
++
++/**
++ * Example data: in-memory roster from the spec's content section.
++ * This is sample data for the prototype; a real implementation would
++ * fetch from a backend.
++ */
++const EXAMPLE_ROSTER: Hero[] = [
++  {
++    id: 'HRO-0007',
++    name: 'Silverwing',
++    alias: 'Ada Voss',
++    powerClass: 'Aerial',
++    powerIndex: 88,
++    status: 'Active',
++    clearanceTier: 'Tier 4',
++    missionCount: 64,
++    successRate: 92,
++    bio: 'Precision flyer. Excels at extraction and high-altitude recon. Pairs well with ground-anchor heroes on breach ops.',
++  },
++  {
++    id: 'HRO-0012',
++    name: 'Dr. Ion',
++    alias: 'Marcus Reyes',
++    powerClass: 'Energy',
++    powerIndex: 94,
++    status: 'Active',
++    clearanceTier: 'Tier 5',
++    missionCount: 118,
++    successRate: 88,
++    bio: 'Directed-energy specialist. High output, needs a cooldown window between deployments.',
++  },
++  {
++    id: 'HRO-0021',
++    name: 'Vantablack',
++    alias: 'Unknown',
++    powerClass: 'Psionic',
++    powerIndex: 81,
++    status: 'Reserve',
++    clearanceTier: 'Tier 3',
++    missionCount: 29,
++    successRate: 79,
++    bio: 'Stealth and misdirection. Prefers solo infiltration; low profile by design.',
++  },
++  {
++    id: 'HRO-0033',
++    name: 'Aurora Vale',
++    alias: 'Lena Park',
++    powerClass: 'Cosmic',
++    powerIndex: 97,
++    status: 'Active',
++    clearanceTier: 'Tier 5',
++    missionCount: 151,
++    successRate: 90,
++    bio: 'Cosmic-tier heavy hitter. Reserved for tier-4 and tier-5 threat responses only.',
++  },
++  {
++    id: 'HRO-0040',
++    name: 'Magnetar',
++    alias: 'Idris Kane',
++    powerClass: 'Enhanced',
++    powerIndex: 76,
++    status: 'Injured',
++    clearanceTier: 'Tier 3',
++    missionCount: 57,
++    successRate: 84,
++    bio: 'Magnetic-field control. Currently on medical hold after Harbor Breach.',
++  },
++  {
++    id: 'HRO-0044',
++    name: 'The Tinkerer',
++    alias: 'Sam Okafor',
++    powerClass: 'Tech',
++    powerIndex: 69,
++    status: 'Active',
++    clearanceTier: 'Tier 2',
++    missionCount: 22,
++    successRate: 95,
++    bio: 'Gadget and drone support. Force multiplier on any team; rarely deployed alone.',
++  },
++  {
++    id: 'HRO-0051',
++    name: 'Halcyon',
++    alias: 'Priya Nair',
++    powerClass: 'Psionic',
++    powerIndex: 85,
++    status: 'Active',
++    clearanceTier: 'Tier 4',
++    missionCount: 73,
++    successRate: 87,
++    bio: 'Crowd-calming empath. De-escalation specialist for civilian-dense operations.',
++  },
++  {
++    id: 'HRO-0058',
++    name: 'Rift',
++    alias: 'Classified',
++    powerClass: 'Cosmic',
++    powerIndex: 91,
++    status: 'Reserve',
++    clearanceTier: 'Tier 4',
++    missionCount: 44,
++    successRate: 82,
++    bio: 'Short-range teleport. Powerful but unstable; flagged for supervised deployment.',
++  },
++  {
++    id: 'HRO-0063',
++    name: 'Ember Cho',
++    alias: 'Jae Cho',
++    powerClass: 'Energy',
++    powerIndex: 78,
++    status: 'Active',
++    clearanceTier: 'Tier 3',
++    missionCount: 48,
++    successRate: 86,
++    bio: 'Thermal projection. Strong area control, watch collateral on urban ops.',
++  },
++  {
++    id: 'HRO-0070',
++    name: 'Null',
++    alias: 'Unknown',
++    powerClass: 'Mutant',
++    powerIndex: 83,
++    status: 'MIA',
++    clearanceTier: 'Tier 4',
++    missionCount: 66,
++    successRate: 80,
++    bio: 'Power-nullification field. Last seen during Operation Nightfall; status unresolved.',
++  },
++  {
++    id: 'HRO-0075',
++    name: 'Grond',
++    alias: 'Boris Volkov',
++    powerClass: 'Enhanced',
++    powerIndex: 72,
++    status: 'Active',
++    clearanceTier: 'Tier 2',
++    missionCount: 31,
++    successRate: 90,
++    bio: 'Raw strength and durability. The wall the rest of the team stands behind.',
++  },
++  {
++    id: 'HRO-0081',
++    name: 'Ms. Meridian',
++    alias: 'Grace Bello',
++    powerClass: 'Tech',
++    powerIndex: 80,
++    status: 'Active',
++    clearanceTier: 'Tier 3',
++    missionCount: 59,
++    successRate: 89,
++    bio: 'Tactical AI handler. Coordinates multi-hero ops from the field.',
++  },
++];
++
++@Injectable({ providedIn: 'root' })
++export class HeroService {
++  private heroesSignal = signal<Hero[]>(EXAMPLE_ROSTER);
++
++  all = computed(() => this.heroesSignal());
++  count = computed(() => this.heroesSignal().length);
++
++  constructor() {}
++
++  byId(id: string): Hero | undefined {
++    return this.heroesSignal().find((h) => h.id === id);
++  }
++
++  update(id: string, changes: Partial<Hero>): void {
++    this.heroesSignal.update((heroes) =>
++      heroes.map((h) => (h.id === id ? { ...h, ...changes } : h))
++    );
++  }
++
++  retire(id: string): void {
++    this.heroesSignal.update((heroes) => heroes.filter((h) => h.id !== id));
++  }
++
++  add(hero: Omit<Hero, 'id'>): void {
++    const maxId = Math.max(...EXAMPLE_ROSTER.map((h) => parseInt(h.id.split('-')[1], 10)));
++    const newId = `HRO-${String(maxId + 1).padStart(4, '0')}`;
++    this.heroesSignal.update((heroes) => [...heroes, { ...hero, id: newId }]);
++  }
++}
+diff --git a/src/app/domain/index.ts b/src/app/domain/index.ts
+new file mode 100644
+index 0000000..02b70fd
+--- /dev/null
++++ b/src/app/domain/index.ts
+@@ -0,0 +1,4 @@
++export type { Hero } from './hero.model';
++export { HeroService } from './hero.service';
++export { heroSchema } from './hero.schema';
++export type { HeroModel } from './hero.schema';
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 6377921..9c912e4 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,8 +1,618 @@
+-import { Component } from '@angular/core';
++import { Component, inject, signal } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { FormsModule } from '@angular/forms';
++import { NgIconsModule, provideIcons } from '@ng-icons/core';
++import {
++  lucideChevronLeft,
++  lucideCrosshair,
++  lucideTrash2,
++  lucidePencil,
++  lucideMoon,
++  lucideSun,
++} from '@ng-icons/lucide';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmSelectImports } from '@spartan-ng/helm/select';
++import { HlmDialogImports } from '@spartan-ng/helm/dialog';
++import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
++import { HeroDetailViewModel } from './hero-detail.viewmodel';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
+ @Component({
+   selector: 'app-hero-detail',
+-  template: `<h1>Hero detail</h1>`,
++  standalone: true,
++  imports: [
++    CommonModule,
++    RouterLink,
++    FormsModule,
++    NgIconsModule,
++    HlmButtonImports,
++    HlmAvatarImports,
++    HlmBadgeImports,
++    HlmInputImports,
++    HlmSelectImports,
++    HlmDialogImports,
++    HlmTooltipImports,
++  ],
++  providers: [
++    HeroDetailViewModel,
++    provideIcons({
++      lucideChevronLeft,
++      lucideCrosshair,
++      lucideTrash2,
++      lucidePencil,
++      lucideMoon,
++      lucideSun,
++    }),
++  ],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      @if (vm.hero(); as hero) {
++        <!-- Back Link -->
++        <div class="px-6 py-4 border-b border-border bg-background">
++          <a
++            routerLink="/roster"
++            class="inline-flex items-center gap-1 text-sm text-primary hover:opacity-80"
++          >
++            <ng-icon name="lucideChevronLeft" class="w-4 h-4" />
++            <span>Back to roster</span>
++          </a>
++        </div>
++
++        <!-- Hero Detail Header -->
++        <div class="px-6 py-6 border-b border-border bg-background">
++          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
++            <div class="flex items-start gap-4">
++              <hlm-avatar class="h-16 w-16 flex-shrink-0">
++                <span hlmAvatarFallback class="text-lg">
++                  {{ hero.name.substring(0, 2).toUpperCase() }}
++                </span>
++              </hlm-avatar>
++              <div class="flex-1 min-w-0">
++                <h1 class="text-2xl font-bold text-foreground">{{ hero.name }}</h1>
++                <p class="text-sm text-muted-foreground mb-1">{{ hero.id }}</p>
++                <p class="text-sm text-muted-foreground mb-3">{{ hero.alias }}</p>
++                <div class="flex flex-wrap gap-2">
++                  <span hlmBadge variant="secondary" class="inline-block">
++                    {{ hero.powerClass }}
++                  </span>
++                  <span
++                    hlmBadge
++                    [ngStyle]="getStatusStyle(hero.status)"
++                    class="inline-block font-medium"
++                  >
++                    {{ hero.status }}
++                  </span>
++                  <span hlmBadge variant="secondary" class="inline-block">
++                    {{ hero.clearanceTier }}
++                  </span>
++                </div>
++              </div>
++            </div>
++            <div class="flex flex-wrap gap-2 sm:flex-col sm:flex-nowrap">
++              <button
++                hlmBtn
++                variant="default"
++                class="flex items-center gap-2"
++                [hlmTooltip]="'Deploy hero'"
++              >
++                <ng-icon name="lucideCrosshair" class="w-4 h-4" />
++                <span>Deploy</span>
++              </button>
++              <button
++                hlmBtn
++                variant="destructive"
++                class="flex items-center gap-2"
++                (click)="showRetireConfirm()"
++                [hlmTooltip]="'Retire hero'"
++              >
++                <ng-icon name="lucideTrash2" class="w-4 h-4" />
++                <span>Retire</span>
++              </button>
++            </div>
++          </div>
++        </div>
++
++        <!-- Tabs -->
++        <div class="flex-1 overflow-auto">
++          <div class="px-6">
++            <!-- Tab Buttons -->
++            <div class="flex gap-1 border-b border-border mt-6 mb-0">
++              <button
++                (click)="activeTab.set('overview')"
++                [class]="activeTab() === 'overview'
++                  ? 'px-4 py-3 font-medium text-foreground border-b-2 border-primary -mb-px'
++                  : 'px-4 py-3 font-medium text-muted-foreground hover:text-foreground'"
++              >
++                Overview
++              </button>
++              <button
++                (click)="activeTab.set('powers')"
++                [class]="activeTab() === 'powers'
++                  ? 'px-4 py-3 font-medium text-foreground border-b-2 border-primary -mb-px'
++                  : 'px-4 py-3 font-medium text-muted-foreground hover:text-foreground'"
++              >
++                Powers
++              </button>
++              <button
++                (click)="activeTab.set('missions')"
++                [class]="activeTab() === 'missions'
++                  ? 'px-4 py-3 font-medium text-foreground border-b-2 border-primary -mb-px'
++                  : 'px-4 py-3 font-medium text-muted-foreground hover:text-foreground'"
++              >
++                Missions
++              </button>
++              <button
++                (click)="activeTab.set('edit')"
++                [class]="activeTab() === 'edit'
++                  ? 'px-4 py-3 font-medium text-foreground border-b-2 border-primary -mb-px'
++                  : 'px-4 py-3 font-medium text-muted-foreground hover:text-foreground'"
++              >
++                Edit
++              </button>
++            </div>
++
++            <!-- Overview Tab -->
++            @if (activeTab() === 'overview') {
++            <div class="pb-8">
++                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
++                  <!-- Field Summary -->
++                  <div class="lg:col-span-2">
++                    <div class="bg-card border border-border rounded-lg p-4 shadow-sm">
++                      <h3 class="text-sm font-semibold text-foreground mb-4">Field Summary</h3>
++                      <p class="text-sm text-muted-foreground leading-relaxed">
++                        {{ hero.bio || 'No field notes available.' }}
++                      </p>
++                    </div>
++
++                    <!-- Mini Stats -->
++                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
++                      <div class="bg-card border border-border rounded-lg p-4">
++                        <div class="text-xs font-medium text-muted-foreground mb-1">
++                          Missions
++                        </div>
++                        <div class="text-2xl font-bold text-foreground">
++                          {{ hero.missionCount }}
++                        </div>
++                      </div>
++                      <div class="bg-card border border-border rounded-lg p-4">
++                        <div class="text-xs font-medium text-muted-foreground mb-1">
++                          Success Rate
++                        </div>
++                        <div class="text-2xl font-bold text-foreground">
++                          {{ hero.successRate }}%
++                        </div>
++                      </div>
++                      <div class="bg-card border border-border rounded-lg p-4">
++                        <div class="text-xs font-medium text-muted-foreground mb-1">
++                          Power Index
++                        </div>
++                        <div class="text-2xl font-bold text-foreground">
++                          {{ hero.powerIndex }}
++                        </div>
++                      </div>
++                    </div>
++                  </div>
++
++                  <!-- Dossier (Key/Value) -->
++                  <div class="bg-card border border-border rounded-lg p-4 shadow-sm">
++                    <h3 class="text-sm font-semibold text-foreground mb-4">Dossier</h3>
++                    <div class="space-y-3 text-sm">
++                      <div class="flex justify-between">
++                        <span class="text-muted-foreground">Status</span>
++                        <span class="font-medium text-foreground">{{ hero.status }}</span>
++                      </div>
++                      <div class="flex justify-between">
++                        <span class="text-muted-foreground">Class</span>
++                        <span class="font-medium text-foreground">{{ hero.powerClass }}</span>
++                      </div>
++                      <div class="flex justify-between">
++                        <span class="text-muted-foreground">Clearance</span>
++                        <span class="font-medium text-foreground">{{ hero.clearanceTier }}</span>
++                      </div>
++                      <div class="flex justify-between">
++                        <span class="text-muted-foreground">Power</span>
++                        <span class="font-medium text-foreground">{{ hero.powerIndex }}/100</span>
++                      </div>
++                    </div>
++                  </div>
++                </div>
++            </div>
++            }
++
++            <!-- Powers Tab -->
++            @if (activeTab() === 'powers') {
++            <div class="pb-8">
++              <div class="mt-4">
++                  <div class="bg-card border border-border rounded-lg p-4 shadow-sm">
++                    <h3 class="text-sm font-semibold text-foreground mb-4">
++                      Power Index: {{ hero.powerIndex }}/100
++                    </h3>
++                    <!-- Power Meter -->
++                    <div class="mb-4">
++                      <div class="w-full h-3 bg-muted rounded-full overflow-hidden">
++                        <div
++                          class="h-full bg-primary rounded-full transition-all"
++                          [style.width.%]="hero.powerIndex"
++                        ></div>
++                      </div>
++                    </div>
++                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
++                      <div
++                        class="px-3 py-2 bg-muted rounded text-sm font-medium text-foreground"
++                      >
++                        <span>{{ hero.powerClass }}</span>
++                      </div>
++                      <div class="px-3 py-2 bg-muted rounded text-sm font-medium text-foreground">
++                        <span>Tier {{ hero.clearanceTier.split(' ')[1] }} Capability</span>
++                      </div>
++                    </div>
++                  </div>
++              </div>
++            </div>
++            }
++
++            <!-- Missions Tab -->
++            @if (activeTab() === 'missions') {
++            <div class="pb-8">
++              <div class="mt-4">
++                <div class="bg-card border border-border rounded-lg p-4 shadow-sm">
++                    <h3 class="text-sm font-semibold text-foreground mb-4">
++                      Deployment Record
++                    </h3>
++                    <div class="space-y-3">
++                      <div class="flex items-center justify-between pb-3 border-b border-border">
++                        <div>
++                          <div class="text-sm font-medium text-foreground">
++                            Total Deployments
++                          </div>
++                          <div class="text-xs text-muted-foreground">
++                            Career missions
++                          </div>
++                        </div>
++                        <div class="text-2xl font-bold text-foreground">
++                          {{ hero.missionCount }}
++                        </div>
++                      </div>
++                      <div class="flex items-center justify-between pt-2">
++                        <div>
++                          <div class="text-sm font-medium text-foreground">
++                            Success Rate
++                          </div>
++                          <div class="text-xs text-muted-foreground">
++                            Successful outcomes
++                          </div>
++                        </div>
++                        <div
++                          class="px-3 py-2 bg-muted rounded font-medium text-foreground"
++                        >
++                          {{ hero.successRate }}%
++                        </div>
++                      </div>
++                    </div>
++                  </div>
++              </div>
++            </div>
++            }
++
++            <!-- Edit Tab -->
++            @if (activeTab() === 'edit') {
++            <div class="pb-8">
++              <div class="mt-4">
++                  @if (!vm.isEditing()) {
++                    <div class="text-center py-12">
++                      <button
++                        hlmBtn
++                        variant="default"
++                        class="flex items-center gap-2 mx-auto"
++                        (click)="vm.startEditing()"
++                      >
++                        <ng-icon name="lucidePencil" class="w-4 h-4" />
++                        <span>Edit Hero</span>
++                      </button>
++                    </div>
++                  } @else {
++                    <div class="bg-card border border-border rounded-lg p-6 shadow-sm max-w-2xl">
++                      <h3 class="text-lg font-semibold text-foreground mb-6">Edit Hero</h3>
++                      <form (ngSubmit)="onSubmit()" class="space-y-6">
++                        <!-- Name Field -->
++                        <div class="flex flex-col gap-2">
++                          <label class="text-sm font-medium text-foreground">
++                            Codename
++                          </label>
++                          <input
++                            hlmInput
++                            type="text"
++                            placeholder="Hero name"
++                            [value]="vm.getFormValue('name') || ''"
++                            (input)="onNameChange($event)"
++                            class="w-full"
++                          />
++                          @if (vm.formErrors()['name']) {
++                            <span class="text-xs text-destructive">
++                              {{ vm.formErrors()['name'] }}
++                            </span>
++                          }
++                        </div>
++
++                        <!-- Alias Field -->
++                        <div class="flex flex-col gap-2">
++                          <label class="text-sm font-medium text-foreground">
++                            Alter ego
++                          </label>
++                          <input
++                            hlmInput
++                            type="text"
++                            placeholder="Real name or alias"
++                            [value]="vm.getFormValue('alias') || ''"
++                            (input)="onAliasChange($event)"
++                            class="w-full"
++                          />
++                          @if (vm.formErrors()['alias']) {
++                            <span class="text-xs text-destructive">
++                              {{ vm.formErrors()['alias'] }}
++                            </span>
++                          }
++                        </div>
++
++                        <!-- Power Class Select -->
++                        <div class="flex flex-col gap-2">
++                          <label class="text-sm font-medium text-foreground">
++                            Power class
++                          </label>
++                          <select
++                            hlmInput
++                            [value]="vm.getFormValue('powerClass') || ''"
++                            (change)="onPowerClassChange($event)"
++                            class="w-full"
++                          >
++                            <option value="">Select a power class</option>
++                            <option value="Aerial">Aerial</option>
++                            <option value="Energy">Energy</option>
++                            <option value="Psionic">Psionic</option>
++                            <option value="Tech">Tech</option>
++                            <option value="Mutant">Mutant</option>
++                            <option value="Cosmic">Cosmic</option>
++                            <option value="Enhanced">Enhanced</option>
++                          </select>
++                          @if (vm.formErrors()['powerClass']) {
++                            <span class="text-xs text-destructive">
++                              {{ vm.formErrors()['powerClass'] }}
++                            </span>
++                          }
++                        </div>
++
++                        <!-- Power Index Field -->
++                        <div class="flex flex-col gap-2">
++                          <label class="text-sm font-medium text-foreground">
++                            Power index (0-100)
++                          </label>
++                          <input
++                            hlmInput
++                            type="number"
++                            min="0"
++                            max="100"
++                            placeholder="0-100"
++                            [value]="vm.getFormValue('powerIndex') || ''"
++                            (input)="onPowerIndexChange($event)"
++                            class="w-full"
++                          />
++                          @if (vm.formErrors()['powerIndex']) {
++                            <span class="text-xs text-destructive">
++                              {{ vm.formErrors()['powerIndex'] }}
++                            </span>
++                          }
++                        </div>
++
++                        <!-- Bio/Notes Textarea -->
++                        <div class="flex flex-col gap-2">
++                          <label class="text-sm font-medium text-foreground">
++                            Field notes
++                          </label>
++                          <textarea
++                            hlmInput
++                            placeholder="Field observations and notes"
++                            [value]="vm.getFormValue('bio') || ''"
++                            (input)="onBioChange($event)"
++                            class="w-full min-h-24 resize-vertical"
++                          ></textarea>
++                          @if (vm.formErrors()['bio']) {
++                            <span class="text-xs text-destructive">
++                              {{ vm.formErrors()['bio'] }}
++                            </span>
++                          }
++                        </div>
++
++                        <!-- Status Select -->
++                        <div class="flex flex-col gap-2">
++                          <label class="text-sm font-medium text-foreground">
++                            Status
++                          </label>
++                          <select
++                            hlmInput
++                            [value]="vm.getFormValue('status') || ''"
++                            (change)="onStatusChange($event)"
++                            class="w-full"
++                          >
++                            <option value="">Select a status</option>
++                            <option value="Active">Active</option>
++                            <option value="Injured">Injured</option>
++                            <option value="Reserve">Reserve</option>
++                            <option value="MIA">MIA</option>
++                          </select>
++                          @if (vm.formErrors()['status']) {
++                            <span class="text-xs text-destructive">
++                              {{ vm.formErrors()['status'] }}
++                            </span>
++                          }
++                        </div>
++
++                        <!-- Form Actions -->
++                        <div class="flex gap-3 pt-6 border-t border-border">
++                          <button
++                            hlmBtn
++                            type="submit"
++                            variant="default"
++                            [disabled]="vm.isSubmitting()"
++                            class="flex-1"
++                          >
++                            @if (vm.isSubmitting()) {
++                              <span>Saving...</span>
++                            } @else {
++                              <span>Save</span>
++                            }
++                          </button>
++                          <button
++                            hlmBtn
++                            type="button"
++                            variant="outline"
++                            (click)="vm.cancelEditing()"
++                            [disabled]="vm.isSubmitting()"
++                            class="flex-1"
++                          >
++                            Cancel
++                          </button>
++                        </div>
++                      </form>
++
++                      <!-- Retire Button -->
++                      <div class="mt-6 pt-6 border-t border-border">
++                        <button
++                          hlmBtn
++                          variant="destructive"
++                          class="w-full"
++                          (click)="showRetireConfirm()"
++                        >
++                          <ng-icon name="lucideTrash2" class="w-4 h-4" />
++                          <span>Retire Hero</span>
++                        </button>
++                      </div>
++                    </div>
++                  }
++              </div>
++            </div>
++            }
++          </div>
++        </div>
++
++        <!-- Retire Confirmation Dialog -->
++        @if (showRetireDialog()) {
++          <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
++            <div class="bg-card border border-border rounded-lg p-6 shadow-lg max-w-sm w-full">
++              <h2 class="text-lg font-semibold text-foreground mb-2">Retire Hero?</h2>
++              <p class="text-sm text-muted-foreground mb-6">
++                Are you sure you want to retire {{ hero.name }}? This action cannot be undone.
++              </p>
++              <div class="flex gap-3">
++                <button
++                  hlmBtn
++                  type="button"
++                  variant="outline"
++                  (click)="closeRetireDialog()"
++                  class="flex-1"
++                >
++                  Cancel
++                </button>
++                <button
++                  hlmBtn
++                  type="button"
++                  variant="destructive"
++                  (click)="confirmRetire()"
++                  class="flex-1"
++                >
++                  Retire
++                </button>
++              </div>
++            </div>
++          </div>
++        }
++      } @else {
++        <div class="flex-1 flex items-center justify-center text-muted-foreground">
++          <p>Hero not found</p>
++        </div>
++      }
++    </div>
++  `,
++  styles: [
++    `
++      :host {
++        display: flex;
++        flex-direction: column;
++        height: 100%;
++      }
++
++      textarea {
++        font-family: inherit;
++      }
++    `,
++  ],
+ })
+-export class HeroDetail {}
++export class HeroDetail {
++  vm = inject(HeroDetailViewModel);
++
++  activeTab = signal('overview');
++  showRetireDialog = signal(false);
++
++  getStatusStyle(status: string): { [key: string]: string } {
++    const styles: { [key: string]: { color: string; bg: string } } = {
++      Active: { color: 'var(--success)', bg: 'rgba(47, 181, 116, 0.1)' },
++      Injured: { color: 'var(--warning)', bg: 'rgba(228, 128, 43, 0.1)' },
++      Reserve: { color: 'var(--muted-foreground)', bg: 'rgba(91, 96, 114, 0.1)' },
++      MIA: { color: 'var(--destructive)', bg: 'rgba(229, 72, 77, 0.1)' },
++    };
++    const style = styles[status] || { color: 'var(--foreground)', bg: 'transparent' };
++    return { color: style.color, backgroundColor: style.bg };
++  }
++
++  showRetireConfirm(): void {
++    this.showRetireDialog.set(true);
++  }
++
++  closeRetireDialog(): void {
++    this.showRetireDialog.set(false);
++  }
++
++  confirmRetire(): void {
++    this.showRetireDialog.set(false);
++    this.vm.retire();
++  }
++
++  onSubmit(): void {
++    this.vm.saveForm();
++  }
++
++  onNameChange(event: Event): void {
++    const target = event.target as HTMLInputElement;
++    this.vm.setFormValue('name', target.value);
++  }
++
++  onAliasChange(event: Event): void {
++    const target = event.target as HTMLInputElement;
++    this.vm.setFormValue('alias', target.value);
++  }
++
++  onPowerClassChange(event: Event): void {
++    const target = event.target as HTMLSelectElement;
++    const value = target.value as any;
++    this.vm.setFormValue('powerClass', value);
++  }
++
++  onPowerIndexChange(event: Event): void {
++    const target = event.target as HTMLInputElement;
++    const value = parseInt(target.value, 10) || 0;
++    this.vm.setFormValue('powerIndex', value);
++  }
++
++  onBioChange(event: Event): void {
++    const target = event.target as HTMLTextAreaElement;
++    this.vm.setFormValue('bio', target.value);
++  }
++
++  onStatusChange(event: Event): void {
++    const target = event.target as HTMLSelectElement;
++    const value = target.value as any;
++    this.vm.setFormValue('status', value);
++  }
++}
+diff --git a/src/app/hero-detail/hero-detail.viewmodel.ts b/src/app/hero-detail/hero-detail.viewmodel.ts
+new file mode 100644
+index 0000000..8151855
+--- /dev/null
++++ b/src/app/hero-detail/hero-detail.viewmodel.ts
+@@ -0,0 +1,109 @@
++import { Injectable, inject, computed, signal } from '@angular/core';
++import { ActivatedRoute } from '@angular/router';
++import { Router } from '@angular/router';
++import { HeroService } from '../domain/hero.service';
++import { Hero } from '../domain/hero.model';
++import { heroSchema, HeroModel } from '../domain/hero.schema';
++
++@Injectable()
++export class HeroDetailViewModel {
++  private heroService = inject(HeroService);
++  private route = inject(ActivatedRoute);
++  private router = inject(Router);
++
++  private heroIdSignal = signal<string>('');
++  private formValuesSignal = signal<Partial<HeroModel>>({});
++  private formErrorsSignal = signal<Record<string, string>>({});
++  private isEditingSignal = signal(false);
++  private isSubmittingSignal = signal(false);
++
++  hero = computed(() => {
++    const id = this.heroIdSignal();
++    if (!id) return undefined;
++    return this.heroService.byId(id);
++  });
++
++  isEditing = this.isEditingSignal.asReadonly();
++  isSubmitting = this.isSubmittingSignal.asReadonly();
++  formErrors = this.formErrorsSignal.asReadonly();
++
++  constructor() {
++    this.route.params.subscribe((params) => {
++      this.heroIdSignal.set(params['id'] || '');
++      const hero = this.hero();
++      if (hero) {
++        this.resetForm(hero);
++      }
++    });
++  }
++
++  private resetForm(hero: Hero): void {
++    this.formValuesSignal.set({
++      name: hero.name,
++      alias: hero.alias,
++      powerClass: hero.powerClass as any,
++      powerIndex: hero.powerIndex,
++      bio: hero.bio || '',
++      status: hero.status as any,
++    });
++    this.formErrorsSignal.set({});
++  }
++
++  startEditing(): void {
++    this.isEditingSignal.set(true);
++  }
++
++  cancelEditing(): void {
++    const hero = this.hero();
++    if (hero) {
++      this.resetForm(hero);
++    }
++    this.isEditingSignal.set(false);
++  }
++
++  setFormValue<K extends keyof HeroModel>(key: K, value: HeroModel[K]): void {
++    this.formValuesSignal.update((values) => ({
++      ...values,
++      [key]: value,
++    }));
++  }
++
++  async saveForm(): Promise<void> {
++    const hero = this.hero();
++    if (!hero) return;
++
++    this.isSubmittingSignal.set(true);
++    const formValues = this.formValuesSignal();
++
++    try {
++      const validatedData = await heroSchema.parseAsync(formValues);
++      this.heroService.update(hero.id, validatedData);
++      this.resetForm(this.hero()!);
++      this.isEditingSignal.set(false);
++      this.formErrorsSignal.set({});
++    } catch (error: unknown) {
++      if (error instanceof Error && 'issues' in error) {
++        const zodError = error as any;
++        const errors: Record<string, string> = {};
++        zodError.issues?.forEach((issue: any) => {
++          const path = issue.path?.[0] || 'form';
++          errors[path] = issue.message;
++        });
++        this.formErrorsSignal.set(errors);
++      }
++    } finally {
++      this.isSubmittingSignal.set(false);
++    }
++  }
++
++  retire(): void {
++    const hero = this.hero();
++    if (!hero) return;
++    this.heroService.retire(hero.id);
++    this.router.navigate(['/roster']);
++  }
++
++  getFormValue<K extends keyof HeroModel>(key: K): HeroModel[K] | undefined {
++    return this.formValuesSignal()[key];
++  }
++}
+diff --git a/src/app/missions/missions.ts b/src/app/missions/missions.ts
+new file mode 100644
+index 0000000..6fff47b
+--- /dev/null
++++ b/src/app/missions/missions.ts
+@@ -0,0 +1,36 @@
++import { Component } from '@angular/core';
++import { CommonModule } from '@angular/common';
++
++@Component({
++  selector: 'app-missions',
++  standalone: true,
++  imports: [CommonModule],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      <!-- Page Header -->
++      <div class="px-6 py-6 border-b border-border bg-background">
++        <h1 class="text-3xl font-bold text-foreground mb-1">Missions</h1>
++        <p class="text-sm text-muted-foreground">View and manage hero deployments</p>
++      </div>
++
++      <!-- Content -->
++      <div class="flex-1 overflow-auto">
++        <div class="px-6 py-6">
++          <div class="bg-card border border-border rounded-lg p-6 shadow-sm text-center">
++            <p class="text-muted-foreground">Mission control system coming soon</p>
++          </div>
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [
++    `
++      :host {
++        display: flex;
++        flex-direction: column;
++        height: 100%;
++      }
++    `,
++  ],
++})
++export class Missions {}
+diff --git a/src/app/recruit/recruit.ts b/src/app/recruit/recruit.ts
+new file mode 100644
+index 0000000..a213ca1
+--- /dev/null
++++ b/src/app/recruit/recruit.ts
+@@ -0,0 +1,272 @@
++import { Component, inject } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { FormsModule } from '@angular/forms';
++import { NgIconsModule, provideIcons } from '@ng-icons/core';
++import { lucideChevronLeft } from '@ng-icons/lucide';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmSelectImports } from '@spartan-ng/helm/select';
++import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
++import { RecruitViewModel } from './recruit.viewmodel';
++
++@Component({
++  selector: 'app-recruit',
++  standalone: true,
++  imports: [
++    CommonModule,
++    RouterLink,
++    FormsModule,
++    NgIconsModule,
++    HlmButtonImports,
++    HlmInputImports,
++    HlmSelectImports,
++    HlmTooltipImports,
++  ],
++  providers: [
++    RecruitViewModel,
++    provideIcons({
++      lucideChevronLeft,
++    }),
++  ],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      <!-- Back Link -->
++      <div class="px-6 py-4 border-b border-border bg-background">
++        <a
++          routerLink="/dashboard"
++          class="inline-flex items-center gap-1 text-sm text-primary hover:opacity-80"
++        >
++          <ng-icon name="lucideChevronLeft" class="w-4 h-4" />
++          <span>Back to dashboard</span>
++        </a>
++      </div>
++
++      <!-- Page Header -->
++      <div class="px-6 py-6 border-b border-border bg-background">
++        <h1 class="text-3xl font-bold text-foreground mb-1">Recruit Hero</h1>
++        <p class="text-sm text-muted-foreground">Add a new hero to the roster</p>
++      </div>
++
++      <!-- Form Content -->
++      <div class="flex-1 overflow-auto">
++        <div class="px-6 py-6 max-w-2xl">
++          <div class="bg-card border border-border rounded-lg p-6 shadow-sm">
++            <form (ngSubmit)="onSubmit()" class="space-y-6">
++              <!-- Codename Field -->
++              <div class="flex flex-col gap-2">
++                <label class="text-sm font-medium text-foreground">
++                  Codename
++                </label>
++                <input
++                  hlmInput
++                  type="text"
++                  placeholder="Hero name (e.g., Silverwing)"
++                  [value]="vm.getFormValue('name') || ''"
++                  (input)="onNameChange($event)"
++                  class="w-full"
++                />
++                @if (vm.formErrors()['name']) {
++                  <span class="text-xs text-destructive">
++                    {{ vm.formErrors()['name'] }}
++                  </span>
++                }
++              </div>
++
++              <!-- Alter Ego Field -->
++              <div class="flex flex-col gap-2">
++                <label class="text-sm font-medium text-foreground">
++                  Alter ego
++                </label>
++                <input
++                  hlmInput
++                  type="text"
++                  placeholder="Real name or alias"
++                  [value]="vm.getFormValue('alias') || ''"
++                  (input)="onAliasChange($event)"
++                  class="w-full"
++                />
++                @if (vm.formErrors()['alias']) {
++                  <span class="text-xs text-destructive">
++                    {{ vm.formErrors()['alias'] }}
++                  </span>
++                }
++              </div>
++
++              <!-- Power Class Select -->
++              <div class="flex flex-col gap-2">
++                <label class="text-sm font-medium text-foreground">
++                  Power class
++                </label>
++                <select
++                  hlmInput
++                  [value]="vm.getFormValue('powerClass') || ''"
++                  (change)="onPowerClassChange($event)"
++                  class="w-full"
++                >
++                  <option value="Aerial">Aerial</option>
++                  <option value="Energy">Energy</option>
++                  <option value="Psionic">Psionic</option>
++                  <option value="Tech">Tech</option>
++                  <option value="Mutant">Mutant</option>
++                  <option value="Cosmic">Cosmic</option>
++                  <option value="Enhanced">Enhanced</option>
++                </select>
++                @if (vm.formErrors()['powerClass']) {
++                  <span class="text-xs text-destructive">
++                    {{ vm.formErrors()['powerClass'] }}
++                  </span>
++                }
++              </div>
++
++              <!-- Power Index Field -->
++              <div class="flex flex-col gap-2">
++                <label class="text-sm font-medium text-foreground">
++                  Power index (0-100)
++                </label>
++                <input
++                  hlmInput
++                  type="number"
++                  min="0"
++                  max="100"
++                  placeholder="50"
++                  [value]="vm.getFormValue('powerIndex') || ''"
++                  (input)="onPowerIndexChange($event)"
++                  class="w-full"
++                />
++                @if (vm.formErrors()['powerIndex']) {
++                  <span class="text-xs text-destructive">
++                    {{ vm.formErrors()['powerIndex'] }}
++                  </span>
++                }
++              </div>
++
++              <!-- Field Notes Textarea -->
++              <div class="flex flex-col gap-2">
++                <label class="text-sm font-medium text-foreground">
++                  Field notes (optional)
++                </label>
++                <textarea
++                  hlmInput
++                  placeholder="Initial field observations..."
++                  [value]="vm.getFormValue('bio') || ''"
++                  (input)="onBioChange($event)"
++                  class="w-full min-h-24 resize-vertical"
++                ></textarea>
++                @if (vm.formErrors()['bio']) {
++                  <span class="text-xs text-destructive">
++                    {{ vm.formErrors()['bio'] }}
++                  </span>
++                }
++              </div>
++
++              <!-- Initial Status -->
++              <div class="flex flex-col gap-2">
++                <label class="text-sm font-medium text-foreground">
++                  Initial status
++                </label>
++                <select
++                  hlmInput
++                  [value]="vm.getFormValue('status') || ''"
++                  (change)="onStatusChange($event)"
++                  class="w-full"
++                >
++                  <option value="Active">Active</option>
++                  <option value="Injured">Injured</option>
++                  <option value="Reserve">Reserve</option>
++                  <option value="MIA">MIA</option>
++                </select>
++                @if (vm.formErrors()['status']) {
++                  <span class="text-xs text-destructive">
++                    {{ vm.formErrors()['status'] }}
++                  </span>
++                }
++              </div>
++
++              <!-- Form Actions -->
++              <div class="flex gap-3 pt-6 border-t border-border">
++                <button
++                  hlmBtn
++                  type="submit"
++                  variant="default"
++                  [disabled]="vm.isSubmitting()"
++                  class="flex-1"
++                >
++                  @if (vm.isSubmitting()) {
++                    <span>Recruiting...</span>
++                  } @else {
++                    <span>Recruit Hero</span>
++                  }
++                </button>
++                <button
++                  hlmBtn
++                  type="button"
++                  variant="outline"
++                  routerLink="/roster"
++                  [disabled]="vm.isSubmitting()"
++                  class="flex-1"
++                >
++                  Cancel
++                </button>
++              </div>
++            </form>
++          </div>
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [
++    `
++      :host {
++        display: flex;
++        flex-direction: column;
++        height: 100%;
++      }
++
++      textarea {
++        font-family: inherit;
++      }
++    `,
++  ],
++})
++export class Recruit {
++  vm = inject(RecruitViewModel);
++
++  onNameChange(event: Event): void {
++    const target = event.target as HTMLInputElement;
++    this.vm.setFormValue('name', target.value);
++  }
++
++  onAliasChange(event: Event): void {
++    const target = event.target as HTMLInputElement;
++    this.vm.setFormValue('alias', target.value);
++  }
++
++  onPowerClassChange(event: Event): void {
++    const target = event.target as HTMLSelectElement;
++    const value = target.value as any;
++    this.vm.setFormValue('powerClass', value);
++  }
++
++  onPowerIndexChange(event: Event): void {
++    const target = event.target as HTMLInputElement;
++    const value = parseInt(target.value, 10) || 0;
++    this.vm.setFormValue('powerIndex', value);
++  }
++
++  onBioChange(event: Event): void {
++    const target = event.target as HTMLTextAreaElement;
++    this.vm.setFormValue('bio', target.value);
++  }
++
++  onStatusChange(event: Event): void {
++    const target = event.target as HTMLSelectElement;
++    const value = target.value as any;
++    this.vm.setFormValue('status', value);
++  }
++
++  onSubmit(): void {
++    this.vm.submitForm();
++  }
++}
++
+diff --git a/src/app/recruit/recruit.viewmodel.ts b/src/app/recruit/recruit.viewmodel.ts
+new file mode 100644
+index 0000000..1a7a7ec
+--- /dev/null
++++ b/src/app/recruit/recruit.viewmodel.ts
+@@ -0,0 +1,71 @@
++import { Injectable, inject, signal } from '@angular/core';
++import { Router } from '@angular/router';
++import { HeroService } from '../domain/hero.service';
++import { heroSchema, HeroModel } from '../domain/hero.schema';
++
++@Injectable()
++export class RecruitViewModel {
++  private heroService = inject(HeroService);
++  private router = inject(Router);
++
++  private formValuesSignal = signal<Partial<HeroModel>>({
++    name: '',
++    alias: '',
++    powerClass: 'Aerial',
++    powerIndex: 50,
++    bio: '',
++    status: 'Active',
++  });
++  private formErrorsSignal = signal<Record<string, string>>({});
++  private isSubmittingSignal = signal(false);
++
++  formErrors = this.formErrorsSignal.asReadonly();
++  isSubmitting = this.isSubmittingSignal.asReadonly();
++
++  setFormValue<K extends keyof HeroModel>(key: K, value: HeroModel[K]): void {
++    this.formValuesSignal.update((values) => ({
++      ...values,
++      [key]: value,
++    }));
++  }
++
++  getFormValue<K extends keyof HeroModel>(key: K): HeroModel[K] | undefined {
++    return this.formValuesSignal()[key];
++  }
++
++  async submitForm(): Promise<void> {
++    this.isSubmittingSignal.set(true);
++    const formValues = this.formValuesSignal();
++
++    try {
++      const validatedData = await heroSchema.parseAsync(formValues);
++      this.heroService.add(validatedData as Omit<any, 'id'>);
++      this.formErrorsSignal.set({});
++      this.router.navigate(['/roster']);
++    } catch (error: unknown) {
++      if (error instanceof Error && 'issues' in error) {
++        const zodError = error as any;
++        const errors: Record<string, string> = {};
++        zodError.issues?.forEach((issue: any) => {
++          const path = issue.path?.[0] || 'form';
++          errors[path] = issue.message;
++        });
++        this.formErrorsSignal.set(errors);
++      }
++    } finally {
++      this.isSubmittingSignal.set(false);
++    }
++  }
++
++  resetForm(): void {
++    this.formValuesSignal.set({
++      name: '',
++      alias: '',
++      powerClass: 'Aerial',
++      powerIndex: 50,
++      bio: '',
++      status: 'Active',
++    });
++    this.formErrorsSignal.set({});
++  }
++}
+diff --git a/src/app/roster/roster.ts b/src/app/roster/roster.ts
+new file mode 100644
+index 0000000..5f13d3a
+--- /dev/null
++++ b/src/app/roster/roster.ts
+@@ -0,0 +1,244 @@
++import { Component, inject } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { RouterLink } from '@angular/router';
++import { FormsModule } from '@angular/forms';
++import { NgIconsModule, provideIcons } from '@ng-icons/core';
++import {
++  lucidePencil,
++  lucideTrash2,
++  lucideChevronDown,
++  lucideSearch,
++} from '@ng-icons/lucide';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmSelectImports } from '@spartan-ng/helm/select';
++import { HlmTableImports } from '@spartan-ng/helm/table';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
++import { RosterViewModel } from './roster.viewmodel';
++
++@Component({
++  selector: 'app-roster',
++  standalone: true,
++  imports: [
++    CommonModule,
++    RouterLink,
++    FormsModule,
++    NgIconsModule,
++    HlmButtonImports,
++    HlmInputImports,
++    HlmSelectImports,
++    HlmTableImports,
++    HlmBadgeImports,
++    HlmAvatarImports,
++    HlmTooltipImports,
++  ],
++  providers: [
++    RosterViewModel,
++    provideIcons({
++      lucidePencil,
++      lucideTrash2,
++      lucideChevronDown,
++      lucideSearch,
++    }),
++  ],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      <!-- Page Header -->
++      <div class="px-6 py-6 border-b border-border bg-background">
++        <div class="flex items-center justify-between mb-1">
++          <h1 class="text-3xl font-bold text-foreground">Roster</h1>
++          <a hlmBtn variant="default" routerLink="/recruit" class="flex items-center gap-2">
++            <span>+</span>
++            <span>Recruit</span>
++          </a>
++        </div>
++        <p class="text-sm text-muted-foreground">{{ vm.visibleCount() }} of {{ vm.totalCount() }} heroes</p>
++      </div>
++
++      <!-- Content -->
++      <div class="flex-1 overflow-auto">
++        <div class="px-6 py-6">
++          <!-- Filter Bar -->
++          <div class="flex flex-col sm:flex-row gap-4 mb-6">
++            <div class="flex-1 relative">
++              <ng-icon name="lucideSearch" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
++              <input
++                hlmInput
++                type="search"
++                placeholder="Search by name, alias, or ID..."
++                class="pl-10 w-full"
++                [(ngModel)]="searchValue"
++                (input)="onSearchChange($event)"
++              />
++            </div>
++            <div class="min-w-[160px]">
++              <select
++                hlmInput
++                [(ngModel)]="classFilterValue"
++                (change)="onClassFilterChange($event)"
++                class="w-full flex items-center"
++              >
++                <option value="">All Classes</option>
++                <option *ngFor="let cls of vm.powerClasses()" [value]="cls">
++                  {{ cls }}
++                </option>
++              </select>
++            </div>
++          </div>
++
++          <!-- Roster Table -->
++          <div class="overflow-x-auto border rounded-lg border-border">
++            <table hlmTable class="w-full">
++              <thead hlmTableHead>
++                <tr hlmTableRow class="border-b border-border">
++                  <th hlmTableHeader class="text-left px-6 py-3 font-semibold text-foreground min-w-[200px]">
++                    HERO
++                  </th>
++                  <th hlmTableHeader class="text-left px-6 py-3 font-semibold text-foreground min-w-[100px]">
++                    CLASS
++                  </th>
++                  <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[80px]">
++                    POWER
++                  </th>
++                  <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[100px]">
++                    STATUS
++                  </th>
++                  <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[80px]">
++                    CLEAR
++                  </th>
++                  <th hlmTableHeader class="text-center px-6 py-3 font-semibold text-foreground min-w-[100px]">
++                    ACTIONS
++                  </th>
++                </tr>
++              </thead>
++              <tbody hlmTableBody>
++                <tr *ngFor="let hero of vm.filteredHeroes()" hlmTableRow class="border-b border-border hover:bg-muted">
++                  <!-- Hero Name & Avatar -->
++                  <td hlmTableCell class="px-6 py-4">
++                    <div class="flex items-center gap-3">
++                      <hlm-avatar class="h-8 w-8">
++                        <span hlmAvatarFallback class="text-xs">{{ hero.name.substring(0, 2).toUpperCase() }}</span>
++                      </hlm-avatar>
++                      <div>
++                        <div class="font-semibold text-foreground">{{ hero.name }}</div>
++                        <div class="text-xs text-muted-foreground">{{ hero.id }}</div>
++                      </div>
++                    </div>
++                  </td>
++
++                  <!-- Class Badge -->
++                  <td hlmTableCell class="px-6 py-4 text-center">
++                    <span hlmBadge variant="secondary" class="inline-block">
++                      {{ hero.powerClass }}
++                    </span>
++                  </td>
++
++                  <!-- Power Index -->
++                  <td hlmTableCell class="px-6 py-4 text-center font-semibold">
++                    {{ hero.powerIndex }}
++                  </td>
++
++                  <!-- Status Pill -->
++                  <td hlmTableCell class="px-6 py-4 text-center">
++                    <span
++                      hlmBadge
++                      [ngClass]="getStatusClass()"
++                      [ngStyle]="getStatusStyle(hero.status)"
++                      class="inline-block"
++                    >
++                      {{ hero.status }}
++                    </span>
++                  </td>
++
++                  <!-- Clearance Tier -->
++                  <td hlmTableCell class="px-6 py-4 text-center text-sm text-muted-foreground">
++                    {{ hero.clearanceTier }}
++                  </td>
++
++                  <!-- Actions -->
++                  <td hlmTableCell class="px-6 py-4 text-center">
++                    <div class="flex items-center justify-center gap-2">
++                      <button
++                        hlmBtn
++                        variant="ghost"
++                        size="icon"
++                        [routerLink]="['/detail', hero.id]"
++                        [hlmTooltip]="'Edit'"
++                        class="h-8 w-8"
++                      >
++                        <ng-icon name="lucidePencil" class="w-4 h-4" />
++                      </button>
++                      <button
++                        hlmBtn
++                        variant="ghost"
++                        size="icon"
++                        (click)="confirmRetire(hero.id)"
++                        [hlmTooltip]="'Retire'"
++                        class="h-8 w-8"
++                      >
++                        <ng-icon name="lucideTrash2" class="w-4 h-4" />
++                      </button>
++                    </div>
++                  </td>
++                </tr>
++              </tbody>
++            </table>
++          </div>
++
++          <!-- Summary Footer -->
++          <div class="flex items-center justify-between mt-6 px-4 py-3 text-sm text-muted-foreground border-t border-border">
++            <span>{{ vm.visibleCount() }} of {{ vm.totalCount() }} heroes</span>
++            <span>sorted by power</span>
++          </div>
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [`
++    :host {
++      display: flex;
++      flex-direction: column;
++      height: 100%;
++    }
++  `],
++})
++export class Roster {
++  vm = inject(RosterViewModel);
++  searchValue = '';
++  classFilterValue = '';
++
++  onSearchChange(event: Event): void {
++    const value = (event.target as HTMLInputElement).value;
++    this.vm.setSearch(value);
++  }
++
++  onClassFilterChange(event: Event): void {
++    const value = (event.target as HTMLSelectElement).value;
++    this.vm.setClassFilter(value);
++  }
++
++  getStatusClass(): string {
++    return 'font-medium';
++  }
++
++  getStatusStyle(status: string): { [key: string]: string } {
++    const styles: { [key: string]: { color: string; bg: string } } = {
++      Active: { color: 'var(--success)', bg: 'rgba(47, 181, 116, 0.1)' },
++      Injured: { color: 'var(--warning)', bg: 'rgba(228, 128, 43, 0.1)' },
++      Reserve: { color: 'var(--muted-foreground)', bg: 'rgba(91, 96, 114, 0.1)' },
++      MIA: { color: 'var(--destructive)', bg: 'rgba(229, 72, 77, 0.1)' },
++    };
++    const style = styles[status] || { color: 'var(--foreground)', bg: 'transparent' };
++    return { color: style.color, backgroundColor: style.bg };
++  }
++
++  confirmRetire(heroId: string): void {
++    // TODO: Show confirmation dialog before retiring
++    // For now, just retire directly
++    if (confirm('Are you sure you want to retire this hero?')) {
++      this.vm.retire(heroId);
++    }
++  }
++}
+diff --git a/src/app/roster/roster.viewmodel.ts b/src/app/roster/roster.viewmodel.ts
+new file mode 100644
+index 0000000..d13f58b
+--- /dev/null
++++ b/src/app/roster/roster.viewmodel.ts
+@@ -0,0 +1,66 @@
++import { Injectable, inject, computed, signal } from '@angular/core';
++import { HeroService } from '../domain/hero.service';
++import { Hero } from '../domain/hero.model';
++
++@Injectable()
++export class RosterViewModel {
++  private heroService = inject(HeroService);
++
++  private searchSignal = signal<string>('');
++  private classFilterSignal = signal<string>('');
++  private sortBySignal = signal<'power' | 'name'>('power');
++
++  heroes = this.heroService.all;
++  heroCount = this.heroService.count;
++
++  filteredHeroes = computed(() => {
++    const search = this.searchSignal().toLowerCase();
++    const classFilter = this.classFilterSignal();
++    let results = [...this.heroes()];
++
++    if (search) {
++      results = results.filter(
++        (h) =>
++          h.name.toLowerCase().includes(search) ||
++          h.alias.toLowerCase().includes(search) ||
++          h.id.toLowerCase().includes(search)
++      );
++    }
++
++    if (classFilter) {
++      results = results.filter((h) => h.powerClass === classFilter);
++    }
++
++    if (this.sortBySignal() === 'power') {
++      results.sort((a, b) => b.powerIndex - a.powerIndex);
++    } else {
++      results.sort((a, b) => a.name.localeCompare(b.name));
++    }
++
++    return results;
++  });
++
++  visibleCount = computed(() => this.filteredHeroes().length);
++  totalCount = computed(() => this.heroCount());
++
++  powerClasses = computed(() => {
++    const classes = new Set(this.heroes().map((h) => h.powerClass));
++    return Array.from(classes).sort();
++  });
++
++  setSearch(value: string): void {
++    this.searchSignal.set(value);
++  }
++
++  setClassFilter(value: string): void {
++    this.classFilterSignal.set(value);
++  }
++
++  getHeroById(id: string): Hero | undefined {
++    return this.heroService.byId(id);
++  }
++
++  retire(id: string): void {
++    this.heroService.retire(id);
++  }
++}
+diff --git a/src/app/settings/settings.ts b/src/app/settings/settings.ts
+new file mode 100644
+index 0000000..10a1d77
+--- /dev/null
++++ b/src/app/settings/settings.ts
+@@ -0,0 +1,36 @@
++import { Component } from '@angular/core';
++import { CommonModule } from '@angular/common';
++
++@Component({
++  selector: 'app-settings',
++  standalone: true,
++  imports: [CommonModule],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      <!-- Page Header -->
++      <div class="px-6 py-6 border-b border-border bg-background">
++        <h1 class="text-3xl font-bold text-foreground mb-1">Settings</h1>
++        <p class="text-sm text-muted-foreground">Configure hero operations console</p>
++      </div>
++
++      <!-- Content -->
++      <div class="flex-1 overflow-auto">
++        <div class="px-6 py-6">
++          <div class="bg-card border border-border rounded-lg p-6 shadow-sm text-center">
++            <p class="text-muted-foreground">Console settings coming soon</p>
++          </div>
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [
++    `
++      :host {
++        display: flex;
++        flex-direction: column;
++        height: 100%;
++      }
++    `,
++  ],
++})
++export class Settings {}
+diff --git a/src/app/threats/threats.ts b/src/app/threats/threats.ts
+new file mode 100644
+index 0000000..7b1cf75
+--- /dev/null
++++ b/src/app/threats/threats.ts
+@@ -0,0 +1,36 @@
++import { Component } from '@angular/core';
++import { CommonModule } from '@angular/common';
++
++@Component({
++  selector: 'app-threats',
++  standalone: true,
++  imports: [CommonModule],
++  template: `
++    <div class="flex-1 flex flex-col overflow-auto bg-background">
++      <!-- Page Header -->
++      <div class="px-6 py-6 border-b border-border bg-background">
++        <h1 class="text-3xl font-bold text-foreground mb-1">Threats</h1>
++        <p class="text-sm text-muted-foreground">Monitor active threats and incident status</p>
++      </div>
++
++      <!-- Content -->
++      <div class="flex-1 overflow-auto">
++        <div class="px-6 py-6">
++          <div class="bg-card border border-border rounded-lg p-6 shadow-sm text-center">
++            <p class="text-muted-foreground">Threat monitoring system coming soon</p>
++          </div>
++        </div>
++      </div>
++    </div>
++  `,
++  styles: [
++    `
++      :host {
++        display: flex;
++        flex-direction: column;
++        height: 100%;
++      }
++    `,
++  ],
++})
++export class Threats {}
+diff --git a/src/app/ui/hero-card.ts b/src/app/ui/hero-card.ts
+new file mode 100644
+index 0000000..c052c7f
+--- /dev/null
++++ b/src/app/ui/hero-card.ts
+@@ -0,0 +1,77 @@
++import { Component, input } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { NgIconsModule } from '@ng-icons/core';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { Hero } from '../domain/hero.model';
++
++@Component({
++  selector: 'app-hero-card',
++  standalone: true,
++  imports: [CommonModule, NgIconsModule, HlmAvatarImports],
++  template: `
++    <div class="bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
++      <div class="flex gap-3 mb-3">
++        <hlm-avatar class="flex-shrink-0">
++          <span hlmAvatarFallback>{{ hero().name.substring(0, 2).toUpperCase() }}</span>
++        </hlm-avatar>
++        <div class="flex-1 min-w-0">
++          <h3 class="font-semibold text-foreground truncate">{{ hero().name }}</h3>
++          <p class="text-xs text-muted-foreground">{{ hero().alias }}</p>
++        </div>
++      </div>
++
++      <div class="space-y-2 text-sm">
++        <div class="flex items-center justify-between">
++          <span class="text-muted-foreground">Power</span>
++          <span class="font-medium">{{ hero().powerIndex }}</span>
++        </div>
++        <div class="flex items-center justify-between">
++          <span class="text-muted-foreground">Missions</span>
++          <span class="font-medium">{{ hero().missionCount }}</span>
++        </div>
++        <div class="flex items-center justify-between">
++          <span class="text-muted-foreground">Success Rate</span>
++          <span class="font-medium">{{ hero().successRate }}%</span>
++        </div>
++      </div>
++
++      <div class="mt-4 pt-4 border-t border-border">
++        <div class="flex items-center gap-2">
++          <span class="inline-block px-2 py-1 bg-muted rounded text-xs font-medium text-foreground">
++            {{ hero().powerClass }}
++          </span>
++          <span class="inline-block px-2 py-1 rounded text-xs font-medium"
++            [class.bg-green-100]="hero().status === 'Active'"
++            [class.text-green-800]="hero().status === 'Active'"
++            [class.bg-yellow-100]="hero().status === 'Injured'"
++            [class.text-yellow-800]="hero().status === 'Injured'"
++            [class.bg-gray-100]="hero().status === 'Reserve'"
++            [class.text-gray-800]="hero().status === 'Reserve'"
++            [class.bg-red-100]="hero().status === 'MIA'"
++            [class.text-red-800]="hero().status === 'MIA'"
++            [class.dark:bg-green-900]="hero().status === 'Active'"
++            [class.dark:text-green-200]="hero().status === 'Active'"
++            [class.dark:bg-yellow-900]="hero().status === 'Injured'"
++            [class.dark:text-yellow-200]="hero().status === 'Injured'"
++            [class.dark:bg-gray-900]="hero().status === 'Reserve'"
++            [class.dark:text-gray-200]="hero().status === 'Reserve'"
++            [class.dark:bg-red-900]="hero().status === 'MIA'"
++            [class.dark:text-red-200]="hero().status === 'MIA'">
++            @if (hero().status === 'Active') {
++              Active
++            } @else if (hero().status === 'Injured') {
++              Injured
++            } @else if (hero().status === 'Reserve') {
++              Reserve
++            } @else if (hero().status === 'MIA') {
++              MIA
++            }
++          </span>
++        </div>
++      </div>
++    </div>
++  `,
++})
++export class HeroCard {
++  hero = input.required<Hero>();
++}
+diff --git a/src/app/ui/stat-tile.ts b/src/app/ui/stat-tile.ts
+new file mode 100644
+index 0000000..cfa7319
+--- /dev/null
++++ b/src/app/ui/stat-tile.ts
+@@ -0,0 +1,37 @@
++import { Component, input } from '@angular/core';
++import { NgIconsModule } from '@ng-icons/core';
++
++@Component({
++  selector: 'app-stat-tile',
++  standalone: true,
++  imports: [NgIconsModule],
++  template: `
++    <div class="bg-card border border-border rounded-lg p-6 shadow-sm">
++      <div class="flex items-center justify-between mb-2">
++        <span class="text-sm font-medium text-muted-foreground">{{ label() }}</span>
++        @if (icon()) {
++          <ng-icon [name]="icon()" class="w-5 h-5 text-muted-foreground" />
++        }
++      </div>
++      <div class="text-3xl font-bold text-foreground">{{ value() }}</div>
++      @if (trend()) {
++        <div class="text-xs mt-2" [class.text-green-600]="trend()! > 0" [class.text-red-600]="trend()! < 0">
++          @if (trend()! > 0) {
++            <span>↑</span>
++          }
++          @if (trend()! < 0) {
++            <span>↓</span>
++          }
++          {{ Math.abs(trend()!) }}% from last cycle
++        </div>
++      }
++    </div>
++  `,
++})
++export class StatTile {
++  label = input.required<string>();
++  value = input.required<string | number>();
++  icon = input<string>();
++  trend = input<number>();
++  Math = Math;
++}
+diff --git a/src/styles.css b/src/styles.css
+index 0497040..b13eadc 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -19,32 +19,42 @@
+   --chart-4: oklch(0.828 0.189 84.429);
+   --chart-5: oklch(0.769 0.188 70.08);
+   --radius: 0.625rem;
+-  --background: oklch(1 0 0);
+-  --foreground: oklch(0.145 0 0);
+-  --card: oklch(1 0 0);
+-  --card-foreground: oklch(0.145 0 0);
+-  --popover: oklch(1 0 0);
+-  --popover-foreground: oklch(0.145 0 0);
+-  --primary: oklch(0.205 0 0);
+-  --primary-foreground: oklch(0.985 0 0);
+-  --secondary: oklch(0.97 0 0);
+-  --secondary-foreground: oklch(0.205 0 0);
+-  --muted: oklch(0.97 0 0);
+-  --muted-foreground: oklch(0.556 0 0);
+-  --accent: oklch(0.97 0 0);
+-  --accent-foreground: oklch(0.205 0 0);
+-  --destructive: oklch(0.577 0.245 27.325);
+-  --border: oklch(0.922 0 0);
+-  --input: oklch(0.922 0 0);
+-  --ring: oklch(0.708 0 0);
+-  --sidebar: oklch(0.985 0 0);
+-  --sidebar-foreground: oklch(0.145 0 0);
+-  --sidebar-primary: oklch(0.205 0 0);
+-  --sidebar-primary-foreground: oklch(0.985 0 0);
+-  --sidebar-accent: oklch(0.97 0 0);
+-  --sidebar-accent-foreground: oklch(0.205 0 0);
+-  --sidebar-border: oklch(0.922 0 0);
+-  --sidebar-ring: oklch(0.708 0 0);
++
++  /* Theme palette (light) */
++  --background: #f6f7fa;
++  --foreground: #1b1e2b;
++  --card: #ffffff;
++  --card-foreground: #1b1e2b;
++  --popover: #ffffff;
++  --popover-foreground: #1b1e2b;
++  --primary: #d8891a;
++  --primary-foreground: #ffffff;
++  --secondary: #eef0f6;
++  --secondary-foreground: #1b1e2b;
++  --muted: #eef0f6;
++  --muted-foreground: #5b6072;
++  --accent: #eef0f6;
++  --accent-foreground: #1b1e2b;
++  --destructive: #e5484d;
++  --border: #e4e7ef;
++  --input: #e4e7ef;
++  --ring: rgb(216 137 26 / 0.35);
++
++  /* Sidebar (dark in both themes) */
++  --sidebar: #1e2233;
++  --sidebar-foreground: #eceef6;
++  --sidebar-primary: #d8891a;
++  --sidebar-primary-foreground: #ffffff;
++  --sidebar-accent: #2a2f45;
++  --sidebar-accent-foreground: #eceef6;
++  --sidebar-muted: #9aa0b4;
++  --sidebar-border: #2a2f45;
++  --sidebar-ring: rgb(216 137 26 / 0.35);
++
++  /* Semantic colors */
++  --success: #2fb574;
++  --warning: #e4802b;
++  --info: #4f7cf0;
+ }
+ 
+ :root.dark {
+@@ -55,32 +65,42 @@
+   --chart-3: oklch(0.769 0.188 70.08);
+   --chart-4: oklch(0.627 0.265 303.9);
+   --chart-5: oklch(0.645 0.246 16.439);
+-  --background: oklch(0.145 0 0);
+-  --foreground: oklch(0.985 0 0);
+-  --card: oklch(0.205 0 0);
+-  --card-foreground: oklch(0.985 0 0);
+-  --popover: oklch(0.205 0 0);
+-  --popover-foreground: oklch(0.985 0 0);
+-  --primary: oklch(0.922 0 0);
+-  --primary-foreground: oklch(0.205 0 0);
+-  --secondary: oklch(0.269 0 0);
+-  --secondary-foreground: oklch(0.985 0 0);
+-  --muted: oklch(0.269 0 0);
+-  --muted-foreground: oklch(0.708 0 0);
+-  --accent: oklch(0.269 0 0);
+-  --accent-foreground: oklch(0.985 0 0);
+-  --destructive: oklch(0.704 0.191 22.216);
+-  --border: oklch(1 0 0 / 10%);
+-  --input: oklch(1 0 0 / 15%);
+-  --ring: oklch(0.556 0 0);
+-  --sidebar: oklch(0.205 0 0);
+-  --sidebar-foreground: oklch(0.985 0 0);
+-  --sidebar-primary: oklch(0.985 0 0);
+-  --sidebar-primary-foreground: oklch(0.205 0 0);
+-  --sidebar-accent: oklch(0.269 0 0);
+-  --sidebar-accent-foreground: oklch(0.985 0 0);
+-  --sidebar-border: oklch(1 0 0 / 10%);
+-  --sidebar-ring: oklch(0.556 0 0);
++
++  /* Theme palette (dark) */
++  --background: #0e1018;
++  --foreground: #eceef6;
++  --card: #171a26;
++  --card-foreground: #eceef6;
++  --popover: #171a26;
++  --popover-foreground: #eceef6;
++  --primary: #f5b843;
++  --primary-foreground: #241a05;
++  --secondary: #1e2231;
++  --secondary-foreground: #eceef6;
++  --muted: #1e2231;
++  --muted-foreground: #9aa0b4;
++  --accent: #1e2231;
++  --accent-foreground: #eceef6;
++  --destructive: #f2585d;
++  --border: #272b3b;
++  --input: #272b3b;
++  --ring: rgb(245 184 67 / 0.4);
++
++  /* Sidebar (dark in both themes) */
++  --sidebar: #10121c;
++  --sidebar-foreground: #eceef6;
++  --sidebar-primary: #f5b843;
++  --sidebar-primary-foreground: #241a05;
++  --sidebar-accent: #20263c;
++  --sidebar-accent-foreground: #eceef6;
++  --sidebar-muted: #8b90a6;
++  --sidebar-border: #20263c;
++  --sidebar-ring: rgb(245 184 67 / 0.4);
++
++  /* Semantic colors */
++  --success: #3ecb84;
++  --warning: #f0983f;
++  --info: #6f97f6;
+ }
+ 
+ @layer base {
+diff --git a/tsconfig.json b/tsconfig.json
+index 88d1ca0..447fc5c 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,31 +12,70 @@
+     "target": "ES2022",
+     "module": "preserve",
+     "paths": {
+-      "@spartan-ng/helm/button": ["./libs/ui/button/src/index.ts"],
+-      "@spartan-ng/helm/utils": ["./libs/ui/utils/src/index.ts"],
+-      "@spartan-ng/helm/card": ["./libs/ui/card/src/index.ts"],
+-      "@spartan-ng/helm/input": ["./libs/ui/input/src/index.ts"],
+-      "@spartan-ng/helm/table": ["./libs/ui/table/src/index.ts"],
+-      "@spartan-ng/helm/select": ["./libs/ui/select/src/index.ts"],
+-      "@spartan-ng/helm/dialog": ["./libs/ui/dialog/src/index.ts"],
+-      "@spartan-ng/helm/tabs": ["./libs/ui/tabs/src/index.ts"],
+-      "@spartan-ng/helm/badge": ["./libs/ui/badge/src/index.ts"],
+-      "@spartan-ng/helm/avatar": ["./libs/ui/avatar/src/index.ts"],
+-      "@spartan-ng/helm/tooltip": ["./libs/ui/tooltip/src/index.ts"],
+-      "@spartan-ng/helm/switch": ["./libs/ui/switch/src/index.ts"],
+-      "@spartan-ng/helm/textarea": ["./libs/ui/textarea/src/index.ts"],
+-      "@spartan-ng/helm/field": ["./libs/ui/field/src/index.ts"],
+-      "@spartan-ng/helm/label": ["./libs/ui/label/src/index.ts"],
+-      "@spartan-ng/helm/separator": ["./libs/ui/separator/src/index.ts"],
+-      "@spartan-ng/helm/sidebar": ["./libs/ui/sidebar/src/index.ts"],
+-      "@spartan-ng/helm/sheet": ["./libs/ui/sheet/src/index.ts"],
+-      "@spartan-ng/helm/skeleton": ["./libs/ui/skeleton/src/index.ts"]
++      "@spartan-ng/helm/button": [
++        "./libs/ui/button/src/index.ts"
++      ],
++      "@spartan-ng/helm/utils": [
++        "./libs/ui/utils/src/index.ts"
++      ],
++      "@spartan-ng/helm/card": [
++        "./libs/ui/card/src/index.ts"
++      ],
++      "@spartan-ng/helm/input": [
++        "./libs/ui/input/src/index.ts"
++      ],
++      "@spartan-ng/helm/table": [
++        "./libs/ui/table/src/index.ts"
++      ],
++      "@spartan-ng/helm/select": [
++        "./libs/ui/select/src/index.ts"
++      ],
++      "@spartan-ng/helm/dialog": [
++        "./libs/ui/dialog/src/index.ts"
++      ],
++      "@spartan-ng/helm/tabs": [
++        "./libs/ui/tabs/src/index.ts"
++      ],
++      "@spartan-ng/helm/badge": [
++        "./libs/ui/badge/src/index.ts"
++      ],
++      "@spartan-ng/helm/avatar": [
++        "./libs/ui/avatar/src/index.ts"
++      ],
++      "@spartan-ng/helm/tooltip": [
++        "./libs/ui/tooltip/src/index.ts"
++      ],
++      "@spartan-ng/helm/switch": [
++        "./libs/ui/switch/src/index.ts"
++      ],
++      "@spartan-ng/helm/textarea": [
++        "./libs/ui/textarea/src/index.ts"
++      ],
++      "@spartan-ng/helm/field": [
++        "./libs/ui/field/src/index.ts"
++      ],
++      "@spartan-ng/helm/label": [
++        "./libs/ui/label/src/index.ts"
++      ],
++      "@spartan-ng/helm/separator": [
++        "./libs/ui/separator/src/index.ts"
++      ],
++      "@spartan-ng/helm/sidebar": [
++        "./libs/ui/sidebar/src/index.ts"
++      ],
++      "@spartan-ng/helm/sheet": [
++        "./libs/ui/sheet/src/index.ts"
++      ],
++      "@spartan-ng/helm/skeleton": [
++        "./libs/ui/skeleton/src/index.ts"
++      ]
+     }
+   },
+   "angularCompilerOptions": {
+     "enableI18nLegacyMessageIdFormat": false,
+     "strictInjectionParameters": true,
+-    "strictInputAccessModifiers": true
++    "strictInputAccessModifiers": true,
++    "strictTemplates": true
+   },
+   "files": [],
+   "references": [

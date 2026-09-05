@@ -1,0 +1,152 @@
+{
+  "runId": "capstone-gate-off-t0-2026-09-05_13-59-18",
+  "part": "capstone",
+  "condition": "gate-off",
+  "trial": 0,
+  "dryRun": false,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "93710ab9ce6651281e84c6993135fbf5c263ff05"
+  },
+  "branch": "run/capstone-capstone-gate-off-t0-2026-09-05_13-59-18",
+  "resultSha": "40d699855c2fe4aa852eb09a106bed5384e49fc1",
+  "model": {
+    "alias": "haiku",
+    "resolved": "claude-haiku-4-5-20251001"
+  },
+  "gateSettings": "harness/gate/capstone-gate-off.settings.json",
+  "stages": [
+    {
+      "stage": 1,
+      "name": "shell",
+      "promptFile": "capstone/stage-1-shell.md",
+      "promptBytes": 2382,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-4-5-20251001"
+      },
+      "exitCode": 0,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 86,
+      "costUsd": 0.8430708000000002,
+      "durationMs": 428838,
+      "durationApiMs": 349121,
+      "sessionId": "8185d0a2-5b40-4209-aaea-b715cdaa5d03",
+      "usage": {
+        "input_tokens": 585,
+        "cache_creation_input_tokens": 84726,
+        "cache_read_input_tokens": 5069788,
+        "output_tokens": 33211,
+        "output_tokens_details": {
+          "thinking_tokens": 7099
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 84726,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 8,
+            "output_tokens": 481,
+            "cache_read_input_tokens": 100810,
+            "cache_creation_input_tokens": 619,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 619
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "parseError": false,
+      "wallMs": 433774,
+      "ok": true,
+      "hookFiringsAfter": 0
+    }
+  ],
+  "cost": {
+    "stages": 1,
+    "costUsd": 0.843071,
+    "numTurns": 86,
+    "durationMs": 428838,
+    "wallMs": 433774,
+    "stagesOk": 1
+  },
+  "buildOk": true,
+  "diffEmpty": false,
+  "hookFirings": 0,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 1,
+      "appearance-on-primitive": 2,
+      "style-attribute": 0,
+      "raw-icon": 0,
+      "all": 3
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 1,
+      "all": 1
+    },
+    "shape": {
+      "hand-set-change-detection": 0,
+      "component-subscribe": 0,
+      "template-driven-form": 0,
+      "restated-validator": 0,
+      "presentational-injects-data": 0,
+      "reactive-form": 0,
+      "vm-not-component-scoped": 0,
+      "state-outside-vm": 1,
+      "feature-injects-data": 0,
+      "vm-not-provided": 0,
+      "hand-written-form-model": 0,
+      "dumb-holds-state": 0,
+      "all": 1
+    },
+    "freeloader": {
+      "legacy-control-flow": 0,
+      "ng-class-style": 0,
+      "all": 0
+    }
+  },
+  "responsive": {
+    "dashboard": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 14,
+      "all": 14
+    },
+    "roster": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 14,
+      "all": 14
+    },
+    "detail/11": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 14,
+      "all": 14
+    }
+  },
+  "auditAnchor": "body",
+  "auditRoutes": [
+    "dashboard",
+    "roster",
+    "detail/11"
+  ],
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-05T14:06:49.380Z"
+}

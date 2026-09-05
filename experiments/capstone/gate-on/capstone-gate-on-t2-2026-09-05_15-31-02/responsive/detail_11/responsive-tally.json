@@ -1,0 +1,117 @@
+{
+  "totals": {
+    "viewport-escape": 0,
+    "element-escape": 0,
+    "element-clip": 15,
+    "all": 15
+  },
+  "byBreakpoint": {
+    "375": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 5
+    },
+    "768": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 5
+    },
+    "1280": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 5
+    }
+  },
+  "violations": [
+    {
+      "kind": "element-clip",
+      "breakpoint": 375,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 375,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 375,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 375,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 375,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 768,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 768,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 768,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 768,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 768,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "aside > nav.no-scrollbar.gap-2 > ul.gap-1.flex > li > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 107x34 clipped to 107x32"
+    }
+  ]
+}

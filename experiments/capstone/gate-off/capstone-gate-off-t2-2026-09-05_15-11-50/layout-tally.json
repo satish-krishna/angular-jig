@@ -1,0 +1,143 @@
+{
+  "totals": {
+    "raw-palette-color": 0,
+    "space-utility": 20,
+    "raw-css-literal": 0,
+    "nested-flex-grid": 2,
+    "all": 22
+  },
+  "violations": [
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/app.html",
+      "line": 34,
+      "detail": "flex with 2 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 66,
+      "detail": "flex with 2 flex children (heuristic)"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 165,
+      "detail": "space-y-4, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 190,
+      "detail": "space-y-4, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 230,
+      "detail": "space-y-4, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 289,
+      "detail": "space-y-3, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 324,
+      "detail": "space-y-6, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 326,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 342,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 358,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 380,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 398,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 59,
+      "detail": "space-y-6, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 61,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 77,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 93,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 116,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 134,
+      "detail": "space-y-2, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/settings/settings.ts",
+      "line": 50,
+      "detail": "space-y-4, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/settings/settings.ts",
+      "line": 89,
+      "detail": "space-y-4, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/settings/settings.ts",
+      "line": 124,
+      "detail": "space-y-4, use gap-*"
+    },
+    {
+      "kind": "space-utility",
+      "file": "src/app/ui/hero-card.ts",
+      "line": 44,
+      "detail": "space-y-3, use gap-*"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "totals": {
+    "hand-set-change-detection": 0,
+    "component-subscribe": 0,
+    "template-driven-form": 5,
+    "restated-validator": 0,
+    "presentational-injects-data": 0,
+    "reactive-form": 0,
+    "vm-not-component-scoped": 0,
+    "state-outside-vm": 3,
+    "feature-injects-data": 0,
+    "vm-not-provided": 0,
+    "hand-written-form-model": 0,
+    "dumb-holds-state": 0,
+    "all": 8
+  },
+  "violations": [
+    {
+      "kind": "state-outside-vm",
+      "file": "src/app/app.ts",
+      "line": 62,
+      "detail": "signal() state on a feature component"
+    },
+    {
+      "kind": "template-driven-form",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 29,
+      "detail": "FormsModule in imports"
+    },
+    {
+      "kind": "state-outside-vm",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 555,
+      "detail": "signal() state on a feature component"
+    },
+    {
+      "kind": "state-outside-vm",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 556,
+      "detail": "signal() state on a feature component"
+    },
+    {
+      "kind": "template-driven-form",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 19,
+      "detail": "FormsModule in imports"
+    },
+    {
+      "kind": "template-driven-form",
+      "file": "src/app/roster/roster.ts",
+      "line": 27,
+      "detail": "FormsModule in imports"
+    },
+    {
+      "kind": "template-driven-form",
+      "file": "src/app/roster/roster.ts",
+      "line": 67,
+      "detail": "ngModel binding"
+    },
+    {
+      "kind": "template-driven-form",
+      "file": "src/app/roster/roster.ts",
+      "line": 77,
+      "detail": "ngModel binding"
+    }
+  ]
+}

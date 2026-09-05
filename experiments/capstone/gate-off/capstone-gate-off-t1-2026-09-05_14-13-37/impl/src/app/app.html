@@ -1,0 +1,95 @@
+<div class="flex h-screen bg-background text-foreground">
+  <!-- Navigation Rail -->
+  <hlm-sidebar class="w-64 flex-shrink-0 border-r border-sidebar-border">
+    <div hlmSidebarGroup class="px-4 py-6">
+      <div class="font-semibold text-sidebar-foreground mb-8">Hero Ops</div>
+    </div>
+    <div hlmSidebarGroup class="space-y-1 px-2">
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/dashboard')" [class.bg-sidebar-accent]="isActive('/dashboard')">
+          <ng-icon name="lucideLayoutDashboard" class="w-5 h-5" />
+          <span>Dashboard</span>
+        </button>
+      </li>
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/roster')" [class.bg-sidebar-accent]="isActive('/roster')">
+          <ng-icon name="lucideUsers" class="w-5 h-5" />
+          <span>Roster</span>
+        </button>
+      </li>
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/missions')" [class.bg-sidebar-accent]="isActive('/missions')">
+          <ng-icon name="lucideTarget" class="w-5 h-5" />
+          <span>Missions</span>
+        </button>
+      </li>
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/threats')" [class.bg-sidebar-accent]="isActive('/threats')">
+          <ng-icon name="lucideShieldAlert" class="w-5 h-5" />
+          <span>Threats</span>
+        </button>
+      </li>
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/recruit')" [class.bg-sidebar-accent]="isActive('/recruit')">
+          <ng-icon name="lucideUserPlus" class="w-5 h-5" />
+          <span>Recruit</span>
+        </button>
+      </li>
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" class="w-full justify-start" (click)="navigate('/settings')" [class.bg-sidebar-accent]="isActive('/settings')">
+          <ng-icon name="lucideSettings" class="w-5 h-5" />
+          <span>Settings</span>
+        </button>
+      </li>
+    </div>
+    <div hlmSidebarGroup class="mt-auto px-2 py-4 border-t border-sidebar-border">
+      <li hlmSidebarMenuItem>
+        <button hlmBtn variant="ghost" size="icon" class="w-full" (click)="toggleTheme()">
+          <ng-icon *ngIf="isDarkTheme()" name="lucideSun" class="w-5 h-5" />
+          <ng-icon *ngIf="!isDarkTheme()" name="lucideMoon" class="w-5 h-5" />
+        </button>
+      </li>
+    </div>
+  </hlm-sidebar>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Bar -->
+    <header class="flex items-center justify-between px-6 py-4 border-b border-border bg-background">
+      <div class="flex items-center gap-4 flex-1">
+        <button hlmBtn variant="ghost" size="icon" (click)="openMobileMenu()">
+          <ng-icon name="lucideMenu" class="w-5 h-5" />
+        </button>
+        <nav class="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Hero Ops</span>
+          <ng-icon name="lucideChevronRight" class="w-4 h-4" />
+          <span>{{ getCurrentPageTitle() }}</span>
+        </nav>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex">
+          <input hlmInput type="search" placeholder="Search heroes..." class="w-48" />
+        </div>
+        <button hlmBtn variant="ghost" size="icon">
+          <ng-icon name="lucideSearch" class="w-5 h-5" />
+        </button>
+        <button hlmBtn variant="ghost" size="icon" [hlmTooltip]="'Notifications'">
+          <ng-icon name="lucideBell" class="w-5 h-5" />
+        </button>
+        <button hlmBtn variant="ghost" size="icon" (click)="toggleTheme()" [hlmTooltip]="isDarkTheme() ? 'Light mode' : 'Dark mode'">
+          <ng-icon *ngIf="isDarkTheme()" name="lucideSun" class="w-5 h-5" />
+          <ng-icon *ngIf="!isDarkTheme()" name="lucideMoon" class="w-5 h-5" />
+        </button>
+        <hlm-avatar class="cursor-pointer">
+          <img hlmAvatarImage src="https://github.com/shadcn.png" alt="User" />
+          <span hlmAvatarFallback>SK</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <!-- Routed Content -->
+    <main class="flex-1 overflow-auto">
+      <router-outlet />
+    </main>
+  </div>
+</div>

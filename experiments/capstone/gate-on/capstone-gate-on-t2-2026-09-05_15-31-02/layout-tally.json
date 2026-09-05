@@ -1,0 +1,71 @@
+{
+  "totals": {
+    "raw-palette-color": 0,
+    "space-utility": 0,
+    "raw-css-literal": 0,
+    "nested-flex-grid": 10,
+    "all": 10
+  },
+  "violations": [
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/app.html",
+      "line": 51,
+      "detail": "flex with 2 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 16,
+      "detail": "flex with 3 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 30,
+      "detail": "flex with 2 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 98,
+      "detail": "flex with 4 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 193,
+      "detail": "flex with 3 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/heroes/heroes.ts",
+      "line": 15,
+      "detail": "flex with 4 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/heroes/heroes.ts",
+      "line": 123,
+      "detail": "flex with 3 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/threats/threats.ts",
+      "line": 12,
+      "detail": "flex with 2 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/ui/hero-card.ts",
+      "line": 12,
+      "detail": "flex with 2 flex children (heuristic)"
+    },
+    {
+      "kind": "nested-flex-grid",
+      "file": "src/app/ui/hero-card.ts",
+      "line": 23,
+      "detail": "flex with 2 flex children (heuristic)"
+    }
+  ]
+}

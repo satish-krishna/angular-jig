@@ -1,0 +1,15 @@
+/* Search input wrapper styling */
+.search-icon {
+  position: absolute;
+  left: var(--spacing-3);
+  top: var(--spacing-3);
+  pointer-events: none;
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-wrapper input {
+  padding-left: var(--spacing-8);
+}

@@ -1,0 +1,63 @@
+{
+  "totals": {
+    "viewport-escape": 0,
+    "element-escape": 0,
+    "element-clip": 6,
+    "all": 6
+  },
+  "byBreakpoint": {
+    "375": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 1
+    },
+    "768": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "1280": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 5
+    }
+  },
+  "violations": [
+    {
+      "kind": "element-clip",
+      "breakpoint": 375,
+      "selector": "div.flex.h-screen > div.flex.flex-1 > header.flex.h-16 > div.flex-1.min-w-0 > h1.truncate.text-sm",
+      "detail": "content 143x20 clipped to 99x20"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-sidebar-content.no-scrollbar.gap-2 > hlm-sidebar-group.p-2.relative > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 134x34 clipped to 134x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-sidebar-content.no-scrollbar.gap-2 > hlm-sidebar-group.p-2.relative > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 134x34 clipped to 134x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-sidebar-content.no-scrollbar.gap-2 > hlm-sidebar-group.p-2.relative > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 134x34 clipped to 134x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-sidebar-content.no-scrollbar.gap-2 > hlm-sidebar-group.p-2.relative > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 134x34 clipped to 134x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-sidebar-content.no-scrollbar.gap-2 > hlm-sidebar-group.p-2.relative > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 134x34 clipped to 134x32"
+    }
+  ]
+}

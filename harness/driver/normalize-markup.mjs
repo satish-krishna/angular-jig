@@ -63,7 +63,18 @@ function stats(srcDir) {
             const cls = n.attributes.find((a) => a.name === 'class');
             if (cls && typeof cls.value === 'string' && /\bflex\b/.test(cls.value)) flexContainers++;
           }
-          for (const k of ['children', 'branches', 'cases', 'empty']) if (Array.isArray(n?.[k])) walk(n[k]);
+          // Angular block-AST child keys, verified against @angular/compiler: a
+          // SwitchBlock exposes `groups` (NOT `cases`; the group then carries both),
+          // and ForLoopBlock.empty plus DeferredBlock.placeholder/loading/error are
+          // OBJECTS rather than arrays. The original list was children/branches/cases/
+          // empty guarded on Array.isArray, so it descended into no @switch, @empty or
+          // @defer body at all: violations inside them went uncounted, and the gate,
+          // which does walk them, silently disagreed. Handle both shapes.
+          for (const k of ['children', 'branches', 'cases', 'groups', 'empty', 'placeholder', 'loading', 'error']) {
+            const v = n?.[k];
+            if (Array.isArray(v)) walk(v);
+            else if (v && typeof v === 'object') walk([v]);
+          }
         }
       };
       walk(nodes);

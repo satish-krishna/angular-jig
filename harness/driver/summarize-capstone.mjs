@@ -150,12 +150,22 @@ function main() {
   line(md ? '### Gate firings and build outcome' : 'GATE FIRINGS');
   line();
   if (md) {
-    line('| condition | trial | hook firings | stages ok | build | run ok |');
-    line('| --- | --- | --- | --- | --- | --- |');
+    line('| condition | trial | hook firings | stages ok | build | tampered | run ok |');
+    line('| --- | --- | --- | --- | --- | --- | --- |');
   }
   for (const c of CONDITIONS) {
     for (const r of byCondition[c]) {
-      const row = [c, r.meta.trial, r.meta.hookFirings ?? 0, `${r.cost?.totals?.stagesOk ?? '?'}/${r.cost?.totals?.stages ?? '?'}`, r.meta.buildOk ? 'ok' : 'FAILED', r.meta.ok ? 'ok' : 'VOID'];
+      // `tampered` is absent on runs that predate the enforcement check, and
+      // absent is NOT false: those runs were simply never examined. Two of them
+      // DID edit stylelint.config.mjs, which is why the check now exists, so
+      // printing "no" for them would assert the opposite of the truth.
+      const tamper =
+        r.meta.tampered === undefined
+          ? 'unchecked'
+          : r.meta.tampered
+            ? `YES: ${(r.meta.tamperedFiles ?? []).join(' ')}`
+            : 'no';
+      const row = [c, r.meta.trial, r.meta.hookFirings ?? 0, `${r.cost?.totals?.stagesOk ?? '?'}/${r.cost?.totals?.stages ?? '?'}`, r.meta.buildOk ? 'ok' : 'FAILED', tamper, r.meta.ok ? 'ok' : 'VOID'];
       line(md ? `| ${row.join(' | ')} |` : `  ${row.join('  ')}`);
     }
   }

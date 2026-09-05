@@ -52,8 +52,17 @@ function walk(nodes, file, lineOffset, acc) {
       if (hit) acc.push({ kind: 'ng-class-style', file, line, detail: hit.name });
     }
 
-    for (const key of ['children', 'branches', 'cases', 'empty']) {
-      if (Array.isArray(n[key])) walk(n[key], file, lineOffset, acc);
+    // Angular block-AST child keys, verified against @angular/compiler: a
+    // SwitchBlock exposes `groups` (NOT `cases`; the group then carries both),
+    // and ForLoopBlock.empty plus DeferredBlock.placeholder/loading/error are
+    // OBJECTS rather than arrays. The original list was children/branches/cases/
+    // empty guarded on Array.isArray, so it descended into no @switch, @empty or
+    // @defer body at all: violations inside them went uncounted, and the gate,
+    // which does walk them, silently disagreed. Handle both shapes.
+    for (const key of ['children', 'branches', 'cases', 'groups', 'empty', 'placeholder', 'loading', 'error']) {
+      const v = n?.[key];
+      if (Array.isArray(v)) walk(v, file, lineOffset, acc);
+      else if (v && typeof v === 'object') walk([v], file, lineOffset, acc);
     }
   }
 }

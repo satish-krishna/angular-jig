@@ -1,0 +1,85 @@
+{
+  "runId": "capstone-gate-on-t0-2026-09-05_17-42-19-dry",
+  "part": "capstone",
+  "condition": "gate-on",
+  "trial": 0,
+  "dryRun": true,
+  "ok": true,
+  "substrate": {
+    "ref": "main",
+    "sha": "73976ec001cb72fbddb10b5ad738d121c734f26d"
+  },
+  "branch": null,
+  "resultSha": "7018ae417f68484117ee1ab7b7e172cb973bfcd5",
+  "model": {
+    "alias": "haiku",
+    "resolved": null
+  },
+  "gateSettings": "harness/gate/capstone-gate-on.settings.json",
+  "stages": [],
+  "cost": {
+    "stages": 0,
+    "costUsd": 0,
+    "numTurns": 0,
+    "durationMs": 0,
+    "wallMs": 0,
+    "stagesOk": 0
+  },
+  "buildOk": null,
+  "diffEmpty": true,
+  "tampered": false,
+  "tamperedFiles": [],
+  "changedFiles": [],
+  "hookFirings": 0,
+  "counterTotals": {
+    "seal": {
+      "raw-control": 0,
+      "appearance-on-primitive": 0,
+      "style-attribute": 0,
+      "raw-icon": 0,
+      "unknown-primitive": 0,
+      "missing-composition-part": 0,
+      "all": 0
+    },
+    "layout": {
+      "raw-palette-color": 0,
+      "space-utility": 0,
+      "raw-css-literal": 0,
+      "nested-flex-grid": 0,
+      "all": 0
+    },
+    "shape": {
+      "hand-set-change-detection": 0,
+      "component-subscribe": 0,
+      "template-driven-form": 0,
+      "restated-validator": 0,
+      "presentational-injects-data": 0,
+      "reactive-form": 0,
+      "vm-not-component-scoped": 0,
+      "state-outside-vm": 0,
+      "feature-injects-data": 0,
+      "vm-not-provided": 0,
+      "explicit-standalone": 0,
+      "legacy-icon-module": 0,
+      "unregistered-icon": 0,
+      "orphan-ng-submit": 0,
+      "hand-written-form-model": 0,
+      "dumb-holds-state": 0,
+      "all": 0
+    },
+    "freeloader": {
+      "legacy-control-flow": 0,
+      "ng-class-style": 0,
+      "all": 0
+    }
+  },
+  "responsive": null,
+  "auditAnchor": "body",
+  "auditRoutes": [
+    "dashboard",
+    "roster",
+    "detail/11"
+  ],
+  "startedFromBranch": "main",
+  "finishedAt": "2026-09-05T17:42:20.561Z"
+}

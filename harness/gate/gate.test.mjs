@@ -112,6 +112,20 @@ describe('sealing gate: template rules', () => {
     expect(messages).toEqual([]);
   });
 
+  // The block-AST coverage case. Every violation in this fixture sits inside a
+  // @switch, @empty or @defer body, which the counters used to walk straight
+  // past while the gate walked them: a real two-engine disagreement that no
+  // test could see, because every other cross-engine fixture is built from
+  // @if and @for bodies only. An anti-circularity check that compares only the
+  // cases where both engines are known to agree is not a check.
+  it('agrees with the independent counter inside @switch, @empty and @defer bodies', () => {
+    const src = readFileSync(fx('control-flow-blocks.html'), 'utf8');
+    const gateTotal = lintHtml(src).length;
+    const counterTotal = tally([fx('control-flow-blocks.html')]).totals.all;
+    expect(counterTotal).toBe(9);
+    expect(gateTotal).toBe(counterTotal);
+  });
+
   it('agrees with the independent counter on the capstone-residue dirty fixture', () => {
     // Same cross-check as above, extended to rules 5 and 6. If the other
     // engine has not landed this yet, this will fail independently of the

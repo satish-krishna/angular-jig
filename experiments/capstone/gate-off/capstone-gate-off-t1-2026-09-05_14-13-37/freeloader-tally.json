@@ -1,0 +1,75 @@
+{
+  "totals": {
+    "legacy-control-flow": 8,
+    "ng-class-style": 3,
+    "all": 11
+  },
+  "violations": [
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/app.html",
+      "line": 48,
+      "detail": "*ngIf"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/app.html",
+      "line": 49,
+      "detail": "*ngIf"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/app.html",
+      "line": 80,
+      "detail": "*ngIf"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/app.html",
+      "line": 81,
+      "detail": "*ngIf"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 102,
+      "detail": "*ngFor"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 144,
+      "detail": "*ngFor"
+    },
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/dashboard/dashboard.ts",
+      "line": 172,
+      "detail": "ngStyle"
+    },
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 81,
+      "detail": "ngStyle"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/roster/roster.ts",
+      "line": 84,
+      "detail": "*ngFor"
+    },
+    {
+      "kind": "legacy-control-flow",
+      "file": "src/app/roster/roster.ts",
+      "line": 117,
+      "detail": "*ngFor"
+    },
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/roster/roster.ts",
+      "line": 145,
+      "detail": "ngClass"
+    }
+  ]
+}

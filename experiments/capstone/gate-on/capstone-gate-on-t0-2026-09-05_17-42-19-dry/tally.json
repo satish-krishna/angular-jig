@@ -1,0 +1,12 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "appearance-on-primitive": 0,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "unknown-primitive": 0,
+    "missing-composition-part": 0,
+    "all": 0
+  },
+  "violations": []
+}

@@ -1,0 +1,29 @@
+{
+  "totals": {
+    "raw-control": 1,
+    "appearance-on-primitive": 2,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "all": 3
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 5,
+      "detail": "appearance class px-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 57,
+      "detail": "appearance class px-4 on primitive div"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/app.html",
+      "line": 82,
+      "detail": "input without hlmInput/hlmSidebarInput"
+    }
+  ]
+}

@@ -26,6 +26,22 @@
 //    editable. Registering it in only one arm would leave the baseline free to
 //    tamper, which would be a worse asymmetry than the one it fixes.
 //
+// WHAT THIS GUARD CANNOT DO, stated rather than discovered later. The Bash arm
+// scans the command text for a literal protected path, and a shell can always
+// name a file without spelling it: `F=stylelint; sed -i s/a/b/ $F.config.mjs`,
+// a glob (`sed -i s/a/b/ *.config.mjs`), a working-directory change (`cd
+// harness && sed -i ... index.mjs`, and this tool's cwd persists between calls),
+// `find . -name '*.config.mjs' -exec sed -i {} +`, or a base64-decoded path all
+// get through. Short of running the shell in a sandbox with the paths mounted
+// read-only, no PreToolUse text scan closes those; the review that found them
+// is on record.
+//
+// So this hook is the cheap first line, not the guarantee. The guarantee is
+// run-capstone.mjs, which diffs every changed file after the run and VOIDS any
+// trial that touched an enforcement path. That check cannot be talked around,
+// because it reads the git tree rather than the agent's intent. Prevention here,
+// authority there.
+//
 // Fails closed: a payload it cannot parse is denied rather than waved through,
 // matching the repo's hook convention.
 
@@ -41,8 +57,18 @@ const PROTECTED = [
   '.claude/hooks/',
   '.claude/skills/',
   '.claude/settings.json',
+  '.claude/settings.local.json',
   '.agents/skills/',
   'components.json',
+  // Not enforcement rules themselves, but each is a lever on the experiment.
+  // package.json holds the scripts the gates run, so an agent that can add a
+  // script can rewrite a config through it. tsconfig.json holds strictTemplates,
+  // which the driver sets as a control in BOTH arms. .mcp.json is handed to the
+  // agent as --mcp-config.
+  'package.json',
+  'tsconfig.json',
+  'tsconfig.app.json',
+  '.mcp.json',
 ];
 
 const DENY_MESSAGE =
@@ -100,7 +126,10 @@ if (toolName === 'Bash' || toolName === 'PowerShell') {
     // Allow the read-only shapes the harness itself needs, so the agent can run
     // the checks it is told to run. Anything that could write is still denied.
     const readOnly = /^\s*(npm run (check:responsive|test:harness|count|lint|build)|npx vitest|node harness\/counter\/[a-z-]+\.mjs)\b/;
-    if (readOnly.test(String(input.command ?? '').trim())) hits = [];
+    // Tested against the NORMALIZED command, not the raw one. Otherwise the
+    // Windows path form (`node harness\counter\counter.mjs`) is denied while the
+    // forward-slash form is allowed, an inconsistency no caller could predict.
+    if (readOnly.test(cmd.trim())) hits = [];
   }
 } else {
   const file = input.file_path ?? input.filePath ?? input.notebook_path ?? null;

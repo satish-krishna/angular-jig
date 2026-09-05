@@ -169,17 +169,18 @@ Same AST shape as the `FormsModule` half of rule 3 and the `ReactiveFormsModule`
 
 This is the rule whose absence was fatal. Bare `NgIconsModule` throws at bootstrap ("No icons have been provided..."), so three of the capstone's six builds compiled cleanly, passed `strictTemplates`, passed every AST gate, and rendered a blank page. `capstone-spec.md` had already stated that the icon rule gated only the decidable template half and left registration doc-only; the drift landed in the ungated half, and the ungated half killed the application. The lesson is not that the limitation was undocumented. It was documented. The lesson is that a documented gap is still a gap.
 
-### 13. `unregistered-icon`: a lucide symbol imported but never registered with `provideIcons`
+### 13. `unregistered-icon`: lucide symbols imported into a file that never registers them
 
-Docs: the house-style skill, "Register with `provideIcons`, and only `provideIcons`"; spartan's `rules/icons.md`, "Icon names are not global - each icon you reference must be provided to the component (or app) via `provideIcons`."
+Docs: spartan's `rules/icons.md`, "Icon names are not global - each icon you reference must be provided to the component (or app) via `provideIcons`."
 
-- Violation: a `@Component` that lists `NgIcon` in its `imports` array and has no `provideIcons(...)` call in its `providers` array.
-- Keyed on the component decorator rather than on the file's import list, deliberately. Imports are a file-level fact, so a file holding two components where only one renders icons would false-positive under the looser reading. `NgIcon` in `imports` is the component saying it renders icons, and that is a per-component property.
-- Good (passes): `providers: [provideIcons({ lucideUsers })]`. Bad (fails): `providers: [{ provide: 'ICONS', useValue: { lucideUsers } }]`, or no providers at all.
+- Violation: a file with one or more named imports from `@ng-icons/lucide` that contains no `provideIcons(...)` call. Reported once per file, at the import declaration.
+- Good (passes): `import { lucideUsers } from '@ng-icons/lucide'` together with `providers: [provideIcons({ lucideUsers })]`. Also good, and importantly so: a component that lists `NgIcon` in `imports` and imports NO lucide symbol, because its icons are registered once at application level. Bad (fails): importing `lucideTrash2` and handing it to `{ provide: 'ICONS', useValue: { lucideTrash2 } }`, or importing it and never registering it at all.
 
-The sealing spec called the registration half permanently doc-only, on the grounds that the template engines cannot see the component class. That reasoning was right about the *template* engines and wrong about decidability: this is a pure TypeScript-AST property, and the shape rules have always been TypeScript rules. One capstone trial invented `{ provide: 'ICONS', useValue: { ... } }`, which typechecks, registers nothing, and left every icon in the application shell rendering blank. That correction is recorded rather than quietly applied, because "we said this could not be gated and we were wrong" is more useful to a reader than a rule that silently appears.
+**This rule was drafted wrong the first time, and the error is worth recording because it is the exact trap this project exists to avoid.** The first draft keyed on the component decorator: `NgIcon` in `imports` with no `provideIcons` in `providers`. That reads plausibly and is wrong, because the spartan line says "the component **(or app)**" and registering every icon once in `app.config.ts` is a documented, sensible pattern. Run against the capstone builds, that draft fired 7 times on one build and 4 on another, and those two were the builds that got icons RIGHT. A rule written to catch a fatal icon bug would have blocked the only builds where icons worked. The gate must enforce what the docs say and permit everything they permit; a rule that hard-blocks the documented pattern is worse than no rule.
 
-What stays genuinely ungated is the join in the other direction, that every `<ng-icon name="X">` names a registered `X`, because a name can be computed (`[name]="'lucide' + icon()"`) and is then not statically knowable.
+The property that actually separates the two is not where `NgIcon` is imported but where the lucide SYMBOLS go. A file that imports a glyph and never registers it has either dead imports or misrouted ones; a file relying on app-level registration imports no glyph at all. That is decidable from the file's own AST with no cross-file join, and it fires on the real drift (an invented `{ provide: 'ICONS' }` token) while staying silent on both correct patterns.
+
+What stays ungated is the join in the other direction, that every `<ng-icon name="X">` names a registered `X`, because a name can be computed (`[name]="'lucide' + icon()"`) and is then not statically knowable.
 
 ### 14. `orphan-ng-submit`: `(ngSubmit)` where no forms module supplies it
 

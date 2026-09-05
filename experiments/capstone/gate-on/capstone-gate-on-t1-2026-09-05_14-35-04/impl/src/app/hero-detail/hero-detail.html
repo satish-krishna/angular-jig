@@ -1,0 +1,357 @@
+<div class="flex flex-col gap-6 p-4 sm:p-6">
+  <!-- Back link -->
+  <button hlmBtn variant="ghost" class="w-fit flex items-center gap-2" (click)="vm.goBack()">
+    <ng-icon name="lucideChevronLeft" />
+    <span>Back to roster</span>
+  </button>
+
+  @if (vm.hero(); as hero) {
+    <!-- Detail header -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div class="flex items-start gap-4">
+        <hlm-avatar class="h-16 w-16">
+          <div hlmAvatarFallback>{{ hero.name.slice(0, 2).toUpperCase() }}</div>
+        </hlm-avatar>
+        <div class="flex flex-col gap-2">
+          <h1 class="text-2xl font-bold text-foreground">{{ hero.name }}</h1>
+          <p class="text-muted-foreground">{{ hero.alias }}</p>
+          <div class="flex flex-wrap gap-2">
+            <hlm-badge variant="secondary">{{ hero.powerClass }}</hlm-badge>
+            <hlm-badge [variant]="statusVariant(hero.status)">{{ hero.status }}</hlm-badge>
+            <hlm-badge variant="outline">{{ hero.clearanceTier }}</hlm-badge>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col gap-2 w-full sm:w-auto">
+        <button hlmBtn class="flex items-center gap-2">
+          <ng-icon name="lucideCrosshair" />
+          <span>Deploy</span>
+        </button>
+        <button hlmBtn variant="destructive" class="flex items-center gap-2" (click)="openRetireDialog()">
+          <ng-icon name="lucideTrash2" />
+          <span>Retire</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs navigation -->
+    <div class="flex gap-2 border-b border-border">
+      <button hlmBtn variant="ghost" (click)="vm.setActiveTab('overview')" [class.font-bold]="vm.activeTab() === 'overview'">
+        Overview
+      </button>
+      <button hlmBtn variant="ghost" (click)="vm.setActiveTab('powers')" [class.font-bold]="vm.activeTab() === 'powers'">
+        Powers
+      </button>
+      <button hlmBtn variant="ghost" (click)="vm.setActiveTab('missions')" [class.font-bold]="vm.activeTab() === 'missions'">
+        Missions
+      </button>
+      <button hlmBtn variant="ghost" (click)="vm.setActiveTab('edit')" [class.font-bold]="vm.activeTab() === 'edit'">
+        Edit
+      </button>
+    </div>
+
+    <!-- Overview tab -->
+    @if (vm.activeTab() === 'overview') {
+      <div class="flex flex-col gap-6 pt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Field summary + mini-stats -->
+          <div hlmCard>
+            <div hlmCardHeader>
+              <h3 hlmCardTitle>Field Summary</h3>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-muted-foreground">Power Index</span>
+                <span class="text-lg font-bold text-primary">{{ hero.powerIndex }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-muted-foreground">Missions</span>
+                <span class="text-lg font-bold text-foreground">{{ hero.missionCount }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-muted-foreground">Success Rate</span>
+                <span class="text-lg font-bold text-foreground">{{ (hero.successRate * 100).toFixed(0) }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dossier k/v -->
+          <div hlmCard>
+            <div hlmCardHeader>
+              <h3 hlmCardTitle>Dossier</h3>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-muted-foreground uppercase">Hero ID</span>
+                <span class="text-sm text-foreground">{{ hero.id }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-muted-foreground uppercase">Status</span>
+                <span class="text-sm text-foreground">{{ hero.status }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-muted-foreground uppercase">Clearance Tier</span>
+                <span class="text-sm text-foreground">{{ hero.clearanceTier }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Powers tab -->
+    @if (vm.activeTab() === 'powers') {
+      <div class="flex flex-col gap-6 pt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Power meters -->
+          <div hlmCard>
+            <div hlmCardHeader>
+              <h3 hlmCardTitle>Power Metrics</h3>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-4">
+              <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-medium text-foreground">Overall Power</span>
+                  <span class="text-sm font-bold text-primary">{{ hero.powerIndex }}%</span>
+                </div>
+                <div class="w-full bg-muted rounded-full h-2">
+                  <div class="bg-primary h-2 rounded-full" [style.width]="hero.powerIndex + '%'"></div>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-medium text-foreground">Success Rate</span>
+                  <span class="text-sm font-bold text-primary">{{ (hero.successRate * 100).toFixed(0) }}%</span>
+                </div>
+                <div class="w-full bg-muted rounded-full h-2">
+                  <div class="bg-primary h-2 rounded-full" [style.width]="(hero.successRate * 100) + '%'"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ability badges -->
+          <div hlmCard>
+            <div hlmCardHeader>
+              <h3 hlmCardTitle>Abilities</h3>
+            </div>
+            <div hlmCardContent class="flex flex-wrap gap-2">
+              <hlm-badge>{{ hero.powerClass }}</hlm-badge>
+              <hlm-badge variant="secondary">{{ hero.status }}</hlm-badge>
+              @if (hero.status === 'Active') {
+                <hlm-badge variant="default">Deployable</hlm-badge>
+              }
+              @if (hero.successRate > 0.95) {
+                <hlm-badge variant="secondary">Elite</hlm-badge>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Missions tab -->
+    @if (vm.activeTab() === 'missions') {
+      <div class="flex flex-col gap-4 pt-6">
+        <div hlmCard>
+          <div hlmCardHeader>
+            <h3 hlmCardTitle>Mission History</h3>
+          </div>
+          <div hlmCardContent class="flex flex-col gap-3">
+            @for (i of [0, 1, 2]; track i) {
+              <div class="flex items-center justify-between p-3 border border-border rounded-lg">
+                <div class="flex flex-col gap-1">
+                  <span class="font-medium text-foreground">Deployment {{ hero.missionCount - i }}</span>
+                  <span class="text-xs text-muted-foreground">2026-08-{{ (i + 1).toString().padStart(2, '0') }}</span>
+                </div>
+                @if (i < 2) {
+                  <hlm-badge variant="default">
+                    <ng-icon name="lucideCheck" class="mr-1"></ng-icon>
+                    Success
+                  </hlm-badge>
+                } @else {
+                  <hlm-badge variant="secondary">
+                    <ng-icon name="lucideTriangleAlert" class="mr-1"></ng-icon>
+                    Warning
+                  </hlm-badge>
+                }
+              </div>
+            }
+            <div class="text-center py-4 text-sm text-muted-foreground">
+              {{ hero.missionCount }} total missions • {{ (hero.successRate * 100).toFixed(0) }}% success rate
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Edit tab -->
+    @if (vm.activeTab() === 'edit') {
+      <div class="flex flex-col gap-6 pt-6">
+        <form [formRoot]="heroForm" (ngSubmit)="onSaveHero()" class="flex flex-col gap-6">
+          <div hlmCard>
+            <div hlmCardHeader>
+              <h3 hlmCardTitle>Hero Details</h3>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-4">
+              <!-- Name -->
+              <div hlmField orientation="vertical">
+                <label hlmLabel for="name">Name</label>
+                <input
+                  hlmInput
+                  id="name"
+                  type="text"
+                  [formField]="heroForm.name"
+                  placeholder="Hero name"
+                />
+                @for (error of heroForm.name().errors(); track error.kind) {
+                  <hlm-field-error>{{ error.message }}</hlm-field-error>
+                }
+              </div>
+
+              <!-- Alias -->
+              <div hlmField orientation="vertical">
+                <label hlmLabel for="alias">Alias</label>
+                <input
+                  hlmInput
+                  id="alias"
+                  type="text"
+                  [formField]="heroForm.alias"
+                  placeholder="Hero alias"
+                />
+                @for (error of heroForm.alias().errors(); track error.kind) {
+                  <hlm-field-error>{{ error.message }}</hlm-field-error>
+                }
+              </div>
+
+              <!-- Power Class -->
+              <div hlmField orientation="vertical">
+                <label hlmLabel for="powerClass">Power Class</label>
+                <hlm-select>
+                  <button hlmBtn hlmSelectTrigger class="justify-start" [formField]="heroForm.powerClass">
+                    <span>{{ heroForm.powerClass().value || 'Select class' }}</span>
+                  </button>
+                  <hlm-select-content>
+                    <hlm-select-item value="Aerial">Aerial</hlm-select-item>
+                    <hlm-select-item value="Energy">Energy</hlm-select-item>
+                    <hlm-select-item value="Psionic">Psionic</hlm-select-item>
+                    <hlm-select-item value="Tech">Tech</hlm-select-item>
+                    <hlm-select-item value="Mutant">Mutant</hlm-select-item>
+                    <hlm-select-item value="Cosmic">Cosmic</hlm-select-item>
+                    <hlm-select-item value="Enhanced">Enhanced</hlm-select-item>
+                  </hlm-select-content>
+                </hlm-select>
+                @for (error of heroForm.powerClass().errors(); track error.kind) {
+                  <hlm-field-error>{{ error.message }}</hlm-field-error>
+                }
+              </div>
+
+              <!-- Power Index -->
+              <div hlmField orientation="vertical">
+                <label hlmLabel for="powerIndex">Power Index</label>
+                <input
+                  hlmInput
+                  id="powerIndex"
+                  type="number"
+                  [formField]="heroForm.powerIndex"
+                  placeholder="0-100"
+                />
+                @for (error of heroForm.powerIndex().errors(); track error.kind) {
+                  <hlm-field-error>{{ error.message }}</hlm-field-error>
+                }
+              </div>
+
+              <!-- Status -->
+              <div hlmField orientation="vertical">
+                <label hlmLabel for="status">Status</label>
+                <hlm-select>
+                  <button hlmBtn hlmSelectTrigger class="justify-start" [formField]="heroForm.status">
+                    <span>{{ heroForm.status().value || 'Select status' }}</span>
+                  </button>
+                  <hlm-select-content>
+                    <hlm-select-item value="Active">Active</hlm-select-item>
+                    <hlm-select-item value="Injured">Injured</hlm-select-item>
+                    <hlm-select-item value="Reserve">Reserve</hlm-select-item>
+                    <hlm-select-item value="MIA">MIA</hlm-select-item>
+                  </hlm-select-content>
+                </hlm-select>
+                @for (error of heroForm.status().errors(); track error.kind) {
+                  <hlm-field-error>{{ error.message }}</hlm-field-error>
+                }
+              </div>
+
+              <!-- Notes -->
+              <div hlmField orientation="vertical">
+                <label hlmLabel for="notes">Notes</label>
+                <textarea
+                  hlmTextarea
+                  id="notes"
+                  [formField]="heroForm.notes"
+                  placeholder="Additional notes"
+                  rows="4"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form actions -->
+          <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <button
+              hlmBtn
+              type="button"
+              variant="outline"
+              (click)="vm.setActiveTab('overview')"
+            >
+              Cancel
+            </button>
+            <button
+              hlmBtn
+              type="submit"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  } @else {
+    <div class="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-muted/30 p-12 text-center">
+      <ng-icon name="lucideShieldAlert" class="text-4xl text-muted-foreground" />
+      <div>
+        @if (vm.isLoading()) {
+          <h3 class="font-semibold text-foreground">Loading hero...</h3>
+          <p class="text-sm text-muted-foreground">Please wait while we fetch the hero details</p>
+        } @else {
+          <h3 class="font-semibold text-foreground">Hero not found</h3>
+          <p class="text-sm text-muted-foreground">The requested hero ({{ vm.isLoading() ? '...' : 'ID not found' }}) does not exist</p>
+        }
+      </div>
+      <button hlmBtn variant="outline" (click)="vm.goBack()">Back to roster</button>
+    </div>
+  }
+</div>
+
+<!-- Retire confirmation dialog -->
+@if (vm.showRetireDialog()) {
+  <hlm-dialog>
+    <hlm-dialog-content>
+      <div class="flex flex-col gap-4">
+        <div>
+          <h2 class="font-semibold text-foreground">Retire Hero?</h2>
+          <p class="text-sm text-muted-foreground mt-2">
+            This action cannot be undone. Are you sure you want to retire {{ vm.hero()?.name }}?
+          </p>
+        </div>
+        <div class="flex gap-3 justify-end">
+          <button hlmBtn variant="outline" (click)="vm.showRetireDialog.set(false)">Cancel</button>
+          <button hlmBtn variant="destructive" (click)="confirmRetire()">
+            Retire Hero
+          </button>
+        </div>
+      </div>
+    </hlm-dialog-content>
+  </hlm-dialog>
+}

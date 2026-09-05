@@ -1,0 +1,4 @@
+/* App shell layout */
+:host {
+  display: contents;
+}

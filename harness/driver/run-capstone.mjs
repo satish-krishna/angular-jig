@@ -209,14 +209,24 @@ const sumOf = (rows, key) => rows.reduce((acc, r) => (typeof r[key] === 'number'
 // A gate the subject can edit is not a gate, and a measurement that cannot
 // detect its own instrument being adjusted is not a measurement. Any run that
 // touches these paths is tampered and its enforcement counts are void.
+// Kept in sync with PROTECTED in .claude/hooks/protect-enforcement.mjs. That
+// hook is the cheap first line; THIS is the authority, because it reads the git
+// tree after the fact rather than scanning the agent's command text, and no
+// shell trick talks its way past a diff.
 const ENFORCEMENT_PATHS = [
   'stylelint.config.mjs',
   'eslint.config.mjs',
   'harness/',
   '.claude/hooks/',
   '.claude/skills/',
+  '.claude/settings.json',
+  '.claude/settings.local.json',
   '.agents/skills/',
   'components.json',
+  'package.json',
+  'tsconfig.json',
+  'tsconfig.app.json',
+  '.mcp.json',
 ];
 
 function findTamperedFiles(changedFiles) {
@@ -333,11 +343,24 @@ function main() {
                 '--out',
                 routeOut,
               ],
-              { cwd: ROOT, stdio: 'inherit' },
+              // stderr is PIPED, not inherited, so the auditor's own message
+              // lands in the run record. Inheriting it sent the render
+              // assertion's text to the console and left meta.json saying only
+              // "Command failed", which made "the build does not render" an
+              // inference rather than a recorded fact. A published claim should
+              // not rest on evidence the run threw away.
+              { cwd: ROOT, stdio: ['ignore', 'inherit', 'pipe'], encoding: 'utf8' },
             );
             responsiveByRoute[route] = JSON.parse(readFileSync(join(routeOut, 'responsive-tally.json'), 'utf8'));
           } catch (e) {
-            responsiveByRoute[route] = { error: String(e.message ?? e) };
+            const stderr = String(e.stderr ?? '').trim();
+            responsiveByRoute[route] = {
+              error: String(e.message ?? e),
+              // The auditor's real reason, e.g. the render assertion's
+              // "page rendered no substantive content at ...".
+              stderr: stderr || null,
+              reason: /no substantive content/.test(stderr) ? 'build-does-not-render' : 'auditor-failed',
+            };
           }
         }
       }

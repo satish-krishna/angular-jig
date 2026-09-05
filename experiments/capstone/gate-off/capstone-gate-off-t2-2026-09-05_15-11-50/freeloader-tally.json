@@ -1,0 +1,33 @@
+{
+  "totals": {
+    "legacy-control-flow": 0,
+    "ng-class-style": 4,
+    "all": 4
+  },
+  "violations": [
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 89,
+      "detail": "ngStyle"
+    },
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/roster/roster.ts",
+      "line": 146,
+      "detail": "ngClass"
+    },
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/threats/threats.ts",
+      "line": 138,
+      "detail": "ngStyle"
+    },
+    {
+      "kind": "ng-class-style",
+      "file": "src/app/ui/hero-card.ts",
+      "line": 52,
+      "detail": "ngClass"
+    }
+  ]
+}

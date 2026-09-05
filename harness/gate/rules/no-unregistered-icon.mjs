@@ -1,59 +1,67 @@
-import { componentDecoratorObject } from './component-util.mjs';
-
-// Rule 13 of the component-shape spec (capstone-residue): a component that
-// lists NgIcon in its imports array but has no provideIcons(...) call in its
-// providers array. The house-style skill: "Register with `provideIcons`, and
-// only `provideIcons`"; spartan's `rules/icons.md`: "Icon names are not
-// global - each icon you reference must be provided to the component (or
-// app) via `provideIcons`."
-//
-// Keyed on the component decorator (NgIcon in `imports`), not on the file's
-// import list, deliberately: imports are a file-level fact, so a file holding
-// two components where only one renders icons would false-positive under the
-// looser reading. NgIcon in `imports` is the component saying it renders
-// icons, which is a per-component property.
-//
-// One capstone trial invented `providers: [{ provide: 'ICONS', useValue: {...} }]`,
-// which typechecks, registers nothing, and left every icon in the shell blank.
+// Rule 13 of the component-shape spec (capstone-residue): a file that imports
+// one or more glyph symbols from `@ng-icons/lucide` and never calls
+// `provideIcons(...)`. Reported once per file, at the import declaration.
 // messageId `unregisteredIcon` maps to the counter's `unregistered-icon` kind.
+//
+// spartan's `rules/icons.md`: "Icon names are not global - each icon you
+// reference must be provided to the component (or app) via `provideIcons`."
+//
+// The parenthesis in "(or app)" is the whole design of this rule, and the first
+// draft got it wrong. That draft keyed on the component decorator: `NgIcon` in
+// `imports` with no `provideIcons` in `providers`. It reads plausibly and it is
+// wrong, because registering every glyph once in `app.config.ts` is a
+// documented pattern, and a component relying on it correctly has no
+// `provideIcons` of its own. Run against the capstone builds that draft fired 7
+// times on one and 4 on another, and those were precisely the two builds where
+// icons WORKED. A rule written to catch a fatal icon bug would have blocked the
+// only builds that shipped icons correctly.
+//
+// The property that actually separates the cases is not where `NgIcon` is
+// imported but where the glyph SYMBOLS go. A file that imports a glyph and never
+// registers it has dead or misrouted imports; a file relying on app-level
+// registration imports no glyph at all. One capstone trial imported eleven
+// glyphs and handed them to `{ provide: 'ICONS', useValue: {...} }`, which
+// typechecks, registers nothing, and left every icon in the shell blank.
+const LUCIDE_MODULE = '@ng-icons/lucide';
+
 export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow a component that imports NgIcon but registers no icon via provideIcons.',
+      description:
+        'Disallow importing lucide glyph symbols into a file that never registers them with provideIcons.',
     },
     schema: [],
     messages: {
       unregisteredIcon:
-        'Component shape: this component imports NgIcon but registers no icon, which renders blank. Add ' +
-        'provideIcons({ ... }) to its providers array (see harness/component-shape-spec.md, rule 13); a custom ' +
-        'token or plain object registers nothing.',
+        'Component shape: this file imports icon symbols from @ng-icons/lucide but never calls ' +
+        'provideIcons({ ... }), so they register nothing and every <ng-icon> using them renders blank. ' +
+        'Register them with provideIcons in this component’s providers, or drop the imports and rely on the ' +
+        'application-level registration (see harness/component-shape-spec.md, rule 13). A custom injection ' +
+        'token or a plain object registers nothing.',
     },
   },
   create(context) {
+    const lucideImports = [];
+    let sawProvideIcons = false;
+
     return {
-      ClassDeclaration(node) {
-        const obj = componentDecoratorObject(node);
-        if (!obj) return;
-
-        const importsProp = obj.properties.find(
-          (p) => p.type === 'Property' && p.key && p.key.type === 'Identifier' && p.key.name === 'imports',
-        );
-        if (!importsProp || importsProp.value.type !== 'ArrayExpression') return;
-        const ngIconEl = importsProp.value.elements.find((el) => el && el.type === 'Identifier' && el.name === 'NgIcon');
-        if (!ngIconEl) return;
-
-        const providersProp = obj.properties.find(
-          (p) => p.type === 'Property' && p.key && p.key.type === 'Identifier' && p.key.name === 'providers',
-        );
-        const providerElements =
-          providersProp && providersProp.value.type === 'ArrayExpression' ? providersProp.value.elements : [];
-        const hasProvideIcons = providerElements.some(
-          (el) => el && el.type === 'CallExpression' && el.callee.type === 'Identifier' && el.callee.name === 'provideIcons',
-        );
-
-        if (!hasProvideIcons) {
-          context.report({ node: ngIconEl, messageId: 'unregisteredIcon' });
+      ImportDeclaration(node) {
+        if (node.source && node.source.value === LUCIDE_MODULE) {
+          const named = (node.specifiers ?? []).some((s) => s.type === 'ImportSpecifier');
+          if (named) lucideImports.push(node);
+        }
+      },
+      CallExpression(node) {
+        if (node.callee && node.callee.type === 'Identifier' && node.callee.name === 'provideIcons') {
+          sawProvideIcons = true;
+        }
+      },
+      'Program:exit'() {
+        if (sawProvideIcons) return;
+        // Once per file, anchored at the first offending import.
+        if (lucideImports.length > 0) {
+          context.report({ node: lucideImports[0], messageId: 'unregisteredIcon' });
         }
       },
     };

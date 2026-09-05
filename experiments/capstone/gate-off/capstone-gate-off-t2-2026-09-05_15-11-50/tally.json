@@ -1,0 +1,461 @@
+{
+  "totals": {
+    "raw-control": 12,
+    "appearance-on-primitive": 63,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "all": 75
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 8,
+      "detail": "appearance class px-2 on primitive ul"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 25,
+      "detail": "appearance class text-sidebar-foreground on primitive button"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 46,
+      "detail": "appearance class bg-transparent on primitive input"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 89,
+      "detail": "appearance class font-medium on primitive span"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 126,
+      "detail": "button without hlmBtn/hlmDialogTrigger/hlmDialogTriggerFor/hlmDialogClose/hlmSheetTrigger/hlmSheetClose/hlmSidebarTrigger/hlmSidebarRail/hlmSidebarMenuButton/hlmSidebarMenuSubButton/hlmSidebarMenuAction/hlmSidebarGroupAction/hlmSidebarGroupLabel"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 133,
+      "detail": "button without hlmBtn/hlmDialogTrigger/hlmDialogTriggerFor/hlmDialogClose/hlmSheetTrigger/hlmSheetClose/hlmSidebarTrigger/hlmSidebarRail/hlmSidebarMenuButton/hlmSidebarMenuSubButton/hlmSidebarMenuAction/hlmSidebarGroupAction/hlmSidebarGroupLabel"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 140,
+      "detail": "button without hlmBtn/hlmDialogTrigger/hlmDialogTriggerFor/hlmDialogClose/hlmSheetTrigger/hlmSheetClose/hlmSidebarTrigger/hlmSidebarRail/hlmSidebarMenuButton/hlmSidebarMenuSubButton/hlmSidebarMenuAction/hlmSidebarGroupAction/hlmSidebarGroupLabel"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 147,
+      "detail": "button without hlmBtn/hlmDialogTrigger/hlmDialogTriggerFor/hlmDialogClose/hlmSheetTrigger/hlmSheetClose/hlmSidebarTrigger/hlmSidebarRail/hlmSidebarMenuButton/hlmSidebarMenuSubButton/hlmSidebarMenuAction/hlmSidebarGroupAction/hlmSidebarGroupLabel"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 161,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 188,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 226,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 267,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 285,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 301,
+      "detail": "appearance class bg-success/20 on primitive span"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 303,
+      "detail": "appearance class bg-warning/20 on primitive span"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 305,
+      "detail": "appearance class bg-destructive/20 on primitive span"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 322,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 327,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 343,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 359,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 362,
+      "detail": "select has no acceptable attribute, replace with hlm-select"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 381,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 399,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 402,
+      "detail": "select has no acceptable attribute, replace with hlm-select"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.ts",
+      "line": 447,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 58,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 62,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 78,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 94,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 97,
+      "detail": "select has no acceptable attribute, replace with hlm-select"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 117,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 135,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 138,
+      "detail": "textarea without hlmTextarea"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 150,
+      "detail": "appearance class text-sm on primitive label"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/recruit/recruit.ts",
+      "line": 153,
+      "detail": "input without hlmInput/hlmSidebarInput"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 63,
+      "detail": "appearance class pl-10 on primitive input"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/roster/roster.ts",
+      "line": 74,
+      "detail": "select has no acceptable attribute, replace with hlm-select"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 91,
+      "detail": "appearance class border-b on primitive tr"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 92,
+      "detail": "appearance class px-6 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 95,
+      "detail": "appearance class px-6 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 98,
+      "detail": "appearance class px-6 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 101,
+      "detail": "appearance class px-6 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 104,
+      "detail": "appearance class px-6 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 107,
+      "detail": "appearance class px-6 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 114,
+      "detail": "appearance class border-b on primitive tr"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 116,
+      "detail": "appearance class px-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 133,
+      "detail": "appearance class px-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 140,
+      "detail": "appearance class px-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 145,
+      "detail": "appearance class px-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 157,
+      "detail": "appearance class px-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/roster/roster.ts",
+      "line": 162,
+      "detail": "appearance class px-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/settings/settings.ts",
+      "line": 47,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/settings/settings.ts",
+      "line": 86,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/settings/settings.ts",
+      "line": 101,
+      "detail": "input without hlmInput/hlmSidebarInput"
+    },
+    {
+      "kind": "raw-control",
+      "file": "src/app/settings/settings.ts",
+      "line": 115,
+      "detail": "input without hlmInput/hlmSidebarInput"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/settings/settings.ts",
+      "line": 121,
+      "detail": "appearance class p-6 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 53,
+      "detail": "appearance class p-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 66,
+      "detail": "appearance class p-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 79,
+      "detail": "appearance class p-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 101,
+      "detail": "appearance class border-b on primitive tr"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 102,
+      "detail": "appearance class px-4 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 105,
+      "detail": "appearance class px-4 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 108,
+      "detail": "appearance class px-4 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 111,
+      "detail": "appearance class px-4 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 114,
+      "detail": "appearance class px-4 on primitive th"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 121,
+      "detail": "appearance class border-b on primitive tr"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 122,
+      "detail": "appearance class px-4 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 137,
+      "detail": "appearance class px-4 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 138,
+      "detail": "appearance class font-medium on primitive span"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 146,
+      "detail": "appearance class px-4 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 151,
+      "detail": "appearance class px-4 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.ts",
+      "line": 154,
+      "detail": "appearance class px-4 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/ui/hero-card.ts",
+      "line": 28,
+      "detail": "appearance class hover:shadow-lg on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/ui/hero-card.ts",
+      "line": 29,
+      "detail": "appearance class pb-3 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/ui/stat-tile.ts",
+      "line": 12,
+      "detail": "appearance class p-6 on primitive div"
+    }
+  ]
+}
