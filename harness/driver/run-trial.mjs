@@ -23,7 +23,7 @@
 // counter, records, branch restore) without spending tokens.
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, readFileSync, existsSync, unlinkSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, unlinkSync, cpSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
@@ -56,6 +56,10 @@ const SETTINGS = {
   4: {
     'gate-off': 'harness/gate/part4-gate-off.settings.json',
     'gate-on': 'harness/gate/part4-gate-on.settings.json',
+  },
+  5: {
+    'gate-off': 'harness/gate/part5-gate-off.settings.json',
+    'gate-on': 'harness/gate/part5-gate-on.settings.json',
   },
 };
 
@@ -155,7 +159,13 @@ function killStrayDevServers() {
 function main() {
   const { condition, trial, dryRun, part, task } = parseArgs(process.argv.slice(2));
   const settingsPath = SETTINGS[part][condition];
-  const promptFile = task === 'dashboard' ? 'task-prompt.md' : `task-prompt-${task}.md`;
+  let promptFile = task === 'dashboard' ? 'task-prompt.md' : `task-prompt-${task}.md`;
+  // Part 5 soft gate: the single variable is the prompt. gate-on runs the
+  // responsive-instructed variant; gate-off runs the plain detail-form prompt.
+  if (part === 5) {
+    if (task !== 'detail-form') throw new Error('Part 5 measures the detail-form slice; pass --task detail-form');
+    if (condition === 'gate-on') promptFile = 'task-prompt-detail-form-responsive.md';
+  }
 
   const startBranch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
   // The driver's own experiment output accumulates in experiments/ and must not
@@ -185,6 +195,8 @@ function main() {
   let shapeResult;
   let freeloaderResult;
   let strictResult = null;
+  let responsiveResult = null;
+  let responsiveOutTmp = null;
   let diff = '';
   let resultSha = substrateSha;
 
@@ -194,6 +206,9 @@ function main() {
     // Part 4 gate-on: put the tree into strictTemplates before the agent builds,
     // so its own `ng build` fails on a template type error and it must fix it.
     if (part === 4 && condition === 'gate-on' && !dryRun) setStrictTemplatesOption(true);
+    // Part 5 keeps Part 4's strictTemplates freeloader on in both conditions
+    // (cumulative baseline), so the single variable stays the responsive prompt.
+    if (part === 5 && !dryRun) setStrictTemplatesOption(true);
 
     if (!dryRun) {
       writeFileSync(logPath, '');
@@ -233,6 +248,21 @@ function main() {
     // Part 4 (it runs a build, so it is not free). Restores tsconfig afterward.
     if (part === 4 && !dryRun) strictResult = strictTemplateCheck({ restore: true });
     diff = git(['diff', `${substrateSha}..HEAD`]);
+
+    // Part 5, Plane 2: measure responsive drift with the independent Playwright
+    // auditor, on the run branch's built tree. Written to a temp dir, folded into
+    // the evidence folder below (mirrors how hook-firings is staged in tmp).
+    if (part === 5 && !dryRun) {
+      execFileSync('npx', ['ng', 'build'], { cwd: ROOT, stdio: 'inherit' });
+      responsiveOutTmp = join(tmpdir(), `responsive-${runId}`);
+      execFileSync('node', [
+        'harness/counter/responsive-auditor.mjs',
+        '--dist', 'dist/angular-jig/browser',
+        '--route', 'detail/11',
+        '--out', responsiveOutTmp,
+      ], { cwd: ROOT, stdio: 'inherit' });
+      responsiveResult = JSON.parse(readFileSync(join(responsiveOutTmp, 'responsive-tally.json'), 'utf8'));
+    }
   } finally {
     // Reap any dev server the agent spawned (it should not, per the task prompt),
     // then always return to where we started, even if the trial threw.
@@ -257,6 +287,12 @@ function main() {
   writeFileSync(join(outDir, 'shape-tally.json'), JSON.stringify(shapeResult, null, 2) + '\n');
   writeFileSync(join(outDir, 'freeloader-tally.json'), JSON.stringify(freeloaderResult, null, 2) + '\n');
   if (strictResult) writeFileSync(join(outDir, 'strict-tally.json'), JSON.stringify(strictResult, null, 2) + '\n');
+  if (responsiveResult) {
+    writeFileSync(join(outDir, 'responsive-tally.json'), JSON.stringify(responsiveResult, null, 2) + '\n');
+    if (responsiveOutTmp && existsSync(responsiveOutTmp)) {
+      cpSync(responsiveOutTmp, join(outDir, 'responsive'), { recursive: true });
+    }
+  }
   writeFileSync(join(outDir, 'diff.patch'), diff + '\n');
   if (!dryRun) writeFileSync(join(outDir, 'claude-output.json'), agent.stdout || '{}');
   if (!dryRun && hookFirings.trim()) writeFileSync(join(outDir, 'hook-firings.jsonl'), hookFirings);
@@ -310,6 +346,7 @@ function main() {
       freeloader: freeloaderResult.totals,
     },
     strictTemplates: strictResult,
+    responsive: responsiveResult ? responsiveResult.totals : null,
     startedFromBranch: startBranch,
     finishedAt: new Date().toISOString(),
   };
@@ -345,6 +382,7 @@ function main() {
       `  shape:   ${JSON.stringify(shapeResult.totals)}\n` +
       `  freeload:${JSON.stringify(freeloaderResult.totals)}\n` +
       (strictResult ? `  strict:  ${JSON.stringify(strictResult)}\n` : '') +
+      (responsiveResult ? `  respons: ${JSON.stringify(responsiveResult.totals)}\n` : '') +
       `  output:  ${outRel.replaceAll('\\', '/')}/\n`,
   );
 
