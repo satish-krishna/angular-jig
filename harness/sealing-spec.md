@@ -126,9 +126,9 @@ The capstone is why this rule exists. Across three gate-on trials, 18 sites wrot
 
 ### 6. `missing-composition-part`: a primitive present but not composed
 
-Docs: spartan's `composition.md`, "Overlays need a title. Dialog, Sheet, and Alert Dialog must have a title for accessibility. If the design hides it, keep it present and apply `class="sr-only"`"; and `forms.md`, "Use `hlmField`, not raw `div`s. Wrap each control in `hlmField`." Both are restated in the house-style skill.
+Docs: spartan's `composition.md`, verbatim: "Overlays need a title. Dialog, Sheet, and Alert Dialog must have a title for accessibility. If the design hides it, keep it present and apply `class="sr-only"`." Restated in the house-style skill.
 
-Rules 1 and 5 ask whether a primitive is present and real. Neither asks whether it was assembled correctly, and a half-composed primitive is a distinct defect: the outer shell renders, so the screen looks finished, while the part that carried the accessibility contract is missing.
+Rules 1 and 5 ask whether a primitive is present and whether it is real. Neither asks whether it was assembled correctly, and a half-composed primitive is a distinct defect: the outer shell renders, so the screen looks finished, while the part carrying the accessibility contract is missing. Both capstone builds that shipped a retire dialog used a bare `<h2 class="font-semibold">` inside `hlm-dialog-content`, so neither dialog had an accessible name.
 
 The required-parts table, which is to this rule what the native-element table is to rule 1:
 
@@ -137,15 +137,13 @@ The required-parts table, which is to this rule what the native-element table is
 | `hlm-dialog-content` | an element carrying `hlmDialogTitle` |
 | `hlm-sheet-content` | an element carrying `hlmSheetTitle` |
 
-And the inverse, a required ancestor:
+- Good (passes): `<hlm-dialog-content><h2 hlmDialogTitle>Retire hero?</h2>...`. Bad (fails): `<hlm-dialog-content><h2 class="font-semibold">Retire hero?</h2>`.
 
-| element | required ancestor |
-| --- | --- |
-| an element carrying `hlmInput` or `hlmTextarea`, or an `hlm-select` | an element carrying `hlmField`, or an `hlm-field` |
+This is a pure parent/child property of a single template AST: no cross-file join, no type information, no heuristic. Containment is scoped within one template, so a title supplied by a wrapper component in another file would be a false positive; in this repo overlays are composed inline at the call site, which is what makes the check sound here. That scope limit is stated rather than discovered.
 
-- Good (passes): `<hlm-dialog-content><h2 hlmDialogTitle>Retire hero?</h2>...`, and `<hlm-field><label hlmFieldLabel>Alias</label><input hlmInput /></hlm-field>`. Bad (fails): `<hlm-dialog-content><h2 class="font-semibold">Retire hero?</h2>`, and a bare `<input hlmInput />` under a `<div class="flex flex-col gap-2">`.
+**What this rule deliberately does NOT check, and why.** spartan's `forms.md` also says "Use `hlmField`, not raw `div`s. Wrap each control in `hlmField`," and an earlier draft of this rule gated that as a required-ancestor check on every `hlmInput`, `hlmTextarea` and `hlm-select`. That was over-broad and would have been a bad gate. The capstone build spec itself calls for a search input and a class-filter select in a toolbar, and neither is a form field: wrapping them in `hlm-field` would add label, error and description slots they do not want. The spartan line is about composing a FORM, and "is this control part of a form" is not decidable from the template, since signal-forms need no `<form>` element at all.
 
-Both halves are pure parent/child properties of a single template AST: no cross-file join, no type information, no heuristic. The containment check is scoped within one template, so a part supplied by a wrapper component in another file is not visible and would be a false positive; in this repo the primitives are composed inline at the call site, which is what makes the check sound here. That scope limit is stated rather than discovered.
+So the field-wrapping convention stays doc-only, in the house-style skill, and is not gated. This is the same call Part 2 made for `nested-flex-grid`: a rule that hard-blocks legitimate usage is worse than a rule that is not written, and the repo's own conformance target contains the legitimate usage.
 
 ## Where customization goes (why the seal is with the grain, not against it)
 

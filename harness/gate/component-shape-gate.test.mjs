@@ -23,6 +23,10 @@ const GATED = new Set([
   'state-outside-vm',
   'feature-injects-data',
   'vm-not-provided',
+  'explicit-standalone',
+  'legacy-icon-module',
+  'unregistered-icon',
+  'orphan-ng-submit',
 ]);
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -46,6 +50,9 @@ const TS_RULES = {
   'shape/no-state-outside-view-model': 'error',
   'shape/no-feature-inject-data': 'error',
   'shape/no-unprovided-view-model': 'error',
+  'shape/no-explicit-standalone': 'error',
+  'shape/no-legacy-icon-module': 'error',
+  'shape/no-unregistered-icon': 'error',
 };
 
 function lintTs(code, filename) {
@@ -70,7 +77,7 @@ function lintHtml(code) {
       languageOptions: { parser: angular.templateParser },
       plugins: { shape },
       linterOptions: { noInlineConfig: true },
-      rules: { 'shape/no-ng-model': 'error' },
+      rules: { 'shape/no-ng-model': 'error', 'shape/no-orphan-ng-submit': 'error' },
     },
     { filename: 'x.html' },
   );
@@ -162,10 +169,38 @@ describe('component-shape gate: MVVM rules (capstone)', () => {
   });
 });
 
+describe('component-shape gate: capstone-residue rules (11-14, plus the two widenings)', () => {
+  const dirty = readFileSync(fx('capstone-residue-shape-dirty.ts'), 'utf8');
+  const clean = readFileSync(fx('capstone-residue-shape-clean.ts'), 'utf8');
+
+  it('flags the dirty residue fixture with the exact messageId spread, at a non-ui feature path', () => {
+    const ms = lintTs(dirty, 'src/app/roster/roster.ts');
+    expect(ms.some((m) => m.fatal)).toBe(false);
+    expect(byId(ms)).toEqual({
+      explicitStandalone: 1,
+      legacyIconModule: 1,
+      unregisteredIcon: 1,
+      componentSubscribe: 1,
+      stateOutsideVm: 1,
+    });
+  });
+
+  it('passes the clean residue fixture with zero reports, at a non-ui feature path', () => {
+    expect(lintTs(clean, 'src/app/roster/roster.ts')).toEqual([]);
+  });
+});
+
 describe('component-shape gate: template rule', () => {
   it('flags ngModel and passes the clean template', () => {
     expect(byId(lintHtml(readFileSync(fx('part3-dirty.html'), 'utf8')))).toEqual({ ngModel: 1 });
     expect(lintHtml(readFileSync(fx('part3-clean.html'), 'utf8'))).toEqual([]);
+  });
+
+  it('flags orphan-ng-submit and passes the clean residue template', () => {
+    expect(byId(lintHtml(readFileSync(fx('capstone-residue-shape-dirty.html'), 'utf8')))).toEqual({
+      orphanNgSubmit: 1,
+    });
+    expect(lintHtml(readFileSync(fx('capstone-residue-shape-clean.html'), 'utf8'))).toEqual([]);
   });
 });
 

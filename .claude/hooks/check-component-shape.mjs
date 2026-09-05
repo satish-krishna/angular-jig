@@ -1,12 +1,15 @@
 #!/usr/bin/env node
-// PostToolUse component-shape gate (Part 3, plus the capstone's MVVM rules).
-// When the agent edits a component .ts or an .html template under src/,
-// enforce the component-shape rules: the typescript-eslint rules on component
-// classes (no hand-set changeDetection, no .subscribe, no FormsModule, no
-// restated validator, no data-service inject in a src/app/ui/ component, no
-// reactive forms, and the four MVVM rules - no providedIn ViewModel, no state
-// signal outside the ViewModel, no direct data-service inject in a feature
-// component, no injected-but-unprovided ViewModel) and the ngModel rule on
+// PostToolUse component-shape gate (Part 3, the capstone's MVVM rules, and the
+// capstone-residue rules added after the capstone run). When the agent edits a
+// component .ts or an .html template under src/, enforce the component-shape
+// rules: the typescript-eslint rules on component classes (no hand-set
+// changeDetection, no .subscribe in a component or ViewModel, no FormsModule,
+// no restated validator, no data-service inject in a src/app/ui/ component, no
+// reactive forms, the four MVVM rules - no providedIn ViewModel, no state
+// signal or form() outside the ViewModel, no direct data-service inject in a
+// feature component, no injected-but-unprovided ViewModel - and the four
+// capstone-residue rules - no explicit standalone, no NgIconsModule, no NgIcon
+// import left unregistered) and the ngModel and orphan-ng-submit rules on
 // templates (including inline templates via processInlineTemplates). On any
 // violation, exit 2 with a corrective message.
 //
@@ -24,7 +27,16 @@ import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import shape from '../../harness/gate/component-shape-index.mjs';
 import { logFiring } from './_hook-log.mjs';
-import { SHAPE_FORMS_GUIDANCE, FORMS_RULE_IDS, MVVM_GUIDANCE, MVVM_RULE_IDS } from './shape-guidance.mjs';
+import {
+  SHAPE_FORMS_GUIDANCE,
+  FORMS_RULE_IDS,
+  MVVM_GUIDANCE,
+  MVVM_RULE_IDS,
+  ICON_GUIDANCE,
+  ICON_RULE_IDS,
+  SUBMIT_GUIDANCE,
+  SUBMIT_RULE_IDS,
+} from './shape-guidance.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -48,6 +60,9 @@ const shapeEslintConfig = [
       'shape/no-state-outside-view-model': 'error',
       'shape/no-feature-inject-data': 'error',
       'shape/no-unprovided-view-model': 'error',
+      'shape/no-explicit-standalone': 'error',
+      'shape/no-legacy-icon-module': 'error',
+      'shape/no-unregistered-icon': 'error',
     },
   },
   {
@@ -55,7 +70,7 @@ const shapeEslintConfig = [
     languageOptions: { parser: angular.templateParser },
     plugins: { shape },
     linterOptions: { noInlineConfig: true },
-    rules: { 'shape/no-ng-model': 'error' },
+    rules: { 'shape/no-ng-model': 'error', 'shape/no-orphan-ng-submit': 'error' },
   },
 ];
 
@@ -101,20 +116,27 @@ async function main() {
 
   const formsFired = [...ruleIds].some((id) => FORMS_RULE_IDS.has(id));
   const mvvmFired = [...ruleIds].some((id) => MVVM_RULE_IDS.has(id));
+  const iconsFired = [...ruleIds].some((id) => ICON_RULE_IDS.has(id));
+  const submitFired = [...ruleIds].some((id) => SUBMIT_RULE_IDS.has(id));
   let guidance = '';
   if (formsFired) guidance += '\n' + SHAPE_FORMS_GUIDANCE + '\n';
   if (mvvmFired) guidance += '\n' + MVVM_GUIDANCE + '\n';
+  if (iconsFired) guidance += '\n' + ICON_GUIDANCE + '\n';
+  if (submitFired) guidance += '\n' + SUBMIT_GUIDANCE + '\n';
   if (!guidance) guidance = '\n\nFix the above before continuing.\n';
 
   process.stderr.write(
     `Component-shape gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
-      `\n\nComponent shape (see harness/component-shape-spec.md): no hand-set changeDetection (OnPush is the v22 default), ` +
-      `no .subscribe in a component (use the async pipe or toSignal), template-driven forms are not used (no FormsModule, no ngModel), ` +
+      `\n\nComponent shape (see harness/component-shape-spec.md): no hand-set changeDetection or explicit standalone ` +
+      `(both are Angular v20+/v22+ defaults), no .subscribe in a component or ViewModel (use the async pipe or toSignal), ` +
+      `template-driven forms are not used (no FormsModule, no ngModel), ` +
       `validation lives in the zod schema (validateStandardSchema, not a restated per-field validator), a presentational ` +
       `(src/app/ui/) component injects no data service, and a feature component owns its state and its data access through a ` +
-      `component-scoped ViewModel: it holds no signal()/computed()/linkedSignal() of its own, it injects no data service ` +
-      `directly, its ViewModel carries no providedIn, and the component provides whatever ViewModel it injects.` +
+      `component-scoped ViewModel: it holds no signal()/computed()/linkedSignal()/form() of its own, it injects no data service ` +
+      `directly, its ViewModel carries no providedIn, and the component provides whatever ViewModel it injects. Icons import ` +
+      `NgIcon (never NgIconsModule) and are registered with provideIcons; a form submits through submit(this.form, ...), never ` +
+      `(ngSubmit).` +
       guidance,
   );
   process.exit(2);

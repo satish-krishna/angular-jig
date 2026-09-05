@@ -16,7 +16,7 @@ import ts from 'typescript';
 
 const norm = (p) => p.replaceAll('\\', '/');
 
-// The ten gated kinds contribute to totals.all; the two heuristics are
+// The fourteen gated kinds contribute to totals.all; the two heuristics are
 // measured and reported but excluded from all, so all counts what the gate
 // could have blocked.
 const GATED_KINDS = [
@@ -30,6 +30,10 @@ const GATED_KINDS = [
   'state-outside-vm',
   'feature-injects-data',
   'vm-not-provided',
+  'explicit-standalone',
+  'legacy-icon-module',
+  'unregistered-icon',
+  'orphan-ng-submit',
 ];
 const HEURISTIC_KINDS = ['hand-written-form-model', 'dumb-holds-state'];
 const isGated = (k) => GATED_KINDS.includes(k);
@@ -52,11 +56,15 @@ const UI_HELPER_TOKENS = new Set([
 ]);
 const REACTIVE_SYMBOLS = new Set(['FormGroup', 'FormControl', 'FormBuilder', 'FormArray']);
 
-// Rule 8 (state-outside-vm): the three reactive-state constructors that a feature
+// Rule 8 (state-outside-vm): the reactive-state constructors that a feature
 // component may not hold itself. input()/output()/model()/viewChild()/contentChild()/
 // inject()/toSignal() are deliberately not in this set: component API and edge
-// conversions, not screen state.
+// conversions, not screen state. `form` was added by the capstone widening; it
+// only counts when resolved as an import from @angular/forms/signals (checked
+// separately below), unlike the bare-identifier match used for signal/computed/
+// linkedSignal.
 const STATE_CTORS = new Set(['signal', 'computed', 'linkedSignal']);
+const STATE_FORM_CTOR = 'form';
 
 const isUiPath = (file) => /(^|\/)src\/app\/ui\//.test(norm(file));
 const isDataToken = (name) =>
@@ -80,8 +88,12 @@ export function countTsSource(sourceText, { file }) {
   const lineOf = (node) => sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
   const ui = isUiPath(file);
 
-  // Imports: which per-field validators came from @angular/forms/signals.
+  // Imports: which per-field validators came from @angular/forms/signals, and
+  // whether `form` itself was imported from there (rule 8's widening resolves
+  // `form` as an import, unlike the bare-identifier match used for signal/
+  // computed/linkedSignal).
   const signalsValidators = new Set();
+  let formImportedFromSignals = false;
   for (const st of sf.statements) {
     if (
       ts.isImportDeclaration(st) &&
@@ -93,6 +105,7 @@ export function countTsSource(sourceText, { file }) {
       for (const el of st.importClause.namedBindings.elements) {
         const name = el.name.text;
         if (RESTATED_VALIDATORS.has(name)) signalsValidators.add(name);
+        if (name === STATE_FORM_CTOR) formImportedFromSignals = true;
       }
     }
   }
@@ -130,9 +143,15 @@ export function countTsSource(sourceText, { file }) {
     let reactiveLine = null; // reactive-form is flagged once per component (import or new-expression)
 
     // Decorator-level kinds.
+    let ngIconInImports = false;
     if (obj) {
       const cd = findProp(obj, 'changeDetection');
       if (cd) out.push({ kind: 'hand-set-change-detection', file, line: lineOf(cd), detail: 'changeDetection set explicitly' });
+
+      // Rule 11 (explicit-standalone): same AST shape as rule 1, a property key
+      // present in the decorator's object literal, to any value.
+      const sa = findProp(obj, 'standalone');
+      if (sa) out.push({ kind: 'explicit-standalone', file, line: lineOf(sa), detail: 'standalone set explicitly' });
 
       const imp = findProp(obj, 'imports');
       if (imp && ts.isArrayLiteralExpression(imp.initializer)) {
@@ -143,27 +162,54 @@ export function countTsSource(sourceText, { file }) {
           if (ts.isIdentifier(el) && el.text === 'ReactiveFormsModule') {
             reactiveLine ??= lineOf(el);
           }
+          // Rule 12 (legacy-icon-module): same AST shape as the FormsModule/
+          // ReactiveFormsModule checks above.
+          if (ts.isIdentifier(el) && el.text === 'NgIconsModule') {
+            out.push({ kind: 'legacy-icon-module', file, line: lineOf(el), detail: 'NgIconsModule in imports' });
+          }
+          // Rule 13 (unregistered-icon) is keyed on this component decorator's
+          // own `imports`, not on the file's import list: NgIcon in `imports`
+          // is the component saying it renders icons.
+          if (ts.isIdentifier(el) && el.text === 'NgIcon') ngIconInImports = true;
         }
       }
     }
 
-    // Rule 10 (vm-not-provided): the identifiers this component's own `providers`
-    // array lists. `providers: [...spread]` is not resolvable statically and is
-    // treated as satisfying the rule, a stated blind spot rather than a guess.
+    // Rule 10 (vm-not-provided) and rule 13 (unregistered-icon) both read this
+    // component's own `providers` array. `providers: [...spread]` is not
+    // resolvable statically and is treated as satisfying both rules, a stated
+    // blind spot rather than a guess.
     const providedNames = new Set();
     let providersHasSpread = false;
+    let hasProvideIcons = false;
     const prov = obj ? findProp(obj, 'providers') : null;
     if (prov && ts.isArrayLiteralExpression(prov.initializer)) {
       for (const el of prov.initializer.elements) {
         if (ts.isIdentifier(el)) providedNames.add(el.text);
         if (ts.isSpreadElement(el)) providersHasSpread = true;
+        if (ts.isCallExpression(el) && ts.isIdentifier(el.expression) && el.expression.text === 'provideIcons') {
+          hasProvideIcons = true;
+        }
       }
+    }
+    // Rule 13: NgIcon in imports with no provideIcons(...) registration.
+    if (ngIconInImports && !hasProvideIcons && !providersHasSpread) {
+      out.push({ kind: 'unregistered-icon', file, line: lineOf(call), detail: 'NgIcon imported without provideIcons(...)' });
     }
     const injectedViewModels = []; // { token, line } for inject(XViewModel) calls
 
     // Member-level kinds: walk the class members only, so the decorator is not re-scanned.
     let hasFormCall = false;
     const modelSignals = []; // signal<LocalType>() nodes
+    // Rule 8: a signal()/computed()/linkedSignal() property that is itself the
+    // model argument of a form(...) built in this same class is part of that
+    // form's own reactive state tree, not a second piece of state, so it must
+    // not be double counted alongside the form() hit. Candidates are collected
+    // here and resolved once the whole class has been walked, because the
+    // form(...) call establishing that link can appear textually before or
+    // after the candidate property.
+    const stateSignalCandidates = []; // { name, ctorText, line }
+    const formModelNames = new Set();
 
     const walk = (node) => {
       if (ts.isCallExpression(node)) {
@@ -195,8 +241,24 @@ export function countTsSource(sourceText, { file }) {
         if (ts.isIdentifier(callee) && signalsValidators.has(callee.text)) {
           out.push({ kind: 'restated-validator', file, line: lineOf(node), detail: `${callee.text}() restates a schema rule` });
         }
-        // form(...) marks that a form is authored here
-        if (ts.isIdentifier(callee) && callee.text === 'form') hasFormCall = true;
+        // form(...) marks that a form is authored here. When `form` resolves
+        // to @angular/forms/signals, its first argument is the model signal
+        // that form wraps; remember its name so rule 8 does not also flag that
+        // signal as a second, separate piece of state (see stateSignalCandidates).
+        if (ts.isIdentifier(callee) && callee.text === 'form') {
+          hasFormCall = true;
+          if (formImportedFromSignals && node.arguments.length) {
+            const arg = node.arguments[0];
+            if (ts.isIdentifier(arg)) {
+              formModelNames.add(arg.text);
+            } else if (
+              ts.isPropertyAccessExpression(arg) &&
+              arg.expression.kind === ts.SyntaxKind.ThisKeyword
+            ) {
+              formModelNames.add(arg.name.text);
+            }
+          }
+        }
         // signal<LocalType>(...) is a candidate hand-written model
         if (ts.isIdentifier(callee) && callee.text === 'signal' && node.typeArguments?.length) {
           const ta = node.typeArguments[0];
@@ -216,19 +278,31 @@ export function countTsSource(sourceText, { file }) {
         }
       }
       // Rule 8 (state-outside-vm): a feature component (NOT under ui/) declaring
-      // its own signal()/computed()/linkedSignal() field. Its ViewModel should
-      // own that state instead. input()/output()/model()/viewChild()/
+      // its own signal()/computed()/linkedSignal()/form() field. Its ViewModel
+      // should own that state instead. input()/output()/model()/viewChild()/
       // contentChild()/inject()/toSignal() are component API, not state, and are
-      // deliberately absent from STATE_CTORS.
+      // deliberately absent from STATE_CTORS. `form` (the capstone widening)
+      // only counts when it resolves to the @angular/forms/signals import.
       if (!ui && ts.isPropertyDeclaration(node) && node.initializer && ts.isCallExpression(node.initializer)) {
         const init = node.initializer.expression;
         if (ts.isIdentifier(init) && STATE_CTORS.has(init.text)) {
-          out.push({ kind: 'state-outside-vm', file, line: lineOf(node), detail: `${init.text}() state on a feature component` });
+          const name = ts.isIdentifier(node.name) ? node.name.text : null;
+          stateSignalCandidates.push({ name, ctorText: init.text, line: lineOf(node) });
+        } else if (ts.isIdentifier(init) && init.text === STATE_FORM_CTOR && formImportedFromSignals) {
+          out.push({ kind: 'state-outside-vm', file, line: lineOf(node), detail: 'form() state on a feature component' });
         }
       }
       ts.forEachChild(node, walk);
     };
     for (const member of classNode.members) walk(member);
+
+    // Resolve the deferred rule-8 signal candidates now that every form(...)
+    // call in the class has been seen: a candidate consumed as a form's model
+    // is that form's own state, not a second violation.
+    for (const c of stateSignalCandidates) {
+      if (c.name && formModelNames.has(c.name)) continue;
+      out.push({ kind: 'state-outside-vm', file, line: c.line, detail: `${c.ctorText}() state on a feature component` });
+    }
 
     if (hasFormCall) {
       for (const m of modelSignals) {
@@ -277,10 +351,32 @@ export function countTsSource(sourceText, { file }) {
     }
   };
 
+  // Rule 2 widening (component-subscribe): the predicate now also covers
+  // classes whose name ends in ViewModel, reusing rule 7's marker, because the
+  // capstone found .subscribe relocated into the one class the original scope
+  // note exempted. A class that is already scanned as a @Component above (rare,
+  // but possible if a ViewModel-named class also carries @Component) is not
+  // re-walked here to avoid double-counting.
+  const visitViewModelSubscribe = (classNode) => {
+    if (!classNode.name || !isViewModel(classNode.name.text)) return;
+    if (componentCall(classNode)) return; // already walked by visitClass
+    const walk = (node) => {
+      if (ts.isCallExpression(node)) {
+        const callee = node.expression;
+        if (ts.isPropertyAccessExpression(callee) && callee.name.text === 'subscribe') {
+          out.push({ kind: 'component-subscribe', file, line: lineOf(node), detail: '.subscribe in a ViewModel' });
+        }
+      }
+      ts.forEachChild(node, walk);
+    };
+    for (const member of classNode.members) walk(member);
+  };
+
   const visit = (node) => {
     if (ts.isClassDeclaration(node)) {
       visitClass(node);
       visitViewModel(node);
+      visitViewModelSubscribe(node);
     }
     ts.forEachChild(node, visit);
   };
@@ -288,7 +384,7 @@ export function countTsSource(sourceText, { file }) {
   return out;
 }
 
-// --- Templates: the ngModel half of template-driven-form ---
+// --- Templates: the ngModel half of template-driven-form, and rule 14 (orphan-ng-submit) ---
 
 function walkTemplateForNgModel(nodes, file, lineOffset, acc) {
   const named = (arr) => Array.isArray(arr) && arr.some((a) => a.name === 'ngModel');
@@ -297,6 +393,18 @@ function walkTemplateForNgModel(nodes, file, lineOffset, acc) {
       if (named(n.attributes) || named(n.inputs)) {
         const line = (n.sourceSpan?.start?.line ?? 0) + 1 + lineOffset;
         acc.push({ kind: 'template-driven-form', file, line, detail: 'ngModel binding' });
+      }
+    }
+    // Rule 14 (orphan-ng-submit): an (ngSubmit) output binding, in any template
+    // under src/. FormsModule and ReactiveFormsModule are both banned (rules 3
+    // and 6), so the NgForm/FormGroupDirective that would ever fire this event
+    // can never be present here; the binding just registers a dead DOM listener.
+    if (n && typeof n.name === 'string' && Array.isArray(n.outputs)) {
+      for (const o of n.outputs) {
+        if (o.name === 'ngSubmit') {
+          const line = (o.sourceSpan?.start?.line ?? 0) + 1 + lineOffset;
+          acc.push({ kind: 'orphan-ng-submit', file, line, detail: '(ngSubmit) binding' });
+        }
       }
     }
     for (const key of ['children', 'branches', 'cases', 'empty']) {

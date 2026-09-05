@@ -218,11 +218,27 @@ const REPLACEMENT_ONLY = { select: 'hlm-select', dialog: 'hlm-dialog' };
 // "What each engine parses").
 const SVG_ELEMENT = ':svg:svg';
 
+// Rule 5's name-shape regexes (spec: "unknown-primitive"). An attribute in
+// either casing, or an element in kebab form, that looks like the hlm
+// namespace but matches no installed selector in that exact form.
+const UNKNOWN_ATTR_CAMEL_RE = /^hlm[A-Z]/;
+const UNKNOWN_ATTR_KEBAB_RE = /^hlm-/;
+const UNKNOWN_ELEMENT_RE = /^hlm-/;
+
+// Rule 6's required-descendant table: a container primitive that must have a
+// descendant carrying the named attribute (spec: "missing-composition-part").
+const REQUIRED_DESCENDANT = {
+  'hlm-dialog-content': 'hlmDialogTitle',
+  'hlm-sheet-content': 'hlmSheetTitle',
+};
+
 const emptyTotals = () => ({
   'raw-control': 0,
   'appearance-on-primitive': 0,
   'style-attribute': 0,
   'raw-icon': 0,
+  'unknown-primitive': 0,
+  'missing-composition-part': 0,
   all: 0,
 });
 
@@ -246,7 +262,24 @@ const APPEARANCE_RE =
   /^(bg-|text-(?!left$|center$|right$|justify$|start$|end$|wrap$|nowrap$|balance$|pretty$|ellipsis$|clip$)|font-|leading-|tracking-|border($|-)|rounded($|-)|shadow($|-)|ring($|-)|p[xytblrse]?-)/;
 const isAppearance = (t) => APPEARANCE_RE.test(baseUtil(t));
 
-function elementViolations(el, file, lineOffset) {
+// Rule 6 helper: does the subtree rooted at `nodes` contain an element
+// carrying `attrName`, at any depth (a descendant, not just a direct child)?
+// Mirrors walk()'s own traversal (children/branches/cases/empty) so control
+// flow inside the container does not hide a composed part.
+function hasDescendantWithAttr(nodes, attrName) {
+  for (const n of nodes) {
+    if (n && Array.isArray(n.attributes) && n.attributes.some((a) => a.name === attrName)) {
+      return true;
+    }
+    for (const key of ['children', 'branches', 'cases', 'empty']) {
+      if (Array.isArray(n?.[key]) && hasDescendantWithAttr(n[key], attrName)) return true;
+    }
+  }
+  return false;
+}
+
+// Rule 6 helper: does the ancestor stack contain an element carrying
+function elementViolations(el, file, lineOffset, ancestors) {
   const out = [];
   const attrNames = new Set(el.attributes.map((a) => a.name));
   const line = (el.sourceSpan?.start?.line ?? 0) + 1 + lineOffset;
@@ -305,18 +338,59 @@ function elementViolations(el, file, lineOffset) {
     out.push({ kind: 'raw-icon', file, line, detail: 'inline <svg> element; use <ng-icon>' });
   }
 
+  // Rule 5: unknown-primitive. A closed-world check: an hlm-shaped attribute
+  // or element name that matches no installed selector IN THAT FORM. The
+  // attribute-vs-element distinction is the point (spec: "unknown-primitive").
+  for (const a of el.attributes) {
+    if (
+      (UNKNOWN_ATTR_CAMEL_RE.test(a.name) || UNKNOWN_ATTR_KEBAB_RE.test(a.name)) &&
+      !PRIMITIVE_ATTRS.has(a.name)
+    ) {
+      out.push({
+        kind: 'unknown-primitive',
+        file,
+        line,
+        detail: `unknown hlm attribute ${a.name} on ${el.name}`,
+      });
+    }
+  }
+  if (UNKNOWN_ELEMENT_RE.test(el.name) && !PRIMITIVE_ELEMENTS.has(el.name)) {
+    out.push({ kind: 'unknown-primitive', file, line, detail: `unknown hlm element ${el.name}` });
+  }
+
+  // Rule 6: missing-composition-part. A primitive present but not composed:
+  // an overlay container missing the descendant that carries its accessible
+  // name. See ../sealing-spec.md, "What this rule deliberately does NOT check":
+  // the field-wrapping half of spartan's forms doc is doc-only, not gated,
+  // because the repo's own conformance target calls for a toolbar search input
+  // and a filter select, neither of which is a form field.
+  const requiredDescendantAttr = REQUIRED_DESCENDANT[el.name];
+  if (requiredDescendantAttr && !hasDescendantWithAttr(el.children ?? [], requiredDescendantAttr)) {
+    out.push({
+      kind: 'missing-composition-part',
+      file,
+      line,
+      detail: `${el.name} without a descendant carrying ${requiredDescendantAttr}`,
+    });
+  }
+
   return out;
 }
 
 // Duck-typed AST walk. An element node has a string name plus attributes and
 // inputs arrays; block nodes carry their bodies in children/branches/cases/empty.
-function walk(nodes, file, lineOffset, acc) {
+// `ancestors` is the stack of enclosing element nodes, oldest first, used by
+// rule 6's required-ancestor half.
+function walk(nodes, file, lineOffset, acc, ancestors) {
   for (const n of nodes) {
-    if (n && typeof n.name === 'string' && Array.isArray(n.attributes) && Array.isArray(n.inputs)) {
-      acc.push(...elementViolations(n, file, lineOffset));
+    const isElement =
+      n && typeof n.name === 'string' && Array.isArray(n.attributes) && Array.isArray(n.inputs);
+    if (isElement) {
+      acc.push(...elementViolations(n, file, lineOffset, ancestors));
     }
+    const nextAncestors = isElement ? [...ancestors, n] : ancestors;
     for (const key of ['children', 'branches', 'cases', 'empty']) {
-      if (Array.isArray(n?.[key])) walk(n[key], file, lineOffset, acc);
+      if (Array.isArray(n?.[key])) walk(n[key], file, lineOffset, acc, nextAncestors);
     }
   }
 }
@@ -324,7 +398,7 @@ function walk(nodes, file, lineOffset, acc) {
 export function countTemplateSource(template, { file, lineOffset = 0 }) {
   const { nodes } = parseTemplate(template, file, { preserveWhitespaces: false });
   const acc = [];
-  walk(nodes, file, lineOffset, acc);
+  walk(nodes, file, lineOffset, acc, []);
   return acc;
 }
 

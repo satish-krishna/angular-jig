@@ -71,12 +71,17 @@ process.stderr.write(
     `${lines.join('\n')}\n\n` +
     `The primitive vocabulary is sealed (see harness/sealing-spec.md). Compose from spartan ` +
     `primitives, and change a primitive's look with its variant/size inputs or its Helm file in ` +
-    `libs/ui, never a class at the call site. Icons are <ng-icon>, never inline SVG. The ` +
-    `documented shape:\n` +
+    `libs/ui, never a class at the call site. Icons are <ng-icon>, never inline SVG. Every hlm* ` +
+    `name must match the installed vocabulary in that exact form (attribute vs. element), and an ` +
+    `overlay needs its title part. The documented shape:\n` +
     `  Good: <button hlmBtn variant="ghost">Save</button>   <input hlmInput />   ` +
     `<button hlmSidebarMenuButton>Roster</button>   <select> -> <hlm-select>   ` +
-    `<ng-icon name="lucideTrash2" />\n` +
+    `<ng-icon name="lucideTrash2" />   <hlm-avatar>...</hlm-avatar>   ` +
+    `<hlm-dialog-content><h2 hlmDialogTitle>Retire hero?</h2>...</hlm-dialog-content>\n` +
     `  Bad:  <button>Save</button>   <button hlmBtn class="bg-blue-600">   <div style="padding:8px">   ` +
+    `<div hlmAvatar>...</div> (hlmAvatar is the element <hlm-avatar>, not an attribute)   ` +
+    `<hlm-dialog-content><h2 class="font-semibold">Retire hero?</h2>...</hlm-dialog-content> ` +
+    `(no hlmDialogTitle)   ` +
     `<select>   <svg viewBox="0 0 24 24">...</svg>\n` +
     `Fix the above before continuing. eslint-disable has no effect here.\n`,
 );

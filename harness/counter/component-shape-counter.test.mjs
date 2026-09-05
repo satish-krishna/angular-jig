@@ -122,3 +122,65 @@ describe('component-shape counter: MVVM rules (capstone, rules 7-10)', () => {
     expect(a).toBe(b);
   });
 });
+
+describe('component-shape counter: capstone-residue rules (11-14, plus two widenings)', () => {
+  const residueDirty = readFileSync(fx('capstone-residue-shape-dirty.ts'), 'utf8');
+  const residueClean = readFileSync(fx('capstone-residue-shape-clean.ts'), 'utf8');
+  const featurePath = 'src/app/roster/roster.ts';
+
+  it('tallies the residue violations on the dirty fixture at a non-ui feature path', () => {
+    const vs = countTsSource(residueDirty, { file: featurePath });
+    // Roster declares both `model = signal(...)` and `heroForm =
+    // form(this.model, ...)`. `model` is the form's own model signal, the same
+    // reactive state tree as the form itself (see component-shape-spec.md,
+    // "A signal-form is a reactive state tree"), not a second piece of state,
+    // so rule 8 counts it once, attributed to the form() hit, matching the
+    // fixture header's "state-outside-vm (1): form() built on the component".
+    // This is consistent with the pre-capstone part3-clean.ts fixture tested
+    // above ("flags the pre-capstone clean fixture under the MVVM
+    // refinement"), which has the identical model+form shape and pins
+    // state-outside-vm at 1, not 2.
+    expect(tallyOf(vs)).toEqual({
+      'explicit-standalone': 1,
+      'legacy-icon-module': 1,
+      'unregistered-icon': 1,
+      'component-subscribe': 1,
+      'state-outside-vm': 1,
+    });
+  });
+
+  it('does not flag the component that imports NgIcon and registers it correctly', () => {
+    // RosterToolbar imports NgIcon and calls provideIcons({ lucideUsers }) in
+    // its own providers. If rule 13 were "never import NgIcon" instead of the
+    // spec's "NgIcon without provideIcons", unregistered-icon would tally 2
+    // (RosterActions and RosterToolbar) instead of 1 (RosterActions only).
+    const vs = countTsSource(residueDirty, { file: featurePath });
+    expect(vs.filter((v) => v.kind === 'unregistered-icon')).toHaveLength(1);
+  });
+
+  it('passes the clean residue fixture with zero violations at the same feature path', () => {
+    expect(countTsSource(residueClean, { file: featurePath })).toEqual([]);
+  });
+
+  it('is deterministic: same bytes in, identical residue tally out', () => {
+    const a = JSON.stringify(countTsSource(residueDirty, { file: featurePath }));
+    const b = JSON.stringify(countTsSource(residueDirty, { file: featurePath }));
+    expect(a).toBe(b);
+  });
+
+  it('flags the orphan (ngSubmit) binding in the dirty template and passes the clean one', () => {
+    expect(
+      tallyOf(countTemplateSource(readFileSync(fx('capstone-residue-shape-dirty.html'), 'utf8'), { file: 'd.html' })),
+    ).toEqual({ 'orphan-ng-submit': 1 });
+    expect(countTemplateSource(readFileSync(fx('capstone-residue-shape-clean.html'), 'utf8'), { file: 'c.html' })).toEqual(
+      [],
+    );
+  });
+
+  it('is deterministic for the template half too', () => {
+    const dirtyHtml = readFileSync(fx('capstone-residue-shape-dirty.html'), 'utf8');
+    const a = JSON.stringify(countTemplateSource(dirtyHtml, { file: 'd.html' }));
+    const b = JSON.stringify(countTemplateSource(dirtyHtml, { file: 'd.html' }));
+    expect(a).toBe(b);
+  });
+});

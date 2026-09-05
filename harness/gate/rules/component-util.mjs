@@ -57,6 +57,22 @@ export function isViewModelName(name) {
   return typeof name === 'string' && /ViewModel$/.test(name);
 }
 
+// Rule 2's first widening (component-shape-spec.md, "Two widenings the capstone
+// forced"): component-subscribe now fires inside @Component classes AND inside
+// classes whose name ends in ViewModel, reusing the same marker as rule 7. The
+// capstone found the gate relocating the hand-managed subscribe into the one
+// class rule 2's original scope note exempted, so the predicate now covers both.
+export function inComponentOrViewModelClass(node) {
+  let p = node.parent;
+  while (p) {
+    if (p.type === 'ClassDeclaration' || p.type === 'ClassExpression') {
+      if (hasComponentDecorator(p) || isViewModelName(p.id && p.id.name)) return true;
+    }
+    p = p.parent;
+  }
+  return false;
+}
+
 // Generalizes componentDecoratorObject to an arbitrary set of decorator names
 // (rule 7 needs @Injectable or @Service, not @Component).
 export function decoratorObjectByNames(classNode, names) {

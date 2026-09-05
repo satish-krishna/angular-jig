@@ -25,6 +25,8 @@ function lintHtml(code) {
         'seal/no-appearance-on-primitive': 'error',
         'seal/no-style-attribute': 'error',
         'seal/no-raw-icon': 'error',
+        'seal/no-unknown-primitive': 'error',
+        'seal/no-missing-composition-part': 'error',
       },
     },
     { filename: 'x.html' },
@@ -84,6 +86,38 @@ describe('sealing gate: template rules', () => {
     // will fail independently of the gate-only assertions above.
     const gateTotal = lintHtml(readFileSync(fx('capstone-seal-dirty.html'), 'utf8')).length;
     const counterTotal = tally([fx('capstone-seal-dirty.html')]).totals.all;
+    expect(gateTotal).toBe(counterTotal);
+  });
+
+  it('flags the capstone-residue dirty fixture with the exact messageId spread', () => {
+    // Rules 5 and 6, the drift that got past rules 1-4 in the measured
+    // capstone run. The fixture's own header comment hand-counts
+    // missing-composition-part as 2 (dialog title + an hlmField ancestor
+    // check), but sealing-spec.md's rule 6 has since dropped the
+    // required-ancestor half entirely (over-broad; the capstone build's
+    // toolbar search/select are legitimately unwrapped, and "is this control
+    // part of a form" is not decidable from the template) - so the current,
+    // spec-correct count is 1 (the dialog-title descendant only). See
+    // ./rules/no-missing-composition-part.mjs for the full note.
+    const messages = lintHtml(readFileSync(fx('capstone-residue-seal-dirty.html'), 'utf8'));
+    expect(messages.some((m) => m.fatal)).toBe(false);
+    expect(countByMessageId(messages)).toEqual({
+      unknownPrimitive: 4,
+      missingCompositionPart: 1,
+    });
+  });
+
+  it('passes the capstone-residue clean fixture with zero reports', () => {
+    const messages = lintHtml(readFileSync(fx('capstone-residue-seal-clean.html'), 'utf8'));
+    expect(messages).toEqual([]);
+  });
+
+  it('agrees with the independent counter on the capstone-residue dirty fixture', () => {
+    // Same cross-check as above, extended to rules 5 and 6. If the other
+    // engine has not landed this yet, this will fail independently of the
+    // gate-only assertions above.
+    const gateTotal = lintHtml(readFileSync(fx('capstone-residue-seal-dirty.html'), 'utf8')).length;
+    const counterTotal = tally([fx('capstone-residue-seal-dirty.html')]).totals.all;
     expect(gateTotal).toBe(counterTotal);
   });
 });

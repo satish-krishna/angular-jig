@@ -198,6 +198,8 @@ This one deserves to be read carefully, because **the gate caused it.** The caps
 
 **Rule 8, `state-outside-vm`, now includes `form()`.** The banned-initializer set was `signal`, `computed`, `linkedSignal`. A signal-form is a reactive state tree and usually the largest piece of state on a screen, and one capstone trial built `form(...)` in the component while its ViewModel shrank to a model signal and a save method: MVVM satisfied in letter, with the state left outside. `form` (resolved as an import from `@angular/forms/signals`) joins the set.
 
+One collapse, stated here because both engines derived it independently and a rule that two encodings infer is a rule the spec should say out loud. A `signal()`/`computed()`/`linkedSignal()` property that is the model argument of a `form(...)` built in the SAME class is absorbed into that form's violation and is not counted again. Moving the form into the ViewModel necessarily takes its backing model with it, so it is one misplaced piece of state with two manifestations, and rule 6 already sets that precedent by reporting reactive forms once per component. Signals unrelated to a form are still counted per property, as the MVVM fixture pins with `signal()` and `computed()` tallying 2.
+
 ## Counter-only heuristics (measured, never gated)
 
 Two Part 3 signals are not cleanly decidable and so are measured by the counter and reported as low-confidence, never used to block an edit. A heuristic that hard-blocks on a false positive is a bad gate; this is the same call Part 2 made for `nested-flex-grid`.

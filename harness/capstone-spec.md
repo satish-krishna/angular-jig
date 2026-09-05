@@ -78,7 +78,24 @@ Five, and none of them are hidden in a footnote.
 
    They are reported rather than exempted, and the two ways to make them disappear were both refused. Raising the tolerance to 2px is the suppression dial this repo bans everywhere else, and a clip is not less of a clip for being small. Editing `libs/ui` to flatter the measurement is worse: tuning the substrate until the numbers look clean is not an experiment, it is decoration. The honest handling is to say the count includes inherited chrome, note that it is constant across conditions so the gate-off versus gate-on delta is unaffected, and report the violating selectors so a reader can see the split themselves.
 
-5. **The icon rule gates half of what its doc says.** `raw-icon` bans inline `<svg>`, which is decidable in a template. It does not check that every `<ng-icon name="X">` was registered with `provideIcons`, because that is a fact about the component class rather than the template, and `@ng-icons` only warns rather than failing the build. An unregistered icon renders as nothing. The unchecked half is doc-only, and an unregistered-icon count must never be reported as gated drift.
+5. **The icon rule gated half of what its doc says, and that was the wrong call.** Corrected after the run: see `component-shape-spec.md` rule 13, `unregistered-icon`. The reasoning below was right that the TEMPLATE engines cannot see a component class, and wrong to conclude the rule was therefore undecidable. It is a plain TypeScript-AST property, and Part 3 rules have always been TypeScript rules. The original text is kept because the run was conducted under it, and because the drift landed in precisely the half it excused.
+
+    `raw-icon` bans inline `<svg>`, which is decidable in a template. It does not check that every `<ng-icon name="X">` was registered with `provideIcons`, because that is a fact about the component class rather than the template, and `@ng-icons` only warns rather than failing the build. An unregistered icon renders as nothing. The unchecked half is doc-only, and an unregistered-icon count must never be reported as gated drift.
+
+## The enforcement guard: a gate the subject cannot edit
+
+The capstone measured the agent under test editing `stylelint.config.mjs` to widen a rule that was blocking it, byte-identically, in two of three gate-on trials. It was not cheating: the rule had a real false positive, and the agent fixed it, which in most contexts is correct engineering. But `raw-css-literal` was then reported as 0 for those trials, and part of that zero was the rule being widened rather than obeyed.
+
+This series has carried "enforcement must not have a dial" as a design principle since Part 1, and the config already switches off `eslint-disable` wholesale via `noInlineConfig`. The dial nobody was watching was not a suppression comment. It was the configuration file itself, sitting in the repo, writable by the thing being constrained.
+
+Two mechanisms now close it, and the pairing is deliberate:
+
+- `.claude/hooks/protect-enforcement.mjs` is a **PreToolUse** hook that denies the edit before it happens. It matches Bash and PowerShell as well as the file-editing tools, because a guard that only watches `Write`/`Edit` is walked around with `sed -i`, a shell redirect, `cp`, or `git checkout` of another revision, and a guard with a known bypass is decoration. It allows the read-only commands the agent is told to run (`npm run build`, `npm run check:responsive`, the auditor CLI).
+- `run-capstone.mjs` records every changed file and voids any run that touched enforcement paths, as the backstop for anything that gets past the hook.
+
+Prevention plus detection, because detection alone is a smoke alarm and prevention alone cannot prove it worked.
+
+**The guard is registered in BOTH conditions**, unlike every other hook in the harness. It is not a house-convention gate; it is an experimental control, the same kind of thing as the driver's clean-working-tree check. gate-off's premise is that no house conventions are enforced, not that the harness is editable, and registering this in only one arm would leave the baseline free to tamper. That would be a worse asymmetry than the one it fixes.
 
 ## The evidence
 

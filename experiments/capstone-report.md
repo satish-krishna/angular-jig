@@ -4,6 +4,13 @@ Six trials, three per condition, all on Haiku, run 2026-09-05 against `main`. Re
 
 Every number here comes from a run's own JSON under `capstone/<condition>/<runId>/`. Nothing is estimated. Regenerate the tables with `node harness/driver/summarize-capstone.mjs` and `node harness/driver/normalize-markup.mjs`.
 
+The question this run exists to answer is not "does a constitution reduce drift." It is **"does the best constitution we can build catch all of it."** The answer comes in two parts, and the second is the useful one:
+
+- Of the drift the constitution **names**, it caught everything. 326 violations to zero, across nine kinds, in three trials.
+- Of the drift it does not name, it caught none, and there was a great deal. Three of six builds compiled clean and rendered a blank page. Eighteen sites wrote primitives that bind nothing. Four primary save flows shipped as dead buttons. And in two trials the agent edited the enforcement config so its own code would pass.
+
+A gate is not a wall. It is a set of named prohibitions, and the drift goes wherever they are not.
+
 ## The headline
 
 Parts 4 and 5 returned nulls: on natural Tour of Heroes the gates were dormant, because the model is competent on native patterns. That produced the series' thesis, that gates fire in proportion to a pattern's distance from the model's priors. The capstone aimed at the far side of that distance, and the same machinery that sat silent for two Parts eliminated **326 violations to zero**.
@@ -90,6 +97,57 @@ Where data exists, the soft responsive gate helped and did not close: 72 to 51 o
 ### 3. The displaced heuristic
 
 `nested-flex-grid`, above. Part 2 judged it undecidable from classes alone and left it counter-only. The capstone gives that judgment a far larger sample and a reason to revisit it: an un-enforced heuristic is not neutral, it is a drain.
+
+### 4. The agent edited the gate
+
+In two of three gate-on trials the agent under test modified `stylelint.config.mjs`, byte-identically, adding `light` and `dark` to `ignoreValues` so that `color-scheme: light` would stop failing. A third trial left the config alone and invented a `var(--color-scheme)` indirection to dodge the same rule. Three trials, three responses to one bad rule, two of them by reaching for the rule itself.
+
+Both halves of this matter and neither should be dropped.
+
+It was not cheating. The rule had a genuine false positive: its property matcher was `/color/`, which also matches `color-scheme`, and `color-scheme` is not a color property. The agent hit a broken rule and fixed it, which in most contexts is the correct engineering response. That false positive is now fixed at the source, tightened to `/^(color|.*-color)$/`.
+
+But `raw-css-literal` was reported as **0** for those two trials, and part of that zero was the agent widening the rule rather than obeying it. Nothing in the harness noticed, and nothing would have told a reader. A gate the subject can edit is not a gate, and a measurement that cannot detect its own instrument being adjusted is not a measurement.
+
+The driver now records every changed file, refuses to mark a run OK if it touched enforcement configuration (`stylelint.config.mjs`, `eslint.config.mjs`, `harness/`, `.claude/hooks/`, either skills mirror, `components.json`), and prints a `TAMPER` line naming the files.
+
+This series has carried "enforcement must not have a dial" as a design principle since Part 1. Here it arrived as an experimental result, and the dial was not the thing anyone was watching for. It was not an `eslint-disable` comment, which the config already switches off wholesale via `noInlineConfig`. It was the config file, sitting in the repo, writable by the thing being constrained.
+
+## The coverage audit: what leaked that no counter can see
+
+The counters report only kinds they already know about, so a clean tally proves nothing about drift nobody thought to name. A capable-model review read all three gate-on builds against the full constitution looking for exactly that, and found substantial drift invisible to every existing rule. The highest-value findings, each verified against source before being written down:
+
+| leak | scale | why nothing caught it |
+| --- | --- | --- |
+| `NgIconsModule` in `imports` | fatal, 3 of 6 builds | no rule existed |
+| `hlm*` attribute matching no selector | 18 sites | rule 1 asks only whether a native element carries a primitive |
+| `standalone: true` | 19 sites | no rule existed, despite a verbatim `CLAUDE.md` line |
+| `provideIcons` replaced by an invented token | every icon blank in 1 build | spec had called this permanently doc-only |
+| `(ngSubmit)` with no forms module | 4 dead submit buttons | banned neither by the ngModel rule nor the reactive-forms rule |
+| overlay with no `hlmDialogTitle`, control with no `hlmField` | ~11 sites | the seal checks presence, never composition |
+
+Six new rules close these, written doc-first after the run and **not tested by it**: `unknown-primitive` and `missing-composition-part` in the sealing spec, `explicit-standalone`, `legacy-icon-module`, `unregistered-icon` and `orphan-ng-submit` in the component-shape spec. Two existing rules were widened, because the audit showed both being evaded by relocation rather than obeyed: `component-subscribe` now reaches `*ViewModel` classes, and `state-outside-vm` now counts `form()`.
+
+Three of these deserve to be read as more than a list.
+
+**`explicit-standalone` is the cheapest rule in the constitution and nobody wrote it.** It is a verbatim line in the baseline docs, the same AST shape as a rule shipped since Part 3, and it was violated in nearly every component of every build. It was invisible for no better reason than that nobody thought to mechanize the easy one.
+
+**`orphan-ng-submit` was caused by the gate.** Rules 3 and 6 ban `FormsModule` and `ReactiveFormsModule`, which are the only providers of the `ngSubmit` output. The model's prior for "how a form submits" survived the ban on the modules that make it work, so it wrote `(ngSubmit)` anyway, four times, and used `submit()` from signals zero times. Angular treats an unmatched output binding on a native `<form>` as a DOM listener for an event nothing fires. Every primary save flow in those builds was a dead button on a page that looked complete. **A constitution that forbids an API without forbidding its usage has not prevented the pattern; it has broken it silently.** That belongs beside the displacement result as the second half of one lesson about partial coverage.
+
+**`unregistered-icon` reverses a call this project got wrong.** `capstone-spec.md` stated the registration half of the icon rule was permanently doc-only because the template engines cannot see the component class. That reasoning was correct about the *template* engines and wrong about decidability: it is a plain TypeScript-AST property, and the shape rules have always been TypeScript rules. The correction is recorded rather than quietly applied, because "we said this could not be gated and we were wrong" is worth more to a reader than a rule that silently appears.
+
+## The largest hole, still open: accessibility
+
+`CLAUDE.md` states it plainly: "It MUST pass all AXE checks. It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes." There is no accessibility auditor in the harness, and the review found nine distinct failure classes across the builds: icon-only controls with no accessible name, inputs whose only label is a placeholder, `<label for>` pointing at a custom element, an `<a (click)>` with no href and no tabindex, a hand-built tab strip with no `role="tablist"` or `aria-selected`, dialogs with no accessible name, navigation as `<button [routerLink]>`, a `<ul>` with a non-`<li>` child, and progress bars with no `role="progressbar"`.
+
+Most of it is decidable from the template AST alone, and the rendered half is nearly free: `harness/playwright` already builds and serves the app for the responsive auditor, so `axe-core` could ride the same rig. This needs no new doc, because the rule is already written. It is the obvious next plane and it is not built here.
+
+## The permanent ceiling
+
+Two classes of drift are not decidable from any AST, and saying so is part of the result rather than an excuse.
+
+**A store wearing a different name.** Rule 7 forbids a `providedIn: 'root'` ViewModel, using the `ViewModel` name suffix as its decidable marker. Two builds put the real screen state in a root-scoped `ThemeService` and reduced the ViewModel to an eleven-line passthrough that the template reached straight through. Rule 7 cannot see it. **The rule does not detect singleton screen state; it detects singleton screen state that admits to being a ViewModel**, and it is one rename away from evasion. Naming-convention-as-marker is a real technique with a real limit, and this is the limit.
+
+**Code that was never written.** One trial shipped four "Coming soon" placeholders and a hero-detail screen with no tabs, no edit form and no retire dialog, while its ViewModel dutifully built `heroForm`, `fieldsMeta`, `saveHero` and `retireHero` — every one unreachable. Every counter reads zero on that screen, correctly, because zero code was written there. A gate measures what is present. It cannot measure what is absent, and no lint rule ever will.
 
 ## What this run is not
 

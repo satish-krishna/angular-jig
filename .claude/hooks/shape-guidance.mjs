@@ -82,3 +82,67 @@ export const MVVM_RULE_IDS = new Set([
   'shape/no-feature-inject-data',
   'shape/no-unprovided-view-model',
 ]);
+
+// The worked-example corrective for the two icon rules added after the
+// capstone (rules 12 and 13). Both fail silently rather than loudly:
+// NgIconsModule throws at bootstrap and takes the whole app down with a blank
+// page, while a hand-rolled registration (a custom token, a plain object)
+// typechecks and registers nothing, so the build is green and the icons are
+// blank. That is exactly the drift a one-line rule message will not stop, so
+// the fix is the worked example, copied from the house-style skill's icons
+// section verbatim.
+export const ICON_GUIDANCE = [
+  '',
+  'Icons: import the standalone NgIcon, never NgIconsModule, and register every',
+  'icon the component renders with provideIcons. Copy this exact shape:',
+  '',
+  "  import { NgIcon, provideIcons } from '@ng-icons/core';",
+  "  import { lucideUsers } from '@ng-icons/lucide';",
+  '',
+  '  @Component({',
+  '    imports: [NgIcon],',
+  '    providers: [provideIcons({ lucideUsers })],',
+  '    template: `<ng-icon name="lucideUsers" />`,',
+  '  })',
+  '',
+  'Do NOT import NgIconsModule (throws at bootstrap), and do NOT register an icon',
+  "through a custom token or a plain object (registers nothing): only provideIcons",
+  'registers an icon.',
+  '',
+  "Read the house-style skill's icons section for the full example.",
+].join('\n');
+
+// The messageIds/ruleIds whose fix is the icon worked example above.
+export const ICON_RULE_IDS = new Set(['shape/no-legacy-icon-module', 'shape/no-unregistered-icon']);
+
+// The worked-example corrective for rule 14, orphan-ng-submit. The gate
+// caused this one: banning FormsModule and ReactiveFormsModule (rules 3 and
+// 6) also removes the only directives that ever supply the `ngSubmit` output,
+// so `(ngSubmit)` on a native `<form>` is not an error, it is a DOM listener
+// for an event nothing fires. A bare "don't do this" would leave the agent's
+// prior for "how a form submits" with nowhere to go, so the fix names the
+// actual submit path, copied from the house-style skill's "Submitting a form"
+// section verbatim.
+export const SUBMIT_GUIDANCE = [
+  '',
+  'There is exactly one submit path in this repo: submit(this.form, ...) from',
+  '@angular/forms/signals. (ngSubmit) is not part of it; NgForm and',
+  'FormGroupDirective, the only directives that fire it, ship with FormsModule and',
+  'ReactiveFormsModule, and this repo uses neither, so the binding is dead.',
+  'Copy this exact shape:',
+  '',
+  '  <!-- template: no (ngSubmit) on the <form> -->',
+  '  <form>',
+  '    <hlm-field> ... </hlm-field>',
+  '    <button hlmBtn type="submit">Save</button>',
+  '  </form>',
+  '',
+  '  // class: wire the submit through the form itself',
+  "  import { submit } from '@angular/forms/signals';",
+  '  protected readonly save = () => submit(this.form, async (f) => { /* ... */ });',
+  '',
+  "Read the house-style skill's \"Submitting a form\" section for the full example.",
+].join('\n');
+
+// The messageIds/ruleIds whose fix is the submit worked example above.
+export const SUBMIT_RULE_IDS = new Set(['shape/no-orphan-ng-submit']);

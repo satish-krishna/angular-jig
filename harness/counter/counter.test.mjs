@@ -20,6 +20,8 @@ describe('structural counter: external templates', () => {
       'appearance-on-primitive': 2,
       'style-attribute': 1,
       'raw-icon': 0,
+      'unknown-primitive': 0,
+      'missing-composition-part': 0,
       all: 5,
     });
   });
@@ -31,13 +33,14 @@ describe('structural counter: external templates', () => {
       'appearance-on-primitive': 0,
       'style-attribute': 0,
       'raw-icon': 0,
+      'unknown-primitive': 0,
+      'missing-composition-part': 0,
       all: 0,
     });
   });
 
   it('does not flag layout classes on a primitive, or a token-styled div', () => {
-    const violations = countFile(fx('clean.html'));
-    expect(violations).toEqual([]);
+    expect(countFile(fx('clean.html'))).toEqual([]);
   });
 });
 
@@ -50,6 +53,8 @@ describe('structural counter: inline templates in .ts components', () => {
       'appearance-on-primitive': 0,
       'style-attribute': 1,
       'raw-icon': 0,
+      'unknown-primitive': 0,
+      'missing-composition-part': 0,
       all: 2,
     });
   });
@@ -78,6 +83,8 @@ describe('structural counter: capstone seal (widened Part 1 spec)', () => {
       'appearance-on-primitive': 2,
       'style-attribute': 1,
       'raw-icon': 1,
+      'unknown-primitive': 0,
+      'missing-composition-part': 0,
       all: 12,
     });
   });
@@ -89,6 +96,8 @@ describe('structural counter: capstone seal (widened Part 1 spec)', () => {
       'appearance-on-primitive': 0,
       'style-attribute': 0,
       'raw-icon': 0,
+      'unknown-primitive': 0,
+      'missing-composition-part': 0,
       all: 0,
     });
   });
@@ -96,6 +105,62 @@ describe('structural counter: capstone seal (widened Part 1 spec)', () => {
   it('is deterministic on the capstone fixtures: same input twice serializes byte-identical', () => {
     const a = JSON.stringify(tally([fx('capstone-seal-dirty.html'), fx('capstone-seal-clean.html')]));
     const b = JSON.stringify(tally([fx('capstone-seal-dirty.html'), fx('capstone-seal-clean.html')]));
+    expect(a).toBe(b);
+  });
+});
+
+describe('structural counter: capstone-residue seal (rules 5 and 6)', () => {
+  it('tallies the capstone-residue dirty fixture by exact kind', () => {
+    const result = tally([fx('capstone-residue-seal-dirty.html')]);
+    // Hand-counted in the fixture's own header, against sealing-spec.md:
+    //   unknown-primitive (4): hlmSelectTrigger and hlmAvatar written as
+    //     attributes (installed as elements), hlm-sidebar written as an
+    //     attribute (installed as an element), <hlm-avatar-image> written as
+    //     an element (installed as the attribute hlmAvatarImage)
+    //   missing-composition-part (1): hlm-dialog-content with no descendant
+    //     carrying hlmDialogTitle. The fixture's bare hlmInput is deliberately
+    //     NOT a violation: the field-wrapping half of the spartan forms doc is
+    //     doc-only, not gated (sealing-spec.md, "What this rule deliberately
+    //     does NOT check").
+    expect(result.totals).toEqual({
+      'raw-control': 0,
+      'appearance-on-primitive': 0,
+      'style-attribute': 0,
+      'raw-icon': 0,
+      'unknown-primitive': 4,
+      'missing-composition-part': 1,
+      all: 5,
+    });
+  });
+
+  // This fixture DID surface a real spec/fixture disagreement while rules 5
+  // and 6 were being written: its first hlm-select sits outside any hlmField,
+  // which an earlier draft of rule 6 counted as a violation. The spec was the
+  // arbiter and the spec lost: requiring every control to sit inside a field
+  // would have hard-blocked the toolbar search box and class filter the
+  // capstone build spec itself calls for, so that half of the rule is now
+  // doc-only. See sealing-spec.md, "What this rule deliberately does NOT
+  // check". The fixture was right and is unchanged.
+  it('finds zero violations in the capstone-residue clean fixture', () => {
+    const result = tally([fx('capstone-residue-seal-clean.html')]);
+    expect(result.totals).toEqual({
+      'raw-control': 0,
+      'appearance-on-primitive': 0,
+      'style-attribute': 0,
+      'raw-icon': 0,
+      'unknown-primitive': 0,
+      'missing-composition-part': 0,
+      all: 0,
+    });
+  });
+
+  it('is deterministic on the capstone-residue fixtures: same input twice serializes byte-identical', () => {
+    const a = JSON.stringify(
+      tally([fx('capstone-residue-seal-dirty.html'), fx('capstone-residue-seal-clean.html')]),
+    );
+    const b = JSON.stringify(
+      tally([fx('capstone-residue-seal-dirty.html'), fx('capstone-residue-seal-clean.html')]),
+    );
     expect(a).toBe(b);
   });
 });

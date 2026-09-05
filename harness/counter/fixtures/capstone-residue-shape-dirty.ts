@@ -8,7 +8,11 @@
 //   unregistered-icon   (1): NgIcon in imports, registration handed to an
 //                            invented token instead of provideIcons
 //   component-subscribe (1): .subscribe in a *ViewModel  <- widening of rule 2
-//   state-outside-vm    (1): form() built on the component <- widening of rule 8
+//   state-outside-vm    (1): heroForm = form(...) on the component. The
+//                            model = signal(...) it is built from is absorbed
+//                            into that one violation, not counted separately:
+//                            moving the form to the ViewModel necessarily takes
+//                            its backing model with it, so it is one defect.
 //
 // NOT flagged on purpose: the ViewModel's own inject(HeroService) (rule 9 fires
 // only inside @Component classes), and the last component below, which imports

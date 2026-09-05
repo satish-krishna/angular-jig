@@ -9,12 +9,15 @@
       hlm-sidebar      as an ATTRIBUTE  (installed selector is the element)
       <hlm-avatar-image>  as an ELEMENT (installed selector is img[hlmAvatarImage])
 
-    missing-composition-part (2):
+    missing-composition-part (1):
       hlm-dialog-content with no descendant carrying hlmDialogTitle
-      an hlmInput with no hlmField / hlm-field ancestor
 
   NOT flagged, on purpose, and each of these is a case a too-greedy rule would
-  break: hlmBtn and hlmAvatarFallback are real attribute selectors;
+  break. The bare hlmInput in a plain div below is the important one: an earlier
+  draft of rule 6 required every control to sit inside an hlmField, which would
+  have hard-blocked the toolbar search box and class filter the capstone build
+  spec itself calls for. That half is doc-only, and this fixture pins it as NOT a
+  violation. Also: hlmBtn and hlmAvatarFallback are real attribute selectors;
   hlm-select-trigger and hlm-avatar are real element selectors; a non-hlm
   attribute is never considered at all; and the correctly composed field and
   dialog further down must stay silent.
