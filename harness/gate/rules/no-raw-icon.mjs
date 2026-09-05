@@ -1,7 +1,7 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 
 // Rule 4 of the sealing spec: no raw inline <svg> in an application template.
-// See ../../sealing-spec.md, "The four rules" #4. messageId `rawIcon` maps to
+// See ../../sealing-spec.md, "The six rules" #4. messageId `rawIcon` maps to
 // the counter's `raw-icon` kind.
 //
 // Both the angular-eslint template parser and @angular/compiler namespace SVG

@@ -286,7 +286,7 @@ function hasDescendantWithAttr(nodes, attrName) {
 }
 
 // Rule 6 helper: does the ancestor stack contain an element carrying
-function elementViolations(el, file, lineOffset, ancestors) {
+function elementViolations(el, file, lineOffset) {
   const out = [];
   const attrNames = new Set(el.attributes.map((a) => a.name));
   const line = (el.sourceSpan?.start?.line ?? 0) + 1 + lineOffset;
@@ -385,17 +385,14 @@ function elementViolations(el, file, lineOffset, ancestors) {
 }
 
 // Duck-typed AST walk. An element node has a string name plus attributes and
-// inputs arrays; block nodes carry their bodies in children/branches/cases/empty.
-// `ancestors` is the stack of enclosing element nodes, oldest first, used by
-// rule 6's required-ancestor half.
-function walk(nodes, file, lineOffset, acc, ancestors) {
+// inputs arrays; block nodes carry their bodies under the keys listed below.
+function walk(nodes, file, lineOffset, acc) {
   for (const n of nodes) {
     const isElement =
       n && typeof n.name === 'string' && Array.isArray(n.attributes) && Array.isArray(n.inputs);
     if (isElement) {
-      acc.push(...elementViolations(n, file, lineOffset, ancestors));
+      acc.push(...elementViolations(n, file, lineOffset));
     }
-    const nextAncestors = isElement ? [...ancestors, n] : ancestors;
     // Angular block-AST child keys, verified against @angular/compiler: a
     // SwitchBlock exposes `groups` (NOT `cases`; the group then carries both),
     // and ForLoopBlock.empty plus DeferredBlock.placeholder/loading/error are
@@ -405,8 +402,8 @@ function walk(nodes, file, lineOffset, acc, ancestors) {
     // the gate, which does walk them, silently disagreed.
     for (const key of ['children', 'branches', 'cases', 'groups', 'empty', 'placeholder', 'loading', 'error']) {
       const v = n?.[key];
-      if (Array.isArray(v)) walk(v, file, lineOffset, acc, nextAncestors);
-      else if (v && typeof v === 'object') walk([v], file, lineOffset, acc, nextAncestors);
+      if (Array.isArray(v)) walk(v, file, lineOffset, acc);
+      else if (v && typeof v === 'object') walk([v], file, lineOffset, acc);
     }
   }
 }

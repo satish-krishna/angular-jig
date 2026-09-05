@@ -121,7 +121,7 @@ if (toolName === 'Bash' || toolName === 'PowerShell') {
   // agent nothing (it can read the specs through Read) and removes the need to
   // parse shell grammar correctly to stay safe.
   const cmd = norm(input.command ?? '');
-  hits = PROTECTED.filter((entry) => cmd.includes(entry.endsWith('/') ? entry : entry));
+  hits = PROTECTED.filter((entry) => cmd.includes(entry));
   if (hits.length) {
     // Allow the read-only shapes the harness itself needs, so the agent can run
     // the checks it is told to run. Anything that could write is still denied.

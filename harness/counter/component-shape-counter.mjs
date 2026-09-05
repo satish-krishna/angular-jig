@@ -93,7 +93,9 @@ export function countTsSource(sourceText, { file }) {
   // `form` as an import, unlike the bare-identifier match used for signal/
   // computed/linkedSignal).
   const signalsValidators = new Set();
-  let formImportedFromSignals = false;
+  // LOCAL names bound to the signals-forms `form` export (an import may be
+  // aliased, in which case the call site uses the alias).
+  const formLocalNames = new Set();
   for (const st of sf.statements) {
     if (
       ts.isImportDeclaration(st) &&
@@ -103,9 +105,15 @@ export function countTsSource(sourceText, { file }) {
       ts.isNamedImports(st.importClause.namedBindings)
     ) {
       for (const el of st.importClause.namedBindings.elements) {
-        const name = el.name.text;
-        if (RESTATED_VALIDATORS.has(name)) signalsValidators.add(name);
-        if (name === STATE_FORM_CTOR) formImportedFromSignals = true;
+        // propertyName is the ORIGINAL export when the import is aliased; name
+        // is always the local binding the call site actually uses. Matching on
+        // the local name alone misses `import { form as f }`, which the gate
+        // resolves: a two-engine disagreement the pre-merge review found and
+        // which no fixture covered.
+        const original = el.propertyName ? el.propertyName.text : el.name.text;
+        const local = el.name.text;
+        if (RESTATED_VALIDATORS.has(original)) signalsValidators.add(local);
+        if (original === STATE_FORM_CTOR) formLocalNames.add(local);
       }
     }
   }
@@ -133,8 +141,19 @@ export function countTsSource(sourceText, { file }) {
   const decoratorObject = (call) =>
     call.arguments.length && ts.isObjectLiteralExpression(call.arguments[0]) ? call.arguments[0] : null;
 
+  // Key comparison strips quotes, so `{ standalone: true }` and
+  // `{ 'standalone': true }` are the same property. getText() alone returns the
+  // literal WITH its quotes, which made the quoted form invisible here while the
+  // gate (which reads the Literal's value) still saw it: a two-engine
+  // disagreement found by the pre-merge review, not by any test.
+  const propKeyName = (p) => {
+    if (!p.name) return null;
+    if (ts.isIdentifier(p.name)) return p.name.text;
+    if (ts.isStringLiteral(p.name) || ts.isNoSubstitutionTemplateLiteral(p.name)) return p.name.text;
+    return p.name.getText(sf);
+  };
   const findProp = (obj, name) =>
-    obj.properties.find((p) => ts.isPropertyAssignment(p) && p.name && p.name.getText(sf) === name) ?? null;
+    obj.properties.find((p) => ts.isPropertyAssignment(p) && propKeyName(p) === name) ?? null;
 
   const visitClass = (classNode) => {
     const call = componentCall(classNode);
@@ -143,7 +162,6 @@ export function countTsSource(sourceText, { file }) {
     let reactiveLine = null; // reactive-form is flagged once per component (import or new-expression)
 
     // Decorator-level kinds.
-    let ngIconInImports = false;
     if (obj) {
       const cd = findProp(obj, 'changeDetection');
       if (cd) out.push({ kind: 'hand-set-change-detection', file, line: lineOf(cd), detail: 'changeDetection set explicitly' });
@@ -167,29 +185,20 @@ export function countTsSource(sourceText, { file }) {
           if (ts.isIdentifier(el) && el.text === 'NgIconsModule') {
             out.push({ kind: 'legacy-icon-module', file, line: lineOf(el), detail: 'NgIconsModule in imports' });
           }
-          // Rule 13 (unregistered-icon) is keyed on this component decorator's
-          // own `imports`, not on the file's import list: NgIcon in `imports`
-          // is the component saying it renders icons.
-          if (ts.isIdentifier(el) && el.text === 'NgIcon') ngIconInImports = true;
         }
       }
     }
 
-    // Rule 10 (vm-not-provided) and rule 13 (unregistered-icon) both read this
-    // component's own `providers` array. `providers: [...spread]` is not
-    // resolvable statically and is treated as satisfying both rules, a stated
-    // blind spot rather than a guess.
+    // Rule 10 (vm-not-provided) reads this component's own `providers` array.
+    // `providers: [...spread]` is not resolvable statically and is treated as
+    // satisfying the rule, a stated blind spot rather than a guess.
     const providedNames = new Set();
     let providersHasSpread = false;
-    let hasProvideIcons = false;
     const prov = obj ? findProp(obj, 'providers') : null;
     if (prov && ts.isArrayLiteralExpression(prov.initializer)) {
       for (const el of prov.initializer.elements) {
         if (ts.isIdentifier(el)) providedNames.add(el.text);
         if (ts.isSpreadElement(el)) providersHasSpread = true;
-        if (ts.isCallExpression(el) && ts.isIdentifier(el.expression) && el.expression.text === 'provideIcons') {
-          hasProvideIcons = true;
-        }
       }
     }
     // Rule 13 is NOT here. It was drafted as a per-component check (NgIcon in
@@ -249,7 +258,7 @@ export function countTsSource(sourceText, { file }) {
         // signal as a second, separate piece of state (see stateSignalCandidates).
         if (ts.isIdentifier(callee) && callee.text === 'form') {
           hasFormCall = true;
-          if (formImportedFromSignals && node.arguments.length) {
+          if (formLocalNames.has(callee.text) && node.arguments.length) {
             const arg = node.arguments[0];
             if (ts.isIdentifier(arg)) {
               formModelNames.add(arg.text);
@@ -290,7 +299,7 @@ export function countTsSource(sourceText, { file }) {
         if (ts.isIdentifier(init) && STATE_CTORS.has(init.text)) {
           const name = ts.isIdentifier(node.name) ? node.name.text : null;
           stateSignalCandidates.push({ name, ctorText: init.text, line: lineOf(node) });
-        } else if (ts.isIdentifier(init) && init.text === STATE_FORM_CTOR && formImportedFromSignals) {
+        } else if (ts.isIdentifier(init) && formLocalNames.has(init.text)) {
           out.push({ kind: 'state-outside-vm', file, line: lineOf(node), detail: 'form() state on a feature component' });
         }
       }
