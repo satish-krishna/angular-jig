@@ -44,6 +44,15 @@ export function inPageMeasure({ tolerancePx, anchorSelector }) {
     }
     return false;
   };
+  // Visually-hidden exemption: a box at most 1x1 CSS pixel in BOTH dimensions
+  // is the screen-reader-only pattern (collapsed and clipped, but announced),
+  // and is exempt for the same reason as aria-hidden: nothing on screen to
+  // escape or truncate. This checks the element's own rendered rect only, not
+  // its ancestors, since the pattern is applied to the element that carries
+  // the text, not inherited from a parent the way display/visibility are.
+  // A 0x0 element already falls out via the zero-area skip above; this is
+  // strictly the >0-but-at-most-1px case, so the two skips do not overlap.
+  const isVisuallyHidden = (rect) => rect.width <= 1 && rect.height <= 1;
 
   // 1. viewport-escape: the document scrolls horizontally.
   const docW = document.documentElement.scrollWidth;
@@ -60,6 +69,7 @@ export function inPageMeasure({ tolerancePx, anchorSelector }) {
     const cs = getComputedStyle(el);
     if (rect.width <= 0 || rect.height <= 0) continue;
     if (isNotShownToUser(el)) continue;
+    if (isVisuallyHidden(rect)) continue;
 
     // 2. element-escape: right past viewport (or left < 0), not inside an intentional scroller.
     if ((rect.right - vw > tolerancePx || rect.left < -tolerancePx) && !insideScrollContainer(el, root)) {

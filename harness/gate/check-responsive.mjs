@@ -32,13 +32,20 @@ function pageCheck({ tol, anchorSelector }) {
   // since those need getComputedStyle rather than a selector match. Not
   // bounded by the measured root, and it does NOT consider transform/position,
   // so an element merely translated off-screen still fails.
-  const isExempt = (el) => {
+  // The visually-hidden exemption is folded into the same predicate, but
+  // expressed on the element's own rect rather than an ancestor walk: the
+  // screen-reader-only pattern collapses the element itself, so the largest
+  // side of its own box is what matters. Math.max(w, h) <= 1 is the same
+  // boundary as "both dimensions at most 1px", just phrased the other way.
+  // The 0x0 case is already gone by the time isExempt runs (the caller skips
+  // zero-area rects first), so this only ever fires for a genuinely 1px box.
+  const isExempt = (el, rect) => {
     if (el.closest('[aria-hidden="true"]')) return true;
     for (let e = el; e; e = e.parentElement) {
       const ecs = getComputedStyle(e);
       if (ecs.display === 'none' || ecs.visibility === 'hidden') return true;
     }
-    return false;
+    return Math.max(rect.width, rect.height) <= 1;
   };
   if (document.documentElement.scrollWidth - vw > tol) {
     fails.push({ kind: 'viewport-escape', selector: 'html', detail: 'page scrolls horizontally' });
@@ -47,7 +54,7 @@ function pageCheck({ tol, anchorSelector }) {
   for (const el of root.querySelectorAll('*')) {
     const r = el.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) continue;
-    if (isExempt(el)) continue;
+    if (isExempt(el, r)) continue;
     const cs = getComputedStyle(el);
     if ((r.right - vw > tol || r.left < -tol) && !scrollAncestor(el, root)) {
       fails.push({ kind: 'element-escape', selector: sel(el), detail: 'right ' + Math.round(r.right) + ' vs ' + vw });

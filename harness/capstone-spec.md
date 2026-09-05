@@ -67,12 +67,18 @@ The auditor runs on **three routes** (`dashboard`, `roster`, `detail/11`), not o
 
 ## The honest asymmetries, stated up front
 
-Four, and none of them are hidden in a footnote.
+Five, and none of them are hidden in a footnote.
 
 1. **The capstone is an aggregate, not an isolation.** Covered above. It cannot attribute a difference to a single rule.
 2. **The responsive gate is soft.** Playwright needs a whole rendered app, so a per-edit hook is physically impossible; the gate is only as hard as the agent's willingness to run a command it was told to run. Part 5 disclosed this and the capstone inherits it unchanged. The auditor runs regardless, so a gate-on build that still ships responsive drift is a finding about self-run gates, not a measurement gap.
 3. **`vm-not-provided` catches something no build catches.** A component-scoped ViewModel injected without being provided is a runtime `NullInjectorError`, not a compile error, so `ng build` passes and the screen dies when it renders. This is the exact inverse of Part 4's freeloader result: there the compiler had already built the graph and the gate rode it for free, and here the framework defers the check to a moment the harness would only reach by accident.
-4. **The icon rule gates half of what its doc says.** `raw-icon` bans inline `<svg>`, which is decidable in a template. It does not check that every `<ng-icon name="X">` was registered with `provideIcons`, because that is a fact about the component class rather than the template, and `@ng-icons` only warns rather than failing the build. An unregistered icon renders as nothing. The unchecked half is doc-only, and an unregistered-icon count must never be reported as gated drift.
+4. **A rendered pixel carries no file provenance.** The AST counters ignore `libs/**` wholesale, because customizing a copied Helm file is the documented escape route and gating it would fight the docs. The Playwright auditor has no equivalent notion and cannot acquire one: a bounding rect does not know which file drew it. So a responsive defect inherited from an unmodified Helm primitive is counted exactly like one the agent wrote.
+
+   This is not hypothetical either. The capstone probe found six `element-clip` violations per route coming from `hlm-sidebar-menu-button`, which is `h-8` with `p-2` and `text-sm`: a 20px line box inside a 16px content box, under an `overflow-hidden` that Helm sets deliberately so long labels truncate horizontally. Every build with a labeled sidebar will report them, in both conditions, from library code the agent never touched.
+
+   They are reported rather than exempted, and the two ways to make them disappear were both refused. Raising the tolerance to 2px is the suppression dial this repo bans everywhere else, and a clip is not less of a clip for being small. Editing `libs/ui` to flatter the measurement is worse: tuning the substrate until the numbers look clean is not an experiment, it is decoration. The honest handling is to say the count includes inherited chrome, note that it is constant across conditions so the gate-off versus gate-on delta is unaffected, and report the violating selectors so a reader can see the split themselves.
+
+5. **The icon rule gates half of what its doc says.** `raw-icon` bans inline `<svg>`, which is decidable in a template. It does not check that every `<ng-icon name="X">` was registered with `provideIcons`, because that is a fact about the component class rather than the template, and `@ng-icons` only warns rather than failing the build. An unregistered icon renders as nothing. The unchecked half is doc-only, and an unregistered-icon count must never be reported as gated drift.
 
 ## The evidence
 

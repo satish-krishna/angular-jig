@@ -8,7 +8,7 @@ Read `sealing-spec.md`, `layout-grammar-spec.md`, `component-shape-spec.md`, and
 
 Part 4 needed no doc-first work: `@if` over `*ngIf` and no `ngClass` are Angular's own rules, already in the agent's baseline `CLAUDE.md`. Plane 2 is different. Angular has no documented rule that says "the detail form must not overflow at 375px," and there is no compiler option that decides it. So the load-bearing principle still holds only if the definition of "correct" is written down as a doc the agent reads in both conditions, before any gate mechanizes it. Part 5 adds a "responsive correctness" section to the house-style skill (both mirrors, byte-identical), and the gate enforces exactly that section, no more.
 
-The doc states the breakpoints, the three failure kinds, the tolerance, and the two exemptions. It is transcribed into `.claude/skills/house-style/SKILL.md` and `.agents/skills/house-style/SKILL.md` as a new section, and this spec is the source of its wording.
+The doc states the breakpoints, the three failure kinds, the tolerance, and the three exemptions. It is transcribed into `.claude/skills/house-style/SKILL.md` and `.agents/skills/house-style/SKILL.md` as a new section, and this spec is the source of its wording.
 
 ## What the house-style doc says (the graph, defined in pixels)
 
@@ -24,7 +24,7 @@ The three failure kinds, each decidable from the rendered DOM with no model in t
 2. **`element-escape`.** An element inside the measured slice has a bounding-rect right edge past the viewport width, or a left edge below zero, beyond tolerance. This catches an element poking off-screen even when an `overflow: hidden` ancestor swallowed the page scrollbar, so `viewport-escape` alone read clean. An element that is not being shown to the user is exempt, see the hidden-element exemption below.
 3. **`element-clip`.** An element clips its own content: its computed `overflow-x` or `overflow-y` is `hidden` or `clip`, and its `scrollWidth` exceeds its `clientWidth` (or `scrollHeight` its `clientHeight`) beyond tolerance. Content is cut off with no way to reach it.
 
-There are two exemptions, and they are the reason the spec does not drown in false positives.
+There are three exemptions, and they are the reason the spec does not drown in false positives. Two of the three were found by running the auditor over a real rich layout rather than reasoned out in advance, which is worth stating plainly: the simple Part 5 slices were not complex enough to surface either.
 
 **The scroll-container exemption.** An element whose computed overflow on the measured axis is `auto` or `scroll` is an intentional scroll container, not a bug, and is exempt from `element-clip`; an element inside one is exempt from `element-escape`. A deliberately scrollable panel is a design choice; a truncated label under `overflow: hidden` is a defect.
 
@@ -36,7 +36,15 @@ That is the load-bearing half of this exemption, and it is why the exemption mak
 
 `display: none` was already exempt before this change, incidentally, but only by accident: such an element has a zero-area bounding rect and the auditor skips zero-area elements. The capstone makes the exemption explicit and extends it to `visibility: hidden` and `aria-hidden`, which keep their boxes, so the behavior no longer rests on an implementation detail.
 
-The tolerance is 1px on every comparison, to absorb sub-pixel rounding, and it is stated in the doc so the gate cannot quietly widen it.
+**The visually-hidden exemption (added by the capstone).** An element whose rendered box is at most 1x1 CSS pixel in BOTH dimensions is not shown to the user either, and commits neither `element-escape` nor `element-clip`.
+
+This is the screen-reader-only pattern, and it is the exact mirror of `aria-hidden`: an `aria-hidden` element is visible but not announced, and a visually-hidden span is announced but not visible. Both are absent from the sighted user's screen, which is the only thing these two failure kinds are about. The pattern is implemented by collapsing an element to a 1px box and clipping its text, so by construction it trips `element-clip` on every screen that uses it, and it is used by spartan's own primitives.
+
+Without this exemption the gate penalizes a build for labeling its icon-only buttons for screen readers, which is worse than useless: it is a responsive gate that pushes back against accessibility. The capstone probe measured exactly that, eight times per route, entirely from Helm's own markup.
+
+The 1px threshold is not a new number. It is the same 1px the spec already uses as its comparison tolerance, applied to a box rather than to a difference, and nothing a user can read fits inside it.
+
+The tolerance is 1px on every comparison, to absorb sub-pixel rounding, and it is stated in the doc so the gate cannot quietly widen it. Note what is deliberately NOT here: no threshold that excuses a clip for being small. A clip of two pixels is still a clip, and raising the tolerance until a run comes back clean is the suppression dial this repo bans everywhere else.
 
 ## The measurement model (cumulative baseline)
 

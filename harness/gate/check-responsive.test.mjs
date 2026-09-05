@@ -46,6 +46,15 @@ test('offscreen-drawer fixture fails: a transform-translated element is still sh
   expect(failures.some((f) => f.kind === 'element-escape')).toBe(true);
 }, 60000);
 
+test('visually-hidden fixture: sr-only spans are exempt but the real clip control still fails', async () => {
+  const { failures } = await check('visually-hidden.html');
+  // Exactly one failure: the 300x20-in-40x10 control's element-clip. If
+  // either sr-only span were not exempted, this would be 2 or 3 instead.
+  expect(failures.length).toBe(1);
+  expect(failures[0].kind).toBe('element-clip');
+  expect(failures.every((f) => !f.selector.includes('span'))).toBe(true);
+}, 60000);
+
 test('anchor parameter changes the measured subtree', async () => {
   const srv = await serveStatic(fixtures, { spaFallback: false });
   try {

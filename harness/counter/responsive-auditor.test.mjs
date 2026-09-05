@@ -62,6 +62,15 @@ test('offscreen-drawer fixture: a transform-translated element is still shown an
   expect(t.totals['element-escape']).toBeGreaterThanOrEqual(1);
 }, 60000);
 
+test('visually-hidden fixture: sr-only spans are exempt but the real clip control is still flagged', async () => {
+  const t = await auditFixture('visually-hidden.html');
+  expect(t.totals['element-escape']).toBe(0);
+  // Exactly one element-clip: the 300x20-in-40x10 control. If either sr-only
+  // span were not exempted, this count would be 2 or 3 instead.
+  expect(t.totals['element-clip']).toBe(1);
+  expect(t.violations.every((v) => !v.selector.includes('span'))).toBe(true);
+}, 60000);
+
 test('anchor parameter changes the measured subtree', async () => {
   const srv = await serveStatic(fixtures, { spaFallback: false });
   try {
