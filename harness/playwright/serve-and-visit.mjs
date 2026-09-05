@@ -58,5 +58,13 @@ export async function visitBreakpoint(browser, url, breakpoint) {
   });
   await page.evaluate(() => document.fonts && document.fonts.ready);
   await page.waitForTimeout(50);
+  const rendered = await page.evaluate(() =>
+    !!document.body &&
+    document.body.innerText.trim().length > 0 &&
+    document.body.querySelectorAll('*').length > 1
+  );
+  if (!rendered) {
+    throw new Error(`page rendered no substantive content at ${url} (viewport ${breakpoint}px); route may have failed to resolve`);
+  }
   return { page, context };
 }

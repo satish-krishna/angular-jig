@@ -34,6 +34,11 @@ test('element-clip fixture flags the clipped element', async () => {
   expect(t.totals['element-clip']).toBeGreaterThanOrEqual(1);
 }, 60000);
 
+test('element-clip-cross-axis fixture flags the horizontally clipped element even with overflow-y auto', async () => {
+  const t = await auditFixture('element-clip-cross-axis.html');
+  expect(t.totals['element-clip']).toBeGreaterThanOrEqual(1);
+}, 60000);
+
 test('scroll-exempt fixture is NOT flagged', async () => {
   const t = await auditFixture('scroll-exempt.html');
   expect(t.totals['element-escape']).toBe(0);

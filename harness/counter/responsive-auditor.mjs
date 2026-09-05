@@ -18,10 +18,6 @@ export function inPageMeasure(tolerancePx) {
     }
     return parts.join(' > ');
   };
-  const axisScrollable = (cs) => {
-    const vals = [cs.overflowX, cs.overflowY];
-    return vals.includes('auto') || vals.includes('scroll');
-  };
   const insideScrollContainer = (el, root) => {
     let e = el.parentElement;
     while (e && e !== root.parentElement) {
@@ -56,7 +52,7 @@ export function inPageMeasure(tolerancePx) {
     // 3. element-clip: hidden/clip box with content larger than its client box.
     const clipX = (cs.overflowX === 'hidden' || cs.overflowX === 'clip') && (el.scrollWidth - el.clientWidth > tolerancePx);
     const clipY = (cs.overflowY === 'hidden' || cs.overflowY === 'clip') && (el.scrollHeight - el.clientHeight > tolerancePx);
-    if ((clipX || clipY) && !axisScrollable(cs)) {
+    if (clipX || clipY) {
       out.push({ kind: 'element-clip', selector: cssPath(el),
         detail: 'content ' + el.scrollWidth + 'x' + el.scrollHeight + ' clipped to ' + el.clientWidth + 'x' + el.clientHeight });
     }
@@ -101,10 +97,13 @@ export async function auditServed({ origin, route, breakpoints = [375, 768, 1280
   try {
     for (const bp of breakpoints) {
       const { page, context } = await visitBreakpoint(browser, `${origin}/${route}`, bp);
-      const list = await measureViolations(page, tolerancePx);
-      if (onPage) await onPage(page, bp);
-      rawByBp.push({ bp, list });
-      await context.close();
+      try {
+        if (onPage) await onPage(page, bp);
+        const list = await measureViolations(page, tolerancePx);
+        rawByBp.push({ bp, list });
+      } finally {
+        await context.close();
+      }
     }
   } finally {
     if (!given) await browser.close();
