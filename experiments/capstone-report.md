@@ -154,6 +154,60 @@ Three of these deserve to be read as more than a list.
 
 **`unregistered-icon` reverses a call this project got wrong.** `capstone-spec.md` stated the registration half of the icon rule was permanently doc-only because the template engines cannot see the component class. That reasoning was correct about the *template* engines and wrong about decidability: it is a plain TypeScript-AST property, and the shape rules have always been TypeScript rules. The correction is recorded rather than quietly applied, because "we said this could not be gated and we were wrong" is worth more to a reader than a rule that silently appears.
 
+## The fatal defects are all the same kind, and no lint rule can catch any of them
+
+Test-driving the one gate-on build that renders surfaced a third runtime failure within a minute, and putting it beside the other two turns three separate bugs into one pattern.
+
+| defect | build passes? | fails at | catchable by AST? |
+| --- | --- | --- | --- |
+| `NgIconsModule` with no root `provideIcons` | yes | bootstrap | partly (the import is; the missing root registration is not) |
+| A ViewModel injected but not provided | yes | first render | yes, `vm-not-provided` |
+| `hlm-dialog-content` rendered inline instead of on `*hlmDialogPortal` | yes | dialog construction | **no** |
+
+The third is new. Spartan's dialog instantiates its content through a service that supplies `BrnDialogRef`; render the content inline and that provider does not exist, so the screen throws `NG0201` the moment the dialog is constructed. `ng build` is perfectly happy. `strictTemplates` is happy. Every gate passes. **`hlmDialogPortal` appears zero times across all six builds** — not one trial used the documented pattern, which is printed verbatim in the spartan composition doc the agent had loaded.
+
+`missing-composition-part` did flag that exact dialog, for missing `hlmDialogTitle`. It caught the wrong defect in the right element, which is the most instructive kind of near-miss: a containment rule can see that a required *part* is absent, and cannot see that a present part is in the wrong structural *position*.
+
+**All three are dependency-injection failures**, and that is the pattern worth taking away. They share a shape no static rule reaches: the code is well-formed, the types check, the primitives are real and correctly named, and the graph only fails when Angular actually assembles it. Three of the four genuinely fatal defects this capstone produced are in this family.
+
+The thing that would catch all three is not another rule. It is booting the app and listening for a thrown error, and **the harness already boots the app** — `harness/playwright/serve-and-visit.mjs` renders every build for the responsive audit and currently discards the browser console. A page-error listener on that existing rig would have caught all three at zero marginal cost. That is the highest-value unbuilt thing in this repo, and it is a smaller job than any of the AST rules already written.
+
+## The agent never opened the docs
+
+The spartan MCP server and the spartan and house-style skills were present in every run, in both conditions, passed on the command line as `--mcp-config .mcp.json`. Reading the session transcripts for all 36 subagents:
+
+| tool | calls |
+| --- | --- |
+| Read, Edit, Bash, Write, PowerShell, Glob, Grep | 1,746 |
+| Angular CLI MCP (`list_projects`, `run_target`) | 3 |
+| **spartan MCP** | **0** |
+| **Skill invocations of any kind** | **0** |
+
+Across six complete builds and 1,752 tool calls, the spartan MCP was invoked **zero times** and no skill was ever explicitly invoked. What the agent did instead is visible in the same transcripts: when it needed the dialog API it ran `Grep "hlm-dialog|HlmDialog"` and read `libs/ui/dialog/src/index.ts` and `hlm-dialog.ts`. That is the Helm **source**, which states the selectors and says nothing about required composition. The portal requirement lives in the doc, and the doc was never opened.
+
+This reframes the series' baseline claim. "The model reads good docs and drifts anyway" turns out to understate it: the model had good docs, a live MCP server built to answer exactly this question, and a skill that shows the correct dialog markup on line 24 — and reached for `grep` and the library source instead. **Availability is not consultation**, and a constitution distributed as documentation is only as good as the agent's inclination to go looking. Every gate in this repo exists downstream of that fact, which is an argument for mechanization rather than against it.
+
+## The trials contaminated each other
+
+`experiments/` lives inside the repo, so it is inside the agent's working tree, and four stages read a previous trial's implementation out of it:
+
+| stage | read |
+| --- | --- |
+| gate-off t2, stage 4 | gate-off **t1**'s `roster.ts` and `roster.viewmodel.ts` |
+| gate-on t1, stage 5 | a **Part 5** trial's `hero-detail.ts` |
+| gate-on t2, stage 3 | gate-off **t2**'s `ui/hero-card.ts` |
+| gate-on t2, stage 5 | gate-on **t1**'s `hero-detail.ts` and `hero-detail.html` |
+
+The last row is where the dialog bug came from: t2's retire dialog is a near-verbatim copy of t1's, down to `<h2 class="font-semibold">Retire Hero?</h2>` and the description paragraph's classes. The defect was not independently reinvented, it was inherited.
+
+Two consequences, and neither is small.
+
+**The trials are not independent.** Three trials per condition was supposed to average over the agent's variance; where one trial copies another, that variance is shared, and the per-trial spread understates the true variance. This does not invalidate the direction of any result — gate-on's 326-to-0 does not turn around — but it means the n=3 is softer than n=3 usually implies.
+
+**The conditions are not fully independent either.** gate-on t2 read gate-off t2's `hero-card.ts`. That is a gate-on build seeded from an ungated one, which is the single worst leak available in a two-arm comparison, and the arms are supposed to share nothing but the substrate.
+
+The fix is mechanical and now in place: `experiments/` is added to the enforcement guard's protected set, so the agent under test cannot read a previous run's output, and the driver's post-hoc check treats a run touching it the same way it treats a run editing a config. It should have been there from the start; the reason it was not is that the guard was written to stop the agent editing the *rules*, and nobody thought about it reading the *answers*.
+
 ## The largest hole, still open: accessibility
 
 `CLAUDE.md` states it plainly: "It MUST pass all AXE checks. It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes." There is no accessibility auditor in the harness, and the review found nine distinct failure classes across the builds: icon-only controls with no accessible name, inputs whose only label is a placeholder, `<label for>` pointing at a custom element, an `<a (click)>` with no href and no tabindex, a hand-built tab strip with no `role="tablist"` or `aria-selected`, dialogs with no accessible name, navigation as `<button [routerLink]>`, a `<ul>` with a non-`<li>` child, and progress bars with no `role="progressbar"`.

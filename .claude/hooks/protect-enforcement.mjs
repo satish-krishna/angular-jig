@@ -65,6 +65,14 @@ const PROTECTED = [
   // script can rewrite a config through it. tsconfig.json holds strictTemplates,
   // which the driver sets as a control in BOTH arms. .mcp.json is handed to the
   // agent as --mcp-config.
+  // Previous runs' implementations. The capstone found FOUR stages reading a
+  // prior trial out of experiments/, including a gate-on trial reading a
+  // gate-off one, and the dialog bug in gate-on t2 is a near-verbatim copy of
+  // gate-on t1's. Trials are supposed to be independent samples and the two
+  // arms are supposed to share nothing but the substrate; a readable
+  // experiments/ breaks both. The guard was written to stop the agent editing
+  // the RULES and nobody thought about it reading the ANSWERS.
+  'experiments/',
   'package.json',
   'tsconfig.json',
   'tsconfig.app.json',

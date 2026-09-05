@@ -461,6 +461,15 @@ function main() {
     tampered: tampered.length > 0,
     tamperedFiles: tampered,
     changedFiles,
+    // Times the PreToolUse guard blocked the agent. Note this is the ONLY way a
+    // contamination attempt is visible: `experiments/` is protected against
+    // READS (the capstone found four stages copying a previous trial's impl,
+    // one of them across conditions), and a read changes no files, so the
+    // tamper diff above is structurally blind to it. A non-zero count here
+    // means the agent reached for something it should not have and was stopped.
+    guardBlocks: hookFirings
+      .split('\n')
+      .filter((l) => l.includes('protect-enforcement')).length,
     hookFirings: hookFirings.trim() ? hookFirings.trim().split('\n').length : 0,
     counterTotals: {
       seal: tallyResult.totals,
