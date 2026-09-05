@@ -148,6 +148,16 @@ readonly form = form(this.model, (path) => {
 <input [(ngModel)]="hero.name" name="name" />
 ```
 
+## Responsive correctness
+
+A screen must render without responsive failure at three viewport widths, height fixed at 900px: 375px (a small phone), 768px (a tablet), and 1280px (a laptop). Responsive failure is defined in rendered pixels, so it is decidable rather than a matter of taste. A screen fails when, at any of the three widths, any of these is true (all comparisons carry a 1px tolerance for sub-pixel rounding):
+
+- **The page scrolls horizontally.** The document is wider than the viewport. Content must reflow to the width, never force a sideways scrollbar on the whole page.
+- **An element escapes the viewport.** An element's right edge is past the viewport width, or its left edge is below zero, and nothing intentionally scrollable contains it. An element sitting inside a container you deliberately made scrollable (`overflow: auto` or `overflow: scroll`) is exempt; a wide element under an `overflow: hidden` ancestor is not, because its content is cut off with no way to reach it.
+- **An element clips its own content.** An element with `overflow: hidden` or `overflow: clip` holds content larger than its box, so text or controls are truncated. Again, `overflow: auto`/`scroll` is exempt: a scroll container is a design choice, not a defect.
+
+Build the screen so a narrow width stacks rather than overflows: prefer the layout grammar's responsive grid (`grid-cols-1 sm:grid-cols-2`), let button rows wrap (`flex-wrap`), and avoid fixed pixel widths on inputs and cards that cannot shrink. The detail card, the form field, and the Save/Cancel button row must all fit and remain reachable at 375px.
+
 ## Why these are written down
 
 The whole point of this repo is that a written convention is not a guardrail: the model reads good docs and drifts anyway. These conventions exist so the drift has something concrete to be measured and gated against. They are here to be mechanized, not merely remembered.
