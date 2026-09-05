@@ -29,6 +29,10 @@ function loadRuns(condition) {
       return { runId: d, meta: at('meta.json'), cost: at('cost.json'), responsive: at('responsive-tally.json') };
     })
     .filter((r) => r.meta)
+    // A partial run (the stage-1 probe) is not a trial and must never be
+    // averaged in with complete ones: it would drag the cost mean down by
+    // five sixths of a build. Full six-stage runs only.
+    .filter((r) => (r.cost?.totals?.stages ?? 0) === 6)
     .sort((a, b) => a.runId.localeCompare(b.runId));
 }
 
@@ -45,19 +49,31 @@ function driftRows(runs) {
         acc[`${engine}/${kind}`].push(n);
       }
     }
-    // Responsive is per-route; fold to one number per run.
-    let resp = 0;
-    for (const t of Object.values(r.meta.responsive ?? {})) resp += num(t?.all);
+    // Responsive is per-route; fold to one number per run. An errored audit is
+    // NOT zero: the build did not render, so nothing was measured. Reporting it
+    // as 0 would claim a dead app is responsive-perfect, which is precisely the
+    // lie the auditor's render assertion exists to prevent. Carry it as null.
+    const routes = Object.values(r.meta.responsive ?? {});
+    const measured = routes.filter((t) => t && typeof t.all === 'number');
     acc['responsive/all'] ??= [];
-    acc['responsive/all'].push(resp);
+    acc['responsive/all'].push(
+      routes.length === 0 || measured.length === 0
+        ? null
+        : measured.reduce((a, t) => a + t.all, 0),
+    );
   }
   return acc;
 }
 
+// Trials are printed as "total (per-trial)". A null trial is unmeasured, shown
+// as n/a, and excluded from the total, which is then marked with a caret so a
+// reader can never mistake a partial total for a complete one.
 function fmtTrials(xs) {
   if (!xs || !xs.length) return '-';
-  const total = xs.reduce((a, b) => a + b, 0);
-  return `${total} (${xs.join(', ')})`;
+  const known = xs.filter((x) => x !== null);
+  const total = known.reduce((a, b) => a + b, 0);
+  const partial = known.length !== xs.length ? '^' : '';
+  return `${total}${partial} (${xs.map((x) => (x === null ? 'n/a' : x)).join(', ')})`;
 }
 
 function main() {
