@@ -100,6 +100,77 @@ Bad:
 
 Registering the icon is not optional, but it is also not something a template check can see: `@ng-icons` logs a warning for an unregistered name rather than failing the build, so an unregistered icon renders as nothing at all. Register every name you use.
 
+## The primitive must actually exist
+
+Every Helm primitive is either an attribute directive or an element, never both, and which one it is is decided by its `selector:` in `libs/ui`. Writing an attribute that looks like a primitive but matches no selector produces markup that compiles, renders, and does nothing at all.
+
+This is the failure mode that is hardest to see by reading, because the wrong version looks more right than the right one:
+
+```html
+<!-- Bad: hlm-select-trigger is an ELEMENT selector. As an attribute it binds
+     nothing, so the select never opens. -->
+<button hlmBtn hlmSelectTrigger>Class</button>
+
+<!-- Bad: hlm-avatar is an ELEMENT selector too. This is a styled div. -->
+<div hlmAvatar><span hlmAvatarFallback>SW</span></div>
+
+<!-- Good -->
+<hlm-select-trigger><hlm-select-value /></hlm-select-trigger>
+<hlm-avatar><span hlmAvatarFallback>SW</span></hlm-avatar>
+```
+
+If you are unsure whether a primitive is an attribute or an element, read its `selector:` line in `libs/ui`. Do not infer it from the shape of a neighbouring primitive; the library mixes both freely, and `hlm-select-trigger` sits beside `hlmSelectValue` which really is an attribute.
+
+## Compose the primitive fully, not just its outer shell
+
+A primitive that is present but missing its required parts is a different defect from a primitive that is absent, and the docs call several of these out by name.
+
+- **An overlay needs a title.** spartan's `composition.md`: "Dialog, Sheet, and Alert Dialog must have a title for accessibility. If the design hides it, keep it present and apply `class="sr-only"`." A bare `<h2>` inside `hlm-dialog-content` is not a title; `hlmDialogTitle` is what wires the accessible name.
+- **A form control belongs in a field.** spartan's `forms.md`: "Use `hlmField`, not raw `div`s. Wrap each control in `hlmField`." A `<div class="flex flex-col gap-2">` around a label and an input is the hand-rolled version of a primitive that already exists.
+
+## Icons: register them, and use the standalone import
+
+Two rules, both of which fail silently rather than loudly, which is why they are stated separately from the no-inline-SVG rule.
+
+- **Import `NgIcon`, never `NgIconsModule`.** `NgIconsModule` is the legacy module API. Placing it in a standalone component's `imports` throws at bootstrap ("No icons have been provided...") and takes the whole application down with a blank page, while compiling perfectly.
+- **Register with `provideIcons`, and only `provideIcons`.** Importing a `lucide*` symbol and then handing it to anything else, a custom injection token or a plain object, registers nothing. `@ng-icons` logs a warning and renders empty, so the screen simply has no icons and the build is green.
+
+```ts
+// Good
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideUsers } from '@ng-icons/lucide';
+@Component({ imports: [NgIcon], providers: [provideIcons({ lucideUsers })], /* ... */ })
+
+// Bad: the legacy module (throws at bootstrap), and a hand-rolled registration
+// (silently registers nothing)
+@Component({
+  imports: [NgIconsModule],
+  providers: [{ provide: 'ICONS', useValue: { lucideUsers } }],
+})
+```
+
+## Submitting a form
+
+The house forms pattern has exactly one submit path: `submit(this.form, async () => { ... })` from `@angular/forms/signals`.
+
+`(ngSubmit)` is not part of it. That output is supplied by `NgForm` and `FormGroupDirective`, which come from `FormsModule` and `ReactiveFormsModule`, and this repo uses neither. On a `<form>` with no forms module imported, `(ngSubmit)` is not an error and not a warning: Angular treats it as a DOM listener for an event named `ngSubmit`, which nothing ever fires. The button is dead and the page looks fine.
+
+```html
+<!-- Bad: nothing will ever call onSubmit() -->
+<form (ngSubmit)="onSubmit()">
+
+<!-- Good: the submit path is wired in the class, through the form -->
+<button hlmBtn type="submit">Save</button>
+```
+
+```ts
+protected readonly save = () => submit(this.form, async (f) => { /* ... */ });
+```
+
+## Do not set `standalone`
+
+`CLAUDE.md` already says it: "Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+." It is repeated here because it is the single most frequently written violation in this repo's measured runs, and because a redundant `standalone: true` reads as diligence rather than as drift.
+
 ## Layout is a grammar
 
 Layout is expressed with a small, fixed vocabulary, so that a screen's structure is decidable rather than a matter of taste.
@@ -195,7 +266,7 @@ export class HeroCard {
 Two shape rules follow from the Angular baseline and are stated here so they are one place to read:
 
 - **Do not hand-set change detection.** `OnPush` is the Angular v22 default, and `CLAUDE.md` says not to set `changeDetection` explicitly. So writing `changeDetection: ChangeDetectionStrategy.OnPush` (or `.Default`) in a `@Component` is drift, not diligence. Leave it off.
-- **No `.subscribe` in a component.** `CLAUDE.md` says to handle observables with the async pipe. A component that calls `.subscribe(...)` on an observable is managing a subscription by hand where the template could do it. Convert at the edge and bind with the async pipe (or `toSignal`).
+- **No `.subscribe` in a component or its ViewModel.** `CLAUDE.md` says to handle observables with the async pipe. A component that calls `.subscribe(...)` on an observable is managing a subscription by hand where the template could do it. Convert at the edge and bind with the async pipe (or `toSignal`). This covers the ViewModel too: it is defined as a class that is unit-testable with zero DOM, which is exactly the argument against hand-managed subscriptions, so moving a `.subscribe` from the component into its ViewModel does not fix it.
 
 ## MVVM: the ViewModel owns the state
 
@@ -205,7 +276,7 @@ This is a deliberate refinement of the rule above, not a contradiction of it. Re
 
 - **The ViewModel is a service.** An `@Injectable` class named `<Feature>ViewModel`, holding all of the screen's logic and state as signals. It injects the data services. It has no `providedIn`, so it is not a singleton.
 - **The ViewModel is component-scoped.** The component lists it in its own `providers: [HeroDetailViewModel]`. Component-scoped, so each instance of the screen gets its own state and it dies with the screen. A `providedIn: 'root'` ViewModel is a store wearing a ViewModel's name, and it is a defect here.
-- **The component is a shell.** It injects the ViewModel and binds the template to its signals. It declares no `signal()`, `computed()`, or `linkedSignal()` of its own, and it injects no data service: everything a container used to do directly, it now does through the ViewModel.
+- **The component is a shell.** It injects the ViewModel and binds the template to its signals. It declares no `signal()`, `computed()`, `linkedSignal()`, or `form()` of its own, and it injects no data service: everything a container used to do directly, it now does through the ViewModel. A signal-form is state, and the largest piece of state on most screens, so it is built in the ViewModel like any other.
 - **The ViewModel is unit-testable with zero DOM.** That is the point of the whole shape. If testing a screen's logic needs `TestBed` and a fixture, the logic is in the wrong class.
 
 `input()`, `output()`, `model()`, `viewChild()`, and `contentChild()` are component API, not state, and stay on the component. Injecting `ActivatedRoute` or `Router` in the component is fine; injecting `HeroService` is not.

@@ -28,7 +28,7 @@ By Part 3 the Part 1 sealing hook and the Part 2 layout hook are baseline: on in
 
 ## The rules (hard-gated)
 
-Every gated Part 3 violation is one of exactly ten kinds: the six below, plus the four MVVM kinds the capstone added, which have their own section. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
+Every gated Part 3 violation is one of exactly fourteen kinds: the six below, the four MVVM kinds the capstone added, and the four capstone-residue kinds added after the capstone run, each with their own section. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
 
 ### 1. `hand-set-change-detection`: an explicit `changeDetection` in `@Component`
 
@@ -46,7 +46,7 @@ Docs: `CLAUDE.md`, "Use the async pipe to handle observables." A component that 
 - Violation: a call expression of the form `<expr>.subscribe(...)` textually inside the body of a class decorated with `@Component`.
 - Good (passes): binding an observable with the async pipe in the template, or `toSignal(obs)` in the class. Bad (fails): `this.route.params.subscribe(p => ...)`, `this.heroes.getAll().subscribe(...)` in a component.
 
-Scope note: the rule fires only inside `@Component` classes, not services or resolvers, where `.subscribe` is legitimate. A member access named `subscribe` is the signal; this is a syntactic property, so a variable literally named `subscribe` that is not a call is not flagged. False-positive risk (a non-RxJS `.subscribe`) is low in a component and is accepted, because the whole point is that a component should not be the place subscriptions live.
+Scope note: the rule fires inside `@Component` classes and inside classes whose name ends in `ViewModel`, but not in other services or resolvers, where `.subscribe` is legitimate. The ViewModel half was added after the capstone measured the rule being evaded by relocation; see "Two widenings the capstone forced" below. A member access named `subscribe` is the signal; this is a syntactic property, so a variable literally named `subscribe` that is not a call is not flagged. False-positive risk (a non-RxJS `.subscribe`) is low in a component and is accepted, because the whole point is that a component should not be the place subscriptions live.
 
 ### 3. `template-driven-form`: `ngModel` or `FormsModule`
 
@@ -114,11 +114,11 @@ Decidable from the TS AST: the class name suffix plus the presence of the proper
 
 Docs: the house-style skill, "It declares no `signal()`, `computed()`, or `linkedSignal()` of its own." This is the load-bearing MVVM rule: it is what actually forces the logic out of the component and into the testable class.
 
-- Violation: a `@Component` class whose file is NOT under `src/app/ui/`, declaring a property whose initializer is a call to `signal`, `computed`, or `linkedSignal`.
+- Violation: a `@Component` class whose file is NOT under `src/app/ui/`, declaring a property whose initializer is a call to `signal`, `computed`, `linkedSignal`, or `form` (the last resolved as an import from `@angular/forms/signals`).
 - Not a violation: `input()`, `output()`, `model()`, `viewChild()`, `contentChild()`, `inject()`, `toSignal()`. Those are component API or an edge conversion, not screen state, and the house doc says so.
 - Good (passes): `protected readonly vm = inject(HeroDetailViewModel);` and nothing else. Bad (fails): `readonly hero = signal<Hero | null>(null);` in a feature component.
 
-The `ui/` complement matters. A presentational component holding a `signal()` is already measured, and only measured, by the `dumb-holds-state` heuristic (kind 12), because a self-contained widget's open/closed toggle is legitimate. A feature component holding one is not ambiguous: the house doc names the ViewModel as the place. So the same syntactic property is a hard gate on one side of the path split and a soft heuristic on the other, and that asymmetry is deliberate rather than an oversight.
+The `ui/` complement matters. A presentational component holding a `signal()` is already measured, and only measured, by the `dumb-holds-state` heuristic (kind 16), because a self-contained widget's open/closed toggle is legitimate. A feature component holding one is not ambiguous: the house doc names the ViewModel as the place. So the same syntactic property is a hard gate on one side of the path split and a soft heuristic on the other, and that asymmetry is deliberate rather than an oversight.
 
 ### 9. `feature-injects-data`: a feature component injecting a data service directly
 
@@ -145,15 +145,68 @@ The reconciliation is not free, and the bill arrived immediately: `fixtures/part
 
 That is the refinement working, not a regression, and the fix is emphatically NOT to weaken rules 8 and 9 until the old fixture goes green again. A constitution that cannot invalidate its own past exemplars is not a constitution, it is a description of what the code already does. So the fixture is kept exactly as it was, as a historical record of the pre-capstone shape, and its assertion is rewritten to state what is now true: it is clean of the six original kinds, and it carries exactly the MVVM violations the refinement introduces. The test is stronger for it. Before, it asserted "this file is fine"; now it pins the reconciliation itself, so any future drift in where state is allowed to live fails a test rather than passing quietly.
 
+## The capstone-residue rules (hard-gated, added after the capstone run)
+
+Four more gated kinds, plus two widenings of existing rules. Every one of them comes from drift the capstone measured getting past the full gate set, and none of them was tested by that run. They are the answer to the question the capstone actually asked, which was not "does this constitution work" but "does it catch everything," and the honest answer was no.
+
+### 11. `explicit-standalone`: `standalone` set in `@Component`
+
+Docs: `CLAUDE.md`, verbatim: "Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+."
+
+- Violation: a `@Component({ ... })` whose metadata object has a `standalone` property, to any value.
+- Good (passes): a `@Component` with no `standalone` key. Bad (fails): `@Component({ standalone: true })`.
+
+This is the same AST shape as rule 1, `hand-set-change-detection`: the presence of a property key in the decorator's object literal, no type information required. It is the cheapest rule in the entire constitution and it fired 19 times across three gate-on builds. Nobody had written it, which is the whole finding: a rule stated verbatim in the baseline docs, trivially decidable, violated in nearly every component, and invisible because no one thought to mechanize the easy one.
+
+### 12. `legacy-icon-module`: `NgIconsModule` in a component's `imports`
+
+Docs: the house-style skill, "Import `NgIcon`, never `NgIconsModule`," layered on spartan's `rules/icons.md`, which shows only the standalone `NgIcon` import.
+
+- Violation: `NgIconsModule` in a `@Component`'s `imports` array.
+- Good (passes): `imports: [NgIcon]`. Bad (fails): `imports: [NgIconsModule]`.
+
+Same AST shape as the `FormsModule` half of rule 3 and the `ReactiveFormsModule` half of rule 6, both gated since Part 3.
+
+This is the rule whose absence was fatal. Bare `NgIconsModule` throws at bootstrap ("No icons have been provided..."), so three of the capstone's six builds compiled cleanly, passed `strictTemplates`, passed every AST gate, and rendered a blank page. `capstone-spec.md` had already stated that the icon rule gated only the decidable template half and left registration doc-only; the drift landed in the ungated half, and the ungated half killed the application. The lesson is not that the limitation was undocumented. It was documented. The lesson is that a documented gap is still a gap.
+
+### 13. `unregistered-icon`: a lucide symbol imported but never registered with `provideIcons`
+
+Docs: the house-style skill, "Register with `provideIcons`, and only `provideIcons`"; spartan's `rules/icons.md`, "Icon names are not global - each icon you reference must be provided to the component (or app) via `provideIcons`."
+
+- Violation: a `@Component` that lists `NgIcon` in its `imports` array and has no `provideIcons(...)` call in its `providers` array.
+- Keyed on the component decorator rather than on the file's import list, deliberately. Imports are a file-level fact, so a file holding two components where only one renders icons would false-positive under the looser reading. `NgIcon` in `imports` is the component saying it renders icons, and that is a per-component property.
+- Good (passes): `providers: [provideIcons({ lucideUsers })]`. Bad (fails): `providers: [{ provide: 'ICONS', useValue: { lucideUsers } }]`, or no providers at all.
+
+The sealing spec called the registration half permanently doc-only, on the grounds that the template engines cannot see the component class. That reasoning was right about the *template* engines and wrong about decidability: this is a pure TypeScript-AST property, and the shape rules have always been TypeScript rules. One capstone trial invented `{ provide: 'ICONS', useValue: { ... } }`, which typechecks, registers nothing, and left every icon in the application shell rendering blank. That correction is recorded rather than quietly applied, because "we said this could not be gated and we were wrong" is more useful to a reader than a rule that silently appears.
+
+What stays genuinely ungated is the join in the other direction, that every `<ng-icon name="X">` names a registered `X`, because a name can be computed (`[name]="'lucide' + icon()"`) and is then not statically knowable.
+
+### 14. `orphan-ng-submit`: `(ngSubmit)` where no forms module supplies it
+
+Docs: the house-style skill, "Submitting a form": the house pattern has exactly one submit path, `submit(this.form, ...)` from `@angular/forms/signals`, and `(ngSubmit)` is not part of it.
+
+- Violation: an `(ngSubmit)` output binding in any template under `src/`.
+- Good (passes): a `<button hlmBtn type="submit">` whose class calls `submit(this.form, ...)`. Bad (fails): `<form (ngSubmit)="onSubmit()">`.
+
+`ngSubmit` is an output of `NgForm` and `FormGroupDirective`, which arrive only with `FormsModule` or `ReactiveFormsModule`. Rules 3 and 6 ban both modules, so in this repo the directive can never be present, and an unmatched output binding on a native `<form>` is not an error: Angular registers a DOM listener for an event named `ngSubmit`, which nothing ever fires.
+
+This one deserves to be read carefully, because **the gate caused it.** The capstone found four `(ngSubmit)` bindings and zero uses of `submit()` from signals. The agent's prior for "how a form submits" survived the ban on the modules that make it work, so the gate removed the mechanism and left the muscle memory, and every primary save flow in those builds was a dead button on a page that looked complete. A constitution that forbids an API without forbidding its usage has not prevented the pattern; it has broken it silently. That is a general lesson about partial bans and it belongs in the writeup next to the displacement result.
+
+### Two widenings the capstone forced
+
+**Rule 2, `component-subscribe`, now covers ViewModels.** Its original scope note exempted services deliberately, on the grounds that `.subscribe` is legitimate there. The MVVM refinement then created a class that is a service by decorator and a component's brain by role, and two capstone trials put `this.route.paramMap.subscribe(...)` in a ViewModel constructor. The gate did not stop the subscribe; it relocated it into the one class the rule exempted. The predicate is now `@Component` classes plus classes whose name ends in `ViewModel`, reusing rule 7's marker. The house doc's own definition of a ViewModel, unit-testable with zero DOM, is precisely the argument against a hand-managed subscription living there.
+
+**Rule 8, `state-outside-vm`, now includes `form()`.** The banned-initializer set was `signal`, `computed`, `linkedSignal`. A signal-form is a reactive state tree and usually the largest piece of state on a screen, and one capstone trial built `form(...)` in the component while its ViewModel shrank to a model signal and a save method: MVVM satisfied in letter, with the state left outside. `form` (resolved as an import from `@angular/forms/signals`) joins the set.
+
 ## Counter-only heuristics (measured, never gated)
 
 Two Part 3 signals are not cleanly decidable and so are measured by the counter and reported as low-confidence, never used to block an edit. A heuristic that hard-blocks on a false positive is a bad gate; this is the same call Part 2 made for `nested-flex-grid`.
 
-### 11. `hand-written-form-model` (heuristic)
+### 15. `hand-written-form-model` (heuristic)
 
 A form component whose model type is a locally declared `interface` or `type` for the form's shape, instead of `z.infer<typeof schema>`. The house rule is that the model is inferred from the schema. This is a heuristic because deciding that a given interface "is a form model" (rather than any other data shape) is not clean: the counter flags an `interface`/`type` that is used as the type argument of a `signal<...>()` which then feeds a `form(...)` call, and reports it as a smell, not a defect.
 
-### 12. `dumb-holds-state` (heuristic)
+### 16. `dumb-holds-state` (heuristic)
 
 A component under `src/app/ui/` that declares writable non-input state (a `signal(...)` or `WritableSignal` field that is not an `input()`/`model()`). A presentational component holding mutable local state may be a legitimate self-contained widget (an open/closed toggle) or a container that leaked into `ui/`. The counter cannot tell which, so it counts and flags it as the lower-confidence smell of the two, not a defect.
 
@@ -172,6 +225,10 @@ A component under `src/app/ui/` that declares writable non-input state (a `signa
     "state-outside-vm": 0,
     "feature-injects-data": 0,
     "vm-not-provided": 0,
+    "explicit-standalone": 0,
+    "legacy-icon-module": 0,
+    "unregistered-icon": 0,
+    "orphan-ng-submit": 0,
     "hand-written-form-model": 0,
     "dumb-holds-state": 0,
     "all": 0
@@ -182,11 +239,11 @@ A component under `src/app/ui/` that declares writable non-input state (a `signa
 }
 ```
 
-`totals.all` is the sum of the ten gated kinds only; the two heuristics are in `totals` but excluded from `all`, so `all` counts what the gate could have blocked. `violations` is ordered by file, then line, then kind, so the same committed input serializes byte-identically. That ordering is what makes the determinism self-test (same diff in, identical tally out) meaningful. A full audit runs all three counters (Part 1, Part 2, Part 3 kinds) and reports each, because the series is cumulative.
+`totals.all` is the sum of the fourteen gated kinds only; the two heuristics are in `totals` but excluded from `all`, so `all` counts what the gate could have blocked. `violations` is ordered by file, then line, then kind, so the same committed input serializes byte-identically. That ordering is what makes the determinism self-test (same diff in, identical tally out) meaningful. A full audit runs all three counters (Part 1, Part 2, Part 3 kinds) and reports each, because the series is cumulative.
 
 ## What each engine parses
 
-- TypeScript (`hand-set-change-detection`, `component-subscribe`, `restated-validator`, the `FormsModule` half of `template-driven-form`, `presentational-injects-data`, `reactive-form`, all four MVVM kinds, and both heuristics): the gate runs custom typescript-eslint rules over the TypeScript AST (`@typescript-eslint/typescript-estree` node types); the counter walks the TypeScript compiler's own AST via the compiler API (`ts.createSourceFile`, `ts.forEachChild`). Different AST shapes, no shared code.
-- Templates (the `ngModel` half of `template-driven-form`): the gate uses the angular-eslint template parser; the counter uses `@angular/compiler`'s `parseTemplate`, reading `.html` files and inline `template:` strings.
+- TypeScript (`hand-set-change-detection`, `component-subscribe`, `restated-validator`, the `FormsModule` half of `template-driven-form`, `presentational-injects-data`, `reactive-form`, all four MVVM kinds, `explicit-standalone`, `legacy-icon-module`, `unregistered-icon`, and both heuristics): the gate runs custom typescript-eslint rules over the TypeScript AST (`@typescript-eslint/typescript-estree` node types); the counter walks the TypeScript compiler's own AST via the compiler API (`ts.createSourceFile`, `ts.forEachChild`). Different AST shapes, no shared code.
+- Templates (the `ngModel` half of `template-driven-form`, and `orphan-ng-submit`): the gate uses the angular-eslint template parser; the counter uses `@angular/compiler`'s `parseTemplate`, reading `.html` files and inline `template:` strings.
 
 Two engines, one spec, and the spec is the docs. If they ever disagree on a fixture, that disagreement is the finding.

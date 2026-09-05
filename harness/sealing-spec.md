@@ -41,9 +41,9 @@ The set of primitive attribute names and element names is used by rules 1 and 2 
 
 `<ng-icon>` is deliberately NOT in this set. It is an `@ng-icons` element, not a Helm primitive, and spartan's own `rules/icons.md` explicitly blesses appearance classes on it (`class="text-muted-foreground"` for a decorative icon, `class="text-[length:--spacing(4)]"` for sizing). Treating it as a primitive would make rule 2 fight a baseline doc, which the whole design forbids. Icons get their own rule instead, rule 4, and that rule bans only the thing no doc endorses.
 
-## The four rules
+## The six rules
 
-Every Part 1 violation is one of exactly four kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
+Every Part 1 violation is one of exactly six kinds. Rules 5 and 6 were added after the capstone run, in response to drift it measured getting past rules 1 through 4; they were not tested by that run, and the report says so. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
 
 ### 1. `raw-control`: a native element where a primitive exists
 
@@ -111,6 +111,42 @@ It does not gate the `provideIcons` registration, even though the doc requires i
 
 It also does not touch `libs/**` (the gate ignores it wholesale) or `src/index.html`. Helm components legitimately inline SVG internals, and that is customization territory, exactly where rule 2 already points appearance changes.
 
+### 5. `unknown-primitive`: an `hlm*` attribute or element that matches no installed selector
+
+Docs: the house-style skill, "The primitive must actually exist," and this spec's own instruction to read the vocabulary from source rather than from memory.
+
+Every Helm primitive is either an attribute directive or an element, never both, and which one it is is fixed by its `selector:` in `libs/ui`. An attribute that looks like a primitive but matches no selector is not a compile error and not a runtime error. Angular treats an unmatched attribute on a native element as a plain HTML attribute, so the markup compiles, renders, and does nothing.
+
+- Violation: an attribute whose name matches `/^hlm[A-Z]/` or `/^hlm-/` (both casings, because a writer who reaches for the wrong form usually reaches for the element name as an attribute), or an element whose name matches `/^hlm-/`, that is not in the installed inventory in "The vocabulary, as installed" **in that form**. The attribute-versus-element distinction is the whole point: `hlmSelectTrigger` as an attribute is a violation because the installed selector is the element `hlm-select-trigger`.
+- Good (passes): `<hlm-select-trigger>`, `<hlm-avatar>`, `<span hlmAvatarFallback>`. Bad (fails): `<button hlmBtn hlmSelectTrigger>`, `<div hlmAvatar>`, `<aside hlm-sidebar>` where the element is right but written as an attribute, or vice versa.
+
+This is a **closed-world check**, which is what makes it unusually safe for a gate. It does not guess at intent; it asserts membership in an inventory this spec already maintains and that is mechanically derivable from `libs/ui`. A name outside the `hlm` namespace is never considered, so ordinary attributes and third-party components are untouched.
+
+The capstone is why this rule exists. Across three gate-on trials, 18 sites wrote a primitive that binds nothing: every `hlm-select` in two trials had a non-functional trigger, so the class filter and both form selects could not open, and one trial had no sidebar component at all despite appearing to use one, and hand-wrote CSS to re-implement the rail it thought it had. Every AST gate reported clean, because rule 1 only asks whether a native element carries a primitive and rule 2 only classifies classes on elements it already believes are primitives. Markup that merely *looks* like the vocabulary was invisible to the entire seal.
+
+### 6. `missing-composition-part`: a primitive present but not composed
+
+Docs: spartan's `composition.md`, "Overlays need a title. Dialog, Sheet, and Alert Dialog must have a title for accessibility. If the design hides it, keep it present and apply `class="sr-only"`"; and `forms.md`, "Use `hlmField`, not raw `div`s. Wrap each control in `hlmField`." Both are restated in the house-style skill.
+
+Rules 1 and 5 ask whether a primitive is present and real. Neither asks whether it was assembled correctly, and a half-composed primitive is a distinct defect: the outer shell renders, so the screen looks finished, while the part that carried the accessibility contract is missing.
+
+The required-parts table, which is to this rule what the native-element table is to rule 1:
+
+| container | required descendant |
+| --- | --- |
+| `hlm-dialog-content` | an element carrying `hlmDialogTitle` |
+| `hlm-sheet-content` | an element carrying `hlmSheetTitle` |
+
+And the inverse, a required ancestor:
+
+| element | required ancestor |
+| --- | --- |
+| an element carrying `hlmInput` or `hlmTextarea`, or an `hlm-select` | an element carrying `hlmField`, or an `hlm-field` |
+
+- Good (passes): `<hlm-dialog-content><h2 hlmDialogTitle>Retire hero?</h2>...`, and `<hlm-field><label hlmFieldLabel>Alias</label><input hlmInput /></hlm-field>`. Bad (fails): `<hlm-dialog-content><h2 class="font-semibold">Retire hero?</h2>`, and a bare `<input hlmInput />` under a `<div class="flex flex-col gap-2">`.
+
+Both halves are pure parent/child properties of a single template AST: no cross-file join, no type information, no heuristic. The containment check is scoped within one template, so a part supplied by a wrapper component in another file is not visible and would be a false positive; in this repo the primitives are composed inline at the call site, which is what makes the check sound here. That scope limit is stated rather than discovered.
+
 ## Where customization goes (why the seal is with the grain, not against it)
 
 Because Helm code is copied into the project, the documented way to customize a component is to edit its file in `libs/ui` (adjust the `cva` variants, change classes, add inputs) or to use its `variant`/`size` inputs, never to reach past it at the call site. The gate ignores `libs/**` entirely, so that customization path is fully open. Rule 2 does not fight the framework; it enforces the framework's own "class is for layout only," and it points appearance changes at the place the docs point them.
@@ -119,18 +155,18 @@ Because Helm code is copied into the project, the documented way to customize a 
 
 ```json
 {
-  "totals": { "raw-control": 0, "appearance-on-primitive": 0, "style-attribute": 0, "raw-icon": 0, "all": 0 },
+  "totals": { "raw-control": 0, "appearance-on-primitive": 0, "style-attribute": 0, "raw-icon": 0, "unknown-primitive": 0, "missing-composition-part": 0, "all": 0 },
   "violations": [
     { "kind": "raw-control", "file": "src/app/dashboard/dashboard.ts", "line": 12, "detail": "button without hlmBtn" }
   ]
 }
 ```
 
-`totals.all` is the sum of the four kinds. `violations` is ordered by file, then line, then kind, so the same input always serializes byte-identically. That ordering is what makes the determinism self-test (same committed diff in, identical tally out) meaningful.
+`totals.all` is the sum of the six kinds. `violations` is ordered by file, then line, then kind, so the same input always serializes byte-identically. That ordering is what makes the determinism self-test (same committed diff in, identical tally out) meaningful.
 
 ## What each engine parses
 
-- The gate loads angular-eslint's template parser and runs four custom rules over the template AST, on `.html` templates and inline `template:` strings.
+- The gate loads angular-eslint's template parser and runs six custom rules over the template AST, on `.html` templates and inline `template:` strings.
 - The counter loads `@angular/compiler`'s `parseTemplate` and walks the AST, reading `.html` files and extracting inline `template:` strings from `.ts` with the TypeScript compiler API. It shares no rule code, no parser, and no AST types with the gate.
 
 One parser fact both engines need, stated here rather than discovered twice: both the angular-eslint template parser and `@angular/compiler` namespace SVG element nodes, so an inline `<svg>` arrives with the node name `:svg:svg`, not `svg`. This is a fact about the parsers, identical on both sides, not a shared implementation.
