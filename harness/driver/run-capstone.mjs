@@ -372,8 +372,10 @@ function main() {
 
   // A trial is void unless every stage succeeded, the tree actually changed, and
   // the result builds. A run that produced nothing is not a zero-drift result.
-  const allStagesOk = dryRun || stageRecords.every((r) => r.ok);
-  const runOk = allStagesOk && diff.trim() !== '' && (dryRun || buildOk === true);
+  // A dry run makes no edits, so an empty diff is the expected outcome there and
+  // proves the plumbing rather than voiding it. Matches run-trial.mjs.
+  const runOk =
+    dryRun || (stageRecords.every((r) => r.ok) && diff.trim() !== '' && buildOk === true);
 
   const meta = {
     runId,
