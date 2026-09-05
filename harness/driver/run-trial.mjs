@@ -163,7 +163,12 @@ function main() {
   // Part 5 soft gate: the single variable is the prompt. gate-on runs the
   // responsive-instructed variant; gate-off runs the plain detail-form prompt.
   if (part === 5) {
-    if (task !== 'detail-form') throw new Error('Part 5 measures the detail-form slice; pass --task detail-form');
+    if (task !== 'detail-form' && task !== 'heroes') {
+      throw new Error('Part 5 measures detail-form or heroes; pass --task detail-form or --task heroes');
+    }
+    if (task === 'heroes' && condition !== 'gate-off') {
+      throw new Error('Part 5 heroes gate-on is not wired yet; probe --condition gate-off first');
+    }
     if (condition === 'gate-on') promptFile = 'task-prompt-detail-form-responsive.md';
   }
 
@@ -255,10 +260,11 @@ function main() {
     if (part === 5 && !dryRun) {
       execFileSync('npm run build', { cwd: ROOT, stdio: 'inherit', shell: true });
       responsiveOutTmp = join(tmpdir(), `responsive-${runId}`);
+      const p5Route = task === 'heroes' ? 'heroes' : 'detail/11';
       execFileSync('node', [
         'harness/counter/responsive-auditor.mjs',
         '--dist', 'dist/angular-jig/browser',
-        '--route', 'detail/11',
+        '--route', p5Route,
         '--out', responsiveOutTmp,
       ], { cwd: ROOT, stdio: 'inherit' });
       responsiveResult = JSON.parse(readFileSync(join(responsiveOutTmp, 'responsive-tally.json'), 'utf8'));
