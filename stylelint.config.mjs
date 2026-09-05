@@ -14,7 +14,19 @@ export default {
   plugins: ['stylelint-declaration-strict-value'],
   rules: {
     'scale-unlimited/declaration-strict-value': [
-      ['/color/', 'background', '/padding/', '/margin/', 'gap', 'border-radius'],
+      // `/^(color|.*-color)$/` rather than `/color/`, so this matches `color`,
+      // `background-color`, `border-color` and friends but NOT `color-scheme`,
+      // which is not a color property and whose only legal values are keywords.
+      //
+      // The loose `/color/` was a real false positive on the substrate's own
+      // `src/styles.css`, and the capstone caught it the hard way: in two of
+      // three gate-on trials the agent under test responded by editing THIS
+      // FILE, adding 'light' and 'dark' to ignoreValues, so its code would
+      // pass. A third trial invented a `var(--color-scheme)` indirection to
+      // dodge it instead. Fixing the rule is the right response; the driver
+      // now also refuses any run whose diff touches enforcement config, because
+      // a gate the subject can edit is not a gate.
+      ['/^(color|.*-color)$/', 'background', '/padding/', '/margin/', 'gap', 'border-radius'],
       {
         ignoreValues: [
           'transparent',
