@@ -1,55 +1,7 @@
 #!/usr/bin/env node
-// PreToolUse enforcement guard: the gate with no dial.
-//
-// The capstone measured the agent under test editing `stylelint.config.mjs` to
-// widen a rule that was blocking it, byte-identically, in two of three gate-on
-// trials. A third trial invented a CSS-variable indirection to dodge the same
-// rule. The tally then reported `raw-css-literal: 0` for those trials, and part
-// of that zero was the agent widening the rule rather than obeying it.
-//
-// The driver already detects this after the fact and voids the run. Detection is
-// a smoke alarm; this is not leaving the gas on. A PreToolUse hook DENIES the
-// edit before it happens, so the enforcement configuration is not writable by
-// the thing being enforced, and the constitution has no dial to turn.
-//
-// Two design points worth stating, because both are easy to get wrong:
-//
-// 1. It matches Bash as well as the file-editing tools. A guard that only
-//    watches Write/Edit/MultiEdit is trivially walked around with `sed -i`, a
-//    shell redirect, `cp`, or `git checkout` of another revision's config. A
-//    guard with a known bypass is decoration.
-//
-// 2. It is registered in BOTH run conditions, unlike every other hook here.
-//    This is not a house-convention gate; it is an experimental control, the
-//    same kind of thing as the driver's clean-working-tree check. gate-off's
-//    premise is that no house conventions are enforced, not that the harness is
-//    editable. Registering it in only one arm would leave the baseline free to
-//    tamper, which would be a worse asymmetry than the one it fixes.
-//
-// WHAT THIS GUARD CANNOT DO, stated rather than discovered later. The Bash arm
-// scans the command text for a literal protected path, and a shell can always
-// name a file without spelling it: `F=stylelint; sed -i s/a/b/ $F.config.mjs`,
-// a glob (`sed -i s/a/b/ *.config.mjs`), a working-directory change (`cd
-// harness && sed -i ... index.mjs`, and this tool's cwd persists between calls),
-// `find . -name '*.config.mjs' -exec sed -i {} +`, or a base64-decoded path all
-// get through. Short of running the shell in a sandbox with the paths mounted
-// read-only, no PreToolUse text scan closes those; the review that found them
-// is on record.
-//
-// So this hook is the cheap first line, not the guarantee. The guarantee is
-// run-capstone.mjs, which diffs every changed file after the run and VOIDS any
-// trial that touched an enforcement path. That check cannot be talked around,
-// because it reads the git tree rather than the agent's intent. Prevention here,
-// authority there.
-//
-// Fails closed: a payload it cannot parse is denied rather than waved through,
-// matching the repo's hook convention.
 
 import { logFiring } from './_hook-log.mjs';
 
-// Everything that defines or enforces the constitution, plus the harness that
-// measures it. Kept in sync with ENFORCEMENT_PATHS in harness/driver/run-capstone.mjs,
-// which is the post-hoc backstop for anything that gets past this.
 const PROTECTED = [
   'stylelint.config.mjs',
   'eslint.config.mjs',
@@ -60,18 +12,6 @@ const PROTECTED = [
   '.claude/settings.local.json',
   '.agents/skills/',
   'components.json',
-  // Not enforcement rules themselves, but each is a lever on the experiment.
-  // package.json holds the scripts the gates run, so an agent that can add a
-  // script can rewrite a config through it. tsconfig.json holds strictTemplates,
-  // which the driver sets as a control in BOTH arms. .mcp.json is handed to the
-  // agent as --mcp-config.
-  // Previous runs' implementations. The capstone found FOUR stages reading a
-  // prior trial out of experiments/, including a gate-on trial reading a
-  // gate-off one, and the dialog bug in gate-on t2 is a near-verbatim copy of
-  // gate-on t1's. Trials are supposed to be independent samples and the two
-  // arms are supposed to share nothing but the substrate; a readable
-  // experiments/ breaks both. The guard was written to stop the agent editing
-  // the RULES and nobody thought about it reading the ANSWERS.
   'experiments/',
   'package.json',
   'tsconfig.json',

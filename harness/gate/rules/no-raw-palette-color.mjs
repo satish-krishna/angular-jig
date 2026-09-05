@@ -1,10 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 
-// Part 2, rule 1: no raw palette or hex color in a class. Docs: spartan
-// styling.md, "Semantic colors only. Never use raw Tailwind palette values."
-// A color utility whose value is a palette name plus number (blue-500), or an
-// arbitrary hex, is flagged; a semantic token (card, primary) passes.
-// Independent of the counter (own classifier, angular-eslint parser).
+// Disallow raw Tailwind palette or hex colors; use semantic tokens.
 const PALETTE = new Set([
   'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow',
   'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet',

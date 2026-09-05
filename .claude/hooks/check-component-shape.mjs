@@ -1,24 +1,4 @@
 #!/usr/bin/env node
-// PostToolUse component-shape gate (Part 3, the capstone's MVVM rules, and the
-// capstone-residue rules added after the capstone run). When the agent edits a
-// component .ts or an .html template under src/, enforce the component-shape
-// rules: the typescript-eslint rules on component classes (no hand-set
-// changeDetection, no .subscribe in a component or ViewModel, no FormsModule,
-// no restated validator, no data-service inject in a src/app/ui/ component, no
-// reactive forms, the four MVVM rules - no providedIn ViewModel, no state
-// signal or form() outside the ViewModel, no direct data-service inject in a
-// feature component, no injected-but-unprovided ViewModel - and the four
-// capstone-residue rules - no explicit standalone, no NgIconsModule, no NgIcon
-// import left unregistered) and the ngModel and orphan-ng-submit rules on
-// templates (including inline templates via processInlineTemplates). On any
-// violation, exit 2 with a corrective message.
-//
-// Self-contained: it builds its own eslint config for the shape rules and does
-// not touch the repo's eslint.config.mjs (which stays the sealing baseline), so
-// these rules are enforced only when this hook is registered (gate-on). The
-// counter is the independent auditor; this is the enforcement.
-//
-// Fails closed on an unparseable payload.
 
 import { ESLint } from 'eslint';
 import { dirname, join } from 'node:path';

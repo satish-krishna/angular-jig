@@ -1,14 +1,3 @@
-// Shared inventory for the gate's own rules 2 and 5. Gate-internal only: this
-// is shared among the gate's own rules, never with the counter (the two
-// engines stay independent, per ../../sealing-spec.md).
-//
-// The primitive sets below are exactly the vocabulary in ../../sealing-spec.md,
-// "The vocabulary, as installed" - the full set of directives/elements
-// installed in libs/ui at this capstone commit. `ng-icon` is deliberately
-// excluded: it is an @ng-icons element, not a Helm primitive, and spartan's
-// own rules/icons.md blesses appearance classes on it (e.g. a decorative
-// icon's text color). Treating it as a primitive would fight that baseline
-// doc, so icons get their own rule (rule 4) instead.
 export const PRIMITIVE_ATTRS = new Set([
   'hlmBtn',
   'hlmInput',

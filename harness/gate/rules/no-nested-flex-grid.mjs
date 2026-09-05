@@ -1,20 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 
-// Rule 4 of the layout-grammar spec: a ROW of COLUMNS is a grid, so use grid.
-// See ../../layout-grammar-spec.md. messageId `nestedFlexGrid` maps to the
-// counter's `nested-flex-grid` kind.
-//
-// This rule did not exist until the capstone, and the reason is worth keeping.
-// Part 2 judged the anti-pattern undecidable from classes alone and left it as a
-// counter-only heuristic: any flex container with two or more flex children. But
-// the house doc's own sentence is directional - "a ROW of flex COLUMNS, each
-// itself a flex stack, arranged to line up into a grid" - and direction is the
-// whole discriminator. A row of columns reads as a grid. A column of rows is a
-// card body. Part 2's own counter-example, "a legitimate flex toolbar of flex
-// rows", is a row of ROWS, which this rule correctly ignores.
-//
-// The proxy flagged 63 sites across seven capstone builds, of which one was the
-// real thing. It was never undecidable, only unencoded.
+// Disallow a flex row of flex columns, which is a grid written as nested flex.
 const baseUtil = (t) => (t.includes(':') ? t.slice(t.lastIndexOf(':') + 1) : t);
 
 function classTokens(node) {

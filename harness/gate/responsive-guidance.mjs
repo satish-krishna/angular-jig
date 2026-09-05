@@ -1,6 +1,5 @@
 // The corrective message for the responsive gate. Hands back the documented
 // definition of failure and the documented fix, per the corrective-message
-// convention (see harness/README.md). No guidance is invented here that the
 // house-style responsive-correctness section does not already state.
 export function formatCorrectiveMessage(failures) {
   const lines = failures.map(

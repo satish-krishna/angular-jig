@@ -1,9 +1,3 @@
-// The worked-example corrective for the forms rules of the component-shape gate.
-// A gate rejection is the highest-salience teaching moment the agent gets, so it
-// hands back the documented right pattern (signal-forms driven by a zod schema),
-// not just the violation. Part 3's gate-on-guided A/B measured this: swapping a
-// prose reminder for this worked example took house-pattern use from 0/3 to 3/3.
-// Shared by the shape hook and its experiment variant so the two never drift.
 export const SHAPE_FORMS_GUIDANCE = [
   '',
   'Use the house forms pattern: Angular signal-forms driven by a zod schema.',
@@ -37,12 +31,6 @@ export const FORMS_RULE_IDS = new Set([
   'shape/no-ng-model',
 ]);
 
-// The worked-example corrective for the capstone's MVVM rules (7-10). Same
-// rationale as SHAPE_FORMS_GUIDANCE above: a rejection is the highest-salience
-// teaching moment, and the MVVM shape is the sharpest non-native pattern in the
-// series (nothing in the agent's baseline suggests a component-scoped
-// ViewModel), so the fix a bare rule message can state in one line is not
-// enough here either. Copy this exact shape:
 export const MVVM_GUIDANCE = [
   '',
   'Use the house MVVM pattern: a container owns its state through a component-scoped',
@@ -83,14 +71,6 @@ export const MVVM_RULE_IDS = new Set([
   'shape/no-unprovided-view-model',
 ]);
 
-// The worked-example corrective for the two icon rules added after the
-// capstone (rules 12 and 13). Both fail silently rather than loudly:
-// NgIconsModule throws at bootstrap and takes the whole app down with a blank
-// page, while a hand-rolled registration (a custom token, a plain object)
-// typechecks and registers nothing, so the build is green and the icons are
-// blank. That is exactly the drift a one-line rule message will not stop, so
-// the fix is the worked example, copied from the house-style skill's icons
-// section verbatim.
 export const ICON_GUIDANCE = [
   '',
   'Icons: import the standalone NgIcon, never NgIconsModule, and register every',

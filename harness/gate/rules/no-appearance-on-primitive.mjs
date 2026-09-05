@@ -1,17 +1,7 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.mjs';
 
-// Part 1, rule 2 (corrected): no appearance-override class on a primitive.
-// Docs: spartan styling.md, "class is for layout only. Do not use it to override
-// a component's own colors, typography, or internal padding." So layout and
-// spacing classes on a primitive are fine; only appearance classes are flagged.
-// Independent of the counter (own classifier, angular-eslint parser).
-//
-// The primitive sets (PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS) are gate-internal
-// shared state - see ./primitive-vocabulary.mjs, which is exactly the
-// vocabulary in ../../sealing-spec.md, "The vocabulary, as installed". Rule 5
-// (./no-unknown-primitive.mjs) reuses the same module; only cross-ENGINE
-// sharing with the counter is forbidden, not gate-internal sharing.
+// Disallow appearance-override classes on a spartan primitive.
 
 const isPrimitive = (node) =>
   PRIMITIVE_ELEMENTS.has(node.name) || node.attributes.some((a) => PRIMITIVE_ATTRS.has(a.name));

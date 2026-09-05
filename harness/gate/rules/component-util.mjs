@@ -1,6 +1,3 @@
-// Shared helpers for the Part 3 component-shape TS rules. Gate-internal only:
-// this is shared among the gate's own rules, never with the counter (the two
-// engines stay independent). Operates on typescript-eslint's ESTree AST.
 
 export function hasComponentDecorator(classNode) {
   const decs = classNode.decorators ?? [];
@@ -57,11 +54,6 @@ export function isViewModelName(name) {
   return typeof name === 'string' && /ViewModel$/.test(name);
 }
 
-// Rule 2's first widening (component-shape-spec.md, "Two widenings the capstone
-// forced"): component-subscribe now fires inside @Component classes AND inside
-// classes whose name ends in ViewModel, reusing the same marker as rule 7. The
-// capstone found the gate relocating the hand-managed subscribe into the one
-// class rule 2's original scope note exempted, so the predicate now covers both.
 export function inComponentOrViewModelClass(node) {
   let p = node.parent;
   while (p) {

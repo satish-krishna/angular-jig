@@ -1,12 +1,4 @@
 #!/usr/bin/env node
-// PostToolUse freeloader gate (Part 4, the edit-time vocabulary half). When the
-// agent edits a template-bearing file under src/, enforce native control flow and
-// class/style bindings, straight from Angular's CLAUDE.md: no *ngIf/*ngFor/
-// *ngSwitch, no ngClass/ngStyle. The strictTemplates freeloader is a whole-program
-// compiler check enforced at the build, not here. Exit 2 with a corrective message
-// that hands back the documented fix.
-//
-// Fails closed on an unparseable payload.
 
 import { ESLint } from 'eslint';
 import { dirname, join } from 'node:path';

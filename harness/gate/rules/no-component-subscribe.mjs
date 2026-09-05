@@ -1,16 +1,6 @@
 import { inComponentOrViewModelClass } from './component-util.mjs';
 
-// Rule 2 of the component-shape spec: no .subscribe() inside a component. Use the
-// async pipe or toSignal at the edge. messageId `componentSubscribe` maps to the
-// counter's `component-subscribe` kind.
-//
-// Widened per "Two widenings the capstone forced": the predicate now also
-// covers classes whose name ends in ViewModel, not only @Component classes.
-// Two capstone trials put `this.route.paramMap.subscribe(...)` in a ViewModel
-// constructor once the MVVM refinement gave `.subscribe` a class that is a
-// service by decorator and a component's brain by role; the gate did not stop
-// the subscribe, it relocated it into the one class the original scope note
-// exempted.
+// Disallow .subscribe() inside a component class or a ViewModel.
 export default {
   meta: {
     type: 'problem',

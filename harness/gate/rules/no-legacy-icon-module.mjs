@@ -1,15 +1,6 @@
 import { componentDecoratorObject } from './component-util.mjs';
 
-// Rule 12 of the component-shape spec (capstone-residue): no NgIconsModule in
-// a component's imports. The house-style skill: "Import `NgIcon`, never
-// `NgIconsModule`," layered on spartan's `rules/icons.md`, which shows only
-// the standalone `NgIcon` import. Same AST shape as the FormsModule half of
-// rule 3 and the ReactiveFormsModule half of rule 6. Bare `NgIconsModule`
-// throws at bootstrap ("No icons have been provided...") and takes the whole
-// application down with a blank page while compiling perfectly; this rule's
-// absence is what let three of the capstone's six builds render blank pages
-// past every other AST gate. messageId `legacyIconModule` maps to the
-// counter's `legacy-icon-module` kind.
+// Disallow NgIconsModule (the legacy icon module) in a component.
 export default {
   meta: {
     type: 'problem',

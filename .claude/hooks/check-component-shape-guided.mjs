@@ -1,15 +1,4 @@
 #!/usr/bin/env node
-// EXPERIMENT variant of check-component-shape.mjs (Part 3). Identical rules and
-// eslint config; the ONLY difference is the corrective message on exit 2, which
-// hands the agent the exact signal-forms worked example instead of a prose
-// reminder. This isolates one variable: does pointing the rejection at the right
-// implementation move the agent from a hand-rolled form onto Angular signal-forms?
-// See experiments/part3/detail-form/gate-on-guided vs gate-on. Retained as the
-// experiment apparatus: the default check-component-shape.mjs now also appends
-// this worked example when a forms rule fires, so the two are equivalent for a
-// forms task, and this file exists to reproduce the original A/B.
-//
-// Fails closed on an unparseable payload.
 
 import { ESLint } from 'eslint';
 import { dirname, join } from 'node:path';

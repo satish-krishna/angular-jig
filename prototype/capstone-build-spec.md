@@ -7,7 +7,7 @@ This is the conformance target for the capstone build. It is intent plus decisio
 ## How to use this
 
 - The app is "Hero Ops Console": Tour of Heroes reimagined as a superhero agency's mission control. That framing is what makes the kitchen sink coherent (a roster, missions, threats, recruiting) rather than a component zoo.
-- Build every screen responsive-correct at 375px, 768px, and 1280px. The Part 5 responsive gate is on: no horizontal page scroll, no element escaping the viewport, no clipped content at any of the three widths. This is the bar the mock failed and the build must clear.
+- Build every screen responsive-correct at 375px, 768px, and 1280px. The responsive gate is on: no horizontal page scroll, no element escaping the viewport, no clipped content at any of the three widths. This is the bar the mock failed and the build must clear.
 - Use spartan primitives for everything that has one. Compose, do not hand-roll. The sealing gate enforces this once the vocabulary is expanded.
 
 ## Theme palette
@@ -160,18 +160,14 @@ MVVM (the house pattern, enforced):
 - Presentational pieces (hero card, stat tile, power meter) live under `src/app/ui/`, take `input()`/`output()`, inject no data service.
 - Forms are schema-driven with zod (the existing house pattern): a zod schema is the single source of truth, the model is `z.infer<typeof schema>`, validation flows through `validateStandardSchema`, no per-field validators, no reactive or template-driven forms.
 
-Responsive rules (the build MUST satisfy the Part 5 gate at 375 / 768 / 1280):
+Responsive rules (the build MUST satisfy the responsive gate at 375 / 768 / 1280):
 
 - No horizontal page scroll at any breakpoint. Reach for the layout grammar: `grid` for regions with responsive column counts (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`), `flex` with `flex-wrap` for button rows, never fixed pixel widths that cannot shrink.
 - Any wide block (the table) either scrolls inside its own `overflow-x:auto` container or restructures (cards) below a breakpoint. The page body never scrolls sideways.
 - The off-canvas drawer must be `display:none` or `aria-hidden` when closed, not parked off-screen, so the gate does not read it as an escaping element.
 - Watch the small ones: the mock leaked 4px at desktop widths. A stray `100vw`, a negative margin, or a `min-w` that will not shrink is usually the cause. The gate catches these; do not ship them.
 
-Layout grammar (enforced by the Part 2 gate): grid for two-dimensional regions, flex for single-axis runs, no nested flex faking a grid, tokens instead of literal colours or pixel values in any hand-written CSS.
-
-## The off-canvas gate refinement (constitution to-do)
-
-Running the responsive auditor on this rich layout surfaced that off-canvas navigation (the standard mobile drawer) reads as `element-escape` because a translated-off-screen element has a negative x. The simple Part 5 slices had no sidebar, so this never appeared. Before the capstone run, the Part 5 spec and auditor/gate need an exemption: an element that is `display:none`, `visibility:hidden`, or `aria-hidden="true"` (a deliberately-hidden drawer) is not an escape. Decide the rule, write it into `harness/responsive-spec.md`, and update the auditor and the gate together (they stay two independent encodings of one spec). This is part of the capstone's constitution work, not a bug to hide.
+Layout grammar (enforced by the layout gate): grid for two-dimensional regions, flex for single-axis runs, no nested flex faking a grid, tokens instead of literal colours or pixel values in any hand-written CSS.
 
 ## Content (example data, hero-agency specific)
 

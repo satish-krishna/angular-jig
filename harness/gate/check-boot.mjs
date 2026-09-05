@@ -1,37 +1,4 @@
 #!/usr/bin/env node
-// The boot gate (`npm run check:boot`).
-//
-// Renders every route and fails on an uncaught runtime error. This is the plane
-// the capstone showed was missing, and it is aimed at a family rather than a
-// rule: three of the four genuinely fatal defects that run produced were
-// dependency-injection failures, and no AST rule reached any of them.
-//
-//   - `NgIconsModule` imported with no root-level `provideIcons`: throws at
-//     bootstrap, blank page, three of six builds.
-//   - A component-scoped ViewModel injected but never provided: NullInjectorError
-//     on first render.
-//   - `hlm-dialog-content` rendered inline instead of on `*hlmDialogPortal`:
-//     spartan supplies `BrnDialogRef` through the portal, so inline content has
-//     no provider and the screen throws NG0201 when the dialog is constructed.
-//
-// Every one of those compiles cleanly, passes strictTemplates, and passes every
-// gate in this repo. They are well-formed code with real primitives and checked
-// types that fails only when Angular actually assembles the graph. A static rule
-// cannot see it; a browser sees it immediately.
-//
-// The cost of adding this was near zero, which is the uncomfortable part: the
-// harness ALREADY boots every build for the responsive audit and was throwing
-// the console away.
-//
-// This gate is deliberately NOT double-encoded the way the AST rules are. A
-// thrown error is an observation the browser hands you, not a judgment about the
-// code, so a second independent implementation would be the same three lines of
-// Playwright API. The independence that matters is kept elsewhere: the responsive
-// auditor captures page errors during its OWN navigation, in its own code path,
-// and the driver records both. See responsive-spec.md.
-//
-// Usage:
-//   node harness/gate/check-boot.mjs [--route dashboard --route roster ...]
 
 import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
@@ -73,17 +40,6 @@ export async function bootErrorsForRoute(browser, origin, route, { viewport = 12
     // component surfaces after navigation settles, not during it.
     await page.waitForTimeout(400);
 
-    // A LOAD-time sweep alone is not enough, and the capstone proved it. The
-    // NG0201 dialog fault hides behind `@if (vm.showRetireDialog())`: the
-    // content is never instantiated until someone clicks Retire, so navigation
-    // sees nothing and the screen looks perfect. Two of the three known DI
-    // faults are load-time; the third is one click away.
-    //
-    // So click. Every visible, enabled button on the route, in order, bounded.
-    // This is deliberately blunt rather than clever: it needs no knowledge of
-    // the app, and an unknown app is exactly the situation a gate is for.
-    // Playwright auto-dismisses native dialogs when no handler is attached, so
-    // a stray window.confirm cannot wedge it.
     if (interact) {
       const buttons = page.locator('button:visible:not([disabled])');
       const n = Math.min(await buttons.count(), maxClicks);
@@ -165,15 +121,6 @@ async function cli() {
   for (let i = 0; i < args.length; i++) if (args[i] === '--route') routes.push(args[++i]);
   if (routes.length === 0) routes.push('dashboard', 'roster', 'detail/11');
 
-  // Built with the DEVELOPMENT configuration (optimization off) on purpose.
-  // Against a production bundle this gate reports "ERROR T: NG0201", because the
-  // injection token's class name has been minified to `T`, and a corrective
-  // message that cannot name the missing provider is close to useless. Part 3
-  // measured corrective-message quality taking a fix rate from 0 of 3 to 3 of 3,
-  // so legibility here is load-bearing rather than cosmetic. Unminified, the
-  // same failure reads "No provider found for BrnDialogRef", which points
-  // straight at the fix. The responsive gate keeps the production build, since
-  // layout geometry does not care about symbol names.
   execFileSync('npm run build -- --configuration development', { cwd: ROOT, stdio: 'inherit', shell: true });
   const srv = await serveStatic(DIST, { spaFallback: true });
   try {

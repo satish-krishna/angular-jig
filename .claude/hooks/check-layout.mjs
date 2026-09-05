@@ -1,16 +1,4 @@
 #!/usr/bin/env node
-// PostToolUse layout gate (Part 2). When the agent edits a template or a
-// stylesheet under src/, enforce the layout grammar: the angular-eslint layout
-// rules on templates (literal values, presentation on raw elements) and
-// stylelint on stylesheets (colors and spacing must be design tokens, not
-// literals). On any violation, exit 2 with a corrective message.
-//
-// Self-contained: it builds its own eslint config for the layout rules and does
-// not touch the repo's eslint.config.mjs (which stays the sealing baseline), so
-// the layout rules are enforced only when this hook is registered (gate-on).
-// The counter is the independent auditor; this is the enforcement.
-//
-// Fails closed on an unparseable payload.
 
 import { ESLint } from 'eslint';
 import stylelint from 'stylelint';

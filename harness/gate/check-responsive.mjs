@@ -26,19 +26,6 @@ function pageCheck({ tol, anchorSelector }) {
     }
     return false;
   };
-  // Hidden-element exemption, expressed differently from the auditor's: use
-  // Element.closest() (native ancestor-selector matching) for the aria-hidden
-  // check, and a separate manual parentElement walk for display/visibility,
-  // since those need getComputedStyle rather than a selector match. Not
-  // bounded by the measured root, and it does NOT consider transform/position,
-  // so an element merely translated off-screen still fails.
-  // The visually-hidden exemption is folded into the same predicate, but
-  // expressed on the element's own rect rather than an ancestor walk: the
-  // screen-reader-only pattern collapses the element itself, so the largest
-  // side of its own box is what matters. Math.max(w, h) <= 1 is the same
-  // boundary as "both dimensions at most 1px", just phrased the other way.
-  // The 0x0 case is already gone by the time isExempt runs (the caller skips
-  // zero-area rects first), so this only ever fires for a genuinely 1px box.
   const isExempt = (el, rect) => {
     if (el.closest('[aria-hidden="true"]')) return true;
     for (let e = el; e; e = e.parentElement) {

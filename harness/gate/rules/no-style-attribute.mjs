@@ -1,9 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 
-// Part 1, rule 3 (narrowed): no static inline style attribute. A static
-// style="..." is a raw literal that bypasses the token system. It is narrow on
-// purpose: Angular's baseline CLAUDE.md endorses [style] bindings over [ngStyle],
-// so the gate must NOT ban style bindings, only the static literal attribute.
+// Disallow a static inline style attribute.
 export default {
   meta: {
     type: 'problem',

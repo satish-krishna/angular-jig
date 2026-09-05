@@ -1,7 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
 
-// Part 2, rule 2: no space-x-* / space-y-* utilities. Docs: spartan styling.md,
-// "Spacing: gap-*, not space-*." Use flex/grid with gap-* instead.
+// Disallow space-x-*/space-y-* utilities; use gap-*.
 const baseUtil = (t) => (t.includes(':') ? t.slice(t.lastIndexOf(':') + 1) : t);
 const isSpaceUtil = (t) => /^space-(x|y)-/.test(baseUtil(t));
 
