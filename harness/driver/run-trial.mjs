@@ -253,7 +253,7 @@ function main() {
     // auditor, on the run branch's built tree. Written to a temp dir, folded into
     // the evidence folder below (mirrors how hook-firings is staged in tmp).
     if (part === 5 && !dryRun) {
-      execFileSync('npx', ['ng', 'build'], { cwd: ROOT, stdio: 'inherit' });
+      execFileSync('npm run build', { cwd: ROOT, stdio: 'inherit', shell: true });
       responsiveOutTmp = join(tmpdir(), `responsive-${runId}`);
       execFileSync('node', [
         'harness/counter/responsive-auditor.mjs',

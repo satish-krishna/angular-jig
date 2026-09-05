@@ -61,7 +61,7 @@ export async function assertResponsive({ origin, route, breakpoints = [375, 768,
 }
 
 async function cli() {
-  execFileSync('npx', ['ng', 'build'], { cwd: ROOT, stdio: 'inherit' });
+  execFileSync('npm run build', { cwd: ROOT, stdio: 'inherit', shell: true });
   const srv = await serveStatic(DIST, { spaFallback: true });
   try {
     const { failures } = await assertResponsive({ origin: srv.origin, route: 'detail/11' });
