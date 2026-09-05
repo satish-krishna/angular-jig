@@ -8,6 +8,10 @@ import tseslint from 'typescript-eslint';
 import shape from './component-shape-index.mjs';
 import { countTsSource, countTemplateSource } from '../counter/component-shape-counter.mjs';
 
+// The counter kinds that contribute to totals.all, used by the anti-circularity
+// agreement tests below. This must stay the FULL gated set: if it lagged behind
+// at the original six, an agreement test could compare a ten-rule gate against a
+// six-kind counter and pass by accident, which is worse than failing.
 const GATED = new Set([
   'hand-set-change-detection',
   'component-subscribe',
@@ -15,12 +19,22 @@ const GATED = new Set([
   'restated-validator',
   'presentational-injects-data',
   'reactive-form',
+  'vm-not-component-scoped',
+  'state-outside-vm',
+  'feature-injects-data',
+  'vm-not-provided',
 ]);
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..', '..');
 const fx = (n) => join(repoRoot, 'harness', 'counter', 'fixtures', n);
 
+// All ten gated rules, in ONE set. There is deliberately no reduced rule set
+// for the older fixtures: linting the pre-capstone fixtures with only the
+// original six would let the gate stay green on a file the counter now flags,
+// and a two-engine disagreement hidden by test configuration is exactly the
+// circularity this harness exists to rule out. The reconciliation is asserted
+// instead, on the fixture it actually affects.
 const TS_RULES = {
   'shape/no-hand-set-change-detection': 'error',
   'shape/no-component-subscribe': 'error',
@@ -28,6 +42,10 @@ const TS_RULES = {
   'shape/no-restated-validator': 'error',
   'shape/no-presentational-inject': 'error',
   'shape/no-reactive-form': 'error',
+  'shape/no-root-provided-view-model': 'error',
+  'shape/no-state-outside-view-model': 'error',
+  'shape/no-feature-inject-data': 'error',
+  'shape/no-unprovided-view-model': 'error',
 };
 
 function lintTs(code, filename) {
@@ -84,8 +102,63 @@ describe('component-shape gate: TS rules', () => {
     expect(byId(lintTs(dirty, 'src/app/heroes/hero-card.ts')).presentationalInject).toBeUndefined();
   });
 
-  it('passes the clean fixture with zero reports', () => {
-    expect(lintTs(readFileSync(fx('part3-clean.ts'), 'utf8'), 'src/app/heroes/hero-list.ts')).toEqual([]);
+  // part3-clean.ts DEFINED clean under the original six rules, and is a
+  // violation under the refined ten: a feature component that injects
+  // HeroService and holds signal() state directly is exactly the shape the
+  // MVVM refinement moves into a ViewModel. Keeping the fixture byte-identical
+  // and asserting the reconciliation is stronger than asserting zero was: it
+  // pins WHERE state is allowed to live, so future drift fails a test.
+  // See component-shape-spec.md, "What the refinement did to Part 3's own
+  // clean fixture".
+  it('keeps the pre-capstone clean fixture clean of the six original rules', () => {
+    const ids = byId(lintTs(readFileSync(fx('part3-clean.ts'), 'utf8'), 'src/app/heroes/hero-list.ts'));
+    for (const id of [
+      'handSetChangeDetection',
+      'componentSubscribe',
+      'formsModule',
+      'restatedValidator',
+      'presentationalInject',
+      'reactiveForm',
+    ]) {
+      expect(ids[id]).toBeUndefined();
+    }
+  });
+
+  it('flags the pre-capstone clean fixture under the MVVM refinement', () => {
+    const ids = byId(lintTs(readFileSync(fx('part3-clean.ts'), 'utf8'), 'src/app/heroes/hero-list.ts'));
+    // toSignal() is deliberately NOT state and must not count.
+    expect(ids).toEqual({ featureInjectsData: 1, stateOutsideVm: 1 });
+  });
+});
+
+describe('component-shape gate: MVVM rules (capstone)', () => {
+  const dirty = readFileSync(fx('capstone-mvvm-dirty.ts'), 'utf8');
+  const clean = readFileSync(fx('capstone-mvvm-clean.ts'), 'utf8');
+
+  it('flags the dirty MVVM fixture with the exact messageId spread, at a non-ui feature path', () => {
+    const ms = lintTs(dirty, 'src/app/roster/roster.ts');
+    expect(ms.some((m) => m.fatal)).toBe(false);
+    expect(byId(ms)).toEqual({
+      vmNotComponentScoped: 1,
+      stateOutsideVm: 2,
+      featureInjectsData: 2,
+      vmNotProvided: 1,
+    });
+  });
+
+  it('passes the clean MVVM fixture with zero reports, at a non-ui feature path', () => {
+    expect(lintTs(clean, 'src/app/roster/roster.ts')).toEqual([]);
+  });
+
+  it('does not fire state-outside-vm or feature-injects-data when the file is under src/app/ui/', () => {
+    // Rule 5 keys on the ui/ path; rules 8 and 9 key on its complement, so no
+    // file is ever judged by both (component-shape-spec.md, MVVM section).
+    // Rules 7 and 10 carry no path condition in the spec, so they still fire.
+    const counts = byId(lintTs(dirty, 'src/app/ui/roster.ts'));
+    expect(counts.stateOutsideVm).toBeUndefined();
+    expect(counts.featureInjectsData).toBeUndefined();
+    expect(counts.vmNotComponentScoped).toBe(1);
+    expect(counts.vmNotProvided).toBe(1);
   });
 });
 

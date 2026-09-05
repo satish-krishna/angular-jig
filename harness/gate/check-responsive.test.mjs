@@ -35,3 +35,26 @@ test('corrective message names the breakpoint and selector', async () => {
   expect(msg).toContain('375px');
   expect(msg).toContain('npm run check:responsive');
 }, 60000);
+
+test('hidden-drawer fixture passes: display:none, visibility:hidden, and aria-hidden (including a descendant of an aria-hidden ancestor) are all exempt', async () => {
+  const { failures } = await check('hidden-drawer.html');
+  expect(failures.length).toBe(0);
+}, 60000);
+
+test('offscreen-drawer fixture fails: a transform-translated element is still shown and stays a violation', async () => {
+  const { failures } = await check('offscreen-drawer.html');
+  expect(failures.some((f) => f.kind === 'element-escape')).toBe(true);
+}, 60000);
+
+test('anchor parameter changes the measured subtree', async () => {
+  const srv = await serveStatic(fixtures, { spaFallback: false });
+  try {
+    const defaultAnchor = await assertResponsive({ origin: srv.origin, route: 'anchor-scope.html', breakpoints: [375] });
+    expect(defaultAnchor.failures.length).toBe(0);
+
+    const bodyAnchor = await assertResponsive({
+      origin: srv.origin, route: 'anchor-scope.html', breakpoints: [375], anchorSelector: 'body',
+    });
+    expect(bodyAnchor.failures.some((f) => f.kind === 'element-escape')).toBe(true);
+  } finally { await srv.close(); }
+}, 60000);

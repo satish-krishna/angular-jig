@@ -50,3 +50,27 @@ test('determinism: two audits of the same fixture are byte-identical', async () 
   const b = await auditFixture('element-escape.html');
   expect(JSON.stringify(a)).toBe(JSON.stringify(b));
 }, 60000);
+
+test('hidden-drawer fixture: display:none, visibility:hidden, and aria-hidden (including a descendant of an aria-hidden ancestor) are all exempt', async () => {
+  const t = await auditFixture('hidden-drawer.html');
+  expect(t.totals['element-escape']).toBe(0);
+  expect(t.totals['element-clip']).toBe(0);
+}, 60000);
+
+test('offscreen-drawer fixture: a transform-translated element is still shown and stays a violation', async () => {
+  const t = await auditFixture('offscreen-drawer.html');
+  expect(t.totals['element-escape']).toBeGreaterThanOrEqual(1);
+}, 60000);
+
+test('anchor parameter changes the measured subtree', async () => {
+  const srv = await serveStatic(fixtures, { spaFallback: false });
+  try {
+    const defaultAnchor = await auditServed({ origin: srv.origin, route: 'anchor-scope.html', breakpoints: [375] });
+    expect(defaultAnchor.totals['element-escape']).toBe(0);
+
+    const bodyAnchor = await auditServed({
+      origin: srv.origin, route: 'anchor-scope.html', breakpoints: [375], anchorSelector: 'body',
+    });
+    expect(bodyAnchor.totals['element-escape']).toBeGreaterThanOrEqual(1);
+  } finally { await srv.close(); }
+}, 60000);

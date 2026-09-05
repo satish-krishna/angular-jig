@@ -99,6 +99,8 @@ This is the sharpest non-native pattern in the whole series. It is not Angular's
 
 A ViewModel is identified syntactically, by a class name ending in `ViewModel`. That is a naming convention promoted to a decidable marker, exactly as rule 5 promoted the `Service` suffix, and it is stated in the house doc so the agent is told the convention rather than made to guess it.
 
+Rules 8 and 9 apply to EVERY `@Component` outside `src/app/ui/`, not only the routed screens, and the house doc was widened to say so before the rules were written. The narrower reading ("every routed feature screen") is what the pattern is FOR, but it is not decidable: nothing in a component file says whether it is routed, and a rule that cannot be decided cannot be enforced without guessing. The wider reading is also correct on the merits, since an app shell holding theme state in its own class has the same testability problem as a screen holding filter state, and the same fix. Doc-first means the doc moved first; the rule did not quietly outgrow it.
+
 ### 7. `vm-not-component-scoped`: a ViewModel with `providedIn`
 
 Docs: the house-style skill, "The ViewModel is component-scoped ... A `providedIn: 'root'` ViewModel is a store wearing a ViewModel's name." A singleton ViewModel leaks one screen's state into the next visit to that screen, which is the whole defect the component-scoped lifetime prevents.
@@ -136,6 +138,12 @@ Docs: the house-style skill, "The component lists it in its own `providers: [Her
 - Good (passes): `providers: [HeroDetailViewModel]` in the decorator and `inject(HeroDetailViewModel)` in the class. Bad (fails): the `inject` without the `providers` entry.
 
 Decidable from the TS AST: the identifier set in `providers` versus the identifier set injected. `providers: [...someSpread]` is not resolvable statically and is treated as satisfying the rule, because a gate that guesses is worse than a gate with a stated blind spot.
+
+### What the refinement did to Part 3's own clean fixture
+
+The reconciliation is not free, and the bill arrived immediately: `fixtures/part3-clean.ts`, the fixture that DEFINED clean under the original six kinds, is a violation under the refined ten. It is a feature component that injects `HeroService` and holds `signal(...)` state directly, which is precisely the shape rule 5's world blessed and rules 8 and 9 now move into a ViewModel.
+
+That is the refinement working, not a regression, and the fix is emphatically NOT to weaken rules 8 and 9 until the old fixture goes green again. A constitution that cannot invalidate its own past exemplars is not a constitution, it is a description of what the code already does. So the fixture is kept exactly as it was, as a historical record of the pre-capstone shape, and its assertion is rewritten to state what is now true: it is clean of the six original kinds, and it carries exactly the MVVM violations the refinement introduces. The test is stronger for it. Before, it asserted "this file is fine"; now it pins the reconciliation itself, so any future drift in where state is allowed to live fails a test rather than passing quietly.
 
 ## Counter-only heuristics (measured, never gated)
 

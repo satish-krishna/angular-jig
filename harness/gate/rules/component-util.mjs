@@ -30,3 +30,53 @@ export function componentDecoratorObject(classNode) {
   }
   return null;
 }
+
+// --- MVVM helpers (rules 7-10) ---------------------------------------------
+// Shared by the four MVVM rules, and kept alongside the rule-5 helpers above so
+// the path/name conventions stay in one place even though rule 5 itself is left
+// untouched (its own local copies keep it independent and its tests unchanged).
+
+// The path split rule 5 keys on, and rules 8/9 key on the complement of.
+export function isUiPath(filename) {
+  return /(^|\/)src\/app\/ui\//.test(String(filename).replaceAll('\\', '/'));
+}
+
+// Rule 5's UI-helper allowlist, reused by rule 9 (feature-injects-data), which
+// is rule 5's inject check inverted across the ui/ path split.
+const UI_HELPERS = new Set([
+  'ElementRef', 'DestroyRef', 'ChangeDetectorRef', 'Renderer2', 'NgZone', 'ViewContainerRef', 'TemplateRef',
+]);
+
+export function isDataServiceToken(name) {
+  return name === 'HttpClient' || (/Service$/.test(name) && !UI_HELPERS.has(name) && !name.startsWith('Hlm'));
+}
+
+// A ViewModel is identified syntactically by a class-name suffix, exactly as
+// rule 5 promoted the `Service` suffix to a decidable marker.
+export function isViewModelName(name) {
+  return typeof name === 'string' && /ViewModel$/.test(name);
+}
+
+// Generalizes componentDecoratorObject to an arbitrary set of decorator names
+// (rule 7 needs @Injectable or @Service, not @Component).
+export function decoratorObjectByNames(classNode, names) {
+  for (const d of classNode.decorators ?? []) {
+    const e = d.expression;
+    if (e && e.type === 'CallExpression' && e.callee.type === 'Identifier' && names.includes(e.callee.name)) {
+      const arg = e.arguments[0];
+      if (arg && arg.type === 'ObjectExpression') return arg;
+    }
+  }
+  return null;
+}
+
+// Like inComponentClass, but returns the enclosing @Component class node
+// itself (rule 10 needs to inspect that class's own providers array).
+export function nearestComponentClass(node) {
+  let p = node.parent;
+  while (p) {
+    if ((p.type === 'ClassDeclaration' || p.type === 'ClassExpression') && hasComponentDecorator(p)) return p;
+    p = p.parent;
+  }
+  return null;
+}

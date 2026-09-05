@@ -1,11 +1,14 @@
 #!/usr/bin/env node
-// PostToolUse component-shape gate (Part 3). When the agent edits a component
-// .ts or an .html template under src/, enforce the component-shape rules: the
-// typescript-eslint rules on component classes (no hand-set changeDetection, no
-// .subscribe, no FormsModule, no restated validator, no data-service inject in a
-// src/app/ui/ component) and the ngModel rule on templates (including inline
-// templates via processInlineTemplates). On any violation, exit 2 with a
-// corrective message.
+// PostToolUse component-shape gate (Part 3, plus the capstone's MVVM rules).
+// When the agent edits a component .ts or an .html template under src/,
+// enforce the component-shape rules: the typescript-eslint rules on component
+// classes (no hand-set changeDetection, no .subscribe, no FormsModule, no
+// restated validator, no data-service inject in a src/app/ui/ component, no
+// reactive forms, and the four MVVM rules - no providedIn ViewModel, no state
+// signal outside the ViewModel, no direct data-service inject in a feature
+// component, no injected-but-unprovided ViewModel) and the ngModel rule on
+// templates (including inline templates via processInlineTemplates). On any
+// violation, exit 2 with a corrective message.
 //
 // Self-contained: it builds its own eslint config for the shape rules and does
 // not touch the repo's eslint.config.mjs (which stays the sealing baseline), so
@@ -21,7 +24,7 @@ import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import shape from '../../harness/gate/component-shape-index.mjs';
 import { logFiring } from './_hook-log.mjs';
-import { SHAPE_FORMS_GUIDANCE, FORMS_RULE_IDS } from './shape-guidance.mjs';
+import { SHAPE_FORMS_GUIDANCE, FORMS_RULE_IDS, MVVM_GUIDANCE, MVVM_RULE_IDS } from './shape-guidance.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -41,6 +44,10 @@ const shapeEslintConfig = [
       'shape/no-restated-validator': 'error',
       'shape/no-presentational-inject': 'error',
       'shape/no-reactive-form': 'error',
+      'shape/no-root-provided-view-model': 'error',
+      'shape/no-state-outside-view-model': 'error',
+      'shape/no-feature-inject-data': 'error',
+      'shape/no-unprovided-view-model': 'error',
     },
   },
   {
@@ -93,14 +100,22 @@ async function main() {
   logFiring('component-shape', normalized, messages);
 
   const formsFired = [...ruleIds].some((id) => FORMS_RULE_IDS.has(id));
+  const mvvmFired = [...ruleIds].some((id) => MVVM_RULE_IDS.has(id));
+  let guidance = '';
+  if (formsFired) guidance += '\n' + SHAPE_FORMS_GUIDANCE + '\n';
+  if (mvvmFired) guidance += '\n' + MVVM_GUIDANCE + '\n';
+  if (!guidance) guidance = '\n\nFix the above before continuing.\n';
+
   process.stderr.write(
     `Component-shape gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
       `\n\nComponent shape (see harness/component-shape-spec.md): no hand-set changeDetection (OnPush is the v22 default), ` +
       `no .subscribe in a component (use the async pipe or toSignal), template-driven forms are not used (no FormsModule, no ngModel), ` +
-      `validation lives in the zod schema (validateStandardSchema, not a restated per-field validator), and a presentational ` +
-      `(src/app/ui/) component injects no data service.` +
-      (formsFired ? '\n' + SHAPE_FORMS_GUIDANCE + '\n' : '\n\nFix the above before continuing.\n'),
+      `validation lives in the zod schema (validateStandardSchema, not a restated per-field validator), a presentational ` +
+      `(src/app/ui/) component injects no data service, and a feature component owns its state and its data access through a ` +
+      `component-scoped ViewModel: it holds no signal()/computed()/linkedSignal() of its own, it injects no data service ` +
+      `directly, its ViewModel carries no providedIn, and the component provides whatever ViewModel it injects.` +
+      guidance,
   );
   process.exit(2);
 }

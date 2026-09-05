@@ -210,6 +210,8 @@ This is a deliberate refinement of the rule above, not a contradiction of it. Re
 
 `input()`, `output()`, `model()`, `viewChild()`, and `contentChild()` are component API, not state, and stay on the component. Injecting `ActivatedRoute` or `Router` in the component is fine; injecting `HeroService` is not.
 
+This applies to every component outside `src/app/ui/`, not only the routed screens. A shell, a layout, or a small non-presentational helper is judged the same way: if it is not a presentational component under `ui/`, its state belongs in a ViewModel. That is wider than "every routed feature screen has a ViewModel" on purpose. The narrower reading is not decidable, since nothing in a component file says whether it is routed, and a rule that cannot be decided cannot be enforced without guessing. It is also the right answer on the merits: the app shell holding the theme state in its own class is the same testability problem as a screen holding its filter state, and it has the same fix. If a component outside `ui/` has state worth holding, give it a ViewModel; if it has no state at all, nothing here applies to it.
+
 Good:
 
 ```ts

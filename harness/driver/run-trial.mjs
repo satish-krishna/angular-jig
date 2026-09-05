@@ -81,6 +81,7 @@ function parseArgs(argv) {
     else if (a === '--part') out.part = argv[++i];
     else if (a === '--task') out.task = argv[++i];
     else if (a === '--dry-run') out.dryRun = true;
+    else if (a === '--anchor') out.anchor = argv[++i];
     else throw new Error(`unknown arg: ${a}`);
   }
   if (!['gate-off', 'gate-on', 'gate-on-guided'].includes(out.condition)) {
@@ -157,7 +158,7 @@ function killStrayDevServers() {
 }
 
 function main() {
-  const { condition, trial, dryRun, part, task } = parseArgs(process.argv.slice(2));
+  const { condition, trial, dryRun, part, task, anchor } = parseArgs(process.argv.slice(2));
   const settingsPath = SETTINGS[part][condition];
   let promptFile = task === 'dashboard' ? 'task-prompt.md' : `task-prompt-${task}.md`;
   // Part 5 soft gate: the single variable is the prompt. gate-on runs the
@@ -266,6 +267,11 @@ function main() {
         '--dist', 'dist/angular-jig/browser',
         '--route', p5Route,
         '--out', responsiveOutTmp,
+        // Threaded through for a caller that wants a non-default measured
+        // subtree (e.g. the capstone's --anchor body); omitted here leaves
+        // the auditor's own default (app-hero-detail), so Part 5's behavior
+        // is unchanged when no anchor is given.
+        ...(anchor ? ['--anchor', anchor] : []),
       ], { cwd: ROOT, stdio: 'inherit' });
       responsiveResult = JSON.parse(readFileSync(join(responsiveOutTmp, 'responsive-tally.json'), 'utf8'));
     }

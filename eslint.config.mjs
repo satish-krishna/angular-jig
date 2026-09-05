@@ -2,7 +2,7 @@ import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
 import seal from './harness/gate/index.mjs';
 
-// The Part 1 sealing gate. Three custom template rules (the `seal` plugin)
+// The Part 1 sealing gate. Four custom template rules (the `seal` plugin)
 // encode the sealing spec (harness/sealing-spec.md); the structural counter
 // encodes the same spec independently. eslint-disable comments are switched off
 // wholesale via noInlineConfig, because a rule with a suppression dial is not a
@@ -29,6 +29,7 @@ export default [
       'seal/no-raw-control': 'error',
       'seal/no-appearance-on-primitive': 'error',
       'seal/no-style-attribute': 'error',
+      'seal/no-raw-icon': 'error',
     },
   },
 ];

@@ -36,8 +36,40 @@ describe('component-shape counter', () => {
     expect(t['hand-set-change-detection']).toBe(1);
   });
 
-  it('passes the clean fixture with zero violations', () => {
-    expect(countTsSource(readFileSync(fx('part3-clean.ts'), 'utf8'), { file: 'src/app/heroes/hero-list.ts' })).toEqual([]);
+  // part3-clean.ts DEFINED clean under the original six kinds, and is a
+  // violation under the refined ten: it is a feature component that injects
+  // HeroService and holds signal() state directly, exactly the shape the MVVM
+  // refinement moves into a ViewModel. That is the refinement working, not a
+  // regression, so the fixture is kept byte-identical as a record of the
+  // pre-capstone shape and this assertion pins the reconciliation instead.
+  // See component-shape-spec.md, "What the refinement did to Part 3's own
+  // clean fixture". Weakening rules 8 or 9 to make this green again would mean
+  // a constitution that cannot invalidate its own past exemplars.
+  it('keeps the pre-capstone clean fixture clean of the six original kinds', () => {
+    const t = tallyOf(
+      countTsSource(readFileSync(fx('part3-clean.ts'), 'utf8'), { file: 'src/app/heroes/hero-list.ts' }),
+    );
+    for (const kind of [
+      'hand-set-change-detection',
+      'component-subscribe',
+      'template-driven-form',
+      'restated-validator',
+      'presentational-injects-data',
+      'reactive-form',
+      'hand-written-form-model',
+      'dumb-holds-state',
+    ]) {
+      expect(t[kind]).toBeUndefined();
+    }
+  });
+
+  it('flags the pre-capstone clean fixture under the MVVM refinement', () => {
+    const t = tallyOf(
+      countTsSource(readFileSync(fx('part3-clean.ts'), 'utf8'), { file: 'src/app/heroes/hero-list.ts' }),
+    );
+    // inject(HeroService) in a feature component, and signal() state on the
+    // component class. toSignal() is deliberately NOT state and must not count.
+    expect(t).toEqual({ 'feature-injects-data': 1, 'state-outside-vm': 1 });
   });
 
   it('flags ngModel in a template and passes the clean template', () => {
@@ -50,6 +82,43 @@ describe('component-shape counter', () => {
   it('is deterministic: same bytes in, identical tally out', () => {
     const a = JSON.stringify(countTsSource(dirty, { file: 'src/app/ui/hero-card.ts' }));
     const b = JSON.stringify(countTsSource(dirty, { file: 'src/app/ui/hero-card.ts' }));
+    expect(a).toBe(b);
+  });
+});
+
+describe('component-shape counter: MVVM rules (capstone, rules 7-10)', () => {
+  const mvvmDirty = readFileSync(fx('capstone-mvvm-dirty.ts'), 'utf8');
+  const mvvmClean = readFileSync(fx('capstone-mvvm-clean.ts'), 'utf8');
+  const featurePath = 'src/app/roster/roster.ts';
+
+  it('tallies the hand-counted MVVM violations on the dirty fixture at a non-ui feature path', () => {
+    const vs = countTsSource(mvvmDirty, { file: featurePath });
+    expect(tallyOf(vs)).toEqual({
+      'vm-not-component-scoped': 1,
+      'state-outside-vm': 2,
+      'feature-injects-data': 2,
+      'vm-not-provided': 1,
+    });
+  });
+
+  it('passes the clean MVVM fixture with zero violations at the same feature path', () => {
+    expect(countTsSource(mvvmClean, { file: featurePath })).toEqual([]);
+  });
+
+  it('does not fire the ui/-gated MVVM rules (state-outside-vm, feature-injects-data) under src/app/ui/', () => {
+    // Rules 8 and 9 key on the complement of the ui/ path (the mirror of rules 5
+    // and 12), so they must not fire there. Rules 7 and 10 carry no ui/
+    // restriction in the spec (a ViewModel's own scope, and a component's own
+    // providers list, are judged the same way regardless of where the file
+    // lives), so they are left out of this assertion on purpose.
+    const t = tallyOf(countTsSource(mvvmDirty, { file: 'src/app/ui/roster.ts' }));
+    expect(t['state-outside-vm']).toBeUndefined();
+    expect(t['feature-injects-data']).toBeUndefined();
+  });
+
+  it('is deterministic: same bytes in, identical MVVM tally out', () => {
+    const a = JSON.stringify(countTsSource(mvvmDirty, { file: featurePath }));
+    const b = JSON.stringify(countTsSource(mvvmDirty, { file: featurePath }));
     expect(a).toBe(b);
   });
 });

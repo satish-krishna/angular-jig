@@ -36,3 +36,49 @@ export const FORMS_RULE_IDS = new Set([
   'shape/no-restated-validator',
   'shape/no-ng-model',
 ]);
+
+// The worked-example corrective for the capstone's MVVM rules (7-10). Same
+// rationale as SHAPE_FORMS_GUIDANCE above: a rejection is the highest-salience
+// teaching moment, and the MVVM shape is the sharpest non-native pattern in the
+// series (nothing in the agent's baseline suggests a component-scoped
+// ViewModel), so the fix a bare rule message can state in one line is not
+// enough here either. Copy this exact shape:
+export const MVVM_GUIDANCE = [
+  '',
+  'Use the house MVVM pattern: a container owns its state through a component-scoped',
+  'ViewModel it provides and injects; it holds no signal()/computed() and injects no',
+  'data service itself. Copy this exact shape:',
+  '',
+  '  // hero-detail.view-model.ts',
+  "  import { Injectable, inject, signal, computed } from '@angular/core';",
+  "  import { HeroService } from './hero.service';",
+  '',
+  '  @Injectable() // no providedIn: this ViewModel is scoped to the component that provides it',
+  '  export class HeroDetailViewModel {',
+  '    private readonly heroes = inject(HeroService);',
+  "    readonly query = signal('');",
+  '    readonly filtered = computed(() => this.heroes.list().filter((h) => h.name.includes(this.query())));',
+  '  }',
+  '',
+  '  // hero-detail.ts',
+  '  @Component({',
+  "    selector: 'app-hero-detail',",
+  '    providers: [HeroDetailViewModel], // provided at component scope, where it is injected',
+  '    template: `<p>{{ vm.filtered().length }}</p>`,',
+  '  })',
+  '  export class HeroDetail {',
+  '    protected readonly vm = inject(HeroDetailViewModel); // inject the ViewModel, not the service',
+  '    protected readonly route = inject(ActivatedRoute); // routing is still fine directly in the component',
+  '    // no signal()/computed() and no inject(HeroService) here: the ViewModel owns both',
+  '  }',
+  '',
+  "Read the house-style skill's MVVM section for the full example.",
+].join('\n');
+
+// The messageIds/ruleIds whose fix is the MVVM worked example above.
+export const MVVM_RULE_IDS = new Set([
+  'shape/no-root-provided-view-model',
+  'shape/no-state-outside-view-model',
+  'shape/no-feature-inject-data',
+  'shape/no-unprovided-view-model',
+]);

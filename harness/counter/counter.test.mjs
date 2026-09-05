@@ -19,6 +19,7 @@ describe('structural counter: external templates', () => {
       'raw-control': 2,
       'appearance-on-primitive': 2,
       'style-attribute': 1,
+      'raw-icon': 0,
       all: 5,
     });
   });
@@ -29,6 +30,7 @@ describe('structural counter: external templates', () => {
       'raw-control': 0,
       'appearance-on-primitive': 0,
       'style-attribute': 0,
+      'raw-icon': 0,
       all: 0,
     });
   });
@@ -47,6 +49,7 @@ describe('structural counter: inline templates in .ts components', () => {
       'raw-control': 1,
       'appearance-on-primitive': 0,
       'style-attribute': 1,
+      'raw-icon': 0,
       all: 2,
     });
   });
@@ -57,6 +60,43 @@ describe('structural counter: inline templates in .ts components', () => {
     // the following line, so it must report a line well past line 1.
     const button = violations.find((v) => v.kind === 'raw-control');
     expect(button.line).toBeGreaterThan(5);
+  });
+});
+
+describe('structural counter: capstone seal (widened Part 1 spec)', () => {
+  it('tallies the capstone dirty fixture by exact kind', () => {
+    const result = tally([fx('capstone-seal-dirty.html')]);
+    // Hand-counted in the fixture's own header, against sealing-spec.md:
+    //   raw-control (8):             table, thead, tr, th, td (all missing
+    //                                 their primitive attribute), label,
+    //                                 textarea, and select (replacement-only)
+    //   appearance-on-primitive (2): bg-blue-600 on hlmBtn, rounded-none on hlmBadge
+    //   style-attribute (1):         static style="" on a <div>
+    //   raw-icon (1):                an inline <svg> (:svg:svg)
+    expect(result.totals).toEqual({
+      'raw-control': 8,
+      'appearance-on-primitive': 2,
+      'style-attribute': 1,
+      'raw-icon': 1,
+      all: 12,
+    });
+  });
+
+  it('finds zero violations in the capstone clean fixture', () => {
+    const result = tally([fx('capstone-seal-clean.html')]);
+    expect(result.totals).toEqual({
+      'raw-control': 0,
+      'appearance-on-primitive': 0,
+      'style-attribute': 0,
+      'raw-icon': 0,
+      all: 0,
+    });
+  });
+
+  it('is deterministic on the capstone fixtures: same input twice serializes byte-identical', () => {
+    const a = JSON.stringify(tally([fx('capstone-seal-dirty.html'), fx('capstone-seal-clean.html')]));
+    const b = JSON.stringify(tally([fx('capstone-seal-dirty.html'), fx('capstone-seal-clean.html')]));
+    expect(a).toBe(b);
   });
 });
 

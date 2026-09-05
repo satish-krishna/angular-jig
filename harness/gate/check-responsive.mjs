@@ -9,7 +9,7 @@ const ROOT = join(here, '..', '..');
 const DIST = join(ROOT, 'dist', 'angular-jig', 'browser');
 
 // Independent in-page check. Distinct code from the auditor's inPageMeasure.
-function pageCheck(tol) {
+function pageCheck({ tol, anchorSelector }) {
   const vw = window.innerWidth;
   const fails = [];
   const sel = (el) => {
@@ -26,13 +26,28 @@ function pageCheck(tol) {
     }
     return false;
   };
+  // Hidden-element exemption, expressed differently from the auditor's: use
+  // Element.closest() (native ancestor-selector matching) for the aria-hidden
+  // check, and a separate manual parentElement walk for display/visibility,
+  // since those need getComputedStyle rather than a selector match. Not
+  // bounded by the measured root, and it does NOT consider transform/position,
+  // so an element merely translated off-screen still fails.
+  const isExempt = (el) => {
+    if (el.closest('[aria-hidden="true"]')) return true;
+    for (let e = el; e; e = e.parentElement) {
+      const ecs = getComputedStyle(e);
+      if (ecs.display === 'none' || ecs.visibility === 'hidden') return true;
+    }
+    return false;
+  };
   if (document.documentElement.scrollWidth - vw > tol) {
     fails.push({ kind: 'viewport-escape', selector: 'html', detail: 'page scrolls horizontally' });
   }
-  const root = document.querySelector('app-hero-detail') || document.body;
+  const root = document.querySelector(anchorSelector) || document.body;
   for (const el of root.querySelectorAll('*')) {
     const r = el.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) continue;
+    if (isExempt(el)) continue;
     const cs = getComputedStyle(el);
     if ((r.right - vw > tol || r.left < -tol) && !scrollAncestor(el, root)) {
       fails.push({ kind: 'element-escape', selector: sel(el), detail: 'right ' + Math.round(r.right) + ' vs ' + vw });
@@ -44,13 +59,13 @@ function pageCheck(tol) {
   return fails;
 }
 
-export async function assertResponsive({ origin, route, breakpoints = [375, 768, 1280], tolerancePx = 1, browser: given }) {
+export async function assertResponsive({ origin, route, breakpoints = [375, 768, 1280], tolerancePx = 1, anchorSelector = 'app-hero-detail', browser: given }) {
   const browser = given ?? (await launchChromium());
   const failures = [];
   try {
     for (const bp of breakpoints) {
       const { page, context } = await visitBreakpoint(browser, `${origin}/${route}`, bp);
-      const fails = await page.evaluate(pageCheck, tolerancePx);
+      const fails = await page.evaluate(pageCheck, { tol: tolerancePx, anchorSelector });
       for (const f of fails) failures.push({ breakpoint: bp, ...f });
       await context.close();
     }
@@ -60,11 +75,17 @@ export async function assertResponsive({ origin, route, breakpoints = [375, 768,
   return { failures };
 }
 
+function parseCliArgs(argv) {
+  const get = (f, d) => { const i = argv.indexOf(f); return i >= 0 ? argv[i + 1] : d; };
+  return { anchor: get('--anchor', 'app-hero-detail') };
+}
+
 async function cli() {
+  const { anchor } = parseCliArgs(process.argv.slice(2));
   execFileSync('npm run build', { cwd: ROOT, stdio: 'inherit', shell: true });
   const srv = await serveStatic(DIST, { spaFallback: true });
   try {
-    const { failures } = await assertResponsive({ origin: srv.origin, route: 'detail/11' });
+    const { failures } = await assertResponsive({ origin: srv.origin, route: 'detail/11', anchorSelector: anchor });
     if (failures.length) {
       process.stderr.write(formatCorrectiveMessage(failures) + '\n');
       process.exit(1);

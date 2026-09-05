@@ -14,11 +14,19 @@ import { relative, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
-// The vocabulary, mirrored from ../sealing-spec.md. Read from source when the
-// primitive set changes; do not let this drift from what libs/ui actually ships.
+// The vocabulary, mirrored from ../sealing-spec.md ("The vocabulary, as
+// installed"). Read from source when the primitive set changes; do not let
+// this drift from what libs/ui actually ships. `ng-icon` is deliberately NOT
+// a primitive (see the spec) - it gets its own rule, rule 4, instead.
 const PRIMITIVE_ATTRS = new Set([
   'hlmBtn',
   'hlmInput',
+  'hlmTextarea',
+  'hlmLabel',
+  'hlmSeparator',
+  'hlmSkeleton',
+  'hlmBadge',
+  'hlmTooltip',
   'hlmCard',
   'hlmCardHeader',
   'hlmCardFooter',
@@ -26,16 +34,195 @@ const PRIMITIVE_ATTRS = new Set([
   'hlmCardDescription',
   'hlmCardContent',
   'hlmCardAction',
+  'hlmTable',
+  'hlmTableContainer',
+  'hlmTHead',
+  'hlmTBody',
+  'hlmTFoot',
+  'hlmTr',
+  'hlmTh',
+  'hlmTd',
+  'hlmCaption',
+  'hlmTableHeader',
+  'hlmTableBody',
+  'hlmTableFooter',
+  'hlmTableRow',
+  'hlmTableHead',
+  'hlmTableCell',
+  'hlmTableCaption',
+  'hlmField',
+  'hlmFieldContent',
+  'hlmFieldDescription',
+  'hlmFieldGroup',
+  'hlmFieldLabel',
+  'hlmFieldTitle',
+  'hlmFieldSet',
+  'hlmFieldLegend',
+  'hlmSelect',
+  'hlmSelectGroup',
+  'hlmSelectLabel',
+  'hlmSelectMultiple',
+  'hlmSelectPlaceholder',
+  'hlmSelectPortal',
+  'hlmSelectSeparator',
+  'hlmSelectValue',
+  'hlmSelectValues',
+  'hlmSelectValuesContent',
+  'hlmSelectValueTemplate',
+  'hlmDialogClose',
+  'hlmDialogDescription',
+  'hlmDialogFooter',
+  'hlmDialogHeader',
+  'hlmDialogOverlay',
+  'hlmDialogPortal',
+  'hlmDialogTitle',
+  'hlmDialogTrigger',
+  'hlmDialogTriggerFor',
+  'hlmSheetClose',
+  'hlmSheetDescription',
+  'hlmSheetFooter',
+  'hlmSheetHeader',
+  'hlmSheetOverlay',
+  'hlmSheetPortal',
+  'hlmSheetTitle',
+  'hlmSheetTrigger',
+  'hlmTabs',
+  'hlmTabsContent',
+  'hlmTabsContentLazy',
+  'hlmTabsList',
+  'hlmTabsTrigger',
+  'hlmAvatarBadge',
+  'hlmAvatarFallback',
+  'hlmAvatarGroup',
+  'hlmAvatarGroupCount',
+  'hlmAvatarImage',
+  'hlmSwitchThumb',
+  'hlmSidebarContent',
+  'hlmSidebarFooter',
+  'hlmSidebarGroup',
+  'hlmSidebarGroupAction',
+  'hlmSidebarGroupContent',
+  'hlmSidebarGroupLabel',
+  'hlmSidebarHeader',
+  'hlmSidebarInput',
+  'hlmSidebarInset',
+  'hlmSidebarMenu',
+  'hlmSidebarMenuAction',
+  'hlmSidebarMenuBadge',
+  'hlmSidebarMenuButton',
+  'hlmSidebarMenuItem',
+  'hlmSidebarMenuSkeleton',
+  'hlmSidebarMenuSub',
+  'hlmSidebarMenuSubButton',
+  'hlmSidebarMenuSubItem',
+  'hlmSidebarRail',
+  'hlmSidebarSeparator',
+  'hlmSidebarTrigger',
+  'hlmSidebarWrapper',
 ]);
-const PRIMITIVE_ELEMENTS = new Set(['hlm-card', 'hlm-card-header', 'hlm-card-footer']);
+const PRIMITIVE_ELEMENTS = new Set([
+  'hlm-card',
+  'hlm-card-header',
+  'hlm-card-footer',
+  'hlm-badge',
+  'hlm-separator',
+  'hlm-skeleton',
+  'hlm-avatar',
+  'hlm-avatar-badge',
+  'hlm-avatar-group',
+  'hlm-avatar-group-count',
+  'hlm-field',
+  'hlm-field-content',
+  'hlm-field-description',
+  'hlm-field-error',
+  'hlm-field-group',
+  'hlm-field-label',
+  'hlm-field-separator',
+  'hlm-field-title',
+  'hlm-select',
+  'hlm-select-content',
+  'hlm-select-group',
+  'hlm-select-item',
+  'hlm-select-label',
+  'hlm-select-multiple',
+  'hlm-select-placeholder',
+  'hlm-select-scroll-down',
+  'hlm-select-scroll-up',
+  'hlm-select-separator',
+  'hlm-select-trigger',
+  'hlm-select-value',
+  'hlm-select-values-content',
+  'hlm-dialog',
+  'hlm-dialog-content',
+  'hlm-dialog-footer',
+  'hlm-dialog-header',
+  'hlm-dialog-overlay',
+  'hlm-sheet',
+  'hlm-sheet-content',
+  'hlm-sheet-footer',
+  'hlm-sheet-header',
+  'hlm-sheet-overlay',
+  'hlm-tabs',
+  'hlm-tabs-list',
+  'hlm-paginated-tabs-list',
+  'hlm-switch',
+  'hlm-sidebar',
+  'hlm-sidebar-content',
+  'hlm-sidebar-footer',
+  'hlm-sidebar-group',
+  'hlm-sidebar-header',
+  'hlm-sidebar-menu-badge',
+  'hlm-sidebar-menu-skeleton',
+  'hlm-sidebar-separator',
+  'hlm-sidebar-wrapper',
+]);
 
-// A native control element -> the primitive attribute that must be present.
-const CONTROL_PRIMITIVE = { button: 'hlmBtn', input: 'hlmInput' };
+// Rule 1's table: a native element -> the set of acceptable primitive
+// attributes, any one of which satisfies the rule (spec: "The four rules", 1).
+const CONTROL_PRIMITIVE_ATTRS = {
+  button: [
+    'hlmBtn',
+    'hlmDialogTrigger',
+    'hlmDialogTriggerFor',
+    'hlmDialogClose',
+    'hlmSheetTrigger',
+    'hlmSheetClose',
+    'hlmSidebarTrigger',
+    'hlmSidebarRail',
+    'hlmSidebarMenuButton',
+    'hlmSidebarMenuSubButton',
+    'hlmSidebarMenuAction',
+    'hlmSidebarGroupAction',
+    'hlmSidebarGroupLabel',
+  ],
+  input: ['hlmInput', 'hlmSidebarInput'],
+  textarea: ['hlmTextarea'],
+  label: ['hlmLabel', 'hlmFieldLabel'],
+  fieldset: ['hlmFieldSet'],
+  legend: ['hlmFieldLegend'],
+  table: ['hlmTable'],
+  thead: ['hlmTableHeader', 'hlmTHead'],
+  tbody: ['hlmTableBody', 'hlmTBody'],
+  tfoot: ['hlmTableFooter', 'hlmTFoot'],
+  tr: ['hlmTableRow', 'hlmTr'],
+  th: ['hlmTableHead', 'hlmTh'],
+  td: ['hlmTableCell', 'hlmTd'],
+  caption: ['hlmTableCaption', 'hlmCaption'],
+};
+
+// Rule 1's replacement-only table: no attribute makes the native element
+// acceptable, so the element itself is the violation.
+const REPLACEMENT_ONLY = { select: 'hlm-select', dialog: 'hlm-dialog' };
+
+// The namespaced node name @angular/compiler gives an inline <svg> (spec:
+// "What each engine parses").
+const SVG_ELEMENT = ':svg:svg';
 
 const emptyTotals = () => ({
   'raw-control': 0,
   'appearance-on-primitive': 0,
   'style-attribute': 0,
+  'raw-icon': 0,
   all: 0,
 });
 
@@ -64,10 +251,27 @@ function elementViolations(el, file, lineOffset) {
   const attrNames = new Set(el.attributes.map((a) => a.name));
   const line = (el.sourceSpan?.start?.line ?? 0) + 1 + lineOffset;
 
-  // Rule 1: raw-control.
-  const requiredAttr = CONTROL_PRIMITIVE[el.name];
-  if (requiredAttr && !attrNames.has(requiredAttr)) {
-    out.push({ kind: 'raw-control', file, line, detail: `${el.name} without ${requiredAttr}` });
+  // Rule 1: raw-control. Two shapes: an attribute-bearing native element
+  // (any one of its acceptable attributes satisfies the rule), and a
+  // replacement-only native element (no attribute is acceptable - the
+  // element itself is the violation).
+  const acceptableAttrs = CONTROL_PRIMITIVE_ATTRS[el.name];
+  if (acceptableAttrs && !acceptableAttrs.some((a) => attrNames.has(a))) {
+    out.push({
+      kind: 'raw-control',
+      file,
+      line,
+      detail: `${el.name} without ${acceptableAttrs.join('/')}`,
+    });
+  }
+  const replacement = REPLACEMENT_ONLY[el.name];
+  if (replacement) {
+    out.push({
+      kind: 'raw-control',
+      file,
+      line,
+      detail: `${el.name} has no acceptable attribute, replace with ${replacement}`,
+    });
   }
 
   const isPrimitive =
@@ -91,6 +295,14 @@ function elementViolations(el, file, lineOffset) {
   // [style.x] binding is allowed; Angular's baseline doc endorses style bindings.
   if (el.attributes.some((a) => a.name === 'style')) {
     out.push({ kind: 'style-attribute', file, line, detail: `static style attribute on ${el.name}` });
+  }
+
+  // Rule 4: raw-icon. A raw inline <svg>; @angular/compiler namespaces the
+  // node name to ":svg:svg" (spec: "What each engine parses"). This does not
+  // (and cannot, from a template alone) check the provideIcons registration -
+  // the spec states that half is doc-only.
+  if (el.name === SVG_ELEMENT) {
+    out.push({ kind: 'raw-icon', file, line, detail: 'inline <svg> element; use <ng-icon>' });
   }
 
   return out;

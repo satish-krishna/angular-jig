@@ -24,6 +24,7 @@ function lintHtml(code) {
         'seal/no-raw-control': 'error',
         'seal/no-appearance-on-primitive': 'error',
         'seal/no-style-attribute': 'error',
+        'seal/no-raw-icon': 'error',
       },
     },
     { filename: 'x.html' },
@@ -58,6 +59,31 @@ describe('sealing gate: template rules', () => {
     // encoded wrong somewhere. This is the anti-circularity cross-check.
     const gateTotal = lintHtml(readFileSync(fx('dirty.html'), 'utf8')).length;
     const counterTotal = tally([fx('dirty.html')]).totals.all;
+    expect(gateTotal).toBe(counterTotal);
+  });
+
+  it('flags the capstone dirty fixture with the exact messageId spread', () => {
+    const messages = lintHtml(readFileSync(fx('capstone-seal-dirty.html'), 'utf8'));
+    expect(messages.some((m) => m.fatal)).toBe(false);
+    expect(countByMessageId(messages)).toEqual({
+      rawControl: 8,
+      appearanceOnPrimitive: 2,
+      styleAttribute: 1,
+      rawIcon: 1,
+    });
+  });
+
+  it('passes the capstone clean fixture with zero reports', () => {
+    const messages = lintHtml(readFileSync(fx('capstone-seal-clean.html'), 'utf8'));
+    expect(messages).toEqual([]);
+  });
+
+  it('agrees with the independent counter on the capstone dirty fixture', () => {
+    // Same cross-check as above, extended to the widened Part 1 vocabulary
+    // plus the icon rule. If the other engine has not landed this yet, this
+    // will fail independently of the gate-only assertions above.
+    const gateTotal = lintHtml(readFileSync(fx('capstone-seal-dirty.html'), 'utf8')).length;
+    const counterTotal = tally([fx('capstone-seal-dirty.html')]).totals.all;
     expect(gateTotal).toBe(counterTotal);
   });
 });

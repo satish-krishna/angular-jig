@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { serveStatic, launchChromium, visitBreakpoint } from '../playwright/serve-and-visit.mjs';
 
-export function inPageMeasure(tolerancePx) {
+export function inPageMeasure({ tolerancePx, anchorSelector }) {
   const vw = window.innerWidth;
   const out = [];
   const cssPath = (el) => {
@@ -27,6 +27,23 @@ export function inPageMeasure(tolerancePx) {
     }
     return false;
   };
+  // Hidden-element exemption: an element is not shown to the user when it, or
+  // ANY ancestor (walked all the way to the document, not just up to the
+  // measured root), is display:none, visibility:hidden, or aria-hidden="true".
+  // A single walk checks all three conditions per node. This deliberately does
+  // NOT look at transforms or position: an element merely translated
+  // off-screen is still rendered, still focusable, still exposed to
+  // assistive tech, and stays a violation.
+  const isNotShownToUser = (el) => {
+    let e = el;
+    while (e && e.nodeType === 1) {
+      if (e.getAttribute('aria-hidden') === 'true') return true;
+      const ecs = getComputedStyle(e);
+      if (ecs.display === 'none' || ecs.visibility === 'hidden') return true;
+      e = e.parentElement;
+    }
+    return false;
+  };
 
   // 1. viewport-escape: the document scrolls horizontally.
   const docW = document.documentElement.scrollWidth;
@@ -35,13 +52,14 @@ export function inPageMeasure(tolerancePx) {
       detail: 'document scrollWidth ' + docW + 'px exceeds viewport ' + vw + 'px' });
   }
 
-  // slice subtree: the routed component host, else body.
-  const root = document.querySelector('app-hero-detail') || document.body;
+  // slice subtree: the anchor selector's match, else body.
+  const root = document.querySelector(anchorSelector) || document.body;
   const els = root.querySelectorAll('*');
   for (const el of els) {
     const rect = el.getBoundingClientRect();
     const cs = getComputedStyle(el);
     if (rect.width <= 0 || rect.height <= 0) continue;
+    if (isNotShownToUser(el)) continue;
 
     // 2. element-escape: right past viewport (or left < 0), not inside an intentional scroller.
     if ((rect.right - vw > tolerancePx || rect.left < -tolerancePx) && !insideScrollContainer(el, root)) {
@@ -62,8 +80,8 @@ export function inPageMeasure(tolerancePx) {
 
 const KINDS = ['viewport-escape', 'element-escape', 'element-clip'];
 
-export async function measureViolations(page, tolerancePx) {
-  return page.evaluate(inPageMeasure, tolerancePx);
+export async function measureViolations(page, tolerancePx, anchorSelector) {
+  return page.evaluate(inPageMeasure, { tolerancePx, anchorSelector });
 }
 
 function emptyKindCounts() {
@@ -91,7 +109,7 @@ function assemble(rawByBp) {
   return { totals, byBreakpoint, violations };
 }
 
-export async function auditServed({ origin, route, breakpoints = [375, 768, 1280], tolerancePx = 1, browser: given, onPage }) {
+export async function auditServed({ origin, route, breakpoints = [375, 768, 1280], tolerancePx = 1, anchorSelector = 'app-hero-detail', browser: given, onPage }) {
   const browser = given ?? (await launchChromium());
   const rawByBp = [];
   try {
@@ -99,7 +117,7 @@ export async function auditServed({ origin, route, breakpoints = [375, 768, 1280
       const { page, context } = await visitBreakpoint(browser, `${origin}/${route}`, bp);
       try {
         if (onPage) await onPage(page, bp);
-        const list = await measureViolations(page, tolerancePx);
+        const list = await measureViolations(page, tolerancePx, anchorSelector);
         rawByBp.push({ bp, list });
       } finally {
         await context.close();
@@ -111,13 +129,13 @@ export async function auditServed({ origin, route, breakpoints = [375, 768, 1280
   return assemble(rawByBp);
 }
 
-export async function auditBuild({ distDir, route = 'detail/11', outDir, breakpoints = [375, 768, 1280], tolerancePx = 1 }) {
+export async function auditBuild({ distDir, route = 'detail/11', outDir, breakpoints = [375, 768, 1280], tolerancePx = 1, anchorSelector = 'app-hero-detail' }) {
   const srv = await serveStatic(distDir, { spaFallback: true });
   const browser = await launchChromium();
   try {
     if (outDir) mkdirSync(outDir, { recursive: true });
     const tally = await auditServed({
-      origin: srv.origin, route, breakpoints, tolerancePx, browser,
+      origin: srv.origin, route, breakpoints, tolerancePx, anchorSelector, browser,
       onPage: outDir
         ? async (page, bp) => page.screenshot({ path: join(outDir, `${bp}.png`), fullPage: true })
         : undefined,
@@ -135,8 +153,8 @@ if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith
   const args = process.argv.slice(2);
   const get = (f, d) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : d; };
   const distDir = get('--dist');
-  if (!distDir) { console.error('usage: responsive-auditor.mjs --dist <dir> [--route detail/11] [--out <dir>]'); process.exit(2); }
-  auditBuild({ distDir, route: get('--route', 'detail/11'), outDir: get('--out') })
+  if (!distDir) { console.error('usage: responsive-auditor.mjs --dist <dir> [--route detail/11] [--out <dir>] [--anchor <selector>]'); process.exit(2); }
+  auditBuild({ distDir, route: get('--route', 'detail/11'), outDir: get('--out'), anchorSelector: get('--anchor', 'app-hero-detail') })
     .then((t) => { process.stdout.write(JSON.stringify(t, null, 2) + '\n'); })
     .catch((e) => { console.error(e); process.exit(1); });
 }
