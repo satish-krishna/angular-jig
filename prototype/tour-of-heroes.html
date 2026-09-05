@@ -426,7 +426,8 @@
   [data-tip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* Dialog */
-  .scrim { position: fixed; inset: 0; background: rgba(10, 12, 22, 0.55); backdrop-filter: blur(2px); display: grid; place-items: center; z-index: 100; padding: 20px; }
+  .scrim { position: fixed; inset: 0; background: rgba(10, 12, 22, 0.55); backdrop-filter: blur(2px); display: none; place-items: center; z-index: 100; padding: 20px; }
+  .scrim.open { display: grid; }
   .dialog { background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); width: min(440px, 100%); padding: 22px; }
   .dialog h3 { font-size: 18px; font-weight: 700; }
   .dialog p { color: var(--fg-muted); margin: 10px 0 0; }
@@ -958,8 +959,8 @@
 
     // ---------- Dialog ----------
     var dlg=document.getElementById("retireDialog");
-    function openRetire(){ dlg.hidden=false; document.getElementById("retireConfirm").focus(); }
-    function closeRetire(){ dlg.hidden=true; }
+    function openRetire(){ dlg.hidden=false; dlg.classList.add("open"); document.getElementById("retireConfirm").focus(); }
+    function closeRetire(){ dlg.classList.remove("open"); dlg.hidden=true; }
     document.getElementById("deleteBtn").addEventListener("click", openRetire);
     document.getElementById("retireCancel").addEventListener("click", closeRetire);
     dlg.addEventListener("click", function(e){ if(e.target===dlg) closeRetire(); });
