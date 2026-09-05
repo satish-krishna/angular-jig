@@ -133,4 +133,6 @@ Because Helm code is copied into the project, the documented way to customize a 
 - The gate loads angular-eslint's template parser and runs four custom rules over the template AST, on `.html` templates and inline `template:` strings.
 - The counter loads `@angular/compiler`'s `parseTemplate` and walks the AST, reading `.html` files and extracting inline `template:` strings from `.ts` with the TypeScript compiler API. It shares no rule code, no parser, and no AST types with the gate.
 
+One parser fact both engines need, stated here rather than discovered twice: both the angular-eslint template parser and `@angular/compiler` namespace SVG element nodes, so an inline `<svg>` arrives with the node name `:svg:svg`, not `svg`. This is a fact about the parsers, identical on both sides, not a shared implementation.
+
 Two engines, one spec, and the spec is the docs. If they ever disagree, that disagreement is the finding.
