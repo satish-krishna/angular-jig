@@ -78,6 +78,10 @@ function parseArgs(argv) {
     else if (a === '--stages') out.stages = argv[++i];
     else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--substrate') out.substrate = argv[++i];
+    // Overrides the settings file for this condition. A clean substrate carries
+    // a neutrally-named gate settings file rather than one called 'capstone',
+    // because a file name is part of what the agent can see.
+    else if (a === '--settings') out.settingsOverride = argv[++i];
     else throw new Error(`unknown arg: ${a}`);
   }
   if (!SETTINGS[out.condition]) throw new Error("--condition must be 'gate-off' or 'gate-on'");
@@ -261,8 +265,8 @@ function tsconfigUntouchedSinceControl(snapshot) {
 }
 
 function main() {
-  const { condition, trial, dryRun, stageList, substrate } = parseArgs(process.argv.slice(2));
-  const settingsPath = SETTINGS[condition];
+  const { condition, trial, dryRun, stageList, substrate, settingsOverride } = parseArgs(process.argv.slice(2));
+  const settingsPath = settingsOverride ?? SETTINGS[condition];
 
   const startBranch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
   const dirty = git(['status', '--porcelain'])
@@ -385,6 +389,27 @@ function main() {
             failures: m ? Number(m[1]) : null,
             detail: stderr.split('\n').slice(0, 12).join('\n') || null,
           };
+        }
+
+        // The measurement code is not required to be on the substrate. A clean
+        // substrate strips harness/counter, harness/driver and the specs, so the
+        // agent under test never sees that it is being measured; but the
+        // responsive auditor is invoked as a subprocess and therefore does need
+        // to exist on disk when it runs.
+        //
+        // Restoring it HERE is safe and is the whole trick: this is after the
+        // stages finished and after the run commit, so the file is an
+        // uncommitted extra in the working tree, invisible to the agent (which
+        // is gone) and absent from the recorded diff. The finally block's forced
+        // checkout discards it. If the substrate already carries it, this is a
+        // no-op.
+        // Restored from startBranch, the ref the driver was LAUNCHED from, which
+        // always carries the full harness. Restoring from the substrate would be
+        // circular: the whole point is that the substrate does not have it.
+        try {
+          git(['checkout', startBranch, '--', 'harness/counter/responsive-auditor.mjs']);
+        } catch {
+          // Let the audit report its own failure rather than guessing at one.
         }
 
         responsiveOutTmp = join(tmpdir(), `responsive-${runId}`);
