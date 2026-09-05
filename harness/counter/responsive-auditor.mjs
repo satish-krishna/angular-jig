@@ -122,9 +122,18 @@ function assemble(rawByBp) {
 export async function auditServed({ origin, route, breakpoints = [375, 768, 1280], tolerancePx = 1, anchorSelector = 'app-hero-detail', browser: given, onPage }) {
   const browser = given ?? (await launchChromium());
   const rawByBp = [];
+  // The auditor is already in the browser, so it records runtime errors here as
+  // well, in its own code path. The boot GATE (harness/gate/check-boot.mjs) is
+  // what blocks; this is the independent observation of the same thing, kept
+  // separate for the same reason the AST counters are kept separate from the AST
+  // gates. It never blocks and never filters.
+  const bootErrors = [];
   try {
     for (const bp of breakpoints) {
       const { page, context } = await visitBreakpoint(browser, `${origin}/${route}`, bp);
+      page.on('pageerror', (err) =>
+        bootErrors.push({ breakpoint: bp, kind: 'pageerror', text: String(err?.message ?? err) }),
+      );
       try {
         if (onPage) await onPage(page, bp);
         const list = await measureViolations(page, tolerancePx, anchorSelector);
@@ -136,7 +145,9 @@ export async function auditServed({ origin, route, breakpoints = [375, 768, 1280
   } finally {
     if (!given) await browser.close();
   }
-  return assemble(rawByBp);
+  const tally = assemble(rawByBp);
+  tally.bootErrors = bootErrors;
+  return tally;
 }
 
 export async function auditBuild({ distDir, route = 'detail/11', outDir, breakpoints = [375, 768, 1280], tolerancePx = 1, anchorSelector = 'app-hero-detail' }) {

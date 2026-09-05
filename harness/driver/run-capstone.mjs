@@ -42,7 +42,12 @@ import { STAGES, RESPONSIVE_SUFFIX, AUDIT_ROUTES, AUDIT_ANCHOR } from './capston
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
-const SUBSTRATE = 'main';
+// The ref each trial branches from. Overridable with --substrate, which exists
+// because the capstone found four stages reading a previous trial's impl out of
+// experiments/ - including a gate-on trial seeded from a gate-off one. A hook
+// can police that; a substrate that simply does not contain experiments/ removes
+// it. Structural beats policed, so runs now branch from a clean ref.
+const DEFAULT_SUBSTRATE = 'main';
 
 // The agent under test is Haiku, always. The capstone measures Haiku's drift;
 // changing this invalidates every number the run produces. Everything that
@@ -72,6 +77,7 @@ function parseArgs(argv) {
     else if (a === '--trial') out.trial = argv[++i];
     else if (a === '--stages') out.stages = argv[++i];
     else if (a === '--dry-run') out.dryRun = true;
+    else if (a === '--substrate') out.substrate = argv[++i];
     else throw new Error(`unknown arg: ${a}`);
   }
   if (!SETTINGS[out.condition]) throw new Error("--condition must be 'gate-off' or 'gate-on'");
@@ -83,6 +89,7 @@ function parseArgs(argv) {
   } else {
     out.stageList = STAGES;
   }
+  out.substrate = out.substrate ?? DEFAULT_SUBSTRATE;
   return out;
 }
 
@@ -234,7 +241,7 @@ function findTamperedFiles(changedFiles) {
 }
 
 function main() {
-  const { condition, trial, dryRun, stageList } = parseArgs(process.argv.slice(2));
+  const { condition, trial, dryRun, stageList, substrate } = parseArgs(process.argv.slice(2));
   const settingsPath = SETTINGS[condition];
 
   const startBranch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
@@ -246,7 +253,7 @@ function main() {
     throw new Error(`working tree is not clean outside experiments/; commit or stash before a trial.\n${dirty}`);
   }
 
-  const substrateSha = git(['rev-parse', SUBSTRATE]);
+  const substrateSha = git(['rev-parse', substrate]);
   const runId = `capstone-${condition}-t${trial}-${stamp()}${dryRun ? '-dry' : ''}`;
   const branch = `run/capstone-${runId}`;
   const outRel = join('experiments', 'capstone', condition, runId);
@@ -263,6 +270,7 @@ function main() {
   let responsiveByRoute = null;
   let responsiveOutTmp = null;
   let buildOk = null;
+  let bootResult = null;
   let changedFiles = [];
   let tampered = [];
   let diff = '';
@@ -324,6 +332,29 @@ function main() {
         buildOk = false;
       }
       if (buildOk) {
+        // Plane 3: does the thing actually run? Measured here independently of
+        // whether the agent bothered to run the gate it was told to run, exactly
+        // as the responsive auditor is. This plane exists because three of the
+        // four fatal defects the first capstone produced were DI failures that
+        // every static gate passed and every browser catches instantly.
+        try {
+          execFileSync('npm run check:boot', {
+            cwd: ROOT,
+            stdio: ['ignore', 'inherit', 'pipe'],
+            encoding: 'utf8',
+            shell: true,
+          });
+          bootResult = { ok: true, failures: 0, detail: null };
+        } catch (e) {
+          const stderr = String(e.stderr ?? '').trim();
+          const m = stderr.match(/Boot gate failed: (\d+) runtime error/);
+          bootResult = {
+            ok: false,
+            failures: m ? Number(m[1]) : null,
+            detail: stderr.split('\n').slice(0, 12).join('\n') || null,
+          };
+        }
+
         responsiveOutTmp = join(tmpdir(), `responsive-${runId}`);
         responsiveByRoute = {};
         for (const route of AUDIT_ROUTES) {
@@ -435,11 +466,15 @@ function main() {
   // proves the plumbing rather than voiding it. Matches run-trial.mjs.
   // Tampering voids a run outright. Its enforcement counts cannot be trusted,
   // because the enforcement itself was edited by the thing being enforced.
+  // A build that does not RUN is not a passing build. Plane 3 is part of the OK
+  // condition rather than a side note: the first capstone shipped three builds
+  // that compiled clean, rendered a blank page, and were recorded as OK.
   const runOk =
     dryRun ||
     (stageRecords.every((r) => r.ok) &&
       diff.trim() !== '' &&
       buildOk === true &&
+      bootResult?.ok === true &&
       tampered.length === 0);
 
   const meta = {
@@ -449,7 +484,7 @@ function main() {
     trial: Number(trial),
     dryRun,
     ok: runOk,
-    substrate: { ref: SUBSTRATE, sha: substrateSha },
+    substrate: { ref: substrate, sha: substrateSha },
     branch: dryRun ? null : branch,
     resultSha,
     model: { alias: MODEL, resolved: stageRecords.find((r) => r.model.resolved)?.model.resolved ?? null },
@@ -457,6 +492,7 @@ function main() {
     stages: stageRecords,
     cost: cost.totals,
     buildOk,
+    boot: bootResult,
     diffEmpty: diff.trim() === '',
     tampered: tampered.length > 0,
     tamperedFiles: tampered,
@@ -516,6 +552,13 @@ function main() {
       `  cost:    $${cost.totals.costUsd.toFixed(4)} across ${cost.totals.stages} haiku subagents, ` +
       `${cost.totals.numTurns} turns, ${Math.round(cost.totals.wallMs / 1000)}s wall\n` +
       `  build:   ${buildOk === null ? '(skipped)' : buildOk ? 'ok' : 'FAILED'}\n` +
+      `  boot:    ${
+        bootResult === null
+          ? '(skipped)'
+          : bootResult.ok
+            ? 'ok'
+            : `FAILED (${bootResult.failures ?? '?'} runtime error(s))`
+      }\n` +
       (tampered.length ? `  TAMPER:  run edited enforcement config: ${tampered.join(', ')}\n` : '') +
       `  seal:    ${JSON.stringify(tallyResult.totals)}\n` +
       `  layout:  ${JSON.stringify(layoutResult.totals)}\n` +

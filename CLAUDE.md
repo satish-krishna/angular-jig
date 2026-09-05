@@ -45,6 +45,16 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 ## House frontend conventions
 
+## Before you write spartan markup, ask the docs
+
+The `spartan-ui` MCP server is configured and running. Use it. Reading a Helm file under `libs/ui/` tells you a component's SELECTOR and nothing about how it must be composed, and composition is where these primitives actually break.
+
+- Before writing any `hlm-*` markup you have not written before, call the spartan MCP (`spartan_components_get`, `spartan_docs_get`) or read the matching `rules/*.md` in the `spartan` skill.
+- Grepping `libs/ui/` is not a substitute. It gives you selectors, not required structure, and the difference is not cosmetic: `hlm-dialog-content` must sit on an `*hlmDialogPortal` template, because spartan supplies `BrnDialogRef` through that portal. Render it inline and it compiles, renders, and throws `NG0201` the moment the dialog opens.
+- The same applies to icons. `NgIconsModule` is the legacy API and throws at bootstrap; the standalone `NgIcon` plus `provideIcons` is the current one.
+
+This is not a style preference. Every fatal runtime defect this repo has measured came from composing a primitive from its source rather than its documentation.
+
 - Follow the `house-style` skill (`.claude/skills/house-style`) for layout and stylesheets, on top of the SpartanNG (`spartan` skill) docs. In short: grid for regions, flex for inline runs, never nest flex to fake a grid; and in any hand-written component stylesheet, colors and lengths are design tokens (`var(--...)`), never raw hex or `px`.
 
 ## Templates

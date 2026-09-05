@@ -10,7 +10,8 @@
     "lint": "eslint src",
     "test:harness": "vitest run --config harness/vitest.config.mjs",
     "check:responsive": "node harness/gate/check-responsive.mjs",
-    "count": "node harness/counter/counter.mjs --root . src"
+    "count": "node harness/counter/counter.mjs --root . src",
+    "check:boot": "node harness/gate/check-boot.mjs"
   },
   "private": true,
   "packageManager": "npm@11.0.0",

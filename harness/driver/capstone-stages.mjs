@@ -38,7 +38,13 @@ export const STAGES = [
 // to run, and responsive-spec.md states that asymmetry rather than hiding it.
 export const RESPONSIVE_SUFFIX = `
 
-After the app builds, run \`npm run check:responsive\`. It renders the console at 375px, 768px, and 1280px and fails if the page scrolls sideways, an element escapes the viewport, or an element clips its own content. If it fails, fix the layout so the screens reflow at narrow widths and run it again. The task is done only when both \`ng build\` and \`npm run check:responsive\` pass.
+After the app builds, run these two checks and fix what they report.
+
+\`npm run check:boot\` renders every route in a real browser and fails on any uncaught runtime error. An application can compile cleanly, pass strictTemplates, pass every lint gate, and still throw the moment the browser assembles it: a missing provider, a primitive composed in the wrong structural position, an icon module resolved in the wrong injector. The compiler cannot see any of that. If this fails, read the error, fix the cause, and run it again. Do not remove the feature to silence it; a screen that does not render is not a screen that passes.
+
+\`npm run check:responsive\` renders the console at 375px, 768px, and 1280px and fails if the page scrolls sideways, an element escapes the viewport, or an element clips its own content. If it fails, fix the layout so the screens reflow at narrow widths and run it again.
+
+The task is done only when \`ng build\`, \`npm run check:boot\` and \`npm run check:responsive\` all pass.
 `;
 
 // Every screen is audited, not one slice: the capstone's claim is about a whole
