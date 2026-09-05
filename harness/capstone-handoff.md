@@ -10,6 +10,15 @@ The fuller planning context (the series playbook, the Part 5 result, the entropy
 - Installed spartan components: only `button`, `input`, `card` (plus `libs/ui/utils`). The sealing vocabulary (Part 1) is exactly as wide as `libs/ui`, so there is no gap to close; the gap is what we are about to create by installing more.
 - Part 5 finding to keep in mind: on natural Tour of Heroes, the gates are dormant because the model is competent on native patterns. The capstone is the deliberate non-native, dense target where the gates should finally bite.
 
+## Model policy (Haiku is the subject, never the instrument)
+
+Only the agent-under-test runs on Haiku. Everything else runs on the default (capable) model, and the orchestrating session picks the right model per subagent.
+
+- **Haiku, always:** the measured capstone build, that is, the driver's headless `claude --model haiku` that builds Tour of Heroes under the gates (the gate-off and gate-on trials, and any from-zero capstone build). If you drive a build through a subagent instead of the driver, that build subagent is Haiku too. The experiment measures Haiku's drift; changing the agent-under-test model invalidates the result. The driver already hardcodes `MODEL = 'haiku'`; do not change it.
+- **Default / capable model (NOT Haiku), orchestrator's choice per subagent:** everything that builds or grades the constitution and harness. That is the vocabulary extension (house-style doc, `sealing-spec.md`, the gate rules, the counter, the fixtures), the new icon rule, the MVVM rule, the off-canvas exemption, component installation, driver wiring, the Angular scaffolding, and every review. These are judgment work and they are the instrument that grades the experiment; a subtle gate bug written by Haiku would poison every published claim (a Sonnet review already caught one such bug this session). Use Sonnet for building and reviewing, the most capable model for the final whole-branch review, exactly as the Part 5 harness was built.
+
+The rule in one line: the thing being measured is Haiku; the things doing the measuring are not.
+
 ## The palette (confirmed: full kitchen sink)
 
 All twelve exist in this `@spartan-ng/cli@1.4.1` catalog by exact name, verified against `node_modules/@spartan-ng/cli/src/generators/ui/supported-ui-libraries.json`:
