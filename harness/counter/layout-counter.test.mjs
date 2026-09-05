@@ -59,3 +59,11 @@ describe('layout counter: output contract', () => {
     expect(a).toBe(b);
   });
 });
+
+describe('layout counter: nested-flex-grid (row of columns)', () => {
+  it('counts only the row-of-columns blocks', () => {
+    // Hand-counted in the fixture header. The direction is the entire rule: a
+    // row of columns is a grid, a column of rows is a card body.
+    expect(layoutTally([fx('nested-flex.html')]).totals['nested-flex-grid']).toBe(2);
+  });
+});

@@ -11,6 +11,8 @@ The question this run exists to answer is not "does a constitution reduce drift.
 
 A gate is not a wall. It is a set of named prohibitions, and the drift goes wherever they are not.
 
+There is a third part, added after the fact and less comfortable than either: **one of the things the constitution named, it was not actually measuring.** `nested-flex-grid` counted for five Parts and reported a result that has now been retracted, because the code never encoded the sentence the doc wrote. A rule that only counts is checked by nobody. See the retraction.
+
 ## The headline
 
 Parts 4 and 5 returned nulls: on natural Tour of Heroes the gates were dormant, because the model is competent on native patterns. That produced the series' thesis, that gates fire in proportion to a pattern's distance from the model's priors. The capstone aimed at the far side of that distance, and the same machinery that sat silent for two Parts eliminated **326 violations to zero**.
@@ -29,7 +31,9 @@ Every gated kind, gate-off total across three trials versus gate-on total across
 | `shape/feature-injects-data` | yes | 7 (0, 4, 3) | 0 (0, 0, 0) |
 | `shape/reactive-form` | yes | 1 (0, 1, 0) | 0 (0, 0, 0) |
 | **all gated kinds** | | **326** | **0** |
-| `layout/nested-flex-grid` | **no, heuristic** | 13 (3, 2, 8) | **32** (13, 10, 9) |
+| `layout/nested-flex-grid` | see retraction | ~~13~~ (3, 2, 8) | ~~32~~ (13, 10, 9) |
+
+The `nested-flex-grid` row is **retracted**. Those numbers come from a proxy that did not encode the rule it claimed to measure; under a faithful rule both conditions are 0 in every trial. It is left struck through rather than deleted, because the retraction is the more useful finding. See below.
 
 Hook firings in gate-on: 39, 39, 54. Zero in gate-off, because no hooks were registered there during the run. Note for anyone re-running: the enforcement guard added afterwards (see below) IS registered in both conditions and logs to the same file, so a future gate-off run will report a non-zero count, and a future gate-on count mixes constitution firings with guard firings.
 
@@ -39,26 +43,30 @@ Ten gated kinds recorded zero in **both** conditions and are omitted above: `sty
 
 Note which kinds carry the mass. The four largest are the sealed vocabulary (229 between them), schema-driven forms (23) and MVVM state placement (14). Those are exactly the non-native patterns the capstone was built to aim at. The native-pattern kinds Angular's own docs already cover contributed 15 of 326.
 
-## The most interesting result: the gates displaced drift into the one dimension they do not enforce
+## RETRACTED: the displacement finding
 
-`nested-flex-grid` has been a counter-only heuristic since Part 2, deliberately never gated, because a flex toolbar of flex rows and a nested-flex fake grid are not distinguishable from classes alone. Under gate-on it went **up**, 13 to 32, while everything enforced went to zero.
+This section originally reported the sharpest claim in the series, and it was wrong. It is kept, marked, because a retraction that deletes the claim also deletes the lesson.
 
-The obvious story is displacement: block the agent from `space-*` utilities and appearance classes and it restructures the markup instead, nesting flex containers to get the layout it wanted. The obvious story is also exactly the kind of thing that is satisfying enough to publish without checking, so it was checked. A raw count cannot separate displacement from the agent simply emitting more markup, and gate-on ran 24% more turns.
+**What it said.** `nested-flex-grid` has been a counter-only heuristic since Part 2, deliberately never gated. Under gate-on it went UP, 13 to 32, while every enforced kind went to zero. Normalizing by markup volume showed gate-on emitted FEWER template elements with identical flex-container and component counts, so the rate was 2.7x with clean per-trial separation. I concluded displacement: block the agent from `space-*` and appearance classes and it restructures into nested flex instead. I generalized it, too, that a partial constitution relocates drift into whatever it leaves unenforced.
 
-Dividing by markup volume settles it:
+**Why it is wrong.** The heuristic was never a faithful encoding of the rule it claimed to measure. The house doc says, verbatim: "**A row of flex columns**, each itself a flex stack, arranged to line up into a grid, is the anti-pattern." That sentence is DIRECTIONAL. The implementation was not: it flagged any flex container with two or more flex children, so a `flex flex-col` card body holding a header row and a content row counted the same as a grid faked out of columns.
 
-| | template elements | flex containers | components | nested-flex-grid | per 1k elements | per flex container |
-| --- | --- | --- | --- | --- | --- | --- |
-| gate-off (3 trials) | 1285 | 268 | 31 | 13 | **10.1** | 0.049 |
-| gate-on (3 trials) | 1176 | 268 | 31 | 32 | **27.2** | 0.119 |
+Re-measured with a rule that says what the doc says, a flex ROW with two or more `flex-col` children:
 
-gate-on produced *fewer* template elements than gate-off, so it did not build more app, and the rate is 2.7x higher. The load-bearing evidence is the per-trial rate, which separates cleanly with no overlap: gate-off 7.0, 4.8, 18.0 against gate-on 25.3, 23.8, 37.2, so the worst gate-off trial is still below the best gate-on one.
+| | old proxy | faithful rule |
+| --- | --- | --- |
+| gate-off t1 / t2 / t3 | 3 / 3 / 8 | **0 / 0 / 0** |
+| gate-on t1 / t2 / t3 | 13 / 10 / 10 | **0 / 0 / 0** |
 
-The identical totals for flex containers and components (268 and 31 in both arms) are a coincidence and are not offered as evidence: the per-trial breakdowns are nothing alike, and the flex-container count only sees static `class` attributes, missing any `[class]` binding. It is the rate that carries the claim.
+Sixty-three flagged sites across the six trials. Zero were the anti-pattern. The rise from 13 to 32 was a rise in ordinary card markup, and both arms are flat on the thing the rule was supposed to detect. **There is no displacement result here.** The normalization was sound and the arithmetic was right; the signal underneath was noise, and a correct method applied to a bad proxy produces a confident wrong answer rather than an obviously wrong one.
 
-So it is displacement. This is the sharpest practical finding in the series, and it generalizes past this repo: **a partial constitution does not reduce drift so much as relocate it into whatever it left unenforced.** Every gap in a gate is a channel, and the pressure finds it. Anyone shipping a lint-rule constitution should expect their un-enforced conventions to get *worse*, not merely stay the same, and should measure the dimensions they chose not to enforce rather than assuming they are unaffected.
+**What the mistake actually was.** Part 2 called the anti-pattern "not cleanly decidable from classes alone (a legitimate flex toolbar of flex rows looks the same as a nested-flex grid)" and settled for a loose proxy. Read that counter-example again: a toolbar of flex ROWS is a ROW of ROWS. The discriminator was sitting inside the sentence used to argue no discriminator existed. The rule was never undecidable, only unencoded, and five Parts of measurement inherited the loss without anyone re-reading the doc.
 
-The honest limit on this claim: n is 3 per condition, one repo, one model, one task. The effect is large and the separation is clean, but it is one experiment.
+It survived that long because it was never gated. A rule that blocks an edit gets its false positives shoved in your face within a day; a rule that only counts is checked by nobody, and quietly accumulates authority in reports. **The counter-only category is where bad rules go to be believed.** That is the finding that replaces the retracted one, and it is worth more, because it is about the method rather than about one repo's flex containers.
+
+`nested-flex-grid` is now encoded faithfully and, being decidable, is hard-gated. Part 2 wrote its own escape clause, "If the run shows it is more noise than signal, it is cut, and that cut is a finding." The run showed it. This is the cut.
+
+**How it was caught.** Not by review and not by a test. Someone asked why the last non-zero number was still ungated, which forced a look at the nine flagged sites in a single build, and eight of them were plainly fine on sight. No amount of internal consistency would have surfaced it, because the proxy agreed with itself perfectly.
 
 ## What it cost
 
@@ -111,9 +119,9 @@ It is also **trivially decidable**: `NgIconsModule` in a component's `imports` a
 
 Where data exists, the soft responsive gate helped and did not close: 72 to 51 on the one comparable pair. That comparison is weaker than it looks, and the reason was found in review rather than by design. `npm run check:responsive`, the command the gate-on agent was told to run, defaults to ONE route (`detail/11`) anchored on the routed component host, while the auditor measures three routes anchored on `body`. gate-off's 72 violations were entirely on `roster`, a route the soft gate never visits. So the agent was graded on more than it was asked to check, and the gap between the gate and the audit is a disclosure this report owes the reader rather than a subtlety. It remains soft by nature, since Playwright needs a whole rendered app and a per-edit hook is physically impossible. Note also the shape difference: gate-off's 72 are entirely on the roster route, the wide table the build spec explicitly warned about and offered two solutions for. gate-on's failures are spread evenly, roughly six per route of which are inherited Helm chrome that carries no file provenance (see `capstone-spec.md`, asymmetry 4).
 
-### 3. The displaced heuristic
+### 3. The heuristic that was measuring nothing
 
-`nested-flex-grid`, above. Part 2 judged it undecidable from classes alone and left it counter-only. The capstone gives that judgment a far larger sample and a reason to revisit it: an un-enforced heuristic is not neutral, it is a drain.
+`nested-flex-grid` reported residue in every gate-on trial and none of it was real. It is now encoded to match the doc, is decidable, is hard-gated, and reports 0 across every trial of both conditions. The residue was in the rule, not in the builds. See the retraction above.
 
 ### 4. The agent edited the gate
 
@@ -150,7 +158,7 @@ Three of these deserve to be read as more than a list.
 
 **`explicit-standalone` is the cheapest rule in the constitution and nobody wrote it.** It is a verbatim line in the baseline docs, the same AST shape as a rule shipped since Part 3, and it was violated in nearly every component of every build. It was invisible for no better reason than that nobody thought to mechanize the easy one.
 
-**`orphan-ng-submit` was caused by the gate.** Rules 3 and 6 ban `FormsModule` and `ReactiveFormsModule`, which are the only providers of the `ngSubmit` output. The model's prior for "how a form submits" survived the ban on the modules that make it work, so it wrote `(ngSubmit)` anyway, four times, and used `submit()` from signals zero times. Angular treats an unmatched output binding on a native `<form>` as a DOM listener for an event nothing fires. Every primary save flow in those builds was a dead button on a page that looked complete. **A constitution that forbids an API without forbidding its usage has not prevented the pattern; it has broken it silently.** That belongs beside the displacement result as the second half of one lesson about partial coverage.
+**`orphan-ng-submit` was caused by the gate.** Rules 3 and 6 ban `FormsModule` and `ReactiveFormsModule`, which are the only providers of the `ngSubmit` output. The model's prior for "how a form submits" survived the ban on the modules that make it work, so it wrote `(ngSubmit)` anyway, four times, and used `submit()` from signals zero times. Angular treats an unmatched output binding on a native `<form>` as a DOM listener for an event nothing fires. Every primary save flow in those builds was a dead button on a page that looked complete. **A constitution that forbids an API without forbidding its usage has not prevented the pattern; it has broken it silently.** With the displacement result retracted, this is now the load-bearing finding about partial coverage, and it is a sturdier one because it rests on four dead submit buttons in the shipped code rather than on a counter.
 
 **`unregistered-icon` reverses a call this project got wrong.** `capstone-spec.md` stated the registration half of the icon rule was permanently doc-only because the template engines cannot see the component class. That reasoning was correct about the *template* engines and wrong about decidability: it is a plain TypeScript-AST property, and the shape rules have always been TypeScript rules. The correction is recorded rather than quietly applied, because "we said this could not be gated and we were wrong" is worth more to a reader than a rule that silently appears.
 

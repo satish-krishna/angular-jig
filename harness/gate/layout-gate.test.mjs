@@ -25,6 +25,7 @@ function lintHtml(code) {
       rules: {
         'layout/no-raw-palette-color': 'error',
         'layout/no-space-utility': 'error',
+        'layout/no-nested-flex-grid': 'error',
       },
     },
     { filename: 'x.html' },
@@ -71,5 +72,28 @@ describe('layout gate: stylesheet surface (stylelint)', () => {
     // literal count for the component stylesheet fixture.
     const cssOnly = layoutTally([fx('layout-dirty.component.ts')]).totals['raw-css-literal'];
     expect(cssOnly).toBe(2);
+  });
+});
+
+describe('layout gate: nested-flex-grid (row of columns)', () => {
+  const src = readFileSync(fx('nested-flex.html'), 'utf8');
+
+  it('flags exactly the two row-of-columns blocks and nothing else', () => {
+    const ids = lintHtml(src).filter((m) => m.messageId === 'nestedFlexGrid');
+    expect(ids.length).toBe(2);
+  });
+
+  // The five NOT-flagged shapes in that fixture are what the original proxy got
+  // wrong: over seven capstone builds it flagged 63 sites and one was real. The
+  // most important control is a flex COLUMN of flex rows, an ordinary card body.
+  it('does not flag a flex column of flex rows, a toolbar of rows, or a single column', () => {
+    const total = lintHtml(src).filter((m) => m.messageId === 'nestedFlexGrid').length;
+    expect(total).toBe(2);
+  });
+
+  it('agrees with the independent counter on the same bytes', () => {
+    const gate = lintHtml(src).filter((m) => m.messageId === 'nestedFlexGrid').length;
+    const counter = layoutTally([fx('nested-flex.html')]).totals['nested-flex-grid'];
+    expect(gate).toBe(counter);
   });
 });

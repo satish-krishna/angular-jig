@@ -39,9 +39,20 @@ Docs: the house-style skill, "No raw literals in hand-written CSS." In an inline
 - Violation: `background: #3b82f6`, `padding: 16px`, `color: rgb(0 0 0)`. Good: `background: var(--card)`, `padding: var(--spacing-4)`, `border: 1px solid var(--border)` where the color is a token (a bare structural `1px` border width is the edge case; see below).
 - The gate enforces this with stylelint's `declaration-strict-value` (colors and spacing must resolve to a `var()`), a genuinely different engine from the counter's scan.
 
-### 4. `nested-flex-grid` (house, heuristic, counter-only)
+### 4. `nested-flex-grid` (house, hard-gated since the capstone)
 
-Docs: the house-style skill, "grid for regions, flex for inline runs, do not nest flex to fake a grid." This is a real house rule now, but it is not cleanly decidable from classes alone (a legitimate flex toolbar of flex rows looks the same as a nested-flex grid). So it is measured by the counter as a lower-confidence signal and NOT enforced by the gate: a heuristic that hard-blocks an edit on a false positive is a bad gate. The heuristic: a `flex` container with two or more direct `flex` children. If the run shows it is more noise than signal, it is cut, and that cut is a finding.
+Docs: the house-style skill, verbatim: "**A row of flex columns**, each itself a flex stack, arranged to line up into a grid, is the anti-pattern."
+
+- Violation: a flex container that is NOT `flex-col` (so it lays out as a row) with two or more direct children that ARE `flex-col`. A row of columns.
+- Good (passes): a `flex flex-col` card body holding a header row and a content row; a `flex` toolbar holding two `flex` inline runs. Bad (fails): `<div class="flex justify-between"><div class="flex flex-col">Power</div><div class="flex flex-col">Missions</div></div>`.
+
+**This rule was wrong for five Parts, and the correction is the interesting part.** Part 2 judged the anti-pattern "not cleanly decidable from classes alone (a legitimate flex toolbar of flex rows looks the same as a nested-flex grid)" and settled for a loose proxy: a `flex` container with two or more direct `flex` children, measured by the counter and never gated. It also wrote its own escape clause: "If the run shows it is more noise than signal, it is cut, and that cut is a finding."
+
+The capstone ran it over seven complete builds and the proxy flagged 63 sites. **One** of them was the anti-pattern the doc describes. The other 62 were overwhelmingly a `flex flex-col` card body containing a header row and a content row, which is not a grid, is not two-dimensional, and is the single most ordinary layout in the language.
+
+The reason is embarrassing once seen: the doc sentence is DIRECTIONAL and the proxy was not. A row of columns is a grid; a column of rows is a stack. Part 2's own counter-example, "a flex toolbar of flex rows," is a ROW of ROWS, and reading it carefully shows the discriminator was in the doc the whole time. The rule was never undecidable. It was unencoded: the implementation dropped the word the doc leaned on, and then five Parts of measurement inherited the loss.
+
+Two consequences are recorded rather than quietly absorbed. First, the kind is now decidable and is therefore GATED, which is what the escape clause always intended. Second, and this one costs us a headline: the capstone reported `nested-flex-grid` rising 13 to 32 under gate-on while every enforced kind went to zero, and called it displacement, drift relocating into the one dimension left unenforced. Under the faithful rule both arms are zero. What rose was benign card markup. **The displacement claim does not survive and has been retracted from the report.** A finding that rests on a proxy is only ever as good as the proxy, and this one was 62 parts noise.
 
 ## The tally shape
 

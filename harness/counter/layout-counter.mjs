@@ -67,15 +67,28 @@ function templateViolations(el, file, lineOffset, acc) {
       acc.push({ kind: 'space-utility', file, line, detail: `${token}, use gap-*` });
     }
   }
-  // nested-flex heuristic (counter-only): a flex container with 2+ flex children.
-  if (classTokens(el).includes('flex')) {
-    const flexKids = elementChildren(el).filter((c) => classTokens(c).includes('flex'));
-    if (flexKids.length >= 2) {
+  // nested-flex-grid: a ROW of COLUMNS. The house doc's sentence is directional,
+  // "a row of flex columns, each itself a flex stack, arranged to line up into a
+  // grid", and direction is the entire discriminator: a row of columns reads as a
+  // grid, a column of rows is an ordinary stack.
+  //
+  // The original encoding dropped it and flagged any flex container with two or
+  // more flex children. Over seven capstone builds that proxy flagged 63 sites of
+  // which ONE was the anti-pattern; the other 62 were mostly a `flex flex-col`
+  // card body holding a header row and a content row. See layout-grammar-spec.md
+  // rule 4 for the full correction, including the finding it cost.
+  const own = classTokens(el).map(baseUtil);
+  if (own.includes('flex') && !own.includes('flex-col')) {
+    const colKids = elementChildren(el).filter((c) => {
+      const k = classTokens(c).map(baseUtil);
+      return k.includes('flex') && k.includes('flex-col');
+    });
+    if (colKids.length >= 2) {
       acc.push({
         kind: 'nested-flex-grid',
         file,
         line,
-        detail: `flex with ${flexKids.length} flex children (heuristic)`,
+        detail: `flex row with ${colKids.length} flex-col children: this is a grid, use grid`,
       });
     }
   }

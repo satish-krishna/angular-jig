@@ -43,6 +43,7 @@ const layoutEslintConfig = [
     rules: {
       'layout/no-raw-palette-color': 'error',
       'layout/no-space-utility': 'error',
+      'layout/no-nested-flex-grid': 'error',
     },
   },
 ];
