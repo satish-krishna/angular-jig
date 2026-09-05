@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { join, extname, normalize, sep, relative, isAbsolute } from 'node:path';
+import { join, extname, normalize, relative, isAbsolute } from 'node:path';
 import { chromium } from 'playwright';
 
 const MIME = {
@@ -17,7 +17,7 @@ export async function serveStatic(dir, { spaFallback = true } = {}) {
     try {
       const rawReqPath = req.url.split('?')[0];
       if (rawReqPath.includes('%2e') || rawReqPath.includes('%2E')) { res.writeHead(403).end(); return; }
-      const urlPath = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+      const urlPath = decodeURIComponent(rawReqPath);
       let filePath = normalize(join(dir, urlPath));
       const rel = relative(rootNorm, filePath);
       if (rel.startsWith('..') || isAbsolute(rel)) { res.writeHead(403).end(); return; }
