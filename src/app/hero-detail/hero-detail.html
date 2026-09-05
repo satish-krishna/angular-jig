@@ -1,0 +1,66 @@
+<div class="flex flex-col gap-6 p-6">
+  @if (vm.hero(); as hero) {
+    <div class="flex items-center justify-between">
+      <button hlmBtn variant="ghost" routerLink="/roster">
+        <ng-icon name="lucideChevronLeft" />
+        <span>Back to Roster</span>
+      </button>
+      @if (!vm.isEditing()) {
+        <button hlmBtn variant="outline" (click)="vm.isEditing.set(true)">
+          <ng-icon name="lucidePencil" />
+          <span>Edit</span>
+        </button>
+      }
+    </div>
+    @if (vm.isEditing()) {
+      <div class="rounded-lg border border-border bg-card p-6">
+        <h2 class="mb-4 text-xl font-semibold">Edit Hero</h2>
+        <app-hero-form [initialValue]="hero" (saveHero)="vm.saveHero($event)" (cancel)="vm.cancelEdit()" />
+      </div>
+    } @else {
+      <div class="rounded-lg border border-border bg-card p-6">
+        <div class="flex items-start gap-4">
+          <hlm-avatar size="lg">
+            <span hlmAvatarFallback>{{ hero.name.substring(0, 2).toUpperCase() }}</span>
+          </hlm-avatar>
+          <div class="flex-1">
+            <h1 class="text-2xl font-bold">{{ hero.name }}</h1>
+            <p class="text-muted-foreground">{{ hero.alias }}</p>
+            <div class="mt-2 flex gap-2">
+              <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
+              <span hlmBadge [variant]="hero.status === 'Active' ? 'default' : hero.status === 'Injured' ? 'destructive' : 'secondary'">
+                {{ hero.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2">
+          <div>
+            <p class="text-sm text-muted-foreground">Power Index</p>
+            <p class="text-2xl font-bold">{{ hero.power }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-muted-foreground">Clearance Tier</p>
+            <p class="text-2xl font-bold">{{ hero.clearanceTier }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-muted-foreground">Missions</p>
+            <p class="text-2xl font-bold">{{ hero.missionsRun }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-muted-foreground">Success Rate</p>
+            <p class="text-2xl font-bold">{{ (hero.successRate * 100).toFixed(0) }}%</p>
+          </div>
+        </div>
+        @if (hero.bio) {
+          <div class="mt-6">
+            <p class="text-sm text-muted-foreground">Bio</p>
+            <p class="mt-2 text-foreground">{{ hero.bio }}</p>
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <div class="text-center text-muted-foreground">Hero not found</div>
+  }
+</div>

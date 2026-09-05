@@ -1,8 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
+import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
+import { HlmBadgeImports } from '@spartan-ng/helm/badge';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HeroForm } from '../ui/hero-form';
+import { HeroDetailViewModel } from './hero-detail.view-model';
 
-// Placeholder. The hero detail and edit form screen is built here.
 @Component({
   selector: 'app-hero-detail',
-  template: `<h1>Hero detail</h1>`,
+  providers: [HeroDetailViewModel],
+  imports: [RouterLink, NgIcon, HlmAvatarImports, HlmBadgeImports, HlmButtonImports, HeroForm],
+  templateUrl: './hero-detail.html',
 })
-export class HeroDetail {}
+export class HeroDetail implements OnInit {
+  protected readonly vm = inject(HeroDetailViewModel);
+  private readonly route = inject(ActivatedRoute);
+
+  ngOnInit() {
+    this.vm.heroId.set(this.route.snapshot.paramMap.get('id'));
+  }
+}
