@@ -1,0 +1,22 @@
+{
+  "$comment": "The house gates, armed for every session in this repo. PostToolUse hooks check each edit against the written conventions in .claude/skills and CLAUDE.md, and hand back a corrective message on a violation. The PreToolUse guard keeps this configuration and the rules themselves read-only: a rule with a dial is not a rule, and the answer to a gate that blocks you is to change the code, not the gate. Two further checks need a rendered application and so cannot be per-edit hooks; run them yourself before calling the work done: npm run check:boot and npm run check:responsive.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/protect-enforcement.mjs" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node .claude/hooks/seal-templates.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-layout.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-component-shape.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-freeloader.mjs" }
+        ]
+      }
+    ]
+  }
+}
