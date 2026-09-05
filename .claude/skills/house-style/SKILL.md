@@ -7,6 +7,99 @@ description: The house frontend conventions for this repo, layered on top of the
 
 These are this repo's conventions, layered on top of the SpartanNG docs (the `spartan` skill). They extend the spartan docs where spartan is silent; they never contradict them. Where spartan already has a rule (semantic colors, `class` is for layout only, `gap-*` not `space-*`, `size-*` for equal dimensions), follow the spartan skill; this file adds only what spartan does not cover.
 
+## The sealed control vocabulary
+
+Helm primitives are copied into `libs/ui`, so the set of primitives this repo owns is exactly what that directory ships. Where a primitive covers a native element, use the primitive. Reaching for the bare native element is the drift this rule exists to stop, and it is the one convention worth reading before writing any template.
+
+Most primitives are directives you put on the native element, so the markup stays native and accessible and only picks up the Helm styling and behavior. A few have no directive twin and replace the native element outright.
+
+Native elements that must carry their primitive directive (any one of the listed attributes satisfies the rule):
+
+| native element | primitive attribute |
+| --- | --- |
+| `<button>` | `hlmBtn`, or a Helm button directive that already implies it (`hlmDialogTrigger`, `hlmDialogTriggerFor`, `hlmDialogClose`, `hlmSheetTrigger`, `hlmSheetClose`, `hlmSidebarTrigger`, `hlmSidebarRail`, `hlmSidebarMenuButton`, `hlmSidebarMenuSubButton`, `hlmSidebarMenuAction`, `hlmSidebarGroupAction`, `hlmSidebarGroupLabel`) |
+| `<input>` | `hlmInput`, or `hlmSidebarInput` |
+| `<textarea>` | `hlmTextarea` |
+| `<label>` | `hlmLabel`, or `hlmFieldLabel` |
+| `<fieldset>` | `hlmFieldSet` |
+| `<legend>` | `hlmFieldLegend` |
+| `<table>` | `hlmTable` |
+| `<thead>` | `hlmTableHeader`, or `hlmTHead` |
+| `<tbody>` | `hlmTableBody`, or `hlmTBody` |
+| `<tfoot>` | `hlmTableFooter`, or `hlmTFoot` |
+| `<tr>` | `hlmTableRow`, or `hlmTr` |
+| `<th>` | `hlmTableHead`, or `hlmTh` |
+| `<td>` | `hlmTableCell`, or `hlmTd` |
+| `<caption>` | `hlmTableCaption`, or `hlmCaption` |
+
+Native elements with no directive twin, which must be replaced by the primitive component instead:
+
+| native element | replace with |
+| --- | --- |
+| `<select>` | `<hlm-select>` and its parts (`hlm-select-trigger`, `hlm-select-content`, `hlm-select-item`) |
+| `<dialog>` | `<hlm-dialog>` and its parts (`hlm-dialog-content`, `hlmDialogTitle`, `hlm-dialog-footer`) |
+
+A native `<select>` is banned outright rather than given a directive, because the sanctioned select in this repo is the composed `hlm-select`. The `native-select` primitive is not installed, so there is no supported way to style a bare `<select>` here.
+
+An `<a>` is not in the table: a plain anchor is a real navigation element, and `hlmBtn` on an anchor is opt-in.
+
+Good:
+
+```html
+<table hlmTable>
+  <thead hlmTHead>
+    <tr hlmTr><th hlmTh>Hero</th><th hlmTh>Power</th></tr>
+  </thead>
+  <tbody hlmTBody>
+    <tr hlmTr><td hlmTd>Silverwing</td><td hlmTd>88</td></tr>
+  </tbody>
+</table>
+
+<hlm-field>
+  <label hlmFieldLabel for="alias">Alias</label>
+  <input hlmInput id="alias" />
+</hlm-field>
+```
+
+Bad:
+
+```html
+<!-- native elements where a primitive exists -->
+<table>
+  <tr><td>Silverwing</td></tr>
+</table>
+<label for="alias">Alias</label>
+<select><option>Aerial</option></select>
+```
+
+## Icons are `<ng-icon>`, never inline SVG
+
+Icons come from `@ng-icons` with the Lucide set, exactly as the spartan icons doc describes: import the icon symbol, register it on the component with `provideIcons`, and render it as `<ng-icon>`.
+
+A raw inline `<svg>` in a template is the drift this rule stops. Pasted SVG markup bypasses the icon registry, cannot be swapped or themed, duplicates a glyph the set already ships, and is the single largest source of unreviewable markup in a hand-built screen. There is no `hlm-icon` wrapper; `<ng-icon>` is the element.
+
+Good:
+
+```ts
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideTrash2 } from '@ng-icons/lucide';
+
+@Component({
+  imports: [NgIcon],
+  providers: [provideIcons({ lucideTrash2 })],
+  template: `<button hlmBtn size="icon" variant="ghost"><ng-icon name="lucideTrash2" /></button>`,
+})
+export class RetireButton {}
+```
+
+Bad:
+
+```html
+<button hlmBtn size="icon"><svg viewBox="0 0 24 24"><path d="M3 6h18" /></svg></button>
+```
+
+Registering the icon is not optional, but it is also not something a template check can see: `@ng-icons` logs a warning for an unregistered name rather than failing the build, so an unregistered icon renders as nothing at all. Register every name you use.
+
 ## Layout is a grammar
 
 Layout is expressed with a small, fixed vocabulary, so that a screen's structure is decidable rather than a matter of taste.
@@ -74,7 +167,7 @@ This rule is about hand-written CSS, where spartan is silent because it assumes 
 
 Angular's `CLAUDE.md` says to keep components small and single-responsibility; it does not say how to split them. This repo does, so the split is decidable rather than a matter of taste.
 
-- **Container (smart) components** are the routed feature components. They inject the application's data services (`HttpClient`, a `HeroService`, a store), hold the signals, and pass state down. They live in their feature folder (`src/app/heroes`, `src/app/dashboard`).
+- **Container (smart) components** are the routed feature components. They own the screen's state and pass it down to the presentational components they compose. They live in their feature folder (`src/app/heroes`, `src/app/dashboard`). They own that state through a ViewModel rather than holding it in the component class: the MVVM section below refines this rule and is the one that binds.
 - **Presentational (dumb) components** live under `src/app/ui/`. They receive state through `input()`, emit through `output()`, and use `model()` for two-way binding. They inject no application data service: a presentational component that reaches for `HttpClient` or a feature `*Service` is doing a container's job and belongs in a feature folder instead. Injecting a pure framework or UI helper (`ElementRef`, `DestroyRef`, a spartan service) is fine; injecting data is not.
 
 Good:
@@ -103,6 +196,72 @@ Two shape rules follow from the Angular baseline and are stated here so they are
 
 - **Do not hand-set change detection.** `OnPush` is the Angular v22 default, and `CLAUDE.md` says not to set `changeDetection` explicitly. So writing `changeDetection: ChangeDetectionStrategy.OnPush` (or `.Default`) in a `@Component` is drift, not diligence. Leave it off.
 - **No `.subscribe` in a component.** `CLAUDE.md` says to handle observables with the async pipe. A component that calls `.subscribe(...)` on an observable is managing a subscription by hand where the template could do it. Convert at the edge and bind with the async pipe (or `toSignal`).
+
+## MVVM: the ViewModel owns the state
+
+The container/presentational split above says which component holds the state. This section says where inside the container that state actually lives, and the answer is: not in the component. Every routed feature screen has a ViewModel, and the component is a thin shell over it.
+
+This is a deliberate refinement of the rule above, not a contradiction of it. Read the two together as: a container owns the state, and it owns it *through its ViewModel*. Presentational components are unchanged.
+
+- **The ViewModel is a service.** An `@Injectable` class named `<Feature>ViewModel`, holding all of the screen's logic and state as signals. It injects the data services. It has no `providedIn`, so it is not a singleton.
+- **The ViewModel is component-scoped.** The component lists it in its own `providers: [HeroDetailViewModel]`. Component-scoped, so each instance of the screen gets its own state and it dies with the screen. A `providedIn: 'root'` ViewModel is a store wearing a ViewModel's name, and it is a defect here.
+- **The component is a shell.** It injects the ViewModel and binds the template to its signals. It declares no `signal()`, `computed()`, or `linkedSignal()` of its own, and it injects no data service: everything a container used to do directly, it now does through the ViewModel.
+- **The ViewModel is unit-testable with zero DOM.** That is the point of the whole shape. If testing a screen's logic needs `TestBed` and a fixture, the logic is in the wrong class.
+
+`input()`, `output()`, `model()`, `viewChild()`, and `contentChild()` are component API, not state, and stay on the component. Injecting `ActivatedRoute` or `Router` in the component is fine; injecting `HeroService` is not.
+
+Good:
+
+```ts
+// hero-detail.view-model.ts: all the state and logic, no DOM, no providedIn
+@Injectable()
+export class HeroDetailViewModel {
+  private readonly heroes = inject(HeroService);
+  readonly heroId = signal<number | null>(null);
+  readonly hero = computed(() => this.heroes.byId(this.heroId()));
+  readonly canDeploy = computed(() => this.hero()?.status === 'Active');
+  rename(name: string) { /* ... */ }
+}
+```
+
+```ts
+// hero-detail.ts: a shell that provides, injects, and binds
+@Component({
+  selector: 'app-hero-detail',
+  providers: [HeroDetailViewModel],
+  imports: [HlmCardImports],
+  template: `<h1>{{ vm.hero()?.name }}</h1>`,
+})
+export class HeroDetail {
+  protected readonly vm = inject(HeroDetailViewModel);
+}
+```
+
+Bad:
+
+```ts
+// state in the component class, and the data service injected past the ViewModel
+@Component({ selector: 'app-hero-detail', template: `...` })
+export class HeroDetail {
+  private readonly heroes = inject(HeroService);   // belongs in the ViewModel
+  readonly hero = signal<Hero | null>(null);       // belongs in the ViewModel
+}
+```
+
+```ts
+// a ViewModel that is really a singleton store
+@Injectable({ providedIn: 'root' })                 // must be component-scoped
+export class HeroDetailViewModel {}
+```
+
+```ts
+// a ViewModel injected but never provided: this is a runtime NullInjectorError,
+// and nothing in the build catches it for you
+@Component({ selector: 'app-roster', template: `...` })  // no providers: [RosterViewModel]
+export class Roster {
+  protected readonly vm = inject(RosterViewModel);
+}
+```
 
 ## Forms: schema-driven with zod
 
@@ -153,8 +312,8 @@ readonly form = form(this.model, (path) => {
 A screen must render without responsive failure at three viewport widths, height fixed at 900px: 375px (a small phone), 768px (a tablet), and 1280px (a laptop). Responsive failure is defined in rendered pixels, so it is decidable rather than a matter of taste. A screen fails when, at any of the three widths, any of these is true (all comparisons carry a 1px tolerance for sub-pixel rounding):
 
 - **The page scrolls horizontally.** The document is wider than the viewport. Content must reflow to the width, never force a sideways scrollbar on the whole page.
-- **An element escapes the viewport.** An element's right edge is past the viewport width, or its left edge is below zero, and nothing intentionally scrollable contains it. An element sitting inside a container you deliberately made scrollable (`overflow: auto` or `overflow: scroll`) is exempt; a wide element under an `overflow: hidden` ancestor is not, because its content is cut off with no way to reach it.
-- **An element clips its own content.** An element with `overflow: hidden` or `overflow: clip` holds content larger than its box, so text or controls are truncated. Again, `overflow: auto`/`scroll` is exempt: a scroll container is a design choice, not a defect.
+- **An element escapes the viewport.** An element's right edge is past the viewport width, or its left edge is below zero, and nothing intentionally scrollable contains it. An element sitting inside a container you deliberately made scrollable (`overflow: auto` or `overflow: scroll`) is exempt; a wide element under an `overflow: hidden` ancestor is not, because its content is cut off with no way to reach it. An element that is not being shown to the user at all is also exempt: if it, or any ancestor, is `display: none`, `visibility: hidden`, or `aria-hidden="true"`, there is nothing on screen to escape. That exemption is what makes a closed off-canvas navigation drawer legal, and it is exactly why a closed drawer must really be hidden rather than merely parked off-screen with a transform. A drawer translated out of view is still rendered, still focusable, and still counts as an escape.
+- **An element clips its own content.** An element with `overflow: hidden` or `overflow: clip` holds content larger than its box, so text or controls are truncated. Again, `overflow: auto`/`scroll` is exempt: a scroll container is a design choice, not a defect. The not-being-shown exemption applies here too, for the same reason: content clipped inside something the user cannot see is not a visible defect.
 
 Build the screen so a narrow width stacks rather than overflows: prefer the layout grammar's responsive grid (`grid-cols-1 sm:grid-cols-2`), let button rows wrap (`flex-wrap`), and avoid fixed pixel widths on inputs and cards that cannot shrink. The detail card, the form field, and the Save/Cancel button row must all fit and remain reachable at 375px.
 

@@ -8,7 +8,7 @@ Read `sealing-spec.md`, `layout-grammar-spec.md`, `component-shape-spec.md`, and
 
 Part 4 needed no doc-first work: `@if` over `*ngIf` and no `ngClass` are Angular's own rules, already in the agent's baseline `CLAUDE.md`. Plane 2 is different. Angular has no documented rule that says "the detail form must not overflow at 375px," and there is no compiler option that decides it. So the load-bearing principle still holds only if the definition of "correct" is written down as a doc the agent reads in both conditions, before any gate mechanizes it. Part 5 adds a "responsive correctness" section to the house-style skill (both mirrors, byte-identical), and the gate enforces exactly that section, no more.
 
-The doc states the breakpoints, the three failure kinds, the tolerance, and the one exemption. It is transcribed into `.claude/skills/house-style/SKILL.md` and `.agents/skills/house-style/SKILL.md` as a new section, and this spec is the source of its wording.
+The doc states the breakpoints, the three failure kinds, the tolerance, and the two exemptions. It is transcribed into `.claude/skills/house-style/SKILL.md` and `.agents/skills/house-style/SKILL.md` as a new section, and this spec is the source of its wording.
 
 ## What the house-style doc says (the graph, defined in pixels)
 
@@ -21,10 +21,22 @@ A screen is responsive-correct when, at each of three breakpoints, it commits no
 The three failure kinds, each decidable from the rendered DOM with no model in the loop:
 
 1. **`viewport-escape`.** The document scrolls horizontally: `document.documentElement.scrollWidth` exceeds the viewport width by more than a 1px sub-pixel tolerance. The page must never scroll sideways at these widths. This is the strongest and least ambiguous signal.
-2. **`element-escape`.** An element inside the measured slice has a bounding-rect right edge past the viewport width, or a left edge below zero, beyond tolerance. This catches an element poking off-screen even when an `overflow: hidden` ancestor swallowed the page scrollbar, so `viewport-escape` alone read clean.
+2. **`element-escape`.** An element inside the measured slice has a bounding-rect right edge past the viewport width, or a left edge below zero, beyond tolerance. This catches an element poking off-screen even when an `overflow: hidden` ancestor swallowed the page scrollbar, so `viewport-escape` alone read clean. An element that is not being shown to the user is exempt, see the hidden-element exemption below.
 3. **`element-clip`.** An element clips its own content: its computed `overflow-x` or `overflow-y` is `hidden` or `clip`, and its `scrollWidth` exceeds its `clientWidth` (or `scrollHeight` its `clientHeight`) beyond tolerance. Content is cut off with no way to reach it.
 
-The one exemption, and the reason the spec does not drown in false positives: an element whose computed overflow on the measured axis is `auto` or `scroll` is an intentional scroll container, not a bug, and is exempt from `element-clip`. A deliberately scrollable panel is a design choice; a truncated label under `overflow: hidden` is a defect. The tolerance is 1px on every comparison, to absorb sub-pixel rounding, and it is stated in the doc so the gate cannot quietly widen it.
+There are two exemptions, and they are the reason the spec does not drown in false positives.
+
+**The scroll-container exemption.** An element whose computed overflow on the measured axis is `auto` or `scroll` is an intentional scroll container, not a bug, and is exempt from `element-clip`; an element inside one is exempt from `element-escape`. A deliberately scrollable panel is a design choice; a truncated label under `overflow: hidden` is a defect.
+
+**The hidden-element exemption (added by the capstone).** An element that is not being shown to the user commits neither `element-escape` nor `element-clip`, because there is nothing on screen to escape or to truncate. An element counts as not shown when it, or any ancestor, is `display: none`, `visibility: hidden`, or carries `aria-hidden="true"`.
+
+This exemption exists because the capstone's layout has a navigation rail that becomes an off-canvas drawer below 768px, and running the Part 5 auditor over that layout showed the closed drawer reading as `element-escape`: a drawer parked off-screen with a transform has a negative left edge, which is precisely the geometry the rule was written to catch. The Part 5 slices had no sidebar, so the case never arose. The naive fix, exempting any element with a negative left edge, would gut the rule. The correct fix is narrower and is a real accessibility rule rather than a measurement dodge: the drawer must actually be hidden.
+
+That is the load-bearing half of this exemption, and it is why the exemption makes the gate stricter rather than laxer. A drawer merely translated out of view is still rendered, still in the tab order, and still read by a screen reader, so it is a genuine defect and stays a violation. Only a drawer that is properly `display: none`, `visibility: hidden`, or `aria-hidden` when closed is exempt, and a drawer in that state is one that also behaves correctly for keyboard and assistive-technology users. The exemption is written so that the only way to satisfy it is to fix the accessibility bug, which means a build cannot buy its way past the responsive gate by hiding a problem; it has to hide the element honestly.
+
+`display: none` was already exempt before this change, incidentally, but only by accident: such an element has a zero-area bounding rect and the auditor skips zero-area elements. The capstone makes the exemption explicit and extends it to `visibility: hidden` and `aria-hidden`, which keep their boxes, so the behavior no longer rests on an implementation detail.
+
+The tolerance is 1px on every comparison, to absorb sub-pixel rounding, and it is stated in the doc so the gate cannot quietly widen it.
 
 ## The measurement model (cumulative baseline)
 
@@ -47,7 +59,9 @@ The measured slice is the hero detail and edit screen, the same slice Parts 3 an
 - Launches headless Chromium through Playwright. For each breakpoint it sets the viewport, navigates to the slice route, waits for the page to settle, then runs one in-page measurement function that walks the slice subtree and returns every violation as `{ kind, selector, breakpoint, detail }`.
 - Writes `responsive-tally.json` (the counts per kind per breakpoint, plus the ordered violation list) and one screenshot per breakpoint under the run's evidence folder.
 
-The slice subtree measured is the routed component's host and its descendants, found from a stable anchor (the `app-hero-detail` host, or the `router-outlet`'s rendered child), so chrome outside the slice does not pollute the count. `viewport-escape` is a page-level check and is measured against the document regardless.
+The slice subtree measured is the routed component's host and its descendants, found from a stable anchor, so chrome outside the slice does not pollute the count. `viewport-escape` is a page-level check and is measured against the document regardless.
+
+The anchor is a selector, passed to both engines as `--anchor`, defaulting to `app-hero-detail` so Part 5's own runs are unchanged; if the selector matches nothing the engines fall back to `body`. The capstone passes `--anchor body` deliberately. Its screens live inside a persistent app shell, and the navigation drawer that the hidden-element exemption exists for is a sibling of the routed component, not a descendant of it. Measuring only the routed host on the capstone would exclude the single element the exemption was written for, which would be a measurement that quietly avoids looking at the interesting part.
 
 ### Flakiness is the enemy; these controls kill it
 

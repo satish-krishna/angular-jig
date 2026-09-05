@@ -12,7 +12,7 @@ Same load-bearing principle as Parts 1 and 2: every rule comes from a doc in the
 - **The spartan `forms.md` doc**: spartan's `hlmField` and controls work with template-driven, reactive, and signal forms alike. Spartan is neutral on which forms API you use; it does not ban any. So the forms rule is not spartan's, it is the house doc's.
 - **The house-style skill** (`.claude/skills/house-style`, `.agents/skills/house-style`): the container/presentational split (presentational components live under `src/app/ui/` and inject no application data service), and the schema-driven forms pattern (a zod schema is the single source of truth; the model is `z.infer<typeof schema>`; validation flows through `validateStandardSchema(path, schema)` and is never restated as a per-field validator; template-driven and reactive forms are not used).
 
-Two of Part 3's six gated rules are drawn straight from Angular's `CLAUDE.md` and need no new doc: no hand-set `changeDetection`, and no `.subscribe` in a component. The other four (template-driven forms, restated validators, a presentational component injecting a data service, and reactive forms) exceed or sharpen what Angular's docs cleanly decide, so, per the series principle, the house-style skill was written first and only then gated. Doc-first, always, and here also **code-first**: the schema-driven pattern is unusable unless the repo actually has the substrate it names, so `zod` is installed and the `src/app/forms` helpers (`FormFieldMeta`, `formMeta`) are added before the gate mechanizes the rule. A gate for `validateStandardSchema` while the agent cannot import it would be a trap, not a test.
+Two of Part 3's original six gated rules are drawn straight from Angular's `CLAUDE.md` and need no new doc: no hand-set `changeDetection`, and no `.subscribe` in a component. The other four (template-driven forms, restated validators, a presentational component injecting a data service, and reactive forms) exceed or sharpen what Angular's docs cleanly decide, so, per the series principle, the house-style skill was written first and only then gated. Doc-first, always, and here also **code-first**: the schema-driven pattern is unusable unless the repo actually has the substrate it names, so `zod` is installed and the `src/app/forms` helpers (`FormFieldMeta`, `formMeta`) are added before the gate mechanizes the rule. A gate for `validateStandardSchema` while the agent cannot import it would be a trap, not a test.
 
 The reactive-forms rule is the one place the house constitution overrides a framework endorsement rather than merely extending it: Angular's `CLAUDE.md` offers reactive forms as the fallback when signal-forms do not fit, and the house-style skill overrides that fallback outright (no reactive forms). That override was made explicit in the doc before the rule was gated, and the rule was promoted from a counter-only heuristic to a hard gate only after a measured run showed the agent reaching for reactive forms in two of three gate-off trials, exactly the drift the gate exists to stop. The heuristics that stay counter-only (a hand-written interface where `z.infer` would fit, and a `ui/` component holding writable state) are not cleanly decidable and stay measured, not blocked.
 
@@ -28,7 +28,7 @@ By Part 3 the Part 1 sealing hook and the Part 2 layout hook are baseline: on in
 
 ## The rules (hard-gated)
 
-Every gated Part 3 violation is one of exactly six kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
+Every gated Part 3 violation is one of exactly ten kinds: the six below, plus the four MVVM kinds the capstone added, which have their own section. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
 
 ### 1. `hand-set-change-detection`: an explicit `changeDetection` in `@Component`
 
@@ -89,15 +89,63 @@ Docs: the house-style skill, "no reactive forms." This is the one Part 3 rule wh
 
 This rule started as a counter-only heuristic and was promoted to a hard gate after the measured run: across three gate-off trials the agent never used the house signal-forms pattern and reached for reactive forms in two of them. Promoting it required making the doc override explicit first (doc-first), so the gate mechanizes an unambiguous house rule and not a preference smuggled in at the gate.
 
+## The MVVM rules (hard-gated, added by the capstone)
+
+The capstone adds a fifth doc source and four more gated kinds: the house-style skill's MVVM section, which says where inside a container the state actually lives. This is a **refinement** of rule 5's world, not a new one, and the reconciliation has to be stated explicitly or the two halves of Part 3 will disagree about where signals belong.
+
+Before the capstone, the house doc said a container component "holds the signals." That sentence is now wrong on its own and has been rewritten: a container **owns** the state, and it owns it through a component-scoped ViewModel. The presentational half of rule 5 is untouched, `src/app/ui/` components still take `input()`/`output()` and inject no data. What moves is the other half: a feature component no longer holds signals or injects data services itself, its ViewModel does. Rule 5 keys on the `ui/` path; rules 8 and 9 below key on the complement of that path, so no file is ever judged by both.
+
+This is the sharpest non-native pattern in the whole series. It is not Angular's documented shape, it is not spartan's, and it is not in the model's priors: the ComponentStore/presenter shape exists in the ecosystem, but nothing in the agent's baseline tells it to reach for one. Parts 4 and 5 produced nulls because the gates were aimed at patterns the model already knew. This one is aimed squarely at the far side of that distance, and it is the single rule most likely to make the capstone fire.
+
+A ViewModel is identified syntactically, by a class name ending in `ViewModel`. That is a naming convention promoted to a decidable marker, exactly as rule 5 promoted the `Service` suffix, and it is stated in the house doc so the agent is told the convention rather than made to guess it.
+
+### 7. `vm-not-component-scoped`: a ViewModel with `providedIn`
+
+Docs: the house-style skill, "The ViewModel is component-scoped ... A `providedIn: 'root'` ViewModel is a store wearing a ViewModel's name." A singleton ViewModel leaks one screen's state into the next visit to that screen, which is the whole defect the component-scoped lifetime prevents.
+
+- Violation: a class whose name ends in `ViewModel`, decorated with `@Injectable({ ... })` or `@Service({ ... })` whose metadata object has a `providedIn` property, to any value.
+- Good (passes): `@Injectable() export class HeroDetailViewModel {}`. Bad (fails): `@Injectable({ providedIn: 'root' }) export class HeroDetailViewModel {}`.
+
+Decidable from the TS AST: the class name suffix plus the presence of the property key. No type information required.
+
+### 8. `state-outside-vm`: a feature component declaring its own state signal
+
+Docs: the house-style skill, "It declares no `signal()`, `computed()`, or `linkedSignal()` of its own." This is the load-bearing MVVM rule: it is what actually forces the logic out of the component and into the testable class.
+
+- Violation: a `@Component` class whose file is NOT under `src/app/ui/`, declaring a property whose initializer is a call to `signal`, `computed`, or `linkedSignal`.
+- Not a violation: `input()`, `output()`, `model()`, `viewChild()`, `contentChild()`, `inject()`, `toSignal()`. Those are component API or an edge conversion, not screen state, and the house doc says so.
+- Good (passes): `protected readonly vm = inject(HeroDetailViewModel);` and nothing else. Bad (fails): `readonly hero = signal<Hero | null>(null);` in a feature component.
+
+The `ui/` complement matters. A presentational component holding a `signal()` is already measured, and only measured, by the `dumb-holds-state` heuristic (kind 12), because a self-contained widget's open/closed toggle is legitimate. A feature component holding one is not ambiguous: the house doc names the ViewModel as the place. So the same syntactic property is a hard gate on one side of the path split and a soft heuristic on the other, and that asymmetry is deliberate rather than an oversight.
+
+### 9. `feature-injects-data`: a feature component injecting a data service directly
+
+Docs: the house-style skill, "it injects no data service: everything a container used to do directly, it now does through the ViewModel." This is rule 5 inverted across the path split: rule 5 says a `ui/` component may not inject data because a container should; rule 9 says a container may not inject data either, because its ViewModel should.
+
+- Violation: a `@Component` class whose file is NOT under `src/app/ui/`, containing an `inject(X)` call where `X` is `HttpClient` or an identifier ending in `Service`, excluding the pure-UI allowlist rule 5 already defines (the framework helpers and any `Hlm*` identifier).
+- Not a violation: `inject(HeroDetailViewModel)` (a `ViewModel` suffix is not a `Service` suffix), or `inject(ActivatedRoute)` / `inject(Router)`. Routing is how a screen learns which screen it is, and the house doc permits it in the component.
+- Good (passes): the ViewModel calls `inject(HeroService)`; the component calls `inject(HeroDetailViewModel)`. Bad (fails): the component calls `inject(HeroService)`.
+
+The rule fires only inside `@Component` classes. A ViewModel injecting `HeroService` is the correct shape and is never flagged, because a ViewModel carries no `@Component` decorator.
+
+### 10. `vm-not-provided`: a ViewModel injected but not provided
+
+Docs: the house-style skill, "The component lists it in its own `providers: [HeroDetailViewModel]`." This rule exists because nothing else catches the mistake. A component-scoped ViewModel that is injected without being provided is a `NullInjectorError` at runtime, not a build failure, so `ng build` passes and the screen dies when it renders. That is the opposite of Part 4's situation: there the compiler had already built the graph and the gate rode it for free, and here the framework defers the check to a moment the harness would only reach by accident.
+
+- Violation: a `@Component` class containing an `inject(X)` call where `X` ends in `ViewModel`, whose `@Component` metadata has no `providers` array listing `X`.
+- Good (passes): `providers: [HeroDetailViewModel]` in the decorator and `inject(HeroDetailViewModel)` in the class. Bad (fails): the `inject` without the `providers` entry.
+
+Decidable from the TS AST: the identifier set in `providers` versus the identifier set injected. `providers: [...someSpread]` is not resolvable statically and is treated as satisfying the rule, because a gate that guesses is worse than a gate with a stated blind spot.
+
 ## Counter-only heuristics (measured, never gated)
 
 Two Part 3 signals are not cleanly decidable and so are measured by the counter and reported as low-confidence, never used to block an edit. A heuristic that hard-blocks on a false positive is a bad gate; this is the same call Part 2 made for `nested-flex-grid`.
 
-### 7. `hand-written-form-model` (heuristic)
+### 11. `hand-written-form-model` (heuristic)
 
 A form component whose model type is a locally declared `interface` or `type` for the form's shape, instead of `z.infer<typeof schema>`. The house rule is that the model is inferred from the schema. This is a heuristic because deciding that a given interface "is a form model" (rather than any other data shape) is not clean: the counter flags an `interface`/`type` that is used as the type argument of a `signal<...>()` which then feeds a `form(...)` call, and reports it as a smell, not a defect.
 
-### 8. `dumb-holds-state` (heuristic)
+### 12. `dumb-holds-state` (heuristic)
 
 A component under `src/app/ui/` that declares writable non-input state (a `signal(...)` or `WritableSignal` field that is not an `input()`/`model()`). A presentational component holding mutable local state may be a legitimate self-contained widget (an open/closed toggle) or a container that leaked into `ui/`. The counter cannot tell which, so it counts and flags it as the lower-confidence smell of the two, not a defect.
 
@@ -112,6 +160,10 @@ A component under `src/app/ui/` that declares writable non-input state (a `signa
     "restated-validator": 0,
     "presentational-injects-data": 0,
     "reactive-form": 0,
+    "vm-not-component-scoped": 0,
+    "state-outside-vm": 0,
+    "feature-injects-data": 0,
+    "vm-not-provided": 0,
     "hand-written-form-model": 0,
     "dumb-holds-state": 0,
     "all": 0
@@ -122,11 +174,11 @@ A component under `src/app/ui/` that declares writable non-input state (a `signa
 }
 ```
 
-`totals.all` is the sum of the six gated kinds only; the two heuristics are in `totals` but excluded from `all`, so `all` counts what the gate could have blocked. `violations` is ordered by file, then line, then kind, so the same committed input serializes byte-identically. That ordering is what makes the determinism self-test (same diff in, identical tally out) meaningful. A full audit runs all three counters (Part 1, Part 2, Part 3 kinds) and reports each, because the series is cumulative.
+`totals.all` is the sum of the ten gated kinds only; the two heuristics are in `totals` but excluded from `all`, so `all` counts what the gate could have blocked. `violations` is ordered by file, then line, then kind, so the same committed input serializes byte-identically. That ordering is what makes the determinism self-test (same diff in, identical tally out) meaningful. A full audit runs all three counters (Part 1, Part 2, Part 3 kinds) and reports each, because the series is cumulative.
 
 ## What each engine parses
 
-- TypeScript (`hand-set-change-detection`, `component-subscribe`, `restated-validator`, the `FormsModule` half of `template-driven-form`, `presentational-injects-data`, `reactive-form`, and both heuristics): the gate runs custom typescript-eslint rules over the TypeScript AST (`@typescript-eslint/typescript-estree` node types); the counter walks the TypeScript compiler's own AST via the compiler API (`ts.createSourceFile`, `ts.forEachChild`). Different AST shapes, no shared code.
+- TypeScript (`hand-set-change-detection`, `component-subscribe`, `restated-validator`, the `FormsModule` half of `template-driven-form`, `presentational-injects-data`, `reactive-form`, all four MVVM kinds, and both heuristics): the gate runs custom typescript-eslint rules over the TypeScript AST (`@typescript-eslint/typescript-estree` node types); the counter walks the TypeScript compiler's own AST via the compiler API (`ts.createSourceFile`, `ts.forEachChild`). Different AST shapes, no shared code.
 - Templates (the `ngModel` half of `template-driven-form`): the gate uses the angular-eslint template parser; the counter uses `@angular/compiler`'s `parseTemplate`, reading `.html` files and inline `template:` strings.
 
 Two engines, one spec, and the spec is the docs. If they ever disagree on a fixture, that disagreement is the finding.

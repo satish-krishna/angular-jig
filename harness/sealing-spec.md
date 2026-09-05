@@ -8,26 +8,78 @@ Every rule here comes from a doc in the agent's baseline: SpartanNG's own docume
 
 ## The vocabulary, as installed
 
-Read from source, not from memory. The primitive selectors present in `libs/ui` at this substrate commit:
+Read from source, not from memory. This list is derived from the `selector:` declarations in `libs/ui` at this substrate commit, which is the only honest definition of what the repo owns. The capstone widened `libs/ui` from three primitives to nineteen, and this section is the record of that widening; the rules below are exactly as wide as it and no wider.
 
-- `button[hlmBtn], a[hlmBtn]` (the button directive)
-- `[hlmInput]` (the input directive)
-- `[hlmCard], hlm-card` and the card parts (`hlmCardHeader`, `hlmCardFooter`, `hlmCardTitle`, `hlmCardDescription`, `hlmCardContent`, `hlmCardAction`)
+Primitive attribute directives:
+
+`hlmBtn`, `hlmInput`, `hlmTextarea`, `hlmLabel`, `hlmSeparator`, `hlmSkeleton`, `hlmBadge`, `hlmTooltip`,
+`hlmCard`, `hlmCardHeader`, `hlmCardFooter`, `hlmCardTitle`, `hlmCardDescription`, `hlmCardContent`, `hlmCardAction`,
+`hlmTable`, `hlmTableContainer`, `hlmTHead`, `hlmTBody`, `hlmTFoot`, `hlmTr`, `hlmTh`, `hlmTd`, `hlmCaption`, `hlmTableHeader`, `hlmTableBody`, `hlmTableFooter`, `hlmTableRow`, `hlmTableHead`, `hlmTableCell`, `hlmTableCaption`,
+`hlmField`, `hlmFieldContent`, `hlmFieldDescription`, `hlmFieldGroup`, `hlmFieldLabel`, `hlmFieldTitle`, `hlmFieldSet`, `hlmFieldLegend`,
+`hlmSelect`, `hlmSelectGroup`, `hlmSelectLabel`, `hlmSelectMultiple`, `hlmSelectPlaceholder`, `hlmSelectPortal`, `hlmSelectSeparator`, `hlmSelectValue`, `hlmSelectValues`, `hlmSelectValuesContent`, `hlmSelectValueTemplate`,
+`hlmDialogClose`, `hlmDialogDescription`, `hlmDialogFooter`, `hlmDialogHeader`, `hlmDialogOverlay`, `hlmDialogPortal`, `hlmDialogTitle`, `hlmDialogTrigger`, `hlmDialogTriggerFor`,
+`hlmSheetClose`, `hlmSheetDescription`, `hlmSheetFooter`, `hlmSheetHeader`, `hlmSheetOverlay`, `hlmSheetPortal`, `hlmSheetTitle`, `hlmSheetTrigger`,
+`hlmTabs`, `hlmTabsContent`, `hlmTabsContentLazy`, `hlmTabsList`, `hlmTabsTrigger`,
+`hlmAvatarBadge`, `hlmAvatarFallback`, `hlmAvatarGroup`, `hlmAvatarGroupCount`, `hlmAvatarImage`,
+`hlmSwitchThumb`,
+`hlmSidebarContent`, `hlmSidebarFooter`, `hlmSidebarGroup`, `hlmSidebarGroupAction`, `hlmSidebarGroupContent`, `hlmSidebarGroupLabel`, `hlmSidebarHeader`, `hlmSidebarInput`, `hlmSidebarInset`, `hlmSidebarMenu`, `hlmSidebarMenuAction`, `hlmSidebarMenuBadge`, `hlmSidebarMenuButton`, `hlmSidebarMenuItem`, `hlmSidebarMenuSkeleton`, `hlmSidebarMenuSub`, `hlmSidebarMenuSubButton`, `hlmSidebarMenuSubItem`, `hlmSidebarRail`, `hlmSidebarSeparator`, `hlmSidebarTrigger`, `hlmSidebarWrapper`.
+
+Primitive element names:
+
+`hlm-card`, `hlm-card-header`, `hlm-card-footer`,
+`hlm-badge`, `hlm-separator`, `hlm-skeleton`,
+`hlm-avatar`, `hlm-avatar-badge`, `hlm-avatar-group`, `hlm-avatar-group-count`,
+`hlm-field`, `hlm-field-content`, `hlm-field-description`, `hlm-field-error`, `hlm-field-group`, `hlm-field-label`, `hlm-field-separator`, `hlm-field-title`,
+`hlm-select`, `hlm-select-content`, `hlm-select-group`, `hlm-select-item`, `hlm-select-label`, `hlm-select-multiple`, `hlm-select-placeholder`, `hlm-select-scroll-down`, `hlm-select-scroll-up`, `hlm-select-separator`, `hlm-select-trigger`, `hlm-select-value`, `hlm-select-values-content`,
+`hlm-dialog`, `hlm-dialog-content`, `hlm-dialog-footer`, `hlm-dialog-header`, `hlm-dialog-overlay`,
+`hlm-sheet`, `hlm-sheet-content`, `hlm-sheet-footer`, `hlm-sheet-header`, `hlm-sheet-overlay`,
+`hlm-tabs`, `hlm-tabs-list`, `hlm-paginated-tabs-list`,
+`hlm-switch`,
+`hlm-sidebar`, `hlm-sidebar-content`, `hlm-sidebar-footer`, `hlm-sidebar-group`, `hlm-sidebar-header`, `hlm-sidebar-menu-badge`, `hlm-sidebar-menu-skeleton`, `hlm-sidebar-separator`, `hlm-sidebar-wrapper`.
 
 The set of primitive attribute names and element names is used by rules 1 and 2 to decide whether an element is a primitive.
 
-## The three rules
+`<ng-icon>` is deliberately NOT in this set. It is an `@ng-icons` element, not a Helm primitive, and spartan's own `rules/icons.md` explicitly blesses appearance classes on it (`class="text-muted-foreground"` for a decorative icon, `class="text-[length:--spacing(4)]"` for sizing). Treating it as a primitive would make rule 2 fight a baseline doc, which the whole design forbids. Icons get their own rule instead, rule 4, and that rule bans only the thing no doc endorses.
 
-Every Part 1 violation is one of exactly three kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
+## The four rules
 
-### 1. `raw-control`: a native control where a primitive directive exists
+Every Part 1 violation is one of exactly four kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
 
-Docs: composition.md, "use components, not custom markup," and the primitives are directives on native elements. A native control that a primitive directive already covers, used without the directive, is a violation. For the vocabulary as installed:
+### 1. `raw-control`: a native element where a primitive exists
 
-- a `<button>` element without `hlmBtn`
-- an `<input>` element without `hlmInput`
+Docs: composition.md, "use components, not custom markup"; the house-style skill's sealed control vocabulary, which states the table below in the agent's own baseline. A native element that a primitive already covers, used bare, is a violation.
 
-Good (passes): `<button hlmBtn>Save</button>`, `<input hlmInput />`. Bad (fails): `<button>Save</button>`, `<input />`. A bare `<a>` is fine; the anchor is a real navigation element, and `hlmBtn` on an anchor is opt-in. Composed components you would otherwise hand-roll from a `<div>` (a card, a badge, an alert, a separator) are Part 3's territory (component shape, "use the component"), not Part 1's; Part 1 covers the atomic controls with a direct directive twin.
+Most primitives are directives on the native element, so the fix is to add the attribute. Any one of the listed attributes satisfies the rule, because several Helm directives style the same native element in different compositions and banning the composition-specific ones would fight spartan's own docs.
+
+| native element | acceptable primitive attributes |
+| --- | --- |
+| `button` | `hlmBtn`, `hlmDialogTrigger`, `hlmDialogTriggerFor`, `hlmDialogClose`, `hlmSheetTrigger`, `hlmSheetClose`, `hlmSidebarTrigger`, `hlmSidebarRail`, `hlmSidebarMenuButton`, `hlmSidebarMenuSubButton`, `hlmSidebarMenuAction`, `hlmSidebarGroupAction`, `hlmSidebarGroupLabel` |
+| `input` | `hlmInput`, `hlmSidebarInput` |
+| `textarea` | `hlmTextarea` |
+| `label` | `hlmLabel`, `hlmFieldLabel` |
+| `fieldset` | `hlmFieldSet` |
+| `legend` | `hlmFieldLegend` |
+| `table` | `hlmTable` |
+| `thead` | `hlmTableHeader`, `hlmTHead` |
+| `tbody` | `hlmTableBody`, `hlmTBody` |
+| `tfoot` | `hlmTableFooter`, `hlmTFoot` |
+| `tr` | `hlmTableRow`, `hlmTr` |
+| `th` | `hlmTableHead`, `hlmTh` |
+| `td` | `hlmTableCell`, `hlmTd` |
+| `caption` | `hlmTableCaption`, `hlmCaption` |
+
+Two native elements have no directive twin and must be replaced by a composed primitive instead. For these there is no attribute that makes the native element acceptable; the element itself is the violation.
+
+| native element | required replacement |
+| --- | --- |
+| `select` | `hlm-select` |
+| `dialog` | `hlm-dialog` |
+
+`select` is banned outright rather than given a directive because spartan's `native-select` primitive is not installed here, so there is no supported way to style a bare `<select>` in this repo. The sanctioned select is the composed `hlm-select`. The same reasoning covers `dialog`.
+
+Good (passes): `<button hlmBtn>Save</button>`, `<button hlmSidebarMenuButton>Roster</button>`, `<input hlmInput />`, `<tr hlmTr><td hlmTd>88</td></tr>`, `<label hlmFieldLabel>Alias</label>`. Bad (fails): `<button>Save</button>`, `<input />`, `<table><tr><td>88</td></tr></table>`, `<select>`, `<label>Alias</label>`.
+
+A bare `<a>` is fine; the anchor is a real navigation element, and `hlmBtn` on an anchor is opt-in. Composed components you would otherwise hand-roll from a `<div>` (a card, a badge, an alert, a separator) remain Part 3's territory (component shape, "use the component"), not Part 1's. The line rule 1 draws is that the violation must be visible in the element NAME: a native element with a primitive twin, used bare. A `<div>` that should have been a card is not decidable from its name, and is not this rule's business. `<select>` and `<dialog>` sit on the correct side of that line: they are named native controls with a named primitive replacement, and the substitution is mechanical.
 
 ### 2. `appearance-on-primitive`: an appearance-override class on a primitive
 
@@ -46,6 +98,19 @@ Careful here, because the baseline holds a rule that pulls the other way. Angula
 
 `[ngStyle]` and `[ngClass]` are also discouraged by the Angular baseline doc, but banning them is a component-shape lint rule for a later Part, not part of the Part 1 seal, so they are out of scope here.
 
+### 4. `raw-icon`: a raw inline `<svg>` in an application template
+
+Docs: the house-style skill, "Icons are `<ng-icon>`, never inline SVG," which layers on spartan's `rules/icons.md` ("icons are `<ng-icon name="lucide...">`; register with `provideIcons`"). Pasted SVG markup bypasses the icon registry, cannot be themed or swapped, duplicates a glyph the Lucide set already ships, and is the single largest source of unreviewable markup in a hand-built screen. There is no `hlm-icon` wrapper; the retired one is why `migrate-icon` exists.
+
+- Violation: an `<svg>` element in a template under `src/`.
+- Good (passes): `<ng-icon name="lucideTrash2" />` with `provideIcons({ lucideTrash2 })` on the component. Bad (fails): `<svg viewBox="0 0 24 24"><path d="M3 6h18" /></svg>`.
+
+The rule is narrow on purpose, and the narrowness is the point twice over.
+
+It does not gate the `provideIcons` registration, even though the doc requires it. Registration is a fact about the component class, and the name is a fact about the template; the template engines cannot see the class, and making the counter alone check it would break the two-engine symmetry that makes a disagreement meaningful. Neither does the framework catch it: `@ng-icons` logs "No icon named X was found" and renders nothing, so an unregistered icon is a silent blank rather than a failed build. This is the honest inverse of Part 4's freeloader finding. Part 4 found a graph the compiler had already built and rode it for free; here there is a rule the framework declines to enforce, so the gate covers the decidable half and this spec states plainly that the other half is doc-only. Do not report an unregistered-icon count as gated drift.
+
+It also does not touch `libs/**` (the gate ignores it wholesale) or `src/index.html`. Helm components legitimately inline SVG internals, and that is customization territory, exactly where rule 2 already points appearance changes.
+
 ## Where customization goes (why the seal is with the grain, not against it)
 
 Because Helm code is copied into the project, the documented way to customize a component is to edit its file in `libs/ui` (adjust the `cva` variants, change classes, add inputs) or to use its `variant`/`size` inputs, never to reach past it at the call site. The gate ignores `libs/**` entirely, so that customization path is fully open. Rule 2 does not fight the framework; it enforces the framework's own "class is for layout only," and it points appearance changes at the place the docs point them.
@@ -54,18 +119,18 @@ Because Helm code is copied into the project, the documented way to customize a 
 
 ```json
 {
-  "totals": { "raw-control": 0, "appearance-on-primitive": 0, "style-attribute": 0, "all": 0 },
+  "totals": { "raw-control": 0, "appearance-on-primitive": 0, "style-attribute": 0, "raw-icon": 0, "all": 0 },
   "violations": [
     { "kind": "raw-control", "file": "src/app/dashboard/dashboard.ts", "line": 12, "detail": "button without hlmBtn" }
   ]
 }
 ```
 
-`totals.all` is the sum of the three kinds. `violations` is ordered by file, then line, then kind, so the same input always serializes byte-identically. That ordering is what makes the determinism self-test (same committed diff in, identical tally out) meaningful.
+`totals.all` is the sum of the four kinds. `violations` is ordered by file, then line, then kind, so the same input always serializes byte-identically. That ordering is what makes the determinism self-test (same committed diff in, identical tally out) meaningful.
 
 ## What each engine parses
 
-- The gate loads angular-eslint's template parser and runs three custom rules over the template AST, on `.html` templates and inline `template:` strings.
+- The gate loads angular-eslint's template parser and runs four custom rules over the template AST, on `.html` templates and inline `template:` strings.
 - The counter loads `@angular/compiler`'s `parseTemplate` and walks the AST, reading `.html` files and extracting inline `template:` strings from `.ts` with the TypeScript compiler API. It shares no rule code, no parser, and no AST types with the gate.
 
 Two engines, one spec, and the spec is the docs. If they ever disagree, that disagreement is the finding.
