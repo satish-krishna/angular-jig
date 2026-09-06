@@ -35,7 +35,12 @@ export function agentGuidanceFor(pointers) {
   for (const { url } of pointers) {
     const path = join(ROOT, url);
     if (!existsSync(path)) continue;
-    const md = readFileSync(path, 'utf8');
+    // Normalize CRLF -> LF before matching. core.autocrlf, a checkout with no
+    // .gitattributes, or any tool that rewrites line endings can hand this
+    // file back with \r\n; the regex below is anchored on a literal \n, so
+    // without this the match silently fails and the guidance block silently
+    // vanishes - the gate still exits 2, so nothing else would ever notice.
+    const md = readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
     const m = md.match(/\n## Agent guidance\n([\s\S]*?)(?=\n## |\s*$)/);
     if (!m) continue;
     const body = m[1].trim();
@@ -44,4 +49,21 @@ export function agentGuidanceFor(pointers) {
     blocks.push(body);
   }
   return blocks;
+}
+
+/**
+ * Renders the "which doc explains this violation" block every hook splices
+ * between its violation list and its own corrective prose. Shared so the four
+ * hooks cannot drift into four different ways of handling the same case: when
+ * no pointer resolves (see check-layout.mjs, where a pure-stylelint violation
+ * carries no rule metadata at all), this returns a single blank line rather
+ * than a section header with nothing under it.
+ */
+export function formatDocPointerBlock(docLines) {
+  if (docLines.length === 0) return '\n';
+  return (
+    `\nThe rule behind each violation, and the doc that argues it:\n` +
+    `${docLines.join('\n')}\n` +
+    `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n`
+  );
 }

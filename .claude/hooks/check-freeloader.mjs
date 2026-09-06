@@ -15,7 +15,7 @@ import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import freeloader from '../../harness/gate/freeloader-index.mjs';
 import { logFiring } from './_hook-log.mjs';
-import { docsPointersFor } from './rule-docs.mjs';
+import { docsPointersFor, formatDocPointerBlock } from './rule-docs.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -91,9 +91,7 @@ async function main() {
     `Template modernity gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
       `\n` +
-      `\nThe rule behind each violation, and the doc that argues it:\n` +
-      `${docLines.join('\n')}\n` +
-      `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n` +
+      formatDocPointerBlock(docLines) +
       `Use native control flow and bindings (Angular's CLAUDE.md). The documented shape:\n` +
       `  Good: @if (x) {} / @for (h of xs; track h.id) {}   [class.active]="isActive()"   [style.width.px]="w()"\n` +
       `  Bad:  *ngIf / *ngFor / *ngSwitch   [ngClass]="..."   [ngStyle]="..."\n` +

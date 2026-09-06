@@ -23,7 +23,7 @@ import tseslint from 'typescript-eslint';
 import layout from '../../harness/gate/layout-index.mjs';
 import styleConfig from '../../stylelint.config.mjs';
 import { logFiring } from './_hook-log.mjs';
-import { docsPointersFor } from './rule-docs.mjs';
+import { docsPointersFor, formatDocPointerBlock } from './rule-docs.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -169,11 +169,7 @@ async function main() {
     `Layout gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
       `\n` +
-      (docLines.length
-        ? `\nThe rule behind each violation, and the doc that argues it:\n` +
-          `${docLines.join('\n')}\n` +
-          `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n`
-        : '\n') +
+      formatDocPointerBlock(docLines) +
       `Layout is a grammar (see harness/layout-grammar-spec.md): grid for regions, flex for inline runs, ` +
       `spacing with gap, and colors and sizes as tokens. The documented shape:\n` +
       `  Good: <div class="grid grid-cols-2 gap-4">   <div class="flex items-center gap-2">   background: var(--card)\n` +

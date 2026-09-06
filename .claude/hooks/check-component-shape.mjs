@@ -27,7 +27,7 @@ import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import shape from '../../harness/gate/component-shape-index.mjs';
 import { logFiring } from './_hook-log.mjs';
-import { docsPointersFor } from './rule-docs.mjs';
+import { docsPointersFor, formatDocPointerBlock } from './rule-docs.mjs';
 import {
   SHAPE_FORMS_GUIDANCE,
   FORMS_RULE_IDS,
@@ -141,9 +141,7 @@ async function main() {
     `Component-shape gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
       `\n` +
-      `\nThe rule behind each violation, and the doc that argues it:\n` +
-      `${docLines.join('\n')}\n` +
-      `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n` +
+      formatDocPointerBlock(docLines) +
       `Component shape (see harness/component-shape-spec.md): no hand-set changeDetection or explicit standalone ` +
       `(both are Angular v20+/v22+ defaults), no .subscribe in a component or ViewModel (use the async pipe or toSignal), ` +
       `template-driven forms are not used (no FormsModule, no ngModel), ` +

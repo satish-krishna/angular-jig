@@ -16,7 +16,7 @@
 
 import { ESLint } from 'eslint';
 import { logFiring } from './_hook-log.mjs';
-import { docsPointersFor } from './rule-docs.mjs';
+import { docsPointersFor, formatDocPointerBlock } from './rule-docs.mjs';
 
 async function readStdin() {
   let raw = '';
@@ -82,9 +82,7 @@ try {
 process.stderr.write(
   `Sealing gate blocked this edit: ${errors.length} violation(s).\n` +
     `${lines.join('\n')}\n` +
-    `\nThe rule behind each violation, and the doc that argues it:\n` +
-    `${docLines.join('\n')}\n` +
-    `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n` +
+    formatDocPointerBlock(docLines) +
     `The primitive vocabulary is sealed (see harness/sealing-spec.md). Compose from spartan ` +
     `primitives, and change a primitive's look with its variant/size inputs or its Helm file in ` +
     `libs/ui, never a class at the call site. Icons are <ng-icon>, never inline SVG. Every hlm* ` +
