@@ -1,4 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
+import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
+import { createRule } from './create-rule.ts';
 
 // Rule 4 of the layout-grammar spec: a ROW of COLUMNS is a grid, so use grid.
 // See ../../layout-grammar-spec.md. messageId `nestedFlexGrid` maps to the
@@ -15,18 +17,31 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 //
 // The proxy flagged 63 sites across seven capstone builds, of which one was the
 // real thing. It was never undecidable, only unencoded.
-const baseUtil = (t) => (t.includes(':') ? t.slice(t.lastIndexOf(':') + 1) : t);
 
-function classTokens(node) {
+export type Options = [];
+export type MessageIds = 'nestedFlexGrid';
+export const RULE_NAME = 'no-nested-flex-grid';
+
+const baseUtil = (t: string): string => (t.includes(':') ? t.slice(t.lastIndexOf(':') + 1) : t);
+
+function classTokens(node: TmplAstElement): string[] {
   const attr = (node.attributes ?? []).find((a) => a.name === 'class');
   return attr && typeof attr.value === 'string'
     ? attr.value.split(/\s+/).filter(Boolean).map(baseUtil)
     : [];
 }
 
-const isElement = (n) => n && typeof n.name === 'string' && Array.isArray(n.attributes);
+// A structural view of the fields isElement checks; `n` arrives as one of
+// TmplAstElement's generic Node children, none of which declare `name` or
+// `attributes` on the base type, so the duck-type check is narrowed via
+// `unknown` rather than assumed.
+function isElement(n: unknown): n is TmplAstElement {
+  const c = n as { readonly name?: unknown; readonly attributes?: unknown } | null | undefined;
+  return !!c && typeof c.name === 'string' && Array.isArray(c.attributes);
+}
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
@@ -41,10 +56,11 @@ export default {
         'of flex rows is fine and is not what this rule flags.',
     },
   },
+  defaultOptions: [],
   create(context) {
     const parserServices = getTemplateParserServices(context);
     return {
-      Element(node) {
+      Element(node: TmplAstElement) {
         const own = classTokens(node);
         // A row: flex, and not flex-col.
         if (!own.includes('flex') || own.includes('flex-col')) return;
@@ -62,4 +78,4 @@ export default {
       },
     };
   },
-};
+});

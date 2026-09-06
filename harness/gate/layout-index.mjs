@@ -1,6 +1,6 @@
-import noRawPaletteColor from './rules/no-raw-palette-color.mjs';
-import noSpaceUtility from './rules/no-space-utility.mjs';
-import noNestedFlexGrid from './rules/no-nested-flex-grid.mjs';
+import noRawPaletteColor from './rules/no-raw-palette-color.ts';
+import noSpaceUtility from './rules/no-space-utility.ts';
+import noNestedFlexGrid from './rules/no-nested-flex-grid.ts';
 
 // The `layout` eslint plugin: the Part 2 template rules, mechanizing spartan's
 // styling docs (semantic colors only, gap not space). Independent of the counter
