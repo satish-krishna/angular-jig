@@ -76,16 +76,17 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
-  logFiring('freeloader', normalized, messages);
-
   // A missing or unreadable doc must never turn this into a soft failure: on
   // any error, drop the pointer block and still block the edit.
-  let docLines = [];
+  let pointers = [];
   try {
-    docLines = docsPointersFor(eslint, results).map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+    pointers = docsPointersFor(eslint, results);
   } catch {
-    docLines = [];
+    pointers = [];
   }
+  const docLines = pointers.map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+
+  logFiring('freeloader', normalized, messages, pointers.map((p) => p.ruleId));
 
   process.stderr.write(
     `Template modernity gate blocked this edit: ${messages.length} violation(s).\n` +

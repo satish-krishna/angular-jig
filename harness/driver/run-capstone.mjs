@@ -220,10 +220,21 @@ const sumOf = (rows, key) => rows.reduce((acc, r) => (typeof r[key] === 'number'
 // A gate the subject can edit is not a gate, and a measurement that cannot
 // detect its own instrument being adjusted is not a measurement. Any run that
 // touches these paths is tampered and its enforcement counts are void.
-// Kept in sync with PROTECTED in .claude/hooks/protect-enforcement.mjs. That
-// hook is the cheap first line; THIS is the authority, because it reads the git
-// tree after the fact rather than scanning the agent's command text, and no
-// shell trick talks its way past a diff.
+//
+// This shares its enforcement core with PROTECTED in
+// .claude/hooks/protect-enforcement.mjs, but the two are NOT the same list and
+// must not be forced equal: that hook is the cheap first line, live during the
+// session; THIS is the authority, reading the committed git tree after the
+// fact, because no shell trick talks its way past a diff. PROTECTED carries
+// one entry this list deliberately omits - 'experiments/' - because PROTECTED
+// also exists to stop READ-contamination (an agent finding a prior trial's
+// answers), which this post-hoc WRITE-tamper check has no reason to police:
+// every trial's own commit already excludes experiments/ from what gets
+// diffed (see the `git add -A -- :(exclude)experiments` below), so adding it
+// here would be inert today and a landmine if that exclusion is ever changed
+// - every future run would then void itself as tampered by its own output.
+// harness/gate/protected-paths.test.mjs pins this single, named exception so
+// any OTHER divergence still fails loudly.
 const ENFORCEMENT_PATHS = [
   'stylelint.config.mjs',
   'eslint.config.mjs',
@@ -237,6 +248,7 @@ const ENFORCEMENT_PATHS = [
   'package.json',
   'tsconfig.json',
   'tsconfig.app.json',
+  'tsconfig.harness.json',
   '.mcp.json',
 ];
 

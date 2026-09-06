@@ -115,7 +115,15 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
-  logFiring('component-shape', normalized, messages);
+  // A missing or unreadable doc must never turn this into a soft failure: on
+  // any error, drop the pointer block and still block the edit.
+  let pointers = [];
+  try {
+    pointers = docsPointersFor(eslint, results);
+  } catch {
+    pointers = [];
+  }
+  logFiring('component-shape', normalized, messages, pointers.map((p) => p.ruleId));
 
   const formsFired = [...ruleIds].some((id) => FORMS_RULE_IDS.has(id));
   const mvvmFired = [...ruleIds].some((id) => MVVM_RULE_IDS.has(id));
@@ -128,14 +136,7 @@ async function main() {
   if (submitFired) guidance += '\n' + SUBMIT_GUIDANCE + '\n';
   if (!guidance) guidance = '\n\nFix the above before continuing.\n';
 
-  // A missing or unreadable doc must never turn this into a soft failure: on
-  // any error, drop the pointer block and still block the edit.
-  let docLines = [];
-  try {
-    docLines = docsPointersFor(eslint, results).map((p) => `  ${p.ruleId}  ->  ${p.url}`);
-  } catch {
-    docLines = [];
-  }
+  const docLines = pointers.map((p) => `  ${p.ruleId}  ->  ${p.url}`);
 
   process.stderr.write(
     `Component-shape gate blocked this edit: ${messages.length} violation(s).\n` +

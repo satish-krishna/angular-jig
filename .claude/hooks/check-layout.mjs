@@ -150,20 +150,28 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
-  logFiring('check-layout', normalized, messages);
-
   // Pointers exist only for the eslint half: stylelint warnings carry no rule
   // metadata and no docs url, so the stylelint lines above stay exactly as
   // they are. A missing or unreadable doc must never turn this into a soft
   // failure: on any error, drop the pointer block and still block the edit.
-  let docLines = [];
+  let pointers = [];
   try {
     if (eslint && results) {
-      docLines = docsPointersFor(eslint, results).map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+      pointers = docsPointersFor(eslint, results);
     }
   } catch {
-    docLines = [];
+    pointers = [];
   }
+  const docLines = pointers.map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+
+  // Stylelint warnings carry no eslint ruleId, but a firing must not vanish
+  // from the count for that: extract the rule name stylelint appends in
+  // parentheses at the end of its warning text (e.g.
+  // "(scale-unlimited/declaration-strict-value)").
+  const stylelintRules = messages
+    .map((m) => m.match(/\(([^()]+)\)\s*$/)?.[1])
+    .filter(Boolean);
+  logFiring('check-layout', normalized, messages, [...pointers.map((p) => p.ruleId), ...stylelintRules]);
 
   process.stderr.write(
     `Layout gate blocked this edit: ${messages.length} violation(s).\n` +

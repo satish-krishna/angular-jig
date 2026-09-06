@@ -67,17 +67,19 @@ const errors = results
 if (errors.length === 0) process.exit(0);
 
 const lines = errors.map((m) => `  ${normalized}:${m.line}:${m.column}  ${m.message}`);
-logFiring('seal-templates', normalized, lines);
 
 // A missing or unreadable doc must never turn this into a soft failure: on any
 // error, drop the pointer block and still block the edit with the rest of the
 // corrective message.
-let docLines = [];
+let pointers = [];
 try {
-  docLines = docsPointersFor(eslint, results).map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+  pointers = docsPointersFor(eslint, results);
 } catch {
-  docLines = [];
+  pointers = [];
 }
+const docLines = pointers.map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+
+logFiring('seal-templates', normalized, lines, pointers.map((p) => p.ruleId));
 
 process.stderr.write(
   `Sealing gate blocked this edit: ${errors.length} violation(s).\n` +
