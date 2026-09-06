@@ -14,6 +14,8 @@ Layout and spacing classes on the same element are not touched: display, flex/gr
 
 Spartan's own styling doc draws this exact line: `class` is for layout only, and overriding a component's own colors, typography, or internal padding belongs in the copied Helm file or a CSS variable, not at the call site. This rule enforces that line rather than adding one of its own — the primitives share a vocabulary of `libs/ui` sources exactly because their appearance is meant to be customized in one place, not re-decided at every usage.
 
+This rule's appearance/layout classifier is written independently of the structural counter, sharing no code and no parser with it, so the two engines' agreement on a fixture is a real cross-check rather than shared code producing the same answer twice.
+
 ## Accepted form
 
     <div hlmCardFooter class="justify-between">
