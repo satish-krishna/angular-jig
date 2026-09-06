@@ -2,8 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Part 2, rule 2: no space-x-* / space-y-* utilities. Docs: spartan styling.md,
-// "Spacing: gap-*, not space-*." Use flex/grid with gap-* instead.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-space-utility.md.
 
 export type Options = [];
 export type MessageIds = 'spaceUtility';

@@ -2,11 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Part 2, rule 1: no raw palette or hex color in a class. Docs: spartan
-// styling.md, "Semantic colors only. Never use raw Tailwind palette values."
-// A color utility whose value is a palette name plus number (blue-500), or an
-// arbitrary hex, is flagged; a semantic token (card, primary) passes.
-// Independent of the counter (own classifier, angular-eslint parser).
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-raw-palette-color.md.
 
 export type Options = [];
 export type MessageIds = 'rawPaletteColor';

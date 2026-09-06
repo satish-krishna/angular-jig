@@ -1,10 +1,8 @@
 import type { TmplAstTemplate } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Freeloader spec rule 1: no *ngIf/*ngFor/*ngSwitch where native control flow
-// exists. A structural directive desugars to a Template node carrying the
-// directive in templateAttrs. messageId `legacyControlFlow` maps to the counter's
-// `legacy-control-flow` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-legacy-control-flow.md.
 
 export type Options = [];
 export type MessageIds = 'legacyControlFlow';

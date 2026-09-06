@@ -2,8 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Freeloader spec rule 2: no ngClass/ngStyle. Use a class or style binding.
-// messageId `ngClassStyle` maps to the counter's `ng-class-style` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-ng-class-style.md.
 
 export type Options = [];
 export type MessageIds = 'ngClassStyle';

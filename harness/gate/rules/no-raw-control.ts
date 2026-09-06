@@ -2,16 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Rule 1 of the sealing spec: no native control element where a primitive
-// exists. See ../../sealing-spec.md, "The four rules" #1. messageId
-// `rawControl` maps to the counter's `raw-control` kind.
-//
-// Two shapes of violation:
-//  - Most native elements have a directive twin: any ONE of the listed
-//    attributes on the element satisfies the rule, because several Helm
-//    directives style the same native element in different compositions.
-//  - Two elements (`select`, `dialog`) have no directive twin at all; no
-//    attribute makes them acceptable, the element itself must be replaced.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-raw-control.md.
 
 export type Options = [];
 export type MessageIds = 'rawControl';

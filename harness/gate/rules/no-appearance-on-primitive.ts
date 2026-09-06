@@ -3,17 +3,13 @@ import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.ts';
 import { createRule } from './create-rule.ts';
 
-// Part 1, rule 2 (corrected): no appearance-override class on a primitive.
-// Docs: spartan styling.md, "class is for layout only. Do not use it to override
-// a component's own colors, typography, or internal padding." So layout and
-// spacing classes on a primitive are fine; only appearance classes are flagged.
-// Independent of the counter (own classifier, angular-eslint parser).
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-appearance-on-primitive.md.
 //
 // The primitive sets (PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS) are gate-internal
-// shared state - see ./primitive-vocabulary.ts, which is exactly the
-// vocabulary in ../../sealing-spec.md, "The vocabulary, as installed". Rule 5
-// (./no-unknown-primitive.ts) reuses the same module; only cross-ENGINE
-// sharing with the counter is forbidden, not gate-internal sharing.
+// shared state - see ./primitive-vocabulary.ts. Rule no-unknown-primitive
+// reuses the same module; only cross-ENGINE sharing with the counter is
+// forbidden, not gate-internal sharing.
 
 export type Options = [];
 export type MessageIds = 'appearanceOnPrimitive';

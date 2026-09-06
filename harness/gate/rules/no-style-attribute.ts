@@ -2,10 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Part 1, rule 3 (narrowed): no static inline style attribute. A static
-// style="..." is a raw literal that bypasses the token system. It is narrow on
-// purpose: Angular's baseline CLAUDE.md endorses [style] bindings over [ngStyle],
-// so the gate must NOT ban style bindings, only the static literal attribute.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-style-attribute.md.
 
 export type Options = [];
 export type MessageIds = 'styleAttribute';

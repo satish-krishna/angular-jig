@@ -2,32 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Rule 6 of the sealing spec: a primitive present but not composed. See
-// ../../sealing-spec.md, "The six rules" #6. Docs: spartan's composition.md,
-// verbatim: "Overlays need a title. Dialog, Sheet, and Alert Dialog must have
-// a title for accessibility. If the design hides it, keep it present and
-// apply class="sr-only"." Restated in the house-style skill. messageId
-// `missingCompositionPart` maps to the counter's `missing-composition-part`
-// kind.
-//
-// A required DESCENDANT only: a container primitive (hlm-dialog-content,
-// hlm-sheet-content) needs a descendant carrying the matching title attribute
-// (hlmDialogTitle, hlmSheetTitle) somewhere under it. This is a pure
-// parent/child property of a single template AST: no cross-file join, no
-// type information, no heuristic. Containment is scoped within one template,
-// so a title supplied by a wrapper component in another file would be a
-// false positive; in this repo overlays are composed inline at the call
-// site, which is what makes the check sound here.
-//
-// What this rule deliberately does NOT check, and why: spartan's forms.md
-// also says "Use hlmField, not raw divs. Wrap each control in hlmField," and
-// an earlier draft of this rule gated that as a required-ancestor check on
-// every hlmInput, hlmTextarea and hlm-select. The spec now states plainly
-// that draft was over-broad and would have been a bad gate - the capstone
-// build spec itself calls for a search input and a class-filter select in a
-// toolbar, neither of which is a form field, and "is this control part of a
-// form" is not decidable from the template. So the field-wrapping convention
-// stays doc-only (house-style skill) and is not gated here.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-missing-composition-part.md.
 
 export type Options = [];
 export type MessageIds = 'missingCompositionPart';
