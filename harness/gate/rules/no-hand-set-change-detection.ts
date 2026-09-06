@@ -2,9 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { componentDecoratorObject } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 1 of the component-shape spec: no explicit changeDetection in @Component.
-// OnPush is the Angular v22 default, and CLAUDE.md says not to set it. messageId
-// `handSetChangeDetection` maps to the counter's `hand-set-change-detection` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-hand-set-change-detection.md.
 
 export type Options = [];
 export type MessageIds = 'handSetChangeDetection';

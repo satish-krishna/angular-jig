@@ -2,13 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { componentDecoratorObject } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 11 of the component-shape spec (capstone-residue): no explicit
-// `standalone` in @Component. CLAUDE.md, verbatim: "Must NOT set
-// `standalone: true` inside Angular decorators. It's the default in Angular
-// v20+." Same AST shape as rule 1 (hand-set-change-detection): the presence
-// of the property key in the decorator's object literal, to any value, not
-// its value. messageId `explicitStandalone` maps to the counter's
-// `explicit-standalone` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-explicit-standalone.md.
 
 export type Options = [];
 export type MessageIds = 'explicitStandalone';

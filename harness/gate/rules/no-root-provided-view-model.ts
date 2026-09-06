@@ -2,11 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { isViewModelName, decoratorObjectByNames } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 7 of the component-shape spec: a ViewModel (a class whose name ends in
-// `ViewModel`) must be component-scoped, never providedIn. A providedIn
-// ViewModel is a singleton store wearing a ViewModel's name and leaks one
-// screen's state into the next visit to that screen. messageId
-// `vmNotComponentScoped` maps to the counter's `vm-not-component-scoped` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-root-provided-view-model.md.
 
 export type Options = [];
 export type MessageIds = 'vmNotComponentScoped';

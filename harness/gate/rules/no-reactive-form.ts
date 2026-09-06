@@ -2,11 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { componentDecoratorObject } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 6 of the component-shape spec: no reactive forms. The house-style skill
-// overrides Angular's reactive-forms fallback and requires signal-forms plus a
-// zod schema, so ReactiveFormsModule in imports, or a `new FormGroup/FormControl/
-// FormBuilder/FormArray` in the class, is a defect. Flagged once per component,
-// to match the counter's `reactive-form` kind (one signal per component).
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-reactive-form.md.
 
 export type Options = [];
 export type MessageIds = 'reactiveForm';

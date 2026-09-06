@@ -2,10 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentClass } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 4 of the component-shape spec: no per-field signal-forms validator the zod
-// schema already owns. validateStandardSchema is the blessed path; the async and
-// custom validators are for logic a schema cannot own and are not flagged.
-// messageId `restatedValidator` maps to the counter's `restated-validator` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-restated-validator.md.
 
 export type Options = [];
 export type MessageIds = 'restatedValidator';

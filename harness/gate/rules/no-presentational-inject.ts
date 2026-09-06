@@ -2,10 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentClass } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 5 of the component-shape spec: a presentational component (under
-// src/app/ui/) must not inject a data service. Keys on the file path plus the
-// injected token name (HttpClient, or a *Service not on the UI-helper allowlist).
-// messageId `presentationalInject` maps to the counter's `presentational-injects-data`.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-presentational-inject.md.
 
 export type Options = [];
 export type MessageIds = 'presentationalInject';

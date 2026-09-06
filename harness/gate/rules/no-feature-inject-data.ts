@@ -2,16 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentClass, isDataServiceToken, isUiPath } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 9 of the component-shape spec: a feature component (not under
-// src/app/ui/) injects no data service directly; its ViewModel does. This is
-// rule 5 inverted across the ui/ path split, and reuses rule 5's token check
-// (HttpClient or a *Service identifier, minus the pure-UI allowlist). A
-// *ViewModel identifier is not a *Service identifier, so inject(SomeViewModel)
-// never matches here, and ActivatedRoute/Router never match either (routing is
-// permitted in the component). The rule fires only inside @Component classes,
-// so a ViewModel's own inject(HeroService) is never flagged: a ViewModel
-// carries no @Component decorator. messageId `featureInjectsData` maps to the
-// counter's `feature-injects-data` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-feature-inject-data.md.
 
 export type Options = [];
 export type MessageIds = 'featureInjectsData';

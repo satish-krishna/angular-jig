@@ -2,11 +2,8 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 import type { TmplAstElement, TmplAstBoundAttribute, TmplAstTextAttribute } from '@angular-eslint/bundled-angular-compiler';
 import { createRule } from './create-rule.ts';
 
-// Rule 3 (template half) of the component-shape spec: no ngModel binding in a
-// template. Template-driven forms are not used here. messageId `ngModel` maps to
-// the counter's `template-driven-form` kind (the same kind as the FormsModule
-// half, counted on the template surface). Runs under the angular-eslint template
-// parser, on .html files and inline templates via processInlineTemplates.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-ng-model.md.
 
 export type Options = [];
 export type MessageIds = 'ngModel';

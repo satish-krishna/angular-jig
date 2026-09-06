@@ -2,13 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { isViewModelName, nearestComponentClass, componentDecoratorObject } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 10 of the component-shape spec: a @Component that injects a ViewModel
-// (inject(X) where X ends in `ViewModel`) must list that same X in its own
-// @Component providers array. A component-scoped ViewModel that is injected
-// without being provided is a NullInjectorError at runtime, not a build
-// failure. `providers: [...someSpread]` is not statically resolvable and is
-// treated as satisfying the rule (a stated blind spot, not a bug). messageId
-// `vmNotProvided` maps to the counter's `vm-not-provided` kind.
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-unprovided-view-model.md.
 
 export type Options = [];
 export type MessageIds = 'vmNotProvided';

@@ -2,10 +2,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 import { componentDecoratorObject } from './component-util.ts';
 import { createRule } from './create-rule.ts';
 
-// Rule 3 (TypeScript half) of the component-shape spec: no FormsModule in a
-// component's imports. Template-driven forms are not used here. messageId
-// `formsModule` maps to the counter's `template-driven-form` kind. ReactiveFormsModule
-// is NOT gated here (reactive-form is a counter-only heuristic).
+// What this forbids, why, and its known blind spots: see
+// ../../rules/no-forms-module.md.
 
 export type Options = [];
 export type MessageIds = 'formsModule';
