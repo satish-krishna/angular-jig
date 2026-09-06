@@ -1,5 +1,5 @@
-import noLegacyControlFlow from './rules/no-legacy-control-flow.mjs';
-import noNgClassStyle from './rules/no-ng-class-style.mjs';
+import noLegacyControlFlow from './rules/no-legacy-control-flow.ts';
+import noNgClassStyle from './rules/no-ng-class-style.ts';
 
 // The `freeloader` eslint plugin: the Part 4 edit-time vocabulary rules, the
 // second freeloader (the house rules the type-checker ignores). The first
