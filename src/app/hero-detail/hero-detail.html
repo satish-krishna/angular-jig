@@ -6,10 +6,32 @@
         <span>Back to Roster</span>
       </button>
       @if (!vm.isEditing()) {
-        <button hlmBtn variant="outline" (click)="vm.isEditing.set(true)">
-          <ng-icon name="lucidePencil" />
-          <span>Edit</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button hlmBtn variant="outline" (click)="vm.isEditing.set(true)">
+            <ng-icon name="lucidePencil" />
+            <span>Edit</span>
+          </button>
+          <hlm-dialog>
+            <button hlmDialogTrigger hlmBtn variant="destructive">
+              <ng-icon name="lucideTrash2" />
+              <span>Retire</span>
+            </button>
+            <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+              <hlm-dialog-header>
+                <h2 hlmDialogTitle>Retire {{ hero.name }}?</h2>
+                <p hlmDialogDescription>
+                  {{ hero.alias }} comes off the active roster. This cannot be undone.
+                </p>
+              </hlm-dialog-header>
+              <hlm-dialog-footer>
+                <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.retireHero()">
+                  Retire hero
+                </button>
+              </hlm-dialog-footer>
+            </hlm-dialog-content>
+          </hlm-dialog>
+        </div>
       }
     </div>
     @if (vm.isEditing()) {

@@ -8,12 +8,15 @@ export class RecruitViewModel {
   private readonly heroService = inject(HeroService);
   private readonly router = inject(Router);
 
-  readonly newHeroTemplate = () => ({
+  // A stable value, not a factory: a function called from a template binding hands
+  // the form a new object on every change detection pass, which reseeds it mid-typing.
+  readonly newHeroTemplate: HeroFormModel = {
     name: '',
     alias: '',
-    powerClass: 'Aerial' as const,
+    powerClass: 'Aerial',
     power: 50,
-  });
+    bio: '',
+  };
 
   createHero(data: HeroFormModel) {
     const hero = this.heroService.create(data);
