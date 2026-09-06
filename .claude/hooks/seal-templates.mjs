@@ -16,6 +16,7 @@
 
 import { ESLint } from 'eslint';
 import { logFiring } from './_hook-log.mjs';
+import { docsPointersFor } from './rule-docs.mjs';
 
 async function readStdin() {
   let raw = '';
@@ -49,9 +50,10 @@ if (!/(^|\/)src\//.test(normalized)) process.exit(0);
 // locates eslint.config.mjs and resolves the edited path reliably.
 const cwd = process.cwd();
 
+let eslint;
 let results;
 try {
-  const eslint = new ESLint({ cwd });
+  eslint = new ESLint({ cwd });
   results = await eslint.lintFiles([file]);
 } catch (err) {
   process.stderr.write(`seal-templates: eslint failed to run (${err?.message ?? err}).\n`);
@@ -66,9 +68,23 @@ if (errors.length === 0) process.exit(0);
 
 const lines = errors.map((m) => `  ${normalized}:${m.line}:${m.column}  ${m.message}`);
 logFiring('seal-templates', normalized, lines);
+
+// A missing or unreadable doc must never turn this into a soft failure: on any
+// error, drop the pointer block and still block the edit with the rest of the
+// corrective message.
+let docLines = [];
+try {
+  docLines = docsPointersFor(eslint, results).map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+} catch {
+  docLines = [];
+}
+
 process.stderr.write(
   `Sealing gate blocked this edit: ${errors.length} violation(s).\n` +
-    `${lines.join('\n')}\n\n` +
+    `${lines.join('\n')}\n` +
+    `\nThe rule behind each violation, and the doc that argues it:\n` +
+    `${docLines.join('\n')}\n` +
+    `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n` +
     `The primitive vocabulary is sealed (see harness/sealing-spec.md). Compose from spartan ` +
     `primitives, and change a primitive's look with its variant/size inputs or its Helm file in ` +
     `libs/ui, never a class at the call site. Icons are <ng-icon>, never inline SVG. Every hlm* ` +

@@ -15,6 +15,7 @@ import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 import freeloader from '../../harness/gate/freeloader-index.mjs';
 import { logFiring } from './_hook-log.mjs';
+import { docsPointersFor } from './rule-docs.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -58,9 +59,11 @@ async function main() {
   if (!/(^|\/)src\//.test(normalized)) process.exit(0);
 
   const messages = [];
+  let eslint;
+  let results;
   try {
-    const eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: config });
-    const results = await eslint.lintFiles([file]);
+    eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: config });
+    results = await eslint.lintFiles([file]);
     for (const r of results) {
       for (const m of r.messages) {
         if (m.severity === 2) messages.push(`${normalized}:${m.line}:${m.column}  ${m.message}`);
@@ -75,10 +78,23 @@ async function main() {
 
   logFiring('freeloader', normalized, messages);
 
+  // A missing or unreadable doc must never turn this into a soft failure: on
+  // any error, drop the pointer block and still block the edit.
+  let docLines = [];
+  try {
+    docLines = docsPointersFor(eslint, results).map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+  } catch {
+    docLines = [];
+  }
+
   process.stderr.write(
     `Template modernity gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
-      `\n\nUse native control flow and bindings (Angular's CLAUDE.md). The documented shape:\n` +
+      `\n` +
+      `\nThe rule behind each violation, and the doc that argues it:\n` +
+      `${docLines.join('\n')}\n` +
+      `Open the doc for the full case, the accepted form, and the rule's known blind spots.\n\n` +
+      `Use native control flow and bindings (Angular's CLAUDE.md). The documented shape:\n` +
       `  Good: @if (x) {} / @for (h of xs; track h.id) {}   [class.active]="isActive()"   [style.width.px]="w()"\n` +
       `  Bad:  *ngIf / *ngFor / *ngSwitch   [ngClass]="..."   [ngStyle]="..."\n` +
       `Fix the above before continuing.\n`,
