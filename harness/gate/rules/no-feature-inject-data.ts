@@ -1,4 +1,6 @@
+import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentClass, isDataServiceToken, isUiPath } from './component-util.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 9 of the component-shape spec: a feature component (not under
 // src/app/ui/) injects no data service directly; its ViewModel does. This is
@@ -10,7 +12,13 @@ import { inComponentClass, isDataServiceToken, isUiPath } from './component-util
 // so a ViewModel's own inject(HeroService) is never flagged: a ViewModel
 // carries no @Component decorator. messageId `featureInjectsData` maps to the
 // counter's `feature-injects-data` kind.
-export default {
+
+export type Options = [];
+export type MessageIds = 'featureInjectsData';
+export const RULE_NAME = 'no-feature-inject-data';
+
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
@@ -23,11 +31,12 @@ export default {
         'component-scoped ViewModel (see harness/component-shape-spec.md, rule 9) and inject the ViewModel here instead.',
     },
   },
+  defaultOptions: [],
   create(context) {
     const filename = context.filename ?? (context.getFilename && context.getFilename()) ?? '';
     if (isUiPath(filename)) return {};
     return {
-      CallExpression(node) {
+      CallExpression(node: TSESTree.CallExpression) {
         const c = node.callee;
         if (
           c &&
@@ -44,4 +53,4 @@ export default {
       },
     };
   },
-};
+});

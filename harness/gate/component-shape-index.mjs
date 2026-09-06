@@ -1,18 +1,18 @@
-import noHandSetChangeDetection from './rules/no-hand-set-change-detection.mjs';
-import noComponentSubscribe from './rules/no-component-subscribe.mjs';
-import noFormsModule from './rules/no-forms-module.mjs';
-import noRestatedValidator from './rules/no-restated-validator.mjs';
-import noPresentationalInject from './rules/no-presentational-inject.mjs';
-import noReactiveForm from './rules/no-reactive-form.mjs';
-import noNgModel from './rules/no-ng-model.mjs';
-import noRootProvidedViewModel from './rules/no-root-provided-view-model.mjs';
-import noStateOutsideViewModel from './rules/no-state-outside-view-model.mjs';
-import noFeatureInjectData from './rules/no-feature-inject-data.mjs';
-import noUnprovidedViewModel from './rules/no-unprovided-view-model.mjs';
-import noExplicitStandalone from './rules/no-explicit-standalone.mjs';
-import noLegacyIconModule from './rules/no-legacy-icon-module.mjs';
-import noUnregisteredIcon from './rules/no-unregistered-icon.mjs';
-import noOrphanNgSubmit from './rules/no-orphan-ng-submit.mjs';
+import noHandSetChangeDetection from './rules/no-hand-set-change-detection.ts';
+import noComponentSubscribe from './rules/no-component-subscribe.ts';
+import noFormsModule from './rules/no-forms-module.ts';
+import noRestatedValidator from './rules/no-restated-validator.ts';
+import noPresentationalInject from './rules/no-presentational-inject.ts';
+import noReactiveForm from './rules/no-reactive-form.ts';
+import noNgModel from './rules/no-ng-model.ts';
+import noRootProvidedViewModel from './rules/no-root-provided-view-model.ts';
+import noStateOutsideViewModel from './rules/no-state-outside-view-model.ts';
+import noFeatureInjectData from './rules/no-feature-inject-data.ts';
+import noUnprovidedViewModel from './rules/no-unprovided-view-model.ts';
+import noExplicitStandalone from './rules/no-explicit-standalone.ts';
+import noLegacyIconModule from './rules/no-legacy-icon-module.ts';
+import noUnregisteredIcon from './rules/no-unregistered-icon.ts';
+import noOrphanNgSubmit from './rules/no-orphan-ng-submit.ts';
 
 // The `shape` eslint plugin: the Part 3 component-shape rules, encoding the
 // component-shape spec (../component-shape-spec.md). It is the second of the two

@@ -22,9 +22,17 @@
 // registration imports no glyph at all. One capstone trial imported eleven
 // glyphs and handed them to `{ provide: 'ICONS', useValue: {...} }`, which
 // typechecks, registers nothing, and left every icon in the shell blank.
+import type { TSESTree } from '@typescript-eslint/utils';
+import { createRule } from './create-rule.ts';
+
+export type Options = [];
+export type MessageIds = 'unregisteredIcon';
+export const RULE_NAME = 'no-unregistered-icon';
+
 const LUCIDE_MODULE = '@ng-icons/lucide';
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
@@ -41,18 +49,19 @@ export default {
         'token or a plain object registers nothing.',
     },
   },
+  defaultOptions: [],
   create(context) {
-    const lucideImports = [];
+    const lucideImports: TSESTree.ImportDeclaration[] = [];
     let sawProvideIcons = false;
 
     return {
-      ImportDeclaration(node) {
+      ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (node.source && node.source.value === LUCIDE_MODULE) {
           const named = (node.specifiers ?? []).some((s) => s.type === 'ImportSpecifier');
           if (named) lucideImports.push(node);
         }
       },
-      CallExpression(node) {
+      CallExpression(node: TSESTree.CallExpression) {
         if (node.callee && node.callee.type === 'Identifier' && node.callee.name === 'provideIcons') {
           sawProvideIcons = true;
         }
@@ -66,4 +75,4 @@ export default {
       },
     };
   },
-};
+});

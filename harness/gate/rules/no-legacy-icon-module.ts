@@ -1,4 +1,6 @@
+import type { TSESTree } from '@typescript-eslint/utils';
 import { componentDecoratorObject } from './component-util.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 12 of the component-shape spec (capstone-residue): no NgIconsModule in
 // a component's imports. The house-style skill: "Import `NgIcon`, never
@@ -10,7 +12,13 @@ import { componentDecoratorObject } from './component-util.ts';
 // absence is what let three of the capstone's six builds render blank pages
 // past every other AST gate. messageId `legacyIconModule` maps to the
 // counter's `legacy-icon-module` kind.
-export default {
+
+export type Options = [];
+export type MessageIds = 'legacyIconModule';
+export const RULE_NAME = 'no-legacy-icon-module';
+
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: { description: 'Disallow NgIconsModule (the legacy icon module) in a component.' },
@@ -21,13 +29,15 @@ export default {
         'instead and register icons with provideIcons(...) (see harness/component-shape-spec.md, rule 12).',
     },
   },
+  defaultOptions: [],
   create(context) {
     return {
-      ClassDeclaration(node) {
+      ClassDeclaration(node: TSESTree.ClassDeclaration) {
         const obj = componentDecoratorObject(node);
         if (!obj) return;
         const imp = obj.properties.find(
-          (p) => p.type === 'Property' && p.key && p.key.type === 'Identifier' && p.key.name === 'imports',
+          (p): p is TSESTree.Property =>
+            p.type === 'Property' && !!p.key && p.key.type === 'Identifier' && p.key.name === 'imports',
         );
         if (!imp || imp.value.type !== 'ArrayExpression') return;
         for (const el of imp.value.elements) {
@@ -38,4 +48,4 @@ export default {
       },
     };
   },
-};
+});

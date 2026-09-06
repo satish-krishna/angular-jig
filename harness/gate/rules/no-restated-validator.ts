@@ -1,12 +1,20 @@
+import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentClass } from './component-util.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 4 of the component-shape spec: no per-field signal-forms validator the zod
 // schema already owns. validateStandardSchema is the blessed path; the async and
 // custom validators are for logic a schema cannot own and are not flagged.
 // messageId `restatedValidator` maps to the counter's `restated-validator` kind.
+
+export type Options = [];
+export type MessageIds = 'restatedValidator';
+export const RULE_NAME = 'no-restated-validator';
+
 const VALIDATORS = new Set(['required', 'minLength', 'maxLength', 'min', 'max', 'email', 'pattern']);
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: { description: 'Disallow a per-field signal-forms validator the zod schema already owns.' },
@@ -16,21 +24,22 @@ export default {
         'Component shape: validation lives in the zod schema. Remove {{name}}(...) and validate through validateStandardSchema(path, schema).',
     },
   },
+  defaultOptions: [],
   create(context) {
     // Track only the validator names actually imported from @angular/forms/signals,
     // under their local (possibly aliased) name.
-    const imported = new Set();
+    const imported = new Set<string>();
     return {
-      ImportDeclaration(node) {
+      ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (node.source && node.source.value === '@angular/forms/signals') {
           for (const s of node.specifiers) {
-            if (s.type === 'ImportSpecifier' && s.imported && VALIDATORS.has(s.imported.name)) {
+            if (s.type === 'ImportSpecifier' && s.imported && s.imported.type === 'Identifier' && VALIDATORS.has(s.imported.name)) {
               imported.add(s.local.name);
             }
           }
         }
       },
-      CallExpression(node) {
+      CallExpression(node: TSESTree.CallExpression) {
         const c = node.callee;
         if (c && c.type === 'Identifier' && imported.has(c.name) && inComponentClass(node)) {
           context.report({ node, messageId: 'restatedValidator', data: { name: c.name } });
@@ -38,4 +47,4 @@ export default {
       },
     };
   },
-};
+});

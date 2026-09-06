@@ -1,16 +1,24 @@
+import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentClass } from './component-util.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 5 of the component-shape spec: a presentational component (under
 // src/app/ui/) must not inject a data service. Keys on the file path plus the
 // injected token name (HttpClient, or a *Service not on the UI-helper allowlist).
 // messageId `presentationalInject` maps to the counter's `presentational-injects-data`.
+
+export type Options = [];
+export type MessageIds = 'presentationalInject';
+export const RULE_NAME = 'no-presentational-inject';
+
 const UI_HELPERS = new Set([
   'ElementRef', 'DestroyRef', 'ChangeDetectorRef', 'Renderer2', 'NgZone', 'ViewContainerRef', 'TemplateRef',
 ]);
-const isDataToken = (n) => n === 'HttpClient' || (/Service$/.test(n) && !UI_HELPERS.has(n) && !n.startsWith('Hlm'));
-const isUiPath = (f) => /(^|\/)src\/app\/ui\//.test(String(f).replaceAll('\\', '/'));
+const isDataToken = (n: string): boolean => n === 'HttpClient' || (/Service$/.test(n) && !UI_HELPERS.has(n) && !n.startsWith('Hlm'));
+const isUiPath = (f: string): boolean => /(^|\/)src\/app\/ui\//.test(String(f).replaceAll('\\', '/'));
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: { description: 'Disallow a presentational (src/app/ui/) component injecting a data service.' },
@@ -20,11 +28,12 @@ export default {
         'Component shape: a presentational component (src/app/ui/) must not inject {{token}}. Move data access to a container in a feature folder.',
     },
   },
+  defaultOptions: [],
   create(context) {
     const filename = context.filename ?? (context.getFilename && context.getFilename()) ?? '';
     if (!isUiPath(filename)) return {};
     return {
-      CallExpression(node) {
+      CallExpression(node: TSESTree.CallExpression) {
         const c = node.callee;
         if (
           c &&
@@ -41,4 +50,4 @@ export default {
       },
     };
   },
-};
+});

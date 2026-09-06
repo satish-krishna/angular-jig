@@ -1,4 +1,6 @@
+import type { TSESTree } from '@typescript-eslint/utils';
 import { inComponentOrViewModelClass } from './component-util.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 2 of the component-shape spec: no .subscribe() inside a component. Use the
 // async pipe or toSignal at the edge. messageId `componentSubscribe` maps to the
@@ -11,7 +13,13 @@ import { inComponentOrViewModelClass } from './component-util.ts';
 // service by decorator and a component's brain by role; the gate did not stop
 // the subscribe, it relocated it into the one class the original scope note
 // exempted.
-export default {
+
+export type Options = [];
+export type MessageIds = 'componentSubscribe';
+export const RULE_NAME = 'no-component-subscribe';
+
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: { description: 'Disallow .subscribe() inside a component class or a ViewModel.' },
@@ -21,9 +29,10 @@ export default {
         'Component shape: no .subscribe in a component or ViewModel. Convert at the edge and bind with the async pipe or toSignal.',
     },
   },
+  defaultOptions: [],
   create(context) {
     return {
-      CallExpression(node) {
+      CallExpression(node: TSESTree.CallExpression) {
         const c = node.callee;
         if (
           c &&
@@ -38,4 +47,4 @@ export default {
       },
     };
   },
-};
+});

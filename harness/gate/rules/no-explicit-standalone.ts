@@ -1,4 +1,6 @@
+import type { TSESTree } from '@typescript-eslint/utils';
 import { componentDecoratorObject } from './component-util.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 11 of the component-shape spec (capstone-residue): no explicit
 // `standalone` in @Component. CLAUDE.md, verbatim: "Must NOT set
@@ -7,7 +9,13 @@ import { componentDecoratorObject } from './component-util.ts';
 // of the property key in the decorator's object literal, to any value, not
 // its value. messageId `explicitStandalone` maps to the counter's
 // `explicit-standalone` kind.
-export default {
+
+export type Options = [];
+export type MessageIds = 'explicitStandalone';
+export const RULE_NAME = 'no-explicit-standalone';
+
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: { description: 'Disallow an explicit standalone in @Component; standalone is the v20+ default.' },
@@ -18,9 +26,10 @@ export default {
         'and harness/component-shape-spec.md, rule 11); remove the standalone property.',
     },
   },
+  defaultOptions: [],
   create(context) {
     return {
-      ClassDeclaration(node) {
+      ClassDeclaration(node: TSESTree.ClassDeclaration) {
         const obj = componentDecoratorObject(node);
         if (!obj) return;
         const prop = obj.properties.find(
@@ -34,4 +43,4 @@ export default {
       },
     };
   },
-};
+});
