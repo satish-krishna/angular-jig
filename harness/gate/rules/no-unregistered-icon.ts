@@ -23,7 +23,7 @@ export default createRule<Options, MessageIds>({
         'Component shape: this file imports icon symbols from @ng-icons/lucide but never calls ' +
         'provideIcons({ ... }), so they register nothing and every <ng-icon> using them renders blank. ' +
         'Register them with provideIcons in this component’s providers, or drop the imports and rely on the ' +
-        'application-level registration (see harness/component-shape-spec.md, rule 13). A custom injection ' +
+        'application-level registration (see harness/rules/no-unregistered-icon.md). A custom injection ' +
         'token or a plain object registers nothing.',
     },
   },

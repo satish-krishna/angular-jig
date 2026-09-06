@@ -20,7 +20,7 @@ export default createRule<Options, MessageIds>({
     messages: {
       featureInjectsData:
         'Component shape: a feature component injects no data service. Move inject({{token}}) into the ' +
-        'component-scoped ViewModel (see harness/component-shape-spec.md, rule 9) and inject the ViewModel here instead.',
+        'component-scoped ViewModel (see harness/rules/no-feature-inject-data.md) and inject the ViewModel here instead.',
     },
   },
   defaultOptions: [],

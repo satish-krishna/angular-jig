@@ -40,7 +40,7 @@ export default createRule<Options, MessageIds>({
     messages: {
       vmNotProvided:
         'Component shape: {{name}} is injected but not provided, which is a NullInjectorError at runtime. ' +
-        'Add providers: [{{name}}] to this component\'s @Component metadata (see harness/component-shape-spec.md, rule 10).',
+        'Add providers: [{{name}}] to this component\'s @Component metadata (see harness/rules/no-unprovided-view-model.md).',
     },
   },
   defaultOptions: [],

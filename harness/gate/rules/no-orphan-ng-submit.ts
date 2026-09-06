@@ -18,7 +18,7 @@ export default createRule<Options, MessageIds>({
     messages: {
       orphanNgSubmit:
         'Component shape: (ngSubmit) is dead here. NgForm/FormGroupDirective ship only with FormsModule or ' +
-        'ReactiveFormsModule, and both are banned (see harness/component-shape-spec.md, rule 14), so Angular ' +
+        'ReactiveFormsModule, and both are banned (see harness/rules/no-orphan-ng-submit.md), so Angular ' +
         "registers a DOM listener for an event nothing ever fires. Wire the submit in the class through " +
         'submit(this.form, async () => { ... }) from @angular/forms/signals, and drop (ngSubmit) from the <form>.',
     },

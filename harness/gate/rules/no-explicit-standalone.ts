@@ -18,7 +18,7 @@ export default createRule<Options, MessageIds>({
     messages: {
       explicitStandalone:
         'Component shape: do not set standalone explicitly. Standalone is the Angular v20+ default (see CLAUDE.md ' +
-        'and harness/component-shape-spec.md, rule 11); remove the standalone property.',
+        'and harness/rules/no-explicit-standalone.md); remove the standalone property.',
     },
   },
   defaultOptions: [],

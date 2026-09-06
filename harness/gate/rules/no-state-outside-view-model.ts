@@ -31,7 +31,7 @@ export default createRule<Options, MessageIds>({
     messages: {
       stateOutsideVm:
         'Component shape: a feature component holds no state of its own. Move this {{name}}(...) into the ' +
-        'component-scoped ViewModel (see harness/component-shape-spec.md, rule 8) and read it off the injected vm instead.',
+        'component-scoped ViewModel (see harness/rules/no-state-outside-view-model.md) and read it off the injected vm instead.',
     },
   },
   defaultOptions: [],

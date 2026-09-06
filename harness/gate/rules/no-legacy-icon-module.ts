@@ -18,7 +18,7 @@ export default createRule<Options, MessageIds>({
     messages: {
       legacyIconModule:
         'Component shape: NgIconsModule is the legacy icon module and throws at bootstrap here. Import NgIcon ' +
-        'instead and register icons with provideIcons(...) (see harness/component-shape-spec.md, rule 12).',
+        'instead and register icons with provideIcons(...) (see harness/rules/no-legacy-icon-module.md).',
     },
   },
   defaultOptions: [],
