@@ -66,6 +66,34 @@ $ npm run test:harness
 
 `task-1b-report.md`, Step 13 also records the rest of the four-command safety gate passing cleanly in the same run: `npm run typecheck:harness` (`tsc -p tsconfig.harness.json --noEmit`, exit 0, no output), `npm run lint` (`eslint src`, exit 0, silent — note this only exercises the 6 rules registered in `eslint.config.mjs`; see `docs/findings/2026-09-06-prompt-corrections.md`, item 5, on why the vitest suites, not `npm run lint`, are the real migration check for the other 20), and `npm run build` (`ng build`, completing with the same three lazy chunks — `hero-detail`, `dashboard`, `heroes` — as before).
 
+## After Task 2: the per-rule docs and the URL test (134 across 14)
+
+From `task-2b-report.md`, "Test output", full suite:
+
+```
+npm run test:harness
+
+ RUN  v4.1.11 D:/Repos/angular-jig
+ Test Files  14 passed (14)
+      Tests  134 passed (134)
+```
+
+134 passed across 14 suites — the 107-test, 13-suite baseline plus the 27 new tests in the new `harness/gate/rule-docs.test.mjs`, which Task 2 wrote to check that the 15 new `harness/rules/*.md` docs exist at the paths `createRule`'s URL function generates and that no rule is registered under a name mismatching its `RULE_NAME`. This is coverage added on top of the baseline, not evidence about the migration itself.
+
+## After Task 3: the hooks and their fixes (143 across 15)
+
+`task-3-report.md`'s first implementation pass reports 136 passing across 15 suites — 134 (the Task 2 count) plus the 2 tests in the new `harness/gate/rule-docs-hook.test.mjs` suite Task 3 wrote to check the docs-pointer wiring. Its fix round then added 7 more tests to that same suite — the CRLF round-trip test, the `FORMS_RULE_IDS` dedup test, four `shape-guidance.mjs` constant tests, and a subprocess test that spawns a real hook and checks its exit code and stderr — and reports the resulting count directly, under "Fix round 1 (review response)":
+
+```
+$ npm run test:harness
+> vitest run --config harness/vitest.config.mjs
+
+ Test Files  15 passed (15)
+      Tests  143 passed (143)
+```
+
+143 passed across 15 suites, matching this repo's current state. As with Task 2, this is coverage Task 3 deliberately added for the hooks it built, not evidence about the rule migration Task 1 performed.
+
 ## Why "the safety gate held" is stronger than a passing number
 
 A test count that does not move across a refactor is consistent with the refactor being a no-op with respect to behavior — but it is also consistent with tests having been quietly loosened to keep passing. This migration's evidence rules that out by a stronger method than the pass count alone: **every `countByMessageId` assertion passed unchanged, and no expectation was edited.**
