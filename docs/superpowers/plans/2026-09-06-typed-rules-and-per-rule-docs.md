@@ -1255,7 +1255,9 @@ Method: every `hook-firings.jsonl` under `experiments/` (16 logs, 179 firings). 
 | 3 | 4 | 3% |
 | 4 | 1 | 1% |
 | 5 | 1 | 1% |
-| **19** | 1 | 1% |
+| **15** | 1 | 1% |
+
+The deepest bucket needs a note, because two true numbers are easy to confuse here. Under the strict definition above — *consecutive* firings of the same `(hook, file)` — the longest episode is **15**. But `seal-templates` fired **19** times on that same file across the window; the run is split into 1, 2, 1 and 15 by `component-shape` and `check-layout` firing on the same file in between. The strict number is the one in the histogram; the 19 is the number of times that one gate rejected that one file, which is what the agent actually experienced. The interleaving strengthens rather than weakens the finding: three separate gates were hitting the same file, and the four `seal` violations at lines 72-75 survived all of it.
 
 **The batching test, across all 38 within-episode transitions:**
 
@@ -1319,7 +1321,7 @@ The gap is real but it is not Playwright-shaped. It is accessibility — nine di
 
 1. **The baseline is red.** `harness/gate/check-boot.test.mjs` loads zero tests under vitest because of a shebang, so the "same test count before and after" gate would have been measured against 103 when the true figure is 107. Task 0.
 2. **Nothing type-checks the rule files.** The brief specifies the typing but not the pass that enforces it, and node/vitest both strip without checking. Task 1 Steps 2–3.
-3. **The Task 4 premise numbers are not in this repo.** "52% of correction episodes cleared on the first rejection" and "the worst took nine consecutive rejections" appear nowhere in `experiments/`, `harness/`, or any report; there is no episode-analysis code in the repo at all. The measured figures are **89% at depth 1** and a worst case of **19**.
+3. **The Task 4 premise numbers are not in this repo.** "52% of correction episodes cleared on the first rejection" and "the worst took nine consecutive rejections" appear nowhere in `experiments/`, `harness/`, or any report; there is no episode-analysis code in the repo at all. The measured figures are **89% at depth 1**, a worst strict-adjacency episode of **15**, and **19** rejections from a single gate on a single file.
 4. **The batching theory is refuted**, and the actual defect is whole-file gating on every edit. See above.
 5. **`npm run lint` exercises 6 of the 26 rules.** `eslint.config.mjs` registers only the `seal` plugin; the other twenty exist solely inside the hooks. This is deliberate — it is what preserves the gate-off baseline — but "run `npm run lint` to check the migration" would give false confidence over three quarters of the work. The per-plugin vitest suites are the real check.
 6. **The `MODULE_TYPELESS_PACKAGE_JSON` warning contaminates hook stderr.** Not mentioned in the brief; addressed by `"type": "module"`.
