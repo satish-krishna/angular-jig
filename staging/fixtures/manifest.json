@@ -1,0 +1,291 @@
+{
+  "$comment": "Every 'Good' example that used to live as prose in a spec. A 'negation' entry needs no exemplar: its Good is simply the absence of the Bad, so the spec states the prohibition and stops. A 'construction' entry asserts that some positive shape works, which prose cannot verify, so it points at real code and is checked. 'behavior' names a script that drives the running app, and is required wherever compiling and linting cannot see the claim - which is where every defect this repo has actually shipped lived.",
+  "fixtures": [
+    {
+      "id": "seal-01-raw-control",
+      "spec": "harness/sealing-spec.md",
+      "rule": 1,
+      "kind": "raw-control",
+      "form": "construction",
+      "claim": "Native elements carrying their primitive directive compile and render as Helm controls.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["<input hlmInput", "<textarea", "hlmTextarea"],
+      "behavior": null
+    },
+    {
+      "id": "seal-02-layout-class-on-primitive",
+      "spec": "harness/sealing-spec.md",
+      "rule": 2,
+      "kind": "appearance-on-primitive",
+      "form": "construction",
+      "claim": "A layout-only class on a primitive is permitted; the rule bans appearance, not geometry.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["class=\"w-full\""],
+      "behavior": null
+    },
+    {
+      "id": "seal-03-computed-style-binding",
+      "spec": "harness/sealing-spec.md",
+      "rule": 3,
+      "kind": "style-attribute",
+      "form": "negation",
+      "claim": "A static style attribute is forbidden. A computed [style.x] binding is ordinary Angular and needs no exemplar.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "seal-04-icon-renders",
+      "spec": "harness/sealing-spec.md",
+      "rule": 4,
+      "kind": "raw-icon",
+      "form": "construction",
+      "claim": "An <ng-icon> whose glyph is registered actually paints. An unregistered one logs a warning and renders nothing, so this claim is invisible to the compiler and the linter.",
+      "exemplar": "src/app/ui/stat-tile.ts",
+      "anchors": ["<ng-icon", "NgIcon"],
+      "behavior": "behavior/seal-04-icon-renders.mjs"
+    },
+    {
+      "id": "seal-05-primitive-as-element",
+      "spec": "harness/sealing-spec.md",
+      "rule": 5,
+      "kind": "unknown-primitive",
+      "form": "construction",
+      "claim": "hlm-select-trigger written as an ELEMENT produces a select that opens. Written as an attribute it compiles, renders, and never opens.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["<hlm-select-trigger", "*hlmSelectPortal", "<hlm-select-item"],
+      "behavior": "behavior/seal-05-primitive-as-element.mjs"
+    },
+    {
+      "id": "seal-06-overlay-has-title",
+      "spec": "harness/sealing-spec.md",
+      "rule": 6,
+      "kind": "missing-composition-part",
+      "form": "construction",
+      "claim": "An hlm-dialog-content carrying hlmDialogTitle exposes an accessible name to assistive technology. A bare h2 looks identical on screen and wires nothing.",
+      "exemplar": "src/app/hero-detail/hero-detail.html",
+      "anchors": ["<hlm-dialog-content *hlmDialogPortal", "hlmDialogTitle", "hlmDialogClose"],
+      "behavior": "behavior/seal-06-overlay-has-title.mjs"
+    },
+    {
+      "id": "layout-01-semantic-color",
+      "spec": "harness/layout-grammar-spec.md",
+      "rule": 1,
+      "kind": "raw-palette-color",
+      "form": "construction",
+      "claim": "Semantic token classes are the sanctioned way to color a surface.",
+      "exemplar": "src/app/hero-detail/hero-detail.html",
+      "anchors": ["bg-card", "text-muted-foreground"],
+      "behavior": null
+    },
+    {
+      "id": "layout-02-gap-not-space",
+      "spec": "harness/layout-grammar-spec.md",
+      "rule": 2,
+      "kind": "space-utility",
+      "form": "negation",
+      "claim": "space-x-*/space-y-* is forbidden. gap-* on a flex or grid container is ordinary Tailwind and needs no exemplar.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "layout-03-css-tokens",
+      "spec": "harness/layout-grammar-spec.md",
+      "rule": 3,
+      "kind": "raw-css-literal",
+      "form": "negation",
+      "claim": "A raw color or length in a hand-written stylesheet is forbidden. Token usage is verified by stylelint, not by this runner.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "layout-04-grid-for-regions",
+      "spec": "harness/layout-grammar-spec.md",
+      "rule": 4,
+      "kind": "nested-flex-grid",
+      "form": "construction",
+      "claim": "A two-dimensional region uses grid; a single-axis run uses flex. Both coexist in one screen without tripping the rule.",
+      "exemplar": "src/app/hero-detail/hero-detail.html",
+      "anchors": ["grid gap-6 grid-cols-1 sm:grid-cols-2", "flex items-center"],
+      "behavior": null
+    },
+    {
+      "id": "freeloader-01-native-control-flow",
+      "spec": "harness/freeloader-spec.md",
+      "rule": 1,
+      "kind": "legacy-control-flow",
+      "form": "construction",
+      "claim": "Native @if/@for blocks are the control flow this repo uses.",
+      "exemplar": "src/app/hero-detail/hero-detail.html",
+      "anchors": ["@if (vm.hero(); as hero)"],
+      "behavior": null
+    },
+    {
+      "id": "freeloader-02-class-binding",
+      "spec": "harness/freeloader-spec.md",
+      "rule": 2,
+      "kind": "ng-class-style",
+      "form": "negation",
+      "claim": "ngClass/ngStyle are forbidden. [class.x] and [style.x] are ordinary Angular and need no exemplar.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "shape-01-no-change-detection",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 1,
+      "kind": "hand-set-change-detection",
+      "form": "negation",
+      "claim": "Setting changeDetection at all is forbidden. Its absence is the whole of the Good case.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "shape-02-no-subscribe",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 2,
+      "kind": "component-subscribe",
+      "form": "construction",
+      "claim": "An observable converted with toSignal delivers its value, and keeps delivering, without a hand-managed subscription.",
+      "exemplar": "src/app/hero-detail/hero-detail.view-model.ts",
+      "anchors": ["toSignal(this.route.paramMap)"],
+      "behavior": "behavior/shape-02-no-subscribe.mjs"
+    },
+    {
+      "id": "shape-03-signal-form-control",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 3,
+      "kind": "template-driven-form",
+      "form": "construction",
+      "claim": "A control bound with [formField] round-trips: typing updates the model and the model updates the control.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["[formField]=\"heroForm.name\""],
+      "behavior": "behavior/shape-03-signal-form-control.mjs"
+    },
+    {
+      "id": "shape-04-schema-validation",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 4,
+      "kind": "restated-validator",
+      "form": "construction",
+      "claim": "validateStandardSchema alone enforces the zod rules; no per-field validator is needed for the schema's constraints to fire.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["validateStandardSchema(path, heroSchema)"],
+      "behavior": "behavior/shape-04-schema-validation.mjs"
+    },
+    {
+      "id": "shape-05-presentational-is-pure",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 5,
+      "kind": "presentational-injects-data",
+      "form": "construction",
+      "claim": "A ui/ component built from input() and output() alone needs no data service.",
+      "exemplar": "src/app/ui/hero-card.ts",
+      "anchors": ["input", "output"],
+      "behavior": null
+    },
+    {
+      "id": "shape-06-signal-form-not-reactive",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 6,
+      "kind": "reactive-form",
+      "form": "construction",
+      "claim": "A signal-form covers what a FormGroup would have: bound controls, validation, and a submit path.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["form(", "@angular/forms/signals"],
+      "behavior": "behavior/shape-06-signal-form-not-reactive.mjs"
+    },
+    {
+      "id": "shape-07-vm-component-scoped",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 7,
+      "kind": "vm-not-component-scoped",
+      "form": "negation",
+      "claim": "providedIn on a ViewModel is forbidden. A bare @Injectable() is the whole of the Good case.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "shape-08-state-in-vm",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 8,
+      "kind": "state-outside-vm",
+      "form": "construction",
+      "claim": "A feature component that injects its ViewModel and declares no state of its own still drives a full screen.",
+      "exemplar": "src/app/hero-detail/hero-detail.view-model.ts",
+      "anchors": ["readonly hero = computed(", "readonly isEditing = linkedSignal("],
+      "behavior": null
+    },
+    {
+      "id": "shape-09-vm-injects-data",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 9,
+      "kind": "feature-injects-data",
+      "form": "construction",
+      "claim": "The ViewModel injects the data service and the component injects only the ViewModel.",
+      "exemplar": "src/app/hero-detail/hero-detail.view-model.ts",
+      "anchors": ["inject(HeroService)"],
+      "behavior": null
+    },
+    {
+      "id": "shape-10-vm-provided",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 10,
+      "kind": "vm-not-provided",
+      "form": "construction",
+      "claim": "A ViewModel listed in the component's own providers resolves at runtime. Omit it and ng build still passes; the screen dies on render with a NullInjectorError.",
+      "exemplar": "src/app/hero-detail/hero-detail.ts",
+      "anchors": ["providers: [HeroDetailViewModel]", "inject(HeroDetailViewModel)"],
+      "behavior": "behavior/shape-10-vm-provided.mjs"
+    },
+    {
+      "id": "shape-11-no-standalone",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 11,
+      "kind": "explicit-standalone",
+      "form": "negation",
+      "claim": "Setting standalone at all is forbidden. Its absence is the whole of the Good case.",
+      "exemplar": null,
+      "anchors": [],
+      "behavior": null
+    },
+    {
+      "id": "shape-12-standalone-ngicon",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 12,
+      "kind": "legacy-icon-module",
+      "form": "construction",
+      "claim": "A component importing the standalone NgIcon boots. NgIconsModule compiles identically and throws at bootstrap, taking the whole application to a blank page.",
+      "exemplar": "src/app/ui/stat-tile.ts",
+      "anchors": ["import { NgIcon }", "imports: [NgIcon]"],
+      "behavior": "behavior/shape-12-standalone-ngicon.mjs"
+    },
+    {
+      "id": "shape-13-icons-registered",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 13,
+      "kind": "unregistered-icon",
+      "form": "construction",
+      "claim": "Registering every glyph once at application level, and importing no lucide symbol in the components that render them, is a documented and working pattern. A rule that blocks it is worse than no rule.",
+      "exemplar": "src/app/app.config.ts",
+      "anchors": ["provideIcons({"],
+      "behavior": "behavior/shape-13-icons-registered.mjs"
+    },
+    {
+      "id": "shape-14-submit-path",
+      "spec": "harness/component-shape-spec.md",
+      "rule": 14,
+      "kind": "orphan-ng-submit",
+      "form": "construction",
+      "claim": "A type=\"submit\" button inside a [formRoot] form runs the action registered in form()'s submission options, and so does pressing Enter in a text field. Without those options FormRoot swallows the native submit and the button is dead - which compiles, lints, and looks finished.",
+      "exemplar": "src/app/ui/hero-form.ts",
+      "anchors": ["[formRoot]=\"heroForm\"", "type=\"submit\"", "submission: {"],
+      "behavior": "behavior/shape-14-submit-path.mjs"
+    }
+  ]
+}
