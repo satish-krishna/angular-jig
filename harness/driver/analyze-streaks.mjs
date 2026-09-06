@@ -13,15 +13,55 @@
 // Run with --json to get the same numbers as a single machine-readable
 // object instead of the human-readable report, so a claim about these
 // figures can be checked by re-running this script rather than trusted.
-import { readFileSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+//
+// Logs are found by walking the filesystem from this script's own location
+// rather than shelling out to POSIX `find` against the current working
+// directory: `find` is not on a Windows-primary machine's PATH by default,
+// and even where it is, a script run from the wrong directory used to find
+// nothing and print a fully-formed report of NaN% and -Infinity at exit 0 -
+// a silent zero. Resolving relative to import.meta.url makes the answer the
+// same regardless of cwd, and the empty-result guard below makes "no data"
+// loud instead of decorated with fake numbers.
+import { readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const asJson = process.argv.includes('--json');
 
-const logs = execSync('find experiments -name hook-firings.jsonl', { encoding: 'utf8' })
-  .trim()
-  .split('\n')
-  .filter(Boolean);
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const EXPERIMENTS_DIR = join(ROOT, 'experiments');
+
+function findHookFiringsLogs(dir) {
+  let entries;
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  const out = [];
+  for (const entry of entries) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      out.push(...findHookFiringsLogs(full));
+    } else if (entry.isFile() && entry.name === 'hook-firings.jsonl') {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+function fail(message) {
+  process.stderr.write(`analyze-streaks: ${message}\n`);
+  process.exit(1);
+}
+
+const logs = findHookFiringsLogs(EXPERIMENTS_DIR);
+if (logs.length === 0) {
+  fail(
+    `no hook-firings.jsonl files found under ${EXPERIMENTS_DIR}. There is no data to ` +
+      `analyze - not printing a report.`,
+  );
+}
 
 // Strip the leading "path:line:col  " and the trailing "(rule-id)" so two
 // firings that report the SAME violation at a shifted line still compare equal
@@ -53,6 +93,13 @@ for (const path of logs) {
     cur.firings.push({ count: r.count, ids: new Set((r.messages ?? []).map(identity)), ts: r.ts });
   }
   flush();
+}
+
+if (allStreaks.length === 0) {
+  fail(
+    `found ${logs.length} hook-firings.jsonl file(s) but parsed zero episodes out of them. ` +
+      `There is no data to analyze - not printing a report.`,
+  );
 }
 
 const fmtDelta = (s) => {

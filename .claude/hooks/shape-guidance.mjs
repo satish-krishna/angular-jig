@@ -20,11 +20,18 @@ function docsPointerFor(ruleId) {
 }
 
 // One guidance block per topic: every rule in the set shares the identical
-// worked example in its doc, so agentGuidanceFor's dedup-by-body collapses
-// them to the single block below.
+// worked example in its doc today, so agentGuidanceFor's dedup-by-body
+// collapses them to a single block and joining that one-element array is
+// byte-identical to taking its first element. Joining rather than taking
+// `[0]` matters only if a doc in the set is ever edited independently: dedup
+// then stops collapsing, and taking `[0]` would silently hand the agent one
+// rule's guidance for a violation of a different rule in the same set, with
+// no error. Joining degrades that failure mode to "the agent sees every
+// block that fired" instead of "the agent sees the wrong one".
 function guidanceFor(ruleIds) {
-  const [block] = agentGuidanceFor([...ruleIds].map(docsPointerFor));
-  return '\n' + (block ?? '');
+  const blocks = agentGuidanceFor([...ruleIds].map(docsPointerFor));
+  if (blocks.length === 0) return '';
+  return '\n' + blocks.join('\n\n');
 }
 
 // The messageIds/ruleIds whose fix is the forms worked example. The other

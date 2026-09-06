@@ -7,7 +7,33 @@ import { spawnSync } from 'node:child_process';
 import angular from 'angular-eslint';
 import seal from './index.mjs';
 import { docsPointersFor, agentGuidanceFor } from '../../.claude/hooks/rule-docs.mjs';
-import { FORMS_RULE_IDS, SHAPE_FORMS_GUIDANCE, MVVM_GUIDANCE, ICON_GUIDANCE, SUBMIT_GUIDANCE } from '../../.claude/hooks/shape-guidance.mjs';
+import {
+  FORMS_RULE_IDS,
+  MVVM_RULE_IDS,
+  ICON_RULE_IDS,
+  SUBMIT_RULE_IDS,
+  SHAPE_FORMS_GUIDANCE,
+  MVVM_GUIDANCE,
+  ICON_GUIDANCE,
+  SUBMIT_GUIDANCE,
+} from '../../.claude/hooks/shape-guidance.mjs';
+import {
+  SHAPE_FORMS_GUIDANCE as PINNED_SHAPE_FORMS_GUIDANCE,
+  MVVM_GUIDANCE as PINNED_MVVM_GUIDANCE,
+  ICON_GUIDANCE as PINNED_ICON_GUIDANCE,
+  SUBMIT_GUIDANCE as PINNED_SUBMIT_GUIDANCE,
+} from './pinned-shape-guidance.mjs';
+
+// shape-guidance.mjs and rule-docs.mjs are plain ESM helpers with no shebang,
+// so importing them directly (as this file does) is safe; every actual hook
+// entrypoint under .claude/hooks/ (check-component-shape.mjs,
+// check-component-shape-guided.mjs, check-freeloader.mjs, check-layout.mjs,
+// protect-enforcement.mjs, seal-templates.mjs) starts with
+// `#!/usr/bin/env node` and must always be exercised via spawnSync instead,
+// never imported, because that shebang silently makes vitest load zero tests
+// from the file while `node --check` still passes on it - see the
+// seal-templates subprocess test at the bottom of this file for the pattern
+// to copy.
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const config = [{
@@ -75,17 +101,43 @@ describe('the hooks can reach a rule doc from a lint result', () => {
     expect(new Set(blocks).size).toBe(blocks.length);
   });
 
-  it('collapses four rules that genuinely share one identical worked example into a single block', () => {
-    // FORMS_RULE_IDS is the real case this repo relies on: four distinct
-    // rules, each pointing at a doc whose '## Agent guidance' body is the
-    // same signal-forms worked example, word for word.
-    const pointers = [...FORMS_RULE_IDS].map((ruleId) => ({
-      ruleId,
-      url: `harness/rules/${ruleId.split('/').pop()}.md`,
-    }));
+  // Each of the four *_RULE_IDS sets in shape-guidance.mjs names several rules
+  // whose docs currently carry an identical '## Agent guidance' body, so
+  // agentGuidanceFor's dedup-by-body collapses every set down to a single
+  // block. shape-guidance.mjs's guidanceFor() relies on that collapse: it
+  // joins whatever blocks come back, and joining a one-element array is
+  // byte-identical to taking element [0]. If a doc in any set is ever edited
+  // independently, the collapse below stops holding for that set and this
+  // assertion is what catches it - not a passing test elsewhere.
+  const toPointers = (ruleIds) =>
+    [...ruleIds].map((ruleId) => ({ ruleId, url: `harness/rules/${ruleId.split('/').pop()}.md` }));
+
+  it('collapses the four forms rules that share one identical worked example into a single block', () => {
+    const pointers = toPointers(FORMS_RULE_IDS);
     expect(pointers.length).toBe(4);
-    const blocks = agentGuidanceFor(pointers);
-    expect(blocks.length).toBe(1);
+    expect(agentGuidanceFor(pointers).length).toBe(1);
+  });
+
+  it('collapses the four MVVM rules that share one identical worked example into a single block', () => {
+    const pointers = toPointers(MVVM_RULE_IDS);
+    expect(pointers.length).toBe(4);
+    expect(agentGuidanceFor(pointers).length).toBe(1);
+  });
+
+  it('collapses the two icon rules that share one identical worked example into a single block', () => {
+    const pointers = toPointers(ICON_RULE_IDS);
+    expect(pointers.length).toBe(2);
+    expect(agentGuidanceFor(pointers).length).toBe(1);
+  });
+
+  it('has exactly one rule in SUBMIT_RULE_IDS, so its "collapse" is trivial by construction', () => {
+    // Documented for symmetry with the other three sets: there is nothing to
+    // collapse here today, but if a second submit-shaped rule is ever added
+    // to this set, this test starts exercising the same collapse the other
+    // three already check, rather than silently staying a single-block case.
+    const pointers = toPointers(SUBMIT_RULE_IDS);
+    expect(pointers.length).toBe(1);
+    expect(agentGuidanceFor(pointers).length).toBe(1);
   });
 
   it('tolerates CRLF line endings in the doc file (a fresh checkout under core.autocrlf)', () => {
@@ -127,6 +179,35 @@ describe('shape-guidance.mjs generates its four constants from the docs', () => 
   it('SUBMIT_GUIDANCE is non-empty and names the one submit path', () => {
     expect(SUBMIT_GUIDANCE.length).toBeGreaterThan(0);
     expect(SUBMIT_GUIDANCE).toMatch(/submit\(this\.form/);
+  });
+});
+
+describe('the four guidance constants match the pinned experiment stimulus, byte for byte', () => {
+  // The regex checks above pass through any rewording, rewrapping, or
+  // re-fencing of harness/rules/*.md's '## Agent guidance' sections.
+  // check-component-shape-guided.mjs (the frozen arm of a published A/B
+  // experiment) reads SHAPE_FORMS_GUIDANCE at module load, so a change to
+  // that text is a change to the stimulus behind a measured result, not a
+  // cosmetic doc edit. These four assertions are full-string equality
+  // against harness/gate/pinned-shape-guidance.mjs, a committed snapshot of
+  // the values as they stood before this branch made the constants derived
+  // from markdown. A failure here means a rule doc's '## Agent guidance'
+  // body changed - see pinned-shape-guidance.mjs's header for what to do
+  // about that (never "regenerate the fixture" without reading it first).
+  it('SHAPE_FORMS_GUIDANCE is byte-identical to the pinned value', () => {
+    expect(SHAPE_FORMS_GUIDANCE).toBe(PINNED_SHAPE_FORMS_GUIDANCE);
+  });
+
+  it('MVVM_GUIDANCE is byte-identical to the pinned value', () => {
+    expect(MVVM_GUIDANCE).toBe(PINNED_MVVM_GUIDANCE);
+  });
+
+  it('ICON_GUIDANCE is byte-identical to the pinned value', () => {
+    expect(ICON_GUIDANCE).toBe(PINNED_ICON_GUIDANCE);
+  });
+
+  it('SUBMIT_GUIDANCE is byte-identical to the pinned value', () => {
+    expect(SUBMIT_GUIDANCE).toBe(PINNED_SUBMIT_GUIDANCE);
   });
 });
 

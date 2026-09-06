@@ -28,7 +28,9 @@ By Part 3 the Part 1 sealing hook and the Part 2 layout hook are baseline: on in
 
 ## The rules
 
-Every gated Part 3 violation is one of exactly fourteen kinds. The gate reports them by `messageId`; the counter tallies them by `kind`. The kind strings are the shared vocabulary and must match on both sides.
+Every gated Part 3 violation is one of exactly fifteen kinds. The gate reports them by `messageId`, one per row in the table below; the counter tallies them by `kind`, and the two counts differ by exactly one: `no-forms-module` (TypeScript) and `no-ng-model` (template) are two separate rules that both feed the single `template-driven-form` kind, so the counter's `totals` carries fourteen keys (see "The tally shape" below), not fifteen. Neither figure is a typo of the other; both are stated so.
+
+The fifteen rules break down as seven original (`no-hand-set-change-detection`, `no-component-subscribe`, `no-forms-module`, `no-ng-model`, `no-restated-validator`, `no-presentational-inject`, `no-reactive-form`), four MVVM (added by the capstone), and four capstone-residue (`no-explicit-standalone`, `no-legacy-icon-module`, `no-unregistered-icon`, `no-orphan-ng-submit`).
 
 | Rule | What it forbids |
 | --- | --- |

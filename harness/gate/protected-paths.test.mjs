@@ -4,10 +4,24 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+// Strips `//` line comments before scanning for quoted entries. Without this,
+// an odd single-quote character (an apostrophe) in a comment inside the array
+// silently corrupts every entry parsed after it - this already happened once
+// during this branch's development. Comments in these arrays carry an
+// in-array warning against writing an apostrophe there too; that warning is
+// belt-and-braces, kept for a human skimming the source, but this parser must
+// not depend on anyone reading it.
+const stripLineComments = (block) => block.replace(/\/\/[^\n]*/g, '');
+
+// Pulled out from listFrom so the comment-stripping behavior can be pinned
+// against a synthetic array body, not only against whatever PROTECTED and
+// ENFORCEMENT_PATHS happen to contain today.
+const parseQuotedEntries = (block) => [...stripLineComments(block).matchAll(/'([^']+)'/g)].map((m) => m[1]).sort();
+
 const listFrom = (file, name) => {
   const src = readFileSync(join(root, file), 'utf8');
   const block = src.match(new RegExp(`${name} = \\[([\\s\\S]*?)\\];`))[1];
-  return [...block.matchAll(/'([^']+)'/g)].map((m) => m[1]).sort();
+  return parseQuotedEntries(block);
 };
 
 // The two lists are deliberately NOT identical. PROTECTED (a live PreToolUse
@@ -46,5 +60,31 @@ describe('the two enforcement-path lists stay in sync (modulo one named exceptio
   it('both cover the harness typecheck config', () => {
     expect(listFrom('.claude/hooks/protect-enforcement.mjs', 'PROTECTED')).toContain('tsconfig.harness.json');
     expect(listFrom('harness/driver/run-capstone.mjs', 'ENFORCEMENT_PATHS')).toContain('tsconfig.harness.json');
+  });
+});
+
+describe('the array-body parser is not fooled by an apostrophe in a comment', () => {
+  it('parses entries correctly even when a comment line contains a single quote', () => {
+    // This is the sixth silent zero the review flagged: without comment
+    // stripping, the lone apostrophe in "editor's" below pairs up with the
+    // next real quote character and swallows 'real-entry-one' entirely.
+    const body = `
+  'zero-entry',
+  // a comment mentioning the editor's own habits, with an apostrophe
+  'real-entry-one',
+  'real-entry-two',
+`;
+    expect(parseQuotedEntries(body)).toEqual(['real-entry-one', 'real-entry-two', 'zero-entry'].sort());
+  });
+
+  it('would have swallowed an entry if comments were not stripped first (proves the bug this guards against)', () => {
+    const body = `
+  'zero-entry',
+  // a comment mentioning the editor's own habits, with an apostrophe
+  'real-entry-one',
+  'real-entry-two',
+`;
+    const withoutStripping = [...body.matchAll(/'([^']+)'/g)].map((m) => m[1]).sort();
+    expect(withoutStripping).not.toEqual(['real-entry-one', 'real-entry-two', 'zero-entry'].sort());
   });
 });
