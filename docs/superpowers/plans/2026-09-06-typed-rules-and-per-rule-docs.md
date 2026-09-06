@@ -268,7 +268,7 @@ git mv harness/gate/rules/component-util.mjs harness/gate/rules/component-util.t
 git mv harness/gate/rules/primitive-vocabulary.mjs harness/gate/rules/primitive-vocabulary.ts
 ```
 
-**In the same step, repoint every rule that imports them.** Seventeen `.mjs` rule files still import `./component-util.mjs` or `./primitive-vocabulary.mjs`; those specifiers now name files that no longer exist, and Step 7's `gate.test.mjs` run loads all six seal rules, two of which import `primitive-vocabulary`. Rewrite the specifiers to `./component-util.ts` and `./primitive-vocabulary.ts` — Node imports a `.ts` from an `.mjs` without complaint. Find them with:
+**In the same step, repoint every rule that imports them.** Fourteen `.mjs` rule files still import `./component-util.mjs` or `./primitive-vocabulary.mjs`; those specifiers now name files that no longer exist, and Step 7's `gate.test.mjs` run loads all six seal rules, two of which import `primitive-vocabulary`. Rewrite the specifiers to `./component-util.ts` and `./primitive-vocabulary.ts` — Node imports a `.ts` from an `.mjs` without complaint. Find them with:
 
 ```bash
 grep -rln "component-util\.mjs\|primitive-vocabulary\.mjs" harness/gate/rules/
