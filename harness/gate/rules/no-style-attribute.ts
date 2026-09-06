@@ -1,10 +1,18 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
+import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
+import { createRule } from './create-rule.ts';
 
 // Part 1, rule 3 (narrowed): no static inline style attribute. A static
 // style="..." is a raw literal that bypasses the token system. It is narrow on
 // purpose: Angular's baseline CLAUDE.md endorses [style] bindings over [ngStyle],
 // so the gate must NOT ban style bindings, only the static literal attribute.
-export default {
+
+export type Options = [];
+export type MessageIds = 'styleAttribute';
+export const RULE_NAME = 'no-style-attribute';
+
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: { description: 'Disallow a static inline style attribute.' },
@@ -14,10 +22,11 @@ export default {
         'Sealed vocabulary: a static style attribute on <{{element}}> is a raw literal. Style belongs in a token or the primitive; a computed [style.x] binding is fine, a hardcoded style attribute is not.',
     },
   },
+  defaultOptions: [],
   create(context) {
     const parserServices = getTemplateParserServices(context);
     return {
-      Element(node) {
+      Element(node: TmplAstElement) {
         const hasStaticStyle = node.attributes.some((a) => a.name === 'style');
         if (!hasStaticStyle) return;
         context.report({
@@ -28,4 +37,4 @@ export default {
       },
     };
   },
-};
+});

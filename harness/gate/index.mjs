@@ -1,9 +1,9 @@
-import noRawControl from './rules/no-raw-control.mjs';
-import noAppearanceOnPrimitive from './rules/no-appearance-on-primitive.mjs';
-import noStyleAttribute from './rules/no-style-attribute.mjs';
-import noRawIcon from './rules/no-raw-icon.mjs';
-import noUnknownPrimitive from './rules/no-unknown-primitive.mjs';
-import noMissingCompositionPart from './rules/no-missing-composition-part.mjs';
+import noRawControl from './rules/no-raw-control.ts';
+import noAppearanceOnPrimitive from './rules/no-appearance-on-primitive.ts';
+import noStyleAttribute from './rules/no-style-attribute.ts';
+import noRawIcon from './rules/no-raw-icon.ts';
+import noUnknownPrimitive from './rules/no-unknown-primitive.ts';
+import noMissingCompositionPart from './rules/no-missing-composition-part.ts';
 
 // The `seal` eslint plugin: the six custom template rules that encode the
 // sealing spec. This is one of the two independent engines; the other is

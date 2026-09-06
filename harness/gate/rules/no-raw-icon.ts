@@ -1,4 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
+import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
+import { createRule } from './create-rule.ts';
 
 // Rule 4 of the sealing spec: no raw inline <svg> in an application template.
 // See ../../sealing-spec.md, "The six rules" #4. messageId `rawIcon` maps to
@@ -14,9 +16,15 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 // registration (a fact about the component class, invisible to a template
 // engine - the spec states that half is doc-only), and it does not touch
 // libs/** (the gate ignores it wholesale; Helm internals may inline SVG).
+
+export type Options = [];
+export type MessageIds = 'rawIcon';
+export const RULE_NAME = 'no-raw-icon';
+
 const SVG_ROOT_NAME = ':svg:svg';
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
@@ -29,10 +37,11 @@ export default {
         '<ng-icon name="lucide..."> and register the icon via provideIcons on the component.',
     },
   },
+  defaultOptions: [],
   create(context) {
     const parserServices = getTemplateParserServices(context);
     return {
-      Element(node) {
+      Element(node: TmplAstElement) {
         if (node.name !== SVG_ROOT_NAME) return;
         context.report({
           loc: parserServices.convertElementSourceSpanToLoc(context, node),
@@ -41,4 +50,4 @@ export default {
       },
     };
   },
-};
+});

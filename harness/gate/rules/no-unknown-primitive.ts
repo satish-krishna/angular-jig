@@ -1,5 +1,7 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
+import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
 import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.ts';
+import { createRule } from './create-rule.ts';
 
 // Rule 5 of the sealing spec: an hlm* attribute or element that matches no
 // installed selector. See ../../sealing-spec.md, "The six rules" #5. Docs: the
@@ -21,16 +23,23 @@ import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.ts';
 // matches /^hlm-/ is checked against PRIMITIVE_ELEMENTS, each in that form
 // only. `hlmSelectTrigger` as an attribute is a violation even though
 // `hlm-select-trigger` is a real, installed element.
+
+export type Options = [];
+export type MessageIds = 'unknownPrimitive';
+export const RULE_NAME = 'no-unknown-primitive';
+
+type Form = 'attribute' | 'element';
+
 const ATTR_LIKE_RE = /^(hlm[A-Z]|hlm-)/;
 const ELEMENT_LIKE_RE = /^hlm-/;
 
-const camelToKebab = (name) => name.replace(/([A-Z])/g, '-$1').toLowerCase();
-const kebabToCamel = (name) => name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+const camelToKebab = (name: string): string => name.replace(/([A-Z])/g, '-$1').toLowerCase();
+const kebabToCamel = (name: string): string => name.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
 
 // If the name written in the wrong form has a real vocabulary entry in the
 // OTHER form, name that entry in the report so the fix is a single
 // substitution, not a guess.
-function correctFormFor(name, form) {
+function correctFormFor(name: string, form: Form): { as: Form; name: string } | null {
   if (form === 'attribute') {
     const kebab = name.startsWith('hlm-') ? name : camelToKebab(name);
     return PRIMITIVE_ELEMENTS.has(kebab) ? { as: 'element', name: kebab } : null;
@@ -39,7 +48,8 @@ function correctFormFor(name, form) {
   return PRIMITIVE_ATTRS.has(camel) ? { as: 'attribute', name: camel } : null;
 }
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
@@ -53,10 +63,11 @@ export default {
         'an hlm* name.',
     },
   },
+  defaultOptions: [],
   create(context) {
     const parserServices = getTemplateParserServices(context);
 
-    const report = (node, name, form) => {
+    const report = (node: TmplAstElement, name: string, form: Form) => {
       const correct = correctFormFor(name, form);
       const hint = correct
         ? form === 'attribute'
@@ -71,7 +82,7 @@ export default {
     };
 
     return {
-      Element(node) {
+      Element(node: TmplAstElement) {
         if (ELEMENT_LIKE_RE.test(node.name) && !PRIMITIVE_ELEMENTS.has(node.name)) {
           report(node, node.name, 'element');
         }
@@ -83,4 +94,4 @@ export default {
       },
     };
   },
-};
+});

@@ -1,4 +1,6 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
+import type { TmplAstElement } from '@angular-eslint/bundled-angular-compiler';
+import { createRule } from './create-rule.ts';
 
 // Rule 1 of the sealing spec: no native control element where a primitive
 // exists. See ../../sealing-spec.md, "The four rules" #1. messageId
@@ -10,7 +12,12 @@ import { getTemplateParserServices } from '@angular-eslint/utils';
 //    directives style the same native element in different compositions.
 //  - Two elements (`select`, `dialog`) have no directive twin at all; no
 //    attribute makes them acceptable, the element itself must be replaced.
-const CONTROL_PRIMITIVE_ATTRS = {
+
+export type Options = [];
+export type MessageIds = 'rawControl';
+export const RULE_NAME = 'no-raw-control';
+
+const CONTROL_PRIMITIVE_ATTRS: Record<string, readonly string[]> = {
   button: [
     'hlmBtn',
     'hlmDialogTrigger',
@@ -41,12 +48,13 @@ const CONTROL_PRIMITIVE_ATTRS = {
   caption: ['hlmTableCaption', 'hlmCaption'],
 };
 
-const REPLACEMENT_ONLY = {
+const REPLACEMENT_ONLY: Record<string, string> = {
   select: 'hlm-select',
   dialog: 'hlm-dialog',
 };
 
-export default {
+export default createRule<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
@@ -57,10 +65,11 @@ export default {
       rawControl: 'Sealed vocabulary: <{{element}}> {{guidance}}',
     },
   },
+  defaultOptions: [],
   create(context) {
     const parserServices = getTemplateParserServices(context);
     return {
-      Element(node) {
+      Element(node: TmplAstElement) {
         const replacement = REPLACEMENT_ONLY[node.name];
         if (replacement) {
           context.report({
@@ -89,4 +98,4 @@ export default {
       },
     };
   },
-};
+});
