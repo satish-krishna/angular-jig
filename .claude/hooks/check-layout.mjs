@@ -23,6 +23,7 @@ import tseslint from 'typescript-eslint';
 import layout from '../../harness/gate/layout-index.mjs';
 import styleConfig from '../../stylelint.config.mjs';
 import { logFiring } from './_hook-log.mjs';
+import { docsPointersFor, formatDocPointerBlock } from './rule-docs.mjs';
 
 const hookDir = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(hookDir, '..', '..');
@@ -106,11 +107,16 @@ async function main() {
 
   const messages = [];
 
+  // eslint and results stay in scope beyond this block so the eslint (not the
+  // stylelint) half of the violations can later be traced back to a docs url.
+  let eslint;
+  let results;
+
   // Template surface (angular-eslint layout rules), for .html and inline templates in .ts.
   if (/\.(html|ts)$/.test(normalized)) {
     try {
-      const eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: layoutEslintConfig });
-      const results = await eslint.lintFiles([file]);
+      eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: layoutEslintConfig });
+      results = await eslint.lintFiles([file]);
       for (const r of results) {
         for (const m of r.messages) {
           if (m.severity === 2) messages.push(`${normalized}:${m.line}:${m.column}  ${m.message}`);
@@ -144,12 +150,35 @@ async function main() {
 
   if (messages.length === 0) process.exit(0);
 
-  logFiring('check-layout', normalized, messages);
+  // Pointers exist only for the eslint half: stylelint warnings carry no rule
+  // metadata and no docs url, so the stylelint lines above stay exactly as
+  // they are. A missing or unreadable doc must never turn this into a soft
+  // failure: on any error, drop the pointer block and still block the edit.
+  let pointers = [];
+  try {
+    if (eslint && results) {
+      pointers = docsPointersFor(eslint, results);
+    }
+  } catch {
+    pointers = [];
+  }
+  const docLines = pointers.map((p) => `  ${p.ruleId}  ->  ${p.url}`);
+
+  // Stylelint warnings carry no eslint ruleId, but a firing must not vanish
+  // from the count for that: extract the rule name stylelint appends in
+  // parentheses at the end of its warning text (e.g.
+  // "(scale-unlimited/declaration-strict-value)").
+  const stylelintRules = messages
+    .map((m) => m.match(/\(([^()]+)\)\s*$/)?.[1])
+    .filter(Boolean);
+  logFiring('check-layout', normalized, messages, [...pointers.map((p) => p.ruleId), ...stylelintRules]);
 
   process.stderr.write(
     `Layout gate blocked this edit: ${messages.length} violation(s).\n` +
       messages.map((m) => `  ${m}`).join('\n') +
-      `\n\nLayout is a grammar (see harness/layout-grammar-spec.md): grid for regions, flex for inline runs, ` +
+      `\n` +
+      formatDocPointerBlock(docLines) +
+      `Layout is a grammar (see harness/layout-grammar-spec.md): grid for regions, flex for inline runs, ` +
       `spacing with gap, and colors and sizes as tokens. The documented shape:\n` +
       `  Good: <div class="grid grid-cols-2 gap-4">   <div class="flex items-center gap-2">   background: var(--card)\n` +
       `  Bad:  class="space-y-4"   class="bg-blue-500"   background: #3b82f6   padding: 16px\n` +

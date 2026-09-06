@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // The boot gate (`npm run check:boot`).
 //
 // Renders every route and fails on an uncaught runtime error. This is the plane

@@ -1,6 +1,7 @@
 {
   "name": "angular-jig",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,9 +10,11 @@
     "test": "ng test",
     "lint": "eslint src",
     "test:harness": "vitest run --config harness/vitest.config.mjs",
+    "typecheck:harness": "tsc -p tsconfig.harness.json --noEmit",
     "check:responsive": "node harness/gate/check-responsive.mjs",
     "count": "node harness/counter/counter.mjs --root . src",
-    "check:boot": "node harness/gate/check-boot.mjs"
+    "check:boot": "node harness/gate/check-boot.mjs",
+    "firings": "node harness/driver/firing-rollup.mjs"
   },
   "private": true,
   "packageManager": "npm@11.0.0",

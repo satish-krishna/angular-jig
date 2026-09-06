@@ -9,12 +9,7 @@ Read `sealing-spec.md`, `layout-grammar-spec.md`, and `component-shape-spec.md` 
 
 ## The rules are the docs, mechanized
 
-Both vocabulary rules come straight from Angular's generated `CLAUDE.md`, which is in the agent's baseline in both conditions:
-
-- "Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`."
-- "Do NOT use `ngClass`, use `class` bindings instead." "Do NOT use `ngStyle`, use `style` bindings instead."
-
-No doc-first work is needed: these are the framework's own rules, mechanized. `strictTemplates` is likewise Angular's own compiler option, off by default in this substrate (verified: `tsconfig.json` sets no `strictTemplates`), turned on as Part 4's measured move.
+Both vocabulary rules come straight from Angular's own generated `CLAUDE.md`, which is in the agent's baseline in both conditions. No doc-first work is needed here, unlike Parts 1-2: these are the framework's own stated rules, mechanized as written. `strictTemplates` is likewise Angular's own compiler option, off by default in this substrate (verified: `tsconfig.json` sets no `strictTemplates`), turned on as Part 4's measured move.
 
 ## The measurement model (cumulative baseline)
 
@@ -29,17 +24,10 @@ The report has two halves, one per freeloader: the strict-template diagnostic co
 
 Two kinds, both template-AST decidable. The gate reports them by `messageId`, the counter tallies them by `kind`, and the strings match on both sides.
 
-### 1. `legacy-control-flow`: a structural directive where native control flow exists
-
-Docs: `CLAUDE.md`, native control flow over the structural directives. A `*ngIf`, `*ngFor`, or `*ngSwitch` in a template is a violation; `@if`/`@for`/`@switch` pass.
-
-- Violation: an element carrying `*ngIf`, `*ngFor`, or `*ngSwitch` (the microsyntax attributes). Good (passes): `@if (x) { ... }`, `@for (h of heroes(); track h.id) { ... }`. Bad (fails): `<div *ngIf="x">`, `<li *ngFor="let h of heroes">`.
-
-### 2. `ng-class-style`: an `ngClass` or `ngStyle` binding
-
-Docs: `CLAUDE.md`, `class`/`style` bindings over `ngClass`/`ngStyle`. Any `ngClass` or `ngStyle`, as a bound input `[ngClass]`/`[ngStyle]` or a bare attribute, is a violation; a `[class.x]`/`[style.x]`/`[class]`/`[style]` binding passes.
-
-- Violation: `[ngClass]="..."`, `ngClass`, `[ngStyle]="..."`, `ngStyle`. Good (passes): `[class.active]="isActive()"`, `[style.width.px]="w()"`. Bad (fails): `<div [ngClass]="{ active: isActive() }">`, `<div [ngStyle]="{ width: w }">`.
+| Rule | What it forbids |
+| --- | --- |
+| [no-legacy-control-flow](rules/no-legacy-control-flow.md) | A structural directive (`*ngIf`/`*ngFor`/`*ngSwitch`) where native control flow exists |
+| [no-ng-class-style](rules/no-ng-class-style.md) | An `ngClass` or `ngStyle` binding |
 
 ## The strictTemplates freeloader (build-time, compiler-audited)
 

@@ -42,3 +42,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Ordinary-session gate telemetry. The per-run logs under experiments/ are
+# evidence and ARE committed; this one is a rolling local counter and is not.
+.claude/hook-firings.jsonl

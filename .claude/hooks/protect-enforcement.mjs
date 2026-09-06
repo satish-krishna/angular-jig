@@ -48,8 +48,19 @@
 import { logFiring } from './_hook-log.mjs';
 
 // Everything that defines or enforces the constitution, plus the harness that
-// measures it. Kept in sync with ENFORCEMENT_PATHS in harness/driver/run-capstone.mjs,
-// which is the post-hoc backstop for anything that gets past this.
+// measures it. Shares its enforcement core with ENFORCEMENT_PATHS in
+// harness/driver/run-capstone.mjs, which is the post-hoc backstop for anything
+// that gets past this - but the two lists are NOT required to be equal, and
+// harness/gate/protected-paths.test.mjs does not assert that they are. This
+// list carries one entry ENFORCEMENT_PATHS deliberately omits: 'experiments/'.
+// It is here because this guard also stops READ-contamination (an agent
+// finding a prior trial's answers under experiments/, which the capstone
+// found happening four times); ENFORCEMENT_PATHS polices WRITE-tampering on
+// the committed diff, where 'experiments/' would be dead weight (every
+// trial's own commit already excludes it, see run-capstone.mjs) and a future
+// landmine if that exclusion ever moves. Do not "fix" this by adding
+// 'experiments/' to ENFORCEMENT_PATHS to make the two lists match - that was
+// considered and rejected for exactly the landmine reason above.
 const PROTECTED = [
   'stylelint.config.mjs',
   'eslint.config.mjs',
@@ -65,17 +76,27 @@ const PROTECTED = [
   // script can rewrite a config through it. tsconfig.json holds strictTemplates,
   // which the driver sets as a control in BOTH arms. .mcp.json is handed to the
   // agent as --mcp-config.
-  // Previous runs' implementations. The capstone found FOUR stages reading a
-  // prior trial out of experiments/, including a gate-on trial reading a
+  // Implementations from previous runs. The capstone found FOUR stages reading
+  // a prior trial out of experiments/, including a gate-on trial reading a
   // gate-off one, and the dialog bug in gate-on t2 is a near-verbatim copy of
-  // gate-on t1's. Trials are supposed to be independent samples and the two
-  // arms are supposed to share nothing but the substrate; a readable
+  // the one in gate-on t1. Trials are supposed to be independent samples and
+  // the two arms are supposed to share nothing but the substrate; a readable
   // experiments/ breaks both. The guard was written to stop the agent editing
   // the RULES and nobody thought about it reading the ANSWERS.
+  //
+  // NOTE for future edits to this array: harness/gate/protected-paths.test.mjs
+  // parses this whole array body, comments included, by scanning for pairs of
+  // single quote characters. A stray apostrophe, or any other lone single
+  // quote character, in a comment inside this array silently corrupts every
+  // entry parsed after it. Do not put an apostrophe or a single quote
+  // character in a comment inside this array; write around it instead.
   'experiments/',
   'package.json',
   'tsconfig.json',
   'tsconfig.app.json',
+  // Decides whether the rules type-check at all (the safety net Task 1 built).
+  // Flip "strict": false in here and that net goes slack, silently.
+  'tsconfig.harness.json',
   '.mcp.json',
 ];
 
@@ -146,6 +167,6 @@ if (toolName === 'Bash' || toolName === 'PowerShell') {
 
 if (hits.length === 0) process.exit(0);
 
-logFiring('protect-enforcement', hits.join(', '), [`${toolName} blocked on: ${hits.join(', ')}`]);
+logFiring('protect-enforcement', hits.join(', '), [`${toolName} blocked on: ${hits.join(', ')}`], ['protect-enforcement']);
 process.stderr.write(`${DENY_MESSAGE}\nBlocked: ${toolName} touching ${hits.join(', ')}\n`);
 process.exit(2);

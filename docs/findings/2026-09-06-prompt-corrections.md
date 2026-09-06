@@ -1,0 +1,24 @@
+# Where the brief's assumptions did not survive the repo
+
+This is the list of places where the originating brief for the typed-rules-and-per-rule-docs migration made a claim that did not hold once checked against this repo, plus four more found during execution after the plan was written. The first seven were caught while writing the plan. The last four were caught while carrying it out.
+
+1. **The baseline is red.** `harness/gate/check-boot.test.mjs` loads zero tests under vitest because of a shebang, so the "same test count before and after" gate would have been measured against 103 when the true figure is 107. Task 0.
+2. **Nothing type-checks the rule files.** The brief specifies the typing but not the pass that enforces it, and node/vitest both strip without checking. Task 1 Steps 2-3.
+3. **The Task 4 premise numbers are not in this repo.** "52% of correction episodes cleared on the first rejection" and "the worst took nine consecutive rejections" appear nowhere in `experiments/`, `harness/`, or any report; there is no episode-analysis code in the repo at all. The measured figures are **89% at depth 1**, a worst strict-adjacency episode of **15**, and **19** rejections from a single gate against a single file before that adjacency rule fragments it — see `docs/findings/2026-09-06-batching-theory.md` for why there are two numbers and what each one measures.
+4. **The batching theory is refuted**, and the actual defect is whole-file gating on every edit. See `docs/findings/2026-09-06-batching-theory.md`.
+5. **`npm run lint` exercises 6 of the 26 rules.** `eslint.config.mjs` registers only the `seal` plugin; the other twenty exist solely inside the hooks. This is deliberate — it is what preserves the gate-off baseline — but "run `npm run lint` to check the migration" would give false confidence over three quarters of the work. The per-plugin vitest suites are the real check.
+6. **The `MODULE_TYPELESS_PACKAGE_JSON` warning contaminates hook stderr.** Not mentioned in the brief; addressed by `"type": "module"`.
+7. **The helpers are gate-internal.** `component-util` and `primitive-vocabulary` are imported only by rules under `harness/gate/rules/`, never by the counter, so converting them cannot force a counter change. The brief's "do not touch `harness/counter/*`" constraint is safe as written — verified, not assumed.
+
+## Found during execution, after the plan was written
+
+8. **A shebang made four tests invisible.** `harness/gate/check-boot.test.mjs` loaded zero tests because `check-boot.mjs` began with `#!/usr/bin/env node`, and vitest wraps each module in a function where a `#!` is a V8 syntax error. `node --check` passes on the same file, which is why it went unnoticed. This is why the baseline was 103, not 107.
+9. **The plan said seventeen files import the rule helpers; there are 14.** Found by an implementer running the plan's own grep.
+10. **The plan's docs-split created seven dangling pointers.** Removing the spec's numbered section headings left seven rule *messages* still saying "see harness/component-shape-spec.md, rule N" — the literal text an agent reads when its edit is rejected, now pointing at nothing. Fixed in its own commit.
+11. **The markdown-as-single-source design had a silent CRLF failure.** `agentGuidanceFor`'s regex is anchored on a literal LF; `core.autocrlf` is `true` with no `.gitattributes`, and the repo already carries CRLF files. A fresh clone would have blanked all four worked examples repo-wide while the hooks kept exiting 2 and kept blocking — a gate that looks healthy and has silently stopped teaching. Fixed with normalization, a `.gitattributes` pin, and a round-trip test.
+
+## The thread these share
+
+Every one of these eleven items is a silent zero: machinery that keeps running, keeps reporting success or keeps exiting with the expected code, and in the meantime checks or teaches nothing. A shebang that quietly drops four tests. A lint command that quietly skips twenty rules. A premise number that quietly never existed anywhere it was cited from. A doc pointer that quietly resolves to nothing. A regex that quietly blanks a worked example on every checkout that isn't the one it was authored on — while the hook it feeds keeps exiting 2 and keeps blocking edits, looking exactly as healthy as it did before the example vanished.
+
+That is the failure mode this repo exists to study in the agents it measures, and a single refactor of the harness itself produced five more instances of it (items 3, 5, 8, 10, 11 are five separate silent zeros; items 1, 2, 6, 7, 9 are the same family of un-verified assumption, caught before they could become one). The corrective is the same one this repo applies everywhere else: don't trust that a green check, a passing exit code, or an unexamined claim means the thing underneath it is actually happening. Read the diff. Run the count. Grep the claim.
