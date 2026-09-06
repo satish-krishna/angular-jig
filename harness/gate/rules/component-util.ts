@@ -2,7 +2,11 @@
 // this is shared among the gate's own rules, never with the counter (the two
 // engines stay independent). Operates on typescript-eslint's ESTree AST.
 
-export function hasComponentDecorator(classNode) {
+import type { TSESTree } from '@typescript-eslint/utils';
+
+type ComponentClassNode = TSESTree.ClassDeclaration | TSESTree.ClassExpression;
+
+export function hasComponentDecorator(classNode: ComponentClassNode): boolean {
   const decs = classNode.decorators ?? [];
   return decs.some((d) => {
     const e = d.expression;
@@ -11,8 +15,8 @@ export function hasComponentDecorator(classNode) {
   });
 }
 
-export function inComponentClass(node) {
-  let p = node.parent;
+export function inComponentClass(node: TSESTree.Node): boolean {
+  let p: TSESTree.Node | undefined = node.parent;
   while (p) {
     if ((p.type === 'ClassDeclaration' || p.type === 'ClassExpression') && hasComponentDecorator(p)) return true;
     p = p.parent;
@@ -20,7 +24,7 @@ export function inComponentClass(node) {
   return false;
 }
 
-export function componentDecoratorObject(classNode) {
+export function componentDecoratorObject(classNode: ComponentClassNode): TSESTree.ObjectExpression | null {
   for (const d of classNode.decorators ?? []) {
     const e = d.expression;
     if (e && e.type === 'CallExpression' && e.callee.type === 'Identifier' && e.callee.name === 'Component') {
@@ -37,7 +41,7 @@ export function componentDecoratorObject(classNode) {
 // untouched (its own local copies keep it independent and its tests unchanged).
 
 // The path split rule 5 keys on, and rules 8/9 key on the complement of.
-export function isUiPath(filename) {
+export function isUiPath(filename: string): boolean {
   return /(^|\/)src\/app\/ui\//.test(String(filename).replaceAll('\\', '/'));
 }
 
@@ -47,13 +51,13 @@ const UI_HELPERS = new Set([
   'ElementRef', 'DestroyRef', 'ChangeDetectorRef', 'Renderer2', 'NgZone', 'ViewContainerRef', 'TemplateRef',
 ]);
 
-export function isDataServiceToken(name) {
+export function isDataServiceToken(name: string): boolean {
   return name === 'HttpClient' || (/Service$/.test(name) && !UI_HELPERS.has(name) && !name.startsWith('Hlm'));
 }
 
 // A ViewModel is identified syntactically by a class-name suffix, exactly as
 // rule 5 promoted the `Service` suffix to a decidable marker.
-export function isViewModelName(name) {
+export function isViewModelName(name: string | null | undefined): boolean {
   return typeof name === 'string' && /ViewModel$/.test(name);
 }
 
@@ -62,8 +66,8 @@ export function isViewModelName(name) {
 // classes whose name ends in ViewModel, reusing the same marker as rule 7. The
 // capstone found the gate relocating the hand-managed subscribe into the one
 // class rule 2's original scope note exempted, so the predicate now covers both.
-export function inComponentOrViewModelClass(node) {
-  let p = node.parent;
+export function inComponentOrViewModelClass(node: TSESTree.Node): boolean {
+  let p: TSESTree.Node | undefined = node.parent;
   while (p) {
     if (p.type === 'ClassDeclaration' || p.type === 'ClassExpression') {
       if (hasComponentDecorator(p) || isViewModelName(p.id && p.id.name)) return true;
@@ -75,7 +79,10 @@ export function inComponentOrViewModelClass(node) {
 
 // Generalizes componentDecoratorObject to an arbitrary set of decorator names
 // (rule 7 needs @Injectable or @Service, not @Component).
-export function decoratorObjectByNames(classNode, names) {
+export function decoratorObjectByNames(
+  classNode: ComponentClassNode,
+  names: readonly string[],
+): TSESTree.ObjectExpression | null {
   for (const d of classNode.decorators ?? []) {
     const e = d.expression;
     if (e && e.type === 'CallExpression' && e.callee.type === 'Identifier' && names.includes(e.callee.name)) {
@@ -88,8 +95,8 @@ export function decoratorObjectByNames(classNode, names) {
 
 // Like inComponentClass, but returns the enclosing @Component class node
 // itself (rule 10 needs to inspect that class's own providers array).
-export function nearestComponentClass(node) {
-  let p = node.parent;
+export function nearestComponentClass(node: TSESTree.Node): ComponentClassNode | null {
+  let p: TSESTree.Node | undefined = node.parent;
   while (p) {
     if ((p.type === 'ClassDeclaration' || p.type === 'ClassExpression') && hasComponentDecorator(p)) return p;
     p = p.parent;

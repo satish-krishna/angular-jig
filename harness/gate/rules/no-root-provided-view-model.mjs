@@ -1,4 +1,4 @@
-import { isViewModelName, decoratorObjectByNames } from './component-util.mjs';
+import { isViewModelName, decoratorObjectByNames } from './component-util.ts';
 
 // Rule 7 of the component-shape spec: a ViewModel (a class whose name ends in
 // `ViewModel`) must be component-scoped, never providedIn. A providedIn

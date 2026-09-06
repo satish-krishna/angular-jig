@@ -1,5 +1,5 @@
 import { getTemplateParserServices } from '@angular-eslint/utils';
-import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.mjs';
+import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.ts';
 
 // Rule 5 of the sealing spec: an hlm* attribute or element that matches no
 // installed selector. See ../../sealing-spec.md, "The six rules" #5. Docs: the
@@ -10,7 +10,7 @@ import { PRIMITIVE_ATTRS, PRIMITIVE_ELEMENTS } from './primitive-vocabulary.mjs'
 // Every Helm primitive is either an attribute directive or an element, never
 // both, and which one it is is fixed by its `selector:` in libs/ui. This is a
 // closed-world check against PRIMITIVE_ATTRS/PRIMITIVE_ELEMENTS (see
-// ./primitive-vocabulary.mjs, shared gate-internally with rule 2): a name
+// ./primitive-vocabulary.ts, shared gate-internally with rule 2): a name
 // outside the hlm namespace is never considered, so ordinary attributes and
 // third-party components are untouched.
 //

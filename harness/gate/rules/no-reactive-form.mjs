@@ -1,4 +1,4 @@
-import { componentDecoratorObject } from './component-util.mjs';
+import { componentDecoratorObject } from './component-util.ts';
 
 // Rule 6 of the component-shape spec: no reactive forms. The house-style skill
 // overrides Angular's reactive-forms fallback and requires signal-forms plus a

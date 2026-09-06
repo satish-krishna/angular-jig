@@ -1,4 +1,4 @@
-import { inComponentClass, isDataServiceToken, isUiPath } from './component-util.mjs';
+import { inComponentClass, isDataServiceToken, isUiPath } from './component-util.ts';
 
 // Rule 9 of the component-shape spec: a feature component (not under
 // src/app/ui/) injects no data service directly; its ViewModel does. This is

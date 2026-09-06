@@ -1,4 +1,4 @@
-import { componentDecoratorObject } from './component-util.mjs';
+import { componentDecoratorObject } from './component-util.ts';
 
 // Rule 12 of the component-shape spec (capstone-residue): no NgIconsModule in
 // a component's imports. The house-style skill: "Import `NgIcon`, never

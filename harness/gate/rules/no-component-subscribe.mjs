@@ -1,4 +1,4 @@
-import { inComponentOrViewModelClass } from './component-util.mjs';
+import { inComponentOrViewModelClass } from './component-util.ts';
 
 // Rule 2 of the component-shape spec: no .subscribe() inside a component. Use the
 // async pipe or toSignal at the edge. messageId `componentSubscribe` maps to the

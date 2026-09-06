@@ -9,7 +9,7 @@
 // own rules/icons.md blesses appearance classes on it (e.g. a decorative
 // icon's text color). Treating it as a primitive would fight that baseline
 // doc, so icons get their own rule (rule 4) instead.
-export const PRIMITIVE_ATTRS = new Set([
+export const PRIMITIVE_ATTRS: ReadonlySet<string> = new Set([
   'hlmBtn',
   'hlmInput',
   'hlmTextarea',
@@ -112,7 +112,7 @@ export const PRIMITIVE_ATTRS = new Set([
   'hlmSidebarWrapper',
 ]);
 
-export const PRIMITIVE_ELEMENTS = new Set([
+export const PRIMITIVE_ELEMENTS: ReadonlySet<string> = new Set([
   'hlm-card',
   'hlm-card-header',
   'hlm-card-footer',

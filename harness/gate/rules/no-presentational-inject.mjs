@@ -1,4 +1,4 @@
-import { inComponentClass } from './component-util.mjs';
+import { inComponentClass } from './component-util.ts';
 
 // Rule 5 of the component-shape spec: a presentational component (under
 // src/app/ui/) must not inject a data service. Keys on the file path plus the

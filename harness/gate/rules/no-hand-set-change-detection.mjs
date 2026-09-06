@@ -1,4 +1,4 @@
-import { componentDecoratorObject } from './component-util.mjs';
+import { componentDecoratorObject } from './component-util.ts';
 
 // Rule 1 of the component-shape spec: no explicit changeDetection in @Component.
 // OnPush is the Angular v22 default, and CLAUDE.md says not to set it. messageId

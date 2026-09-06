@@ -1,4 +1,4 @@
-import { componentDecoratorObject } from './component-util.mjs';
+import { componentDecoratorObject } from './component-util.ts';
 
 // Rule 11 of the component-shape spec (capstone-residue): no explicit
 // `standalone` in @Component. CLAUDE.md, verbatim: "Must NOT set

@@ -1,4 +1,4 @@
-import { inComponentClass } from './component-util.mjs';
+import { inComponentClass } from './component-util.ts';
 
 // Rule 4 of the component-shape spec: no per-field signal-forms validator the zod
 // schema already owns. validateStandardSchema is the blessed path; the async and

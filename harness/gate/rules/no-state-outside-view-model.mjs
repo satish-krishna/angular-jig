@@ -1,4 +1,4 @@
-import { hasComponentDecorator, isUiPath } from './component-util.mjs';
+import { hasComponentDecorator, isUiPath } from './component-util.ts';
 
 // Rule 8 of the component-shape spec: a feature component (not under
 // src/app/ui/) declares no state of its own; the state lives in its

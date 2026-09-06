@@ -1,4 +1,4 @@
-import { componentDecoratorObject } from './component-util.mjs';
+import { componentDecoratorObject } from './component-util.ts';
 
 // Rule 3 (TypeScript half) of the component-shape spec: no FormsModule in a
 // component's imports. Template-driven forms are not used here. messageId

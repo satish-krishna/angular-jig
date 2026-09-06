@@ -1,4 +1,4 @@
-import { isViewModelName, nearestComponentClass, componentDecoratorObject } from './component-util.mjs';
+import { isViewModelName, nearestComponentClass, componentDecoratorObject } from './component-util.ts';
 
 // Rule 10 of the component-shape spec: a @Component that injects a ViewModel
 // (inject(X) where X ends in `ViewModel`) must list that same X in its own
