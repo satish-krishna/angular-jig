@@ -18,7 +18,7 @@
 - **No enums, no namespaces, no parameter properties** anywhere under `harness/gate/`. Node runs in strip-only mode and rejects any TypeScript construct that needs code generation. Use union types or `as const` objects.
 - **`noInlineConfig` stays `true`** in every eslint config in this repo. Nothing in this work may introduce a suppression path.
 - **Do not touch `harness/counter/*`.** The two engines are deliberately independent.
-- **`npm run test:harness` must report 107 passing tests** at the end of Task 1 and every task after it. See Task 0 — the pre-existing count is 103 passing plus one suite that never loads.
+- **`npm run test:harness` must report 107 passing tests** at the end of Task 0 and at the end of Task 1. See Task 0 — the pre-existing count is 103 passing plus one suite that never loads. From Task 2 onward the count may only *grow*, by exactly the tests that task adds (134 after Task 2, 136 after Task 3); **no pre-existing test may be deleted, skipped, or changed.** The frozen thing is the existing suite, not the integer.
 - **Every `countByMessageId` assertion is the contract.** If one appears to need changing, stop and report rather than updating the expectation.
 - **Every rule keeps `type: 'problem'`, `schema: []`, and exactly one messageId,** spelled exactly as it is spelled today. The messageId is the join key to the counter's `kind`; renaming one silently unhooks a rule from its cross-check.
 - **Separate commits** per task as specified. A bisect has to be able to tell the migration from the docs split from the hook change.
@@ -266,6 +266,12 @@ Rename `component-util.mjs` → `component-util.ts` and `primitive-vocabulary.mj
 ```bash
 git mv harness/gate/rules/component-util.mjs harness/gate/rules/component-util.ts
 git mv harness/gate/rules/primitive-vocabulary.mjs harness/gate/rules/primitive-vocabulary.ts
+```
+
+**In the same step, repoint every rule that imports them.** Seventeen `.mjs` rule files still import `./component-util.mjs` or `./primitive-vocabulary.mjs`; those specifiers now name files that no longer exist, and Step 7's `gate.test.mjs` run loads all six seal rules, two of which import `primitive-vocabulary`. Rewrite the specifiers to `./component-util.ts` and `./primitive-vocabulary.ts` — Node imports a `.ts` from an `.mjs` without complaint. Find them with:
+
+```bash
+grep -rln "component-util\.mjs\|primitive-vocabulary\.mjs" harness/gate/rules/
 ```
 
 Then add type annotations. **Change no logic and no exported name.** `primitive-vocabulary.ts` holds `PRIMITIVE_ATTRS` and `PRIMITIVE_ELEMENTS`; type them as `readonly string[]` or `ReadonlySet<string>` matching how they are actually used, and add `as const` where the values are literal collections. `component-util.ts` exports `isViewModelName`, `nearestComponentClass`, `componentDecoratorObject`, `decoratorObjectByNames`, `inComponentClass`, `inComponentOrViewModelClass`, `hasComponentDecorator`, `isUiPath`, `isDataServiceToken` — give each an explicit parameter and return type using `TSESTree` node types from `@typescript-eslint/utils`.
@@ -861,6 +867,376 @@ git commit -m "docs(findings): where the brief's assumptions did not survive the
 Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_0162mqAx9gjJyZ6DEEFidnMw"
 ```
+
+---
+
+## Task 8: arm the guard permanently, and make the firing counter actually count
+
+**This task must run last.** Its final commit registers `protect-enforcement` for every session in this repo, and that hook denies any tool call touching `harness/`, `.claude/hooks/`, `package.json` or `experiments/` — which is most of Tasks 0-3 and all of Task 5's inputs. Land it earlier and the rest of the plan cannot be executed by an agent.
+
+**Files:**
+- Modify: `.claude/hooks/_hook-log.mjs`
+- Modify: `.claude/hooks/seal-templates.mjs`, `check-layout.mjs`, `check-component-shape.mjs`, `check-freeloader.mjs`, `protect-enforcement.mjs` (the `logFiring` call sites)
+- Modify: `.claude/hooks/protect-enforcement.mjs` (`PROTECTED`), `harness/driver/run-capstone.mjs` (`ENFORCEMENT_PATHS`)
+- Create: `.claude/settings.json`
+- Create: `harness/gate/maintenance.settings.json`
+- Create: `harness/driver/firing-rollup.mjs`
+- Modify: `.gitignore`, `package.json`
+
+**Interfaces:**
+- Consumes: the `pointers` array (`{ruleId, url}[]`) built by `docsPointersFor` in Task 3 — that is where the ruleIds come from.
+- Produces: `.claude/hook-firings.jsonl`, appended in *every* session, and `npm run firings` to read it.
+
+### The bug this fixes
+
+```js
+export function logFiring(hook, file, messages) {
+  const path = process.env.HOOK_LOG;
+  if (!path) return;          // <-- HOOK_LOG is set only by the run driver
+```
+
+Only `harness/driver/run-trial.mjs` and `run-capstone.mjs` ever set `HOOK_LOG`. In an ordinary interactive session it is unset, so every hook fires, blocks correctly, and records **nothing** — no error, no empty file, no signal. Registering the hooks permanently without fixing this produces a drift counter that reports zero forever. That is the same silent-zero shape as the shebang in Task 0 and the never-dereferenced docs URL in Task 2.
+
+- [ ] **Step 1: Write the failing test**
+
+Create `harness/gate/hook-log.test.mjs`:
+
+```js
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { readFileSync, rmSync, existsSync, mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { logFiring, DEFAULT_LOG_PATH } from '../../.claude/hooks/_hook-log.mjs';
+
+describe('logFiring', () => {
+  let dir;
+  beforeEach(() => { dir = mkdtempSync(join(tmpdir(), 'firing-')); });
+  afterEach(() => { delete process.env.HOOK_LOG; rmSync(dir, { recursive: true, force: true }); });
+
+  it('keeps the verbose per-run record when HOOK_LOG is set, for the driver', () => {
+    const p = join(dir, 'run.jsonl');
+    process.env.HOOK_LOG = p;
+    logFiring('seal-templates', 'src/a.html', ['a.html:1:1  bad'], ['seal/no-raw-control']);
+    const row = JSON.parse(readFileSync(p, 'utf8').trim());
+    expect(row.count).toBe(1);
+    expect(row.messages).toEqual(['a.html:1:1  bad']);
+  });
+
+  it('writes a LEAN record to the default path when HOOK_LOG is unset', () => {
+    const p = join(dir, 'default.jsonl');
+    logFiring('seal-templates', 'src/a.html', ['a.html:1:1  bad'], ['seal/no-raw-control'], p);
+    const row = JSON.parse(readFileSync(p, 'utf8').trim());
+    expect(row.count).toBe(1);
+    expect(row.rules).toEqual(['seal/no-raw-control']);
+    expect(row).not.toHaveProperty('messages');
+  });
+
+  it('never throws into the gate when the path is unwritable', () => {
+    expect(() => logFiring('h', 'f', ['m'], ['r'], join(dir, 'no', 'such', 'x.jsonl'))).not.toThrow();
+  });
+
+  it('names a default path inside .claude', () => {
+    expect(DEFAULT_LOG_PATH).toMatch(/\.claude[/\\]hook-firings\.jsonl$/);
+  });
+});
+```
+
+Run: `npx vitest run --config harness/vitest.config.mjs harness/gate/hook-log.test.mjs`
+Expected: FAIL — `DEFAULT_LOG_PATH` is not exported and `logFiring` takes three parameters.
+
+- [ ] **Step 2: Rewrite `_hook-log.mjs` with two modes**
+
+```js
+import { appendFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+/** Where an ordinary session records firings. Git-ignored; telemetry, not evidence. */
+export const DEFAULT_LOG_PATH = join(ROOT, '.claude', 'hook-firings.jsonl');
+
+/**
+ * Two records, deliberately, because the two readers want different things.
+ *
+ * HOOK_LOG set (the run driver, per trial): the VERBOSE record, with the full
+ * message text. Every file under experiments/ is in this shape and
+ * harness/driver/analyze-streaks.mjs parses it. Changing it would silently
+ * invalidate the batching analysis and every future re-run of it, so it does
+ * not change.
+ *
+ * HOOK_LOG unset (an ordinary interactive session): the LEAN record - which
+ * hook, which file, how many, which rules. That answers "how often is the
+ * machinery catching drift, and what drift" and nothing else, which is the
+ * whole brief. The message text is deliberately absent: a permanent log
+ * running on every session for months would otherwise accumulate source
+ * fragments nobody reads.
+ *
+ * Logging never throws into the gate. A gate that dies because its telemetry
+ * could not write is worse than a gate with no telemetry.
+ */
+export function logFiring(hook, file, messages, rules = [], pathOverride = null) {
+  const runPath = process.env.HOOK_LOG;
+  const ts = new Date().toISOString();
+  const path = pathOverride ?? runPath ?? DEFAULT_LOG_PATH;
+  const record =
+    runPath && !pathOverride
+      ? { hook, file, count: messages.length, messages, ts }
+      : { hook, file, count: messages.length, rules: [...new Set(rules)], ts };
+  try {
+    appendFileSync(path, JSON.stringify(record) + '\n');
+  } catch {
+    // Never let logging break a gate.
+  }
+}
+```
+
+Note the `pathOverride ?? runPath` ordering: an explicit path wins, so the test can exercise the lean branch without unsetting an env var the driver may have set.
+
+Run the test again: Expected PASS, 4/4.
+
+- [ ] **Step 3: Pass ruleIds at every call site**
+
+Task 3 already computes `pointers` (`{ruleId, url}[]`) in the four gate hooks. Add the fourth argument:
+
+```js
+logFiring('seal-templates', normalized, lines, pointers.map((p) => p.ruleId));
+```
+
+`check-layout.mjs` also collects **stylelint** warnings, which carry no eslint ruleId. Its stylelint text ends in `(scale-unlimited/declaration-strict-value)`; extract it, or label the firing `stylelint` — either is fine, but a stylelint firing must not vanish from the count:
+
+```js
+const stylelintRules = messages
+  .map((m) => m.match(/\(([^()]+)\)\s*$/)?.[1])
+  .filter(Boolean);
+logFiring('check-layout', normalized, messages, [...pointers.map((p) => p.ruleId), ...stylelintRules]);
+```
+
+`protect-enforcement.mjs` already calls `logFiring` with the blocked paths. Pass `['protect-enforcement']` as its rules so a tamper attempt shows up in the rollup as its own category — that is the single most interesting number in the file.
+
+There are **six** call sites, not five:
+
+| File | Line (pre-edit) | Action |
+|---|---|---|
+| `seal-templates.mjs` | 68 | pass `pointers.map(p => p.ruleId)` |
+| `check-layout.mjs` | 147 | pass eslint ruleIds **+** the extracted stylelint rule names |
+| `check-component-shape.mjs` | 115 | pass `pointers.map(p => p.ruleId)` |
+| `check-freeloader.mjs` | 76 | pass `pointers.map(p => p.ruleId)` |
+| `protect-enforcement.mjs` | 149 | pass `['protect-enforcement']` |
+| `check-component-shape-guided.mjs` | 86 | **leave unchanged** |
+
+`check-component-shape-guided.mjs` is the frozen experiment variant from Part 3's A/B. The new `rules` parameter defaults to `[]`, so the old three-argument call keeps working untouched — which is the point. It only ever runs under `part3-gate-on-guided.settings.json`, where the driver sets `HOOK_LOG` and the verbose branch is taken anyway, so it never reaches the lean record and loses nothing by not passing ruleIds. Do not "tidy" it.
+
+- [ ] **Step 4: Write the rollup**
+
+Create `harness/driver/firing-rollup.mjs`. Counts only. No dashboard, no trend line — the brief is "how many times, no more no less", and a count with no rule attached is a number nobody can act on, so rule is the minimum useful grain.
+
+```js
+// npm run firings [-- --since 2026-09-01]
+// Reads the ordinary-session firing log and prints counts by hook and by rule.
+import { readFileSync, existsSync } from 'node:fs';
+import { DEFAULT_LOG_PATH } from '../../.claude/hooks/_hook-log.mjs';
+
+const args = process.argv.slice(2);
+const since = args.includes('--since') ? args[args.indexOf('--since') + 1] : null;
+
+if (!existsSync(DEFAULT_LOG_PATH)) {
+  process.stdout.write(`No firings recorded yet (${DEFAULT_LOG_PATH} does not exist).\n`);
+  process.exit(0);
+}
+
+const rows = readFileSync(DEFAULT_LOG_PATH, 'utf8')
+  .split('\n')
+  .filter(Boolean)
+  .map((l) => { try { return JSON.parse(l); } catch { return null; } })
+  .filter(Boolean)
+  .filter((r) => !since || r.ts >= since);
+
+const byHook = {};
+const byRule = {};
+for (const r of rows) {
+  byHook[r.hook] = (byHook[r.hook] ?? 0) + 1;
+  for (const rule of r.rules ?? []) byRule[rule] = (byRule[rule] ?? 0) + 1;
+}
+
+const table = (title, obj) => {
+  process.stdout.write(`\n${title}\n`);
+  const entries = Object.entries(obj).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) { process.stdout.write('  (none)\n'); return; }
+  for (const [k, n] of entries) process.stdout.write(`  ${String(n).padStart(5)}  ${k}\n`);
+};
+
+process.stdout.write(`${rows.length} firing(s)${since ? ` since ${since}` : ''}, ${new Set(rows.map((r) => r.file)).size} distinct file(s).\n`);
+table('By hook', byHook);
+table('By rule', byRule);
+process.stdout.write('\n');
+```
+
+Add to `package.json`: `"firings": "node harness/driver/firing-rollup.mjs"`.
+
+- [ ] **Step 5: Git-ignore the log**
+
+Append to `.gitignore`:
+
+```
+# Ordinary-session gate telemetry. The per-run logs under experiments/ are
+# evidence and ARE committed; this one is a rolling local counter and is not.
+.claude/hook-firings.jsonl
+```
+
+Verify: `git status --short` shows no `.claude/hook-firings.jsonl` after a hook has fired.
+
+- [ ] **Step 6: Close the two gaps in the protected-path lists**
+
+`tsconfig.harness.json` (created in Task 1) decides whether the rules type-check at all. Flip `"strict": false` in it and the safety net Task 1 exists to build goes slack, silently. It appears in neither list. Add it to **both**, because they are hand-maintained and independently enforced:
+
+- `.claude/hooks/protect-enforcement.mjs` → `PROTECTED`, next to `tsconfig.app.json`
+- `harness/driver/run-capstone.mjs` → `ENFORCEMENT_PATHS`, same position
+
+Add a test at `harness/gate/protected-paths.test.mjs` so the two lists cannot drift apart again:
+
+```js
+import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const listFrom = (file, name) => {
+  const src = readFileSync(join(root, file), 'utf8');
+  const block = src.match(new RegExp(`${name} = \\[([\\s\\S]*?)\\];`))[1];
+  return [...block.matchAll(/'([^']+)'/g)].map((m) => m[1]).sort();
+};
+
+describe('the two enforcement-path lists stay in sync', () => {
+  it('protect-enforcement PROTECTED equals run-capstone ENFORCEMENT_PATHS', () => {
+    const guard = listFrom('.claude/hooks/protect-enforcement.mjs', 'PROTECTED');
+    const driver = listFrom('harness/driver/run-capstone.mjs', 'ENFORCEMENT_PATHS');
+    expect(guard).toEqual(driver);
+  });
+
+  it('both cover the harness typecheck config', () => {
+    expect(listFrom('.claude/hooks/protect-enforcement.mjs', 'PROTECTED')).toContain('tsconfig.harness.json');
+  });
+});
+```
+
+Run it. If the two lists already differ on something other than the new entry, **stop and report** — that is a live gap in the tamper backstop, not a housekeeping detail.
+
+- [ ] **Step 7: Create the maintenance profile**
+
+`protect-enforcement` in a committed `settings.json` is self-sealing: it guards `.claude/settings.json`, so once registered no agent can unregister it. That is correct, and it means work shaped like *this plan* — migrating a rule, splitting a spec, adding a gate — is impossible for an agent until a different settings file is handed in. The repo already has this pattern (`gate-on.settings.json`, `gate-off.settings.json`); this is one more.
+
+Create `harness/gate/maintenance.settings.json`:
+
+```json
+{
+  "$comment": "Maintenance profile: for sessions whose JOB is to change the harness - migrating a rule, splitting a spec, adding a gate. The house-convention PostToolUse gates stay registered, because a maintenance session still edits src/ and should still obey the constitution. protect-enforcement is deliberately ABSENT, because the thing it forbids is the thing this session was invoked to do. Use: claude --settings harness/gate/maintenance.settings.json. This is not a dial on the gate: the gate rules are unchanged and un-suppressible in every arm. It is a different operator, not a weaker rule.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node .claude/hooks/seal-templates.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-layout.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-component-shape.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-freeloader.mjs" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+- [ ] **Step 8: Write the committed `settings.json` — the arming commit**
+
+Create `.claude/settings.json`:
+
+```json
+{
+  "$comment": "The constitution, always on. Every session in this repo now runs the full edit-time gate plus the enforcement guard; the experiment phase is over and these are house rules rather than an experimental arm. Firings are recorded to .claude/hook-firings.jsonl (git-ignored) on every session - read them with `npm run firings`. To do maintenance ON the harness itself, launch with --settings harness/gate/maintenance.settings.json, which drops protect-enforcement and keeps the gates.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/protect-enforcement.mjs" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node .claude/hooks/seal-templates.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-layout.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-component-shape.mjs" },
+          { "type": "command", "command": "node .claude/hooks/check-freeloader.mjs" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Do not add `.claude/settings.local.json` to git.** It is already in `PROTECTED` and holds the operator's own output-style choice.
+
+- [ ] **Step 9: Prove the counter counts before trusting it**
+
+The whole point of this task is that a silent zero is indistinguishable from a clean repo. Verify by hand, once:
+
+```bash
+rm -f .claude/hook-firings.jsonl
+cp harness/counter/fixtures/dirty.html src/__firing-probe.html
+echo '{"tool_name":"Write","tool_input":{"file_path":"src/__firing-probe.html"}}' | node .claude/hooks/seal-templates.mjs; echo "exit=$?"
+cat .claude/hook-firings.jsonl
+echo '{"tool_name":"Edit","tool_input":{"file_path":"harness/gate/index.mjs"}}' | node .claude/hooks/protect-enforcement.mjs; echo "exit=$?"
+npm run firings
+rm -f src/__firing-probe.html
+```
+
+Expected: the seal hook exits 2 and appends one lean row carrying `"rules":["seal/no-raw-control", ...]` and **no** `messages` key; `protect-enforcement` exits 2 and appends its own row; `npm run firings` prints non-zero counts under both `By hook` and `By rule`. If the file is missing or empty, this task has failed at the one thing it exists to do.
+
+- [ ] **Step 10: Full gate**
+
+```bash
+npm run typecheck:harness && npm run test:harness && npm run lint && npm run build
+git status --short   # must NOT list .claude/hook-firings.jsonl
+```
+
+Expected: 142 passing across 17 suites (136 after Task 3, plus 4 hook-log tests and 2 protected-path tests).
+
+- [ ] **Step 11: Commit**
+
+```bash
+git add .claude/settings.json .claude/hooks .gitignore package.json \
+        harness/gate/maintenance.settings.json harness/gate/hook-log.test.mjs \
+        harness/gate/protected-paths.test.mjs harness/driver
+git commit -m "feat(gate): arm the constitution for every session, and make firings countable
+
+The experiment phase is over: settings.json now registers the four gate hooks
+and protect-enforcement in every session, not just a driver-launched trial.
+
+logFiring was a no-op whenever HOOK_LOG was unset, which is every ordinary
+session - so arming the hooks without this would have produced a drift counter
+that reported zero forever, with no error to notice. It now writes a lean
+record (hook, file, count, rules) to a git-ignored .claude/hook-firings.jsonl
+by default, and keeps the verbose per-run record untouched when the driver sets
+HOOK_LOG, because experiments/ and analyze-streaks.mjs parse that shape.
+
+tsconfig.harness.json decides whether the rules type-check at all and was in
+neither protected-path list; it is now in both, with a test that keeps the two
+lists from drifting apart again.
+
+maintenance.settings.json is how a session that is SUPPOSED to change the
+harness gets to: the gates stay, protect-enforcement goes. Not a dial on the
+rules - a different operator.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0162mqAx9gjJyZ6DEEFidnMw"
+```
+
+- [ ] **Step 12: Tell the operator what just changed about their sessions**
+
+After this commit, an ordinary `claude` in this repo cannot edit `harness/`, `.claude/hooks/`, `package.json`, `tsconfig*.json`, `eslint.config.mjs`, `stylelint.config.mjs` or `experiments/` — and cannot read `experiments/` through Bash either, since the guard's Bash arm scans command text. That is the intent. The escape is `claude --settings harness/gate/maintenance.settings.json`, and it must be stated in the final report, not left to be discovered.
 
 ---
 
