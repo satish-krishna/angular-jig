@@ -2,11 +2,13 @@ import { Injectable, computed, inject, linkedSignal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeroService } from '../hero/hero.service';
+import { MissionService } from '../mission/mission.service';
 import type { HeroFormModel } from '../hero/hero.schema';
 
 @Injectable()
 export class HeroDetailViewModel {
   private readonly heroService = inject(HeroService);
+  private readonly missionService = inject(MissionService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -22,23 +24,29 @@ export class HeroDetailViewModel {
     return id ? this.heroService.byId(id) : null;
   });
 
-  // Reseeds to false whenever the hero changes, so an open editor does not
-  // follow the reader onto the next hero.
-  readonly isEditing = linkedSignal(() => {
+  // Reseeds whenever the hero changes, so navigating to another hero returns the
+  // reader to Overview instead of stranding them in a stale editor. This is the
+  // same reseeding behaviour isEditing had, moved onto the tab key.
+  readonly tab = linkedSignal(() => {
     this.heroId();
-    return false;
+    return 'overview';
+  });
+
+  readonly missions = computed(() => {
+    const id = this.heroId();
+    return id ? this.missionService.forHero(id) : [];
   });
 
   saveHero(data: HeroFormModel) {
     const hero = this.hero();
     if (hero) {
       this.heroService.update(hero.id, data);
-      this.isEditing.set(false);
+      this.tab.set('overview');
     }
   }
 
   cancelEdit() {
-    this.isEditing.set(false);
+    this.tab.set('overview');
   }
 
   retireHero() {
