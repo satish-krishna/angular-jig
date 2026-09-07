@@ -1,25 +1,22 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Injectable, computed, effect, inject } from '@angular/core';
+import { PreferencesService } from './preferences/preferences.service';
 
 @Injectable()
 export class AppShellViewModel {
   private readonly document = inject(DOCUMENT);
-  private readonly prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+  private readonly preferences = inject(PreferencesService);
 
-  readonly isDark = signal(this.readInitialPreference());
+  readonly isDark = computed(() => this.preferences.isDark());
+  readonly theme = computed(() => this.preferences.theme());
 
   constructor() {
     effect(() => {
-      const isDark = this.isDark();
-      this.document.documentElement.classList.toggle('dark', isDark);
+      this.document.documentElement.classList.toggle('dark', this.isDark());
     });
   }
 
-  toggleTheme() {
-    this.isDark.update((v) => !v);
-  }
-
-  private readInitialPreference(): boolean {
-    return this.prefersDark.matches;
+  toggleTheme(): void {
+    this.preferences.setTheme(this.preferences.isDark() ? 'light' : 'dark');
   }
 }
