@@ -9,13 +9,11 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
     <hlm-card>
       <hlm-card-header>
         <p hlmCardDescription>{{ label() }}</p>
+        <p hlmCardTitle emphasis="stat">{{ value() }}</p>
         <div hlmCardAction>
           <ng-icon [name]="icon()" class="size-8 text-muted-foreground" />
         </div>
       </hlm-card-header>
-      <div hlmCardContent>
-        <p class="text-3xl font-bold text-foreground">{{ value() }}</p>
-      </div>
     </hlm-card>
   `,
 })
