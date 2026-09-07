@@ -43,13 +43,12 @@ npm test
 npm run test:harness
 npx stylelint "src/**/*.css"
 npm run check:boot -- --route <every route this task touches>
-node harness/counter/counter.mjs --root . src
-node harness/counter/layout-counter.mjs --root . src
-node harness/counter/component-shape-counter.mjs --root . src
-node harness/counter/freeloader-counter.mjs --root . src
+node harness/counter/counter.mjs --root . src && node harness/counter/layout-counter.mjs --root . src && node harness/counter/component-shape-counter.mjs --root . src && node harness/counter/freeloader-counter.mjs --root . src
 ```
 
 All four counters must report `"all": 0`. `npm run build` emits a bundle-budget **warning** at over 500 kB and still exits 0; only 1 MB is an error, so the warning is expected and is not a failure. Note the `--` in the boot command: `node harness/gate/check-boot.mjs` is denied by the enforcement guard because the command text contains a protected path, while `npm run check:boot -- --route x` passes.
+
+**Run the four counters as that one chained command, exactly as written, with no `cd` prefix, no loop, and nothing before the first `node`.** The enforcement guard's read-only allowlist is anchored to the *start* of the command text, so `node harness/counter/...` at position zero is permitted while `cd /some/path; node harness/counter/...` and `for c in ...; do node harness/counter/$c.mjs` are both denied for containing a protected path. Task 2's implementer hit this, could not run three of the four counters, and reported that their passing was "strongly indicated" — inferring a measurement instead of taking one, which is the single habit this project exists to prevent. If a counter will not run, that is a `BLOCKED` report, never an inference.
 
 `npm run check:responsive` is run by the orchestrator at wave boundaries, not by each task.
 
