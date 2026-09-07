@@ -879,6 +879,7 @@ git commit -m "feat(domain): mission and threat entities, and a dashboard that s
 ### Task 3a: Card refactor (runs in parallel with 3b)
 
 **Files:**
+- Modify: `libs/ui/card/src/lib/hlm-card-title.ts` (add the `emphasis` variant input — the sanctioned customization path; the gate ignores `libs/**`)
 - Modify: `src/app/ui/stat-tile.ts` (whole file replaced)
 - Modify: `src/app/ui/hero-card.ts` (template only)
 - Modify: `src/app/dashboard/dashboard.html` (the roster preview block only)
@@ -923,7 +924,7 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
     <hlm-card>
       <hlm-card-header>
         <p hlmCardDescription>{{ label() }}</p>
-        <h3 hlmCardTitle class="text-3xl font-bold">{{ value() }}</h3>
+        <p hlmCardTitle emphasis="stat">{{ value() }}</p>
         <div hlmCardAction>
           <ng-icon [name]="icon()" class="size-8 text-muted-foreground" />
         </div>
@@ -939,6 +940,40 @@ export class StatTile {
 ```
 
 Note that the hand-rolled `flex items-start justify-between` wrapper is gone entirely: `hlmCardAction` already places the icon at the end of the header grid, so faking that layout with flex would be the nested-flex anti-pattern the layout gate exists to catch.
+
+Three things about this snippet are deliberate, and earlier drafts of this plan got all three wrong in two separate ways:
+
+- **The value is not a heading.** The first draft made it `<h3 hlmCardTitle>{{ value() }}</h3>`, which produced two real accessibility defects: an `H1 → H3 → H2` heading-order skip on the dashboard, and a heading whose entire accessible name is a bare number, so a screen-reader heading list reads "42, 88, 1204" with no indication of what any of them measure. A stat tile is a label/value pair, not a document section. `hlmCardTitle` is an attribute directive and attaches to any element, so `<p hlmCardTitle>` gets the design-system typography with no heading semantics. Heading level is a document-outline decision; the spartan docs' `<h3>` is a generic placeholder in an example, not a requirement.
+- **The emphasis comes from a variant on the primitive, never from a class at the call site.** The first draft wrote `class="text-3xl font-bold"` on the primitive, which `no-appearance-on-primitive` correctly rejected, leaving the headline number rendering at the default `text-base font-medium` — the whole point of a stat tile, lost, with every counter still reading zero. The second draft moved the number to a plain `<p>` in `hlmCardContent` and put the class there. That passed the gate and was still wrong: it is the rule's own failure mode, relocating code until the rule no longer applies rather than doing the work the rule points at. `sealing-spec.md:57-59` names the sanctioned path — edit the owned copy in `libs/ui` or use the component's `variant`/`size` inputs. `HlmCardTitle` had no variant input, so Task 3a adds one.
+- **The icon keeps its class** because `<ng-icon>` is not a sealed primitive.
+
+**Adding the variant** (`libs/ui/card/src/lib/hlm-card-title.ts`). The gate ignores `libs/**` entirely, so this path is open; what is NOT open is inventing a new part name, because `PRIMITIVE_ATTRS` in `harness/gate/rules/primitive-vocabulary.ts` is a frozen hardcoded list inside a protected directory. Extend the existing directive rather than adding a sibling:
+
+```ts
+import { Directive, input } from '@angular/core';
+import { classes } from '@spartan-ng/helm/utils';
+
+export type HlmCardTitleEmphasis = 'default' | 'stat';
+
+@Directive({
+  selector: '[hlmCardTitle]',
+  host: { 'data-slot': 'card-title' },
+})
+export class HlmCardTitle {
+  /** 'stat' renders the headline-number treatment dashboard stat tiles need. */
+  readonly emphasis = input<HlmCardTitleEmphasis>('default');
+
+  constructor() {
+    classes(() =>
+      this.emphasis() === 'stat'
+        ? 'text-3xl leading-tight font-bold group-data-[size=sm]/card:text-2xl'
+        : 'text-base leading-normal font-medium group-data-[size=sm]/card:text-sm',
+    );
+  }
+}
+```
+
+The `default` branch is the existing string unchanged, so every other card title in the application renders exactly as before.
 
 - [ ] **Step 3: Run the tests and the counters**
 
@@ -968,7 +1003,6 @@ with:
 ```html
 <hlm-card>
   <hlm-card-header>
-    <h3 hlmCardTitle>Roster</h3>
     <p hlmCardDescription>{{ vm.totalHeroes() }} heroes on file</p>
   </hlm-card-header>
   <hlm-card-footer>
@@ -979,7 +1013,9 @@ with:
 </hlm-card>
 ```
 
-Add `HlmCardImports` to the `imports` array in `src/app/dashboard/dashboard.ts`. Delete the now-duplicated `<h2 class="text-xl font-semibold">Roster</h2>` that sat above the block.
+Add `HlmCardImports` to the `imports` array in `src/app/dashboard/dashboard.ts`.
+
+**Keep the existing `<h2 class="text-xl font-semibold">Roster</h2>` above the block.** An earlier draft of this plan deleted it and moved "Roster" into the card as an `<h3 hlmCardTitle>`. That demoted a top-level page section below its own sibling — "Top Heroes This Cycle" is an `<h2>`, and the two are parallel regions under the same container, so giving one `h2` and the other `h3` is an inconsistent hierarchy with no structural justification.
 
 - [ ] **Step 6: Run the whole verification bar**
 
@@ -1965,10 +2001,23 @@ git commit -m "feat(settings): theme control and roster defaults that actually c
 - Modify: `src/app/app.html`
 - Modify: `src/app/app.routes.ts` (only if a route is missing)
 - Modify: `src/app/app.config.ts` (icon registration only)
+- Modify: `src/app/recruit/recruit.html` and `src/app/recruit/recruit.ts` (card refactor missed by the plan's original inventory — see Step 0)
 
 **Interfaces:**
 - Consumes: everything built in Tasks 1 through 6.
 - Produces: no new API.
+
+- [ ] **Step 0: Finish the card refactor the plan's inventory missed**
+
+The plan originally listed five hand-rolled cards; there are six. `src/app/recruit/recruit.html:6` carries a `rounded-lg border border-border bg-card p-6` block that fell into no task's manifest, so Task 3a correctly refused to touch it. Replace it with `hlm-card` and its parts, and add `HlmCardImports` from `@spartan-ng/helm/card` to `src/app/recruit/recruit.ts`.
+
+Confirm no hand-rolled card survives anywhere:
+
+```bash
+grep -rn "rounded-lg border border-border bg-card" src/app
+```
+
+Expected: no output.
 
 - [ ] **Step 1: Reconcile the navigation**
 
