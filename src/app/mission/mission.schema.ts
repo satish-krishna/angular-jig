@@ -26,7 +26,7 @@ export const missionSchema = z.object({
     } satisfies FormFieldMeta),
   priority: z
     .boolean()
-    .meta({ label: 'Priority deployment', control: 'checkbox' } satisfies FormFieldMeta),
+    .meta({ label: 'Priority deployment', control: 'switch' } satisfies FormFieldMeta),
   threatId: z
     .string()
     .nullable()

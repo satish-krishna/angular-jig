@@ -23,6 +23,8 @@ import {
   lucideZap,
   lucideCheck,
   lucideTriangleAlert,
+  lucidePlus,
+  lucideFlag,
 } from '@ng-icons/lucide';
 import { routes } from './app.routes';
 
@@ -52,6 +54,8 @@ export const appConfig: ApplicationConfig = {
       lucideZap,
       lucideCheck,
       lucideTriangleAlert,
+      lucidePlus,
+      lucideFlag,
     }),
   ],
 };

@@ -4,7 +4,7 @@
  * component reads this off the schema instead of restating labels and control
  * kinds in a parallel config object.
  */
-export type ControlKind = 'text' | 'email' | 'number' | 'select' | 'checkbox' | 'textarea';
+export type ControlKind = 'text' | 'email' | 'number' | 'select' | 'checkbox' | 'switch' | 'textarea';
 
 export interface FormFieldMeta {
   label: string;
