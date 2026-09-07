@@ -334,7 +334,9 @@ export class AppShellViewModel {
 
 Run: `npm test`
 
-Expected: PASS, all 8 tests. The two `App` tests that failed in Step 1 now pass, because nothing reads a bare global at field-initializer time any more.
+Expected: PASS, all 8 tests.
+
+Corrected after execution: this step originally claimed the `matchMedia` fix alone turns both `App` tests green. It does not. `app.spec.ts` also asserts `compiled.querySelector('nav')`, and the promoted source had already replaced the old literal `<nav>` shell with `hlm-sidebar` without updating that test, so `should render the shell nav` was failing for two independent reasons. Satisfying it requires wrapping the sidebar in a `<nav>` landmark in `src/app/app.html` — a file outside this task's manifest. That was ruled acceptable at execution time; see the ledger. `hlm-sidebar` carries no landmark role of its own, so the wrapper creates no nested navigation landmark.
 
 - [ ] **Step 8: Run the whole verification bar**
 
@@ -1971,7 +1973,7 @@ git commit -m "feat(settings): theme control and roster defaults that actually c
 
 - [ ] **Step 1: Reconcile the navigation**
 
-Open `src/app/app.html`. Confirm the sidebar has exactly six `hlmSidebarMenuItem` entries routing to `/dashboard`, `/roster`, `/missions`, `/threats`, `/recruit` and `/settings`, each with the icon named in the build spec: `lucideLayoutDashboard`, `lucideUsers`, `lucideTarget`, `lucideShieldAlert`, `lucideUserPlus`, `lucideSettings`. Add any that are missing. Confirm the theme toggle in the top bar calls `vm.toggleTheme()` and renders `lucideSun` or `lucideMoon` from `vm.isDark()`.
+Open `src/app/app.html`. Task 1 wrapped `<hlm-sidebar>` in a `<nav>` landmark and left the interior content indented one level shallower than its new nesting depth — reindent that block. Then confirm the sidebar has exactly six `hlmSidebarMenuItem` entries routing to `/dashboard`, `/roster`, `/missions`, `/threats`, `/recruit` and `/settings`, each with the icon named in the build spec: `lucideLayoutDashboard`, `lucideUsers`, `lucideTarget`, `lucideShieldAlert`, `lucideUserPlus`, `lucideSettings`. Add any that are missing. Confirm the theme toggle in the top bar calls `vm.toggleTheme()` and renders `lucideSun` or `lucideMoon` from `vm.isDark()`.
 
 - [ ] **Step 2: Confirm every icon is registered**
 
