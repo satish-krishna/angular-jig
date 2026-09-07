@@ -46,15 +46,17 @@
   </div>
 
   <!-- Roster preview section -->
-  <hlm-card>
-    <hlm-card-header>
-      <h3 hlmCardTitle>Roster</h3>
-      <p hlmCardDescription>{{ vm.totalHeroes() }} heroes on file</p>
-    </hlm-card-header>
-    <hlm-card-footer>
-      <a routerLink="/roster" hlmBtn variant="outline" size="sm">
-        <span>View full roster</span>
-      </a>
-    </hlm-card-footer>
-  </hlm-card>
+  <div class="flex flex-col gap-4">
+    <h2 class="text-xl font-semibold">Roster</h2>
+    <hlm-card>
+      <hlm-card-header>
+        <p hlmCardDescription>{{ vm.totalHeroes() }} heroes on file</p>
+      </hlm-card-header>
+      <hlm-card-footer>
+        <a routerLink="/roster" hlmBtn variant="outline" size="sm">
+          <span>View full roster</span>
+        </a>
+      </hlm-card-footer>
+    </hlm-card>
+  </div>
 </div>
