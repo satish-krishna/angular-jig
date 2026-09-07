@@ -1,0 +1,74 @@
+<div class="flex flex-col gap-6 p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Roster</h1>
+    <a routerLink="/recruit" hlmBtn variant="default">
+      <ng-icon name="lucideUserPlus" />
+      <span>Recruit</span>
+    </a>
+  </div>
+
+  <!-- Search toolbar -->
+  <div>
+    <input
+      hlmInput
+      placeholder="Search heroes..."
+      [value]="vm.searchQuery()"
+      (change)="vm.searchQuery.set(($event.target).value)"
+    />
+  </div>
+
+  <!-- Table (desktop) & Cards (mobile) -->
+  <div class="hidden sm:block overflow-x-auto">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Hero</th>
+          <th hlmTh>Class</th>
+          <th hlmTh>Power</th>
+          <th hlmTh>Status</th>
+          <th hlmTh>Tier</th>
+          <th hlmTh>Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (hero of vm.filtered(); track hero.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ hero.name }} / {{ hero.id }}</td>
+            <td hlmTd>
+              <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
+            </td>
+            <td hlmTd>{{ hero.power }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="hero.status === 'Active' ? 'default' : hero.status === 'Injured' ? 'destructive' : 'secondary'">
+                {{ hero.status }}
+              </span>
+            </td>
+            <td hlmTd>{{ hero.clearanceTier }}</td>
+            <td hlmTd class="flex gap-2">
+              <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)">
+                <ng-icon name="lucidePencil" />
+              </button>
+              <button hlmBtn size="sm" variant="ghost" (click)="vm.retireHero(hero.id)">
+                <ng-icon name="lucideTrash2" />
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cards (mobile) -->
+  <div class="grid gap-4 sm:hidden">
+    @for (hero of vm.filtered(); track hero.id) {
+      <app-hero-card [hero]="hero" (select)="vm.editHero($event.id)" />
+    }
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between text-sm text-muted-foreground">
+    <span>{{ vm.filtered().length }} of {{ vm.heroes().length }} heroes</span>
+    <span>sorted by power</span>
+  </div>
+</div>
