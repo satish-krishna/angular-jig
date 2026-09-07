@@ -40,7 +40,7 @@
             <span hlmAvatarFallback>{{ hero.name.substring(0, 2).toUpperCase() }}</span>
           </hlm-avatar>
         </div>
-        <h1 hlmCardTitle [emphasis]="'stat'">{{ hero.name }}</h1>
+        <h1 hlmCardTitle emphasis="title">{{ hero.name }}</h1>
         <p hlmCardDescription>{{ hero.alias }}</p>
       </hlm-card-header>
       <div hlmCardContent class="flex flex-wrap gap-2">
@@ -54,10 +54,10 @@
 
     <hlm-tabs [tab]="vm.tab()" (tabActivated)="vm.tab.set($event)" class="w-full">
       <hlm-tabs-list class="grid w-full grid-cols-4" aria-label="Hero sections">
-        <button hlmBtn hlmTabsTrigger="overview">Overview</button>
-        <button hlmBtn hlmTabsTrigger="powers">Powers</button>
-        <button hlmBtn hlmTabsTrigger="missions">Missions</button>
-        <button hlmBtn hlmTabsTrigger="edit">Edit</button>
+        <button hlmTabsTrigger="overview">Overview</button>
+        <button hlmTabsTrigger="powers">Powers</button>
+        <button hlmTabsTrigger="missions">Missions</button>
+        <button hlmTabsTrigger="edit">Edit</button>
       </hlm-tabs-list>
 
       <div hlmTabsContent="overview">
@@ -101,7 +101,7 @@
             @for (mission of vm.missions(); track mission.id) {
               <hlm-card>
                 <hlm-card-header>
-                  <h3 hlmCardTitle>{{ mission.codename }}</h3>
+                  <h2 hlmCardTitle>{{ mission.codename }}</h2>
                   <p hlmCardDescription>{{ mission.objective }}</p>
                   <div hlmCardAction>
                     <span hlmBadge [variant]="mission.status === 'Complete' ? 'default' : mission.status === 'Failed' ? 'destructive' : 'secondary'">

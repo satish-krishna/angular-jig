@@ -26,7 +26,7 @@ export class HeroDetailViewModel {
 
   // Reseeds whenever the hero changes, so navigating to another hero returns the
   // reader to Overview instead of stranding them in a stale editor. This is the
-  // same reseeding behaviour isEditing had, moved onto the tab key.
+  // same reseeding behaviour the old edit-mode flag had, moved onto the tab key.
   readonly tab = linkedSignal(() => {
     this.heroId();
     return 'overview';

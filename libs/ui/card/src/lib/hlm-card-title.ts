@@ -1,7 +1,7 @@
 import { Directive, input } from '@angular/core';
 import { classes } from '@spartan-ng/helm/utils';
 
-export type HlmCardTitleEmphasis = 'default' | 'stat';
+export type HlmCardTitleEmphasis = 'default' | 'stat' | 'title';
 
 @Directive({
   selector: '[hlmCardTitle]',
@@ -15,7 +15,9 @@ export class HlmCardTitle {
     classes(() =>
       this.emphasis() === 'stat'
         ? 'text-3xl leading-tight font-bold group-data-[size=sm]/card:text-2xl'
-        : 'text-base leading-normal font-medium group-data-[size=sm]/card:text-sm',
+        : this.emphasis() === 'title'
+          ? 'text-2xl leading-tight font-bold'
+          : 'text-base leading-normal font-medium group-data-[size=sm]/card:text-sm',
     );
   }
 }
