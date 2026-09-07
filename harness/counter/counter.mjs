@@ -194,6 +194,7 @@ const CONTROL_PRIMITIVE_ATTRS = {
     'hlmSidebarMenuAction',
     'hlmSidebarGroupAction',
     'hlmSidebarGroupLabel',
+    'hlmTabsTrigger'
   ],
   input: ['hlmInput', 'hlmSidebarInput'],
   textarea: ['hlmTextarea'],
