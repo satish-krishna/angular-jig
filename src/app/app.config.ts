@@ -21,8 +21,6 @@ import {
   lucideUserCheck,
   lucideActivity,
   lucideZap,
-  lucideCheck,
-  lucideTriangleAlert,
   lucidePlus,
   lucideFlag,
 } from '@ng-icons/lucide';
@@ -52,8 +50,6 @@ export const appConfig: ApplicationConfig = {
       lucideUserCheck,
       lucideActivity,
       lucideZap,
-      lucideCheck,
-      lucideTriangleAlert,
       lucidePlus,
       lucideFlag,
     }),
