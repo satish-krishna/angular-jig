@@ -1,7 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { MissionService } from '../mission/mission.service';
 import { ThreatService } from '../threat/threat.service';
-import type { MissionStatus } from '../mission/mission.model';
 import type { MissionFormModel } from '../mission/mission.schema';
 
 @Injectable()
@@ -12,7 +11,6 @@ export class MissionsViewModel {
   readonly missions = this.missionService.missions;
 
   readonly searchQuery = signal('');
-  readonly statusFilter = signal<MissionStatus | 'all'>('all');
   readonly priorityOnly = signal(false);
 
   /** The id of the mission being edited, '' for a new one, or null when closed. */
@@ -20,10 +18,8 @@ export class MissionsViewModel {
 
   readonly filtered = computed(() => {
     const q = this.searchQuery().toLowerCase();
-    const status = this.statusFilter();
     const priorityOnly = this.priorityOnly();
     return this.missions()
-      .filter((m) => status === 'all' || m.status === status)
       .filter((m) => !priorityOnly || m.priority)
       .filter((m) => !q || m.codename.toLowerCase().includes(q) || m.objective.toLowerCase().includes(q));
   });

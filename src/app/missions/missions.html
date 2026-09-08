@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-bold">Missions</h1>
-    <hlm-dialog>
+    <hlm-dialog #createDialog="hlmDialog">
       <button hlmBtn hlmDialogTrigger variant="default" (click)="vm.startCreate()">
         <ng-icon name="lucidePlus" />
         <span>New mission</span>
@@ -24,8 +24,8 @@
           }"
           [threatOptions]="vm.threatOptions()"
           submitLabel="Create"
-          (saveMission)="vm.save($event); vm.cancel()"
-          (cancel)="vm.cancel()"
+          (saveMission)="vm.save($event); createDialog.close()"
+          (cancel)="createDialog.close()"
         />
       </hlm-dialog-content>
     </hlm-dialog>
@@ -33,11 +33,13 @@
 
   <!-- Filter toolbar -->
   <div class="flex flex-col gap-4">
+    <label hlmLabel class="sr-only" for="missions-search">Search missions</label>
     <input
       hlmInput
+      id="missions-search"
       placeholder="Search missions..."
       [value]="vm.searchQuery()"
-      (change)="vm.searchQuery.set(($event.target).value)"
+      (input)="vm.searchQuery.set(($event.target).value)"
     />
     <div class="flex items-center gap-4">
       <button
@@ -87,7 +89,7 @@
             </td>
             <td hlmTd>{{ mission.startedOn | date: 'mediumDate' }}</td>
             <td hlmTd class="flex gap-2">
-              <hlm-dialog>
+              <hlm-dialog #tableEditDialog="hlmDialog">
                 <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)" data-testid="edit-mission" [attr.aria-label]="'Edit ' + mission.codename">
                   <ng-icon name="lucidePencil" />
                 </button>
@@ -101,8 +103,8 @@
                       [initialValue]="mission"
                       [threatOptions]="vm.threatOptions()"
                       submitLabel="Update"
-                      (saveMission)="vm.save($event)"
-                      (cancel)="vm.cancel()"
+                      (saveMission)="vm.save($event); tableEditDialog.close()"
+                      (cancel)="tableEditDialog.close()"
                     />
                   }
                 </hlm-dialog-content>
@@ -126,6 +128,14 @@
                   </hlm-dialog-footer>
                 </hlm-dialog-content>
               </hlm-dialog>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <div class="text-center text-muted-foreground">
+                No missions match this filter.
+              </div>
             </td>
           </tr>
         }
@@ -161,7 +171,7 @@
             </div>
           }
           <div class="flex gap-2 pt-2">
-            <hlm-dialog>
+            <hlm-dialog #cardEditDialog="hlmDialog">
               <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1" (click)="vm.startEdit(mission.id)" data-testid="edit-mission">
                 <ng-icon name="lucidePencil" />
                 <span>Edit</span>
@@ -176,8 +186,8 @@
                     [initialValue]="mission"
                     [threatOptions]="vm.threatOptions()"
                     submitLabel="Update"
-                    (saveMission)="vm.save($event)"
-                    (cancel)="vm.cancel()"
+                    (saveMission)="vm.save($event); cardEditDialog.close()"
+                    (cancel)="cardEditDialog.close()"
                   />
                 }
               </hlm-dialog-content>
@@ -205,6 +215,10 @@
           </div>
         </div>
       </hlm-card>
+    } @empty {
+      <div class="text-center text-muted-foreground">
+        No missions match this filter.
+      </div>
     }
   </div>
 

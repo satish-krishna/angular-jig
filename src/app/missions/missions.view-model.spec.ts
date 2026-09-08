@@ -20,11 +20,6 @@ describe('MissionsViewModel', () => {
     expect(vm.filtered().map((m) => m.id)).toContain(target.id);
   });
 
-  it('filters by status', () => {
-    vm.statusFilter.set('Active');
-    expect(vm.filtered().every((m) => m.status === 'Active')).toBe(true);
-  });
-
   it('filters to priority missions only', () => {
     vm.priorityOnly.set(true);
     expect(vm.filtered().every((m) => m.priority)).toBe(true);

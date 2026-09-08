@@ -15,6 +15,7 @@ export class RosterViewModel {
   // and changing it in Settings reseeds this screen rather than being ignored
   // until a reload.
   readonly statusFilter = linkedSignal(() => this.preferences.rosterStatus());
+  readonly rosterSort = computed(() => this.preferences.rosterSort());
   readonly heroes = this.heroService.heroes;
 
   readonly filtered = computed(() => {
@@ -35,7 +36,7 @@ export class RosterViewModel {
     this.router.navigate(['/detail', id]);
   }
 
-  async retireHero(id: string) {
+  retireHero(id: string) {
     this.heroService.retire(id);
   }
 }

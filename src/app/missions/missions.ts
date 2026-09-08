@@ -6,6 +6,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmInputImports } from '@spartan-ng/helm/input';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { MissionForm } from '../ui/mission-form';
 import { MissionsViewModel } from './missions.view-model';
@@ -21,6 +22,7 @@ import { MissionsViewModel } from './missions.view-model';
     HlmCardImports,
     HlmDialogImports,
     HlmInputImports,
+    HlmLabelImports,
     HlmTableImports,
     MissionForm,
   ],

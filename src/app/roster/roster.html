@@ -10,11 +10,13 @@
 
   <!-- Search toolbar -->
   <div>
+    <label hlmLabel class="sr-only" for="roster-search">Search heroes</label>
     <input
       hlmInput
+      id="roster-search"
       placeholder="Search heroes..."
       [value]="vm.searchQuery()"
-      (change)="vm.searchQuery.set(($event.target).value)"
+      (input)="vm.searchQuery.set(($event.target).value)"
     />
   </div>
 
@@ -49,9 +51,33 @@
               <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)" [attr.aria-label]="'Edit ' + hero.name">
                 <ng-icon name="lucidePencil" />
               </button>
-              <button hlmBtn size="sm" variant="ghost" (click)="vm.retireHero(hero.id)" [attr.aria-label]="'Delete ' + hero.name">
-                <ng-icon name="lucideTrash2" />
-              </button>
+              <hlm-dialog>
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + hero.name">
+                  <ng-icon name="lucideTrash2" />
+                </button>
+                <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+                  <hlm-dialog-header>
+                    <h2 hlmDialogTitle>Retire hero?</h2>
+                    <p hlmDialogDescription>
+                      This hero will be retired and removed from all active missions. This cannot be undone.
+                    </p>
+                  </hlm-dialog-header>
+                  <hlm-dialog-footer>
+                    <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                    <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.retireHero(hero.id)">
+                      Retire
+                    </button>
+                  </hlm-dialog-footer>
+                </hlm-dialog-content>
+              </hlm-dialog>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <div class="text-center text-muted-foreground">
+                No heroes match this filter.
+              </div>
             </td>
           </tr>
         }
@@ -60,15 +86,22 @@
   </div>
 
   <!-- Cards (mobile) -->
-  <div class="grid gap-4 sm:hidden">
-    @for (hero of vm.filtered(); track hero.id) {
-      <app-hero-card [hero]="hero" (select)="vm.editHero($event.id)" />
-    }
+  <div class="sm:hidden">
+    <h2 class="sr-only">Heroes</h2>
+    <div class="grid gap-4">
+      @for (hero of vm.filtered(); track hero.id) {
+        <app-hero-card [hero]="hero" (select)="vm.editHero($event.id)" />
+      } @empty {
+        <div class="text-center text-muted-foreground">
+          No heroes match this filter.
+        </div>
+      }
+    </div>
   </div>
 
   <!-- Footer -->
   <div class="flex items-center justify-between text-sm text-muted-foreground">
     <span>{{ vm.filtered().length }} of {{ vm.heroes().length }} heroes</span>
-    <span>sorted by power</span>
+    <span>sorted by {{ vm.rosterSort() }}</span>
   </div>
 </div>

@@ -18,7 +18,9 @@
               <a
                 hlmSidebarMenuButton
                 routerLink="/dashboard"
-                routerLinkActive="data-active"
+                routerLinkActive #rlaDashboard="routerLinkActive"
+                [isActive]="rlaDashboard.isActive"
+                [attr.aria-current]="rlaDashboard.isActive ? 'page' : null"
                 [routerLinkActiveOptions]="{ exact: true }"
               >
                 <ng-icon name="lucideLayoutDashboard" />
@@ -27,35 +29,35 @@
             </li>
 
             <li hlmSidebarMenuItem>
-              <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive="data-active" [routerLinkActiveOptions]="{ exact: true }">
+              <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive #rlaRoster="routerLinkActive" [isActive]="rlaRoster.isActive" [attr.aria-current]="rlaRoster.isActive ? 'page' : null" [routerLinkActiveOptions]="{ exact: true }">
                 <ng-icon name="lucideUsers" />
                 <span>Roster</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
-              <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive="data-active">
+              <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive #rlaMissions="routerLinkActive" [isActive]="rlaMissions.isActive" [attr.aria-current]="rlaMissions.isActive ? 'page' : null">
                 <ng-icon name="lucideTarget" />
                 <span>Missions</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
-              <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive="data-active">
+              <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive #rlaThreats="routerLinkActive" [isActive]="rlaThreats.isActive" [attr.aria-current]="rlaThreats.isActive ? 'page' : null">
                 <ng-icon name="lucideShieldAlert" />
                 <span>Threats</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
-              <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive="data-active">
+              <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive #rlaRecruit="routerLinkActive" [isActive]="rlaRecruit.isActive" [attr.aria-current]="rlaRecruit.isActive ? 'page' : null">
                 <ng-icon name="lucideUserPlus" />
                 <span>Recruit</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
-              <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive="data-active">
+              <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive #rlaSettings="routerLinkActive" [isActive]="rlaSettings.isActive" [attr.aria-current]="rlaSettings.isActive ? 'page' : null">
                 <ng-icon name="lucideSettings" />
                 <span>Settings</span>
               </a>

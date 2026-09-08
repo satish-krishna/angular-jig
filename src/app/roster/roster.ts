@@ -5,21 +5,17 @@ import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HeroCard } from '../ui/hero-card';
 import { RosterViewModel } from './roster.view-model';
-import type { HeroStatus } from '../hero/hero.model';
 
 @Component({
   selector: 'app-roster',
   providers: [RosterViewModel],
-  imports: [RouterLink, NgIcon, HlmTableImports, HlmInputImports, HlmButtonImports, HlmBadgeImports, HeroCard],
+  imports: [RouterLink, NgIcon, HlmTableImports, HlmInputImports, HlmButtonImports, HlmBadgeImports, HlmLabelImports, HlmDialogImports, HeroCard],
   templateUrl: './roster.html',
 })
 export class Roster {
   protected readonly vm = inject(RosterViewModel);
-
-  onStatusChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.vm.statusFilter.set(value as HeroStatus | 'all');
-  }
 }
