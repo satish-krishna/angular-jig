@@ -8,7 +8,10 @@
         <span>New mission</span>
       </button>
       <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
-        <h2 hlmDialogTitle>Create mission</h2>
+        <hlm-dialog-header>
+          <h2 hlmDialogTitle>Create mission</h2>
+          <p hlmDialogDescription>Add a new mission to the operations board.</p>
+        </hlm-dialog-header>
         <app-mission-form
           [initialValue]="{
             codename: '',
@@ -39,10 +42,8 @@
     <div class="flex items-center gap-4">
       <button
         hlmBtn
-        variant="outline"
+        [variant]="vm.priorityOnly() ? 'default' : 'outline'"
         size="sm"
-        [class.bg-primary]="vm.priorityOnly()"
-        [class.text-primary-foreground]="vm.priorityOnly()"
         (click)="vm.priorityOnly.set(!vm.priorityOnly())"
       >
         <ng-icon name="lucideFlag" class="h-4 w-4" />
@@ -87,11 +88,13 @@
             <td hlmTd>{{ mission.startedOn | date: 'mediumDate' }}</td>
             <td hlmTd class="flex gap-2">
               <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)">
                   <ng-icon name="lucidePencil" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
-                  <h2 hlmDialogTitle>Edit mission</h2>
+                  <hlm-dialog-header>
+                    <h2 hlmDialogTitle>Edit mission</h2>
+                  </hlm-dialog-header>
                   @if (vm.editingMission(); as mission) {
                     <app-mission-form
                       [initialValue]="mission"
@@ -108,10 +111,12 @@
                   <ng-icon name="lucideTrash2" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
-                  <h2 hlmDialogTitle>Delete mission?</h2>
-                  <p class="text-sm text-muted-foreground">
-                    This mission will be permanently removed. This cannot be undone.
-                  </p>
+                  <hlm-dialog-header>
+                    <h2 hlmDialogTitle>Delete mission?</h2>
+                    <p hlmDialogDescription>
+                      This mission will be permanently removed. This cannot be undone.
+                    </p>
+                  </hlm-dialog-header>
                   <hlm-dialog-footer>
                     <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
                     <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(mission.id)">
@@ -156,12 +161,14 @@
           }
           <div class="flex gap-2 pt-2">
             <hlm-dialog>
-              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1">
+              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1" (click)="vm.startEdit(mission.id)">
                 <ng-icon name="lucidePencil" />
                 <span>Edit</span>
               </button>
               <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
-                <h2 hlmDialogTitle>Edit mission</h2>
+                <hlm-dialog-header>
+                  <h2 hlmDialogTitle>Edit mission</h2>
+                </hlm-dialog-header>
                 @if (vm.editingMission(); as mission) {
                   <app-mission-form
                     [initialValue]="mission"
@@ -179,10 +186,12 @@
                 <span>Delete</span>
               </button>
               <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
-                <h2 hlmDialogTitle>Delete mission?</h2>
-                <p class="text-sm text-muted-foreground">
-                  This mission will be permanently removed. This cannot be undone.
-                </p>
+                <hlm-dialog-header>
+                  <h2 hlmDialogTitle>Delete mission?</h2>
+                  <p hlmDialogDescription>
+                    This mission will be permanently removed. This cannot be undone.
+                  </p>
+                </hlm-dialog-header>
                 <hlm-dialog-footer>
                   <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
                   <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(mission.id)">

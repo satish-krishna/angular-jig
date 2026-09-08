@@ -51,4 +51,30 @@ describe('MissionsViewModel', () => {
     vm.remove(target.id);
     expect(service.byId(target.id)).toBeUndefined();
   });
+
+  it('resolves the mission being edited once startEdit runs', () => {
+    const target = TestBed.inject(MissionService).missions()[0];
+    expect(vm.editingMission()).toBeUndefined();
+    vm.startEdit(target.id);
+    expect(vm.editingMission()?.id).toBe(target.id);
+  });
+
+  it('updates rather than creates when a mission is being edited', () => {
+    const service = TestBed.inject(MissionService);
+    const target = service.missions()[0];
+    const before = service.missions().length;
+    vm.startEdit(target.id);
+    vm.save({
+      codename: 'Renamed',
+      objective: target.objective,
+      status: target.status,
+      priority: target.priority,
+      threatId: target.threatId,
+      startedOn: target.startedOn,
+      debrief: target.debrief,
+    });
+    expect(service.missions().length).toBe(before);
+    expect(service.byId(target.id)?.codename).toBe('Renamed');
+    expect(vm.editing()).toBeNull();
+  });
 });
