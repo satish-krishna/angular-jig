@@ -13,8 +13,8 @@ const allRules = Object.entries({
 });
 
 describe('every rule points at a doc that exists', () => {
-  it('registers 26 rules across the four plugins', () => {
-    expect(allRules.length).toBe(26);
+  it('registers 27 rules across the four plugins', () => {
+    expect(allRules.length).toBe(27);
   });
 
   it.each(allRules)('%s has a docs url resolving to a real file', (name, rule) => {
