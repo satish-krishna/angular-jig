@@ -1,8 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSwitchImports } from '@spartan-ng/helm/switch';
+import { SettingsViewModel } from './settings.view-model';
 
 @Component({
   selector: 'app-settings',
-  imports: [],
-  template: `<div class="p-6"><h1 class="text-3xl font-bold">Settings</h1><p class="mt-4 text-muted-foreground">Configuration panel under construction.</p></div>`,
+  providers: [SettingsViewModel],
+  imports: [
+    HlmButtonImports,
+    HlmCardImports,
+    HlmLabelImports,
+    HlmSelectImports,
+    HlmSwitchImports,
+  ],
+  templateUrl: './settings.html',
 })
-export class Settings {}
+export class Settings {
+  protected readonly vm = inject(SettingsViewModel);
+}
