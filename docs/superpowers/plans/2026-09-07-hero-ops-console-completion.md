@@ -1767,7 +1767,63 @@ export class Threats {
 }
 ```
 
-Create `src/app/threats/threats.html`, mirroring `src/app/roster/roster.html`: a header row with the screen title and a "Log threat" button; a filter bar with an `hlmInput` search; an `hlmTable` inside `<div class="hidden sm:block overflow-x-auto">` with columns Designation, Category, Level, Status, Location, Missions, Actions, where Level and Status render as `hlmBadge` with the variant chosen from the value; a `<div class="grid gap-4 sm:hidden">` card list for narrow viewports; and a footer count. Create, edit and delete all happen inside `hlm-dialog` with `hlm-dialog-content *hlmDialogPortal`, each with an `hlmDialogTitle`.
+Create `src/app/threats/threats.html`, mirroring `src/app/roster/roster.html`: a header row with the screen title and a "Log threat" button; a filter bar with an `hlmInput` search; an `hlmTable` inside `<div class="hidden sm:block overflow-x-auto">` with columns Designation, Category, Level, Status, Location, Missions, Actions, where Level and Status render as `hlmBadge` with the variant chosen from the value; a `<div class="grid gap-4 sm:hidden">` card list for narrow viewports; and a footer count.
+
+Create, edit and delete all happen inside `hlm-dialog` with `hlm-dialog-content` on `*hlmDialogPortal`. **There are five dialogs — create, table-view edit, table-view delete, card-view edit, card-view delete — and every one of them carries BOTH an `<h2 hlmDialogTitle>` and a `<p hlmDialogDescription>`, both inside `<hlm-dialog-header>`, neither with a `class` attribute.** Count them before reporting: five titles, five descriptions. Task 4 shipped two dialogs with a title and no description; `hlmDialogDescription` generates the id that wires the dialog's `aria-describedby`, so a dialog without one announces its title and nothing else to assistive technology.
+
+**Both Edit trigger buttons must carry `(click)="vm.startEdit(threat.id)"` and `data-testid="edit-threat"`.** Task 4 defined `startEdit` and called it from no template, so its edit dialog opened onto an empty body and `ThreatService.update` was unreachable from the UI while every counter, every test and the boot check reported success. The `data-testid` is the hook the seam-crossing test in Step 6a needs.
+
+- [ ] **Step 6a: Write the test that crosses the template-to-ViewModel seam**
+
+A ViewModel test cannot catch a missing click binding, because it calls the ViewModel method directly — which is the half that already works. Task 4's regression tests passed with the binding deleted. This test must cross the seam.
+
+Create `src/app/threats/threats.spec.ts`:
+
+```ts
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { Threats } from './threats';
+import { ThreatsViewModel } from './threats.view-model';
+import { ThreatService } from '../threat/threat.service';
+
+describe('Threats screen wiring', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Threats],
+      providers: [provideRouter([])],
+    }).compileComponents();
+  });
+
+  it('sets the threat being edited when the Edit control is activated', async () => {
+    const fixture = TestBed.createComponent(Threats);
+    await fixture.whenStable();
+
+    // Read the ViewModel out of the COMPONENT's injector, never via
+    // TestBed.inject: the component provides its own, and a TestBed-level
+    // instance would be a different object from the one the template binds to,
+    // making the assertion prove nothing.
+    const vm = fixture.debugElement.injector.get(ThreatsViewModel);
+    const firstThreat = TestBed.inject(ThreatService).threats()[0];
+
+    expect(vm.editing()).toBeNull();
+
+    const editControl = fixture.nativeElement.querySelector(
+      '[data-testid="edit-threat"]',
+    ) as HTMLElement | null;
+    expect(editControl).toBeTruthy();
+
+    editControl!.click();
+    await fixture.whenStable();
+
+    expect(vm.editing()).toBe(firstThreat.id);
+    expect(vm.editingThreat()?.id).toBe(firstThreat.id);
+  });
+});
+```
+
+Do NOT add `ThreatsViewModel` to the TestBed providers — doing so is what makes this test hollow.
+
+Then prove it is a real regression test: temporarily delete the `(click)="vm.startEdit(threat.id)"` from the table-view Edit button, run `npm test`, confirm THIS test fails while the ViewModel tests still pass, restore the binding, and confirm everything passes. Paste both outputs in the report. A regression test nobody has watched fail is an assertion, not evidence.
 
 Register any new lucide icon names in `provideIcons` in `app.config.ts` and confirm the exact export names against the installed `@ng-icons/lucide`.
 
