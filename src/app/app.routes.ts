@@ -7,11 +7,27 @@ export const routes: Routes = [
     loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
-    path: 'heroes',
-    loadComponent: () => import('./heroes/heroes').then((m) => m.Heroes),
+    path: 'roster',
+    loadComponent: () => import('./roster/roster').then((m) => m.Roster),
   },
   {
     path: 'detail/:id',
     loadComponent: () => import('./hero-detail/hero-detail').then((m) => m.HeroDetail),
+  },
+  {
+    path: 'recruit',
+    loadComponent: () => import('./recruit/recruit').then((m) => m.Recruit),
+  },
+  {
+    path: 'missions',
+    loadComponent: () => import('./missions/missions').then((m) => m.Missions),
+  },
+  {
+    path: 'threats',
+    loadComponent: () => import('./threats/threats').then((m) => m.Threats),
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./settings/settings').then((m) => m.Settings),
   },
 ];

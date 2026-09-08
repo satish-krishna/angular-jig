@@ -1,0 +1,62 @@
+<div class="flex flex-col gap-8 p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Operations Dashboard</h1>
+    <a routerLink="/recruit" hlmBtn variant="default">
+      <ng-icon name="lucideUserPlus" />
+      <span>Recruit</span>
+    </a>
+  </div>
+
+  <!-- Stats grid -->
+  <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <app-stat-tile
+      label="Total Heroes"
+      [value]="vm.totalHeroes()"
+      icon="lucideUserCheck"
+    />
+    <app-stat-tile
+      label="Active Missions"
+      [value]="vm.activeMissions()"
+      icon="lucideActivity"
+    />
+    <app-stat-tile
+      label="Avg Power"
+      [value]="vm.averagePower()"
+      icon="lucideZap"
+    />
+    <app-stat-tile
+      label="Threats"
+      [value]="vm.threats()"
+      icon="lucideShieldAlert"
+    />
+  </div>
+
+  <!-- Top heroes section -->
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-semibold">Top Heroes This Cycle</h2>
+      <a routerLink="/roster" class="text-sm text-primary hover:underline">View all roster</a>
+    </div>
+    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" (select)="goToHero($event.id)" />
+      }
+    </div>
+  </div>
+
+  <!-- Roster preview section -->
+  <div class="flex flex-col gap-4">
+    <h2 class="text-xl font-semibold">Roster</h2>
+    <hlm-card>
+      <hlm-card-header>
+        <p hlmCardDescription>{{ vm.totalHeroes() }} heroes on file</p>
+      </hlm-card-header>
+      <hlm-card-footer>
+        <a routerLink="/roster" hlmBtn variant="outline" size="sm">
+          <span>View full roster</span>
+        </a>
+      </hlm-card-footer>
+    </hlm-card>
+  </div>
+</div>

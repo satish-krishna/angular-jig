@@ -1,0 +1,107 @@
+<div class="flex flex-col gap-6 p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Roster</h1>
+    <a routerLink="/recruit" hlmBtn variant="default">
+      <ng-icon name="lucideUserPlus" />
+      <span>Recruit</span>
+    </a>
+  </div>
+
+  <!-- Search toolbar -->
+  <div>
+    <label hlmLabel class="sr-only" for="roster-search">Search heroes</label>
+    <input
+      hlmInput
+      id="roster-search"
+      placeholder="Search heroes..."
+      [value]="vm.searchQuery()"
+      (input)="vm.searchQuery.set(($event.target).value)"
+    />
+  </div>
+
+  <!-- Table (desktop) & Cards (mobile) -->
+  <div class="hidden sm:block overflow-x-auto">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Hero</th>
+          <th hlmTh>Class</th>
+          <th hlmTh>Power</th>
+          <th hlmTh>Status</th>
+          <th hlmTh>Tier</th>
+          <th hlmTh>Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (hero of vm.filtered(); track hero.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ hero.name }} / {{ hero.id }}</td>
+            <td hlmTd>
+              <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
+            </td>
+            <td hlmTd>{{ hero.power }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="hero.status === 'Active' ? 'default' : hero.status === 'Injured' ? 'destructive' : 'secondary'">
+                {{ hero.status }}
+              </span>
+            </td>
+            <td hlmTd>{{ hero.clearanceTier }}</td>
+            <td hlmTd class="flex gap-2">
+              <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)" [attr.aria-label]="'Edit ' + hero.name">
+                <ng-icon name="lucidePencil" />
+              </button>
+              <hlm-dialog>
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + hero.name">
+                  <ng-icon name="lucideTrash2" />
+                </button>
+                <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+                  <hlm-dialog-header>
+                    <h2 hlmDialogTitle>Retire hero?</h2>
+                    <p hlmDialogDescription>
+                      This hero will be retired and removed from all active missions. This cannot be undone.
+                    </p>
+                  </hlm-dialog-header>
+                  <hlm-dialog-footer>
+                    <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                    <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.retireHero(hero.id)">
+                      Retire
+                    </button>
+                  </hlm-dialog-footer>
+                </hlm-dialog-content>
+              </hlm-dialog>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <div class="text-center text-muted-foreground">
+                No heroes match this filter.
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cards (mobile) -->
+  <div class="sm:hidden">
+    <h2 class="sr-only">Heroes</h2>
+    <div class="grid gap-4">
+      @for (hero of vm.filtered(); track hero.id) {
+        <app-hero-card [hero]="hero" (select)="vm.editHero($event.id)" />
+      } @empty {
+        <div class="text-center text-muted-foreground">
+          No heroes match this filter.
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between text-sm text-muted-foreground">
+    <span>{{ vm.filtered().length }} of {{ vm.heroes().length }} heroes</span>
+    <span>sorted by {{ vm.rosterSort() }}</span>
+  </div>
+</div>

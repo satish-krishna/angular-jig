@@ -19,32 +19,48 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Hero Ops palette (light) */
+  --background: #f6f7fa;
+  --foreground: #1b1e2b;
+  --card: #ffffff;
+  --card-foreground: #1b1e2b;
+  --popover: #ffffff;
+  --popover-foreground: #1b1e2b;
+  --primary: #9a5c00;
+  --primary-foreground: #ffffff;
+  --secondary: #eef0f6;
+  --secondary-foreground: #1b1e2b;
+  --muted: #eef0f6;
+  --muted-foreground: #5b6072;
+  --accent: #eef0f6;
+  --accent-foreground: #1b1e2b;
+  --destructive: #c1272c;
+  --destructive-foreground: #ffffff;
+  --border: #e4e7ef;
+  --input: #e4e7ef;
+  --ring: #8a6100;
+  --ring-opacity: 0.35;
+
+  /* Semantic colors (light) */
+  --success: #2fb574;
+  --success-foreground: #ffffff;
+  --warning: #e4802b;
+  --warning-foreground: #ffffff;
+  --info: #4f7cf0;
+  --info-foreground: #ffffff;
+
+  /* Sidebar (dark in both themes) */
+  --sidebar: #1e2233;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #9a5c00;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef0f6;
+  --sidebar-accent-foreground: #1e2233;
+  --sidebar-muted: #9aa0b4;
+  --sidebar-muted-foreground: #9aa0b4;
+  --sidebar-border: #e4e7ef;
+  --sidebar-ring: #f59e0b;
 }
 
 :root.dark {
@@ -55,32 +71,48 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.985 0 0);
-  --sidebar-primary-foreground: oklch(0.205 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Hero Ops palette (dark) */
+  --background: #0e1018;
+  --foreground: #eceef6;
+  --card: #171a26;
+  --card-foreground: #eceef6;
+  --popover: #171a26;
+  --popover-foreground: #eceef6;
+  --primary: #f5b843;
+  --primary-foreground: #241a05;
+  --secondary: #1e2231;
+  --secondary-foreground: #eceef6;
+  --muted: #1e2231;
+  --muted-foreground: #9aa0b4;
+  --accent: #1e2231;
+  --accent-foreground: #eceef6;
+  --destructive: #c1272c;
+  --destructive-foreground: #ffffff;
+  --border: #272b3b;
+  --input: #272b3b;
+  --ring: #fbbf24;
+  --ring-opacity: 0.40;
+
+  /* Semantic colors (dark) */
+  --success: #3ecb84;
+  --success-foreground: #000000;
+  --warning: #f0983f;
+  --warning-foreground: #000000;
+  --info: #6f97f6;
+  --info-foreground: #ffffff;
+
+  /* Sidebar (dark in both themes) */
+  --sidebar: #10121c;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #f5b843;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #1e2231;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-muted: #8b90a6;
+  --sidebar-muted-foreground: #8b90a6;
+  --sidebar-border: #272b3b;
+  --sidebar-ring: #fbbf24;
 }
 
 @layer base {

@@ -1,0 +1,229 @@
+<div class="flex flex-col gap-6 p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Missions</h1>
+    <hlm-dialog #createDialog="hlmDialog">
+      <button hlmBtn hlmDialogTrigger variant="default" (click)="vm.startCreate()">
+        <ng-icon name="lucidePlus" />
+        <span>New mission</span>
+      </button>
+      <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
+        <hlm-dialog-header>
+          <h2 hlmDialogTitle>Create mission</h2>
+          <p hlmDialogDescription>Add a new mission to the operations board.</p>
+        </hlm-dialog-header>
+        <app-mission-form
+          [initialValue]="{
+            codename: '',
+            objective: '',
+            status: 'Planned',
+            priority: false,
+            threatId: null,
+            startedOn: '',
+            debrief: ''
+          }"
+          [threatOptions]="vm.threatOptions()"
+          submitLabel="Create"
+          (saveMission)="vm.save($event); createDialog.close()"
+          (cancel)="createDialog.close()"
+        />
+      </hlm-dialog-content>
+    </hlm-dialog>
+  </div>
+
+  <!-- Filter toolbar -->
+  <div class="flex flex-col gap-4">
+    <label hlmLabel class="sr-only" for="missions-search">Search missions</label>
+    <input
+      hlmInput
+      id="missions-search"
+      placeholder="Search missions..."
+      [value]="vm.searchQuery()"
+      (input)="vm.searchQuery.set(($event.target).value)"
+    />
+    <div class="flex items-center gap-4">
+      <button
+        hlmBtn
+        [variant]="vm.priorityOnly() ? 'default' : 'outline'"
+        size="sm"
+        (click)="vm.priorityOnly.set(!vm.priorityOnly())"
+      >
+        <ng-icon name="lucideFlag" class="h-4 w-4" />
+        <span>Priority only</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table (desktop) & Cards (mobile) -->
+  <div class="hidden sm:block overflow-x-auto">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Codename</th>
+          <th hlmTh>Objective</th>
+          <th hlmTh>Status</th>
+          <th hlmTh>Priority</th>
+          <th hlmTh>Started</th>
+          <th hlmTh>Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (mission of vm.filtered(); track mission.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ mission.codename }}</td>
+            <td hlmTd>{{ mission.objective }}</td>
+            <td hlmTd>
+              <span
+                hlmBadge
+                [variant]="mission.status === 'Complete' ? 'default' : mission.status === 'Failed' ? 'destructive' : 'secondary'"
+              >
+                {{ mission.status }}
+              </span>
+            </td>
+            <td hlmTd>
+              @if (mission.priority) {
+                <span hlmBadge variant="outline">
+                  <ng-icon name="lucideFlag" class="h-4 w-4" />
+                </span>
+              }
+            </td>
+            <td hlmTd>{{ mission.startedOn | date: 'mediumDate' }}</td>
+            <td hlmTd class="flex gap-2">
+              <hlm-dialog #tableEditDialog="hlmDialog">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)" data-testid="edit-mission" [attr.aria-label]="'Edit ' + mission.codename">
+                  <ng-icon name="lucidePencil" />
+                </button>
+                <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
+                  <hlm-dialog-header>
+                    <h2 hlmDialogTitle>Edit mission</h2>
+                    <p hlmDialogDescription>Change this mission's details and save.</p>
+                  </hlm-dialog-header>
+                  @if (vm.editingMission(); as mission) {
+                    <app-mission-form
+                      [initialValue]="mission"
+                      [threatOptions]="vm.threatOptions()"
+                      submitLabel="Update"
+                      (saveMission)="vm.save($event); tableEditDialog.close()"
+                      (cancel)="tableEditDialog.close()"
+                    />
+                  }
+                </hlm-dialog-content>
+              </hlm-dialog>
+              <hlm-dialog>
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + mission.codename">
+                  <ng-icon name="lucideTrash2" />
+                </button>
+                <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+                  <hlm-dialog-header>
+                    <h2 hlmDialogTitle>Delete mission?</h2>
+                    <p hlmDialogDescription>
+                      This mission will be permanently removed. This cannot be undone.
+                    </p>
+                  </hlm-dialog-header>
+                  <hlm-dialog-footer>
+                    <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                    <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(mission.id)">
+                      Delete
+                    </button>
+                  </hlm-dialog-footer>
+                </hlm-dialog-content>
+              </hlm-dialog>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <div class="text-center text-muted-foreground">
+                No missions match this filter.
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cards (mobile) -->
+  <div class="grid gap-4 sm:hidden">
+    @for (mission of vm.filtered(); track mission.id) {
+      <hlm-card>
+        <hlm-card-header>
+          <h2 hlmCardTitle>{{ mission.codename }}</h2>
+          <p hlmCardDescription>{{ mission.objective }}</p>
+          <div hlmCardAction>
+            <span
+              hlmBadge
+              [variant]="mission.status === 'Complete' ? 'default' : mission.status === 'Failed' ? 'destructive' : 'secondary'"
+            >
+              {{ mission.status }}
+            </span>
+          </div>
+        </hlm-card-header>
+        <div hlmCardContent class="flex flex-col gap-3">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-muted-foreground">Started</span>
+            <span>{{ mission.startedOn | date: 'mediumDate' }}</span>
+          </div>
+          @if (mission.priority) {
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-muted-foreground">Priority</span>
+              <span hlmBadge variant="outline">Yes</span>
+            </div>
+          }
+          <div class="flex gap-2 pt-2">
+            <hlm-dialog #cardEditDialog="hlmDialog">
+              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1" (click)="vm.startEdit(mission.id)" data-testid="edit-mission">
+                <ng-icon name="lucidePencil" />
+                <span>Edit</span>
+              </button>
+              <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
+                <hlm-dialog-header>
+                  <h2 hlmDialogTitle>Edit mission</h2>
+                  <p hlmDialogDescription>Change this mission's details and save.</p>
+                </hlm-dialog-header>
+                @if (vm.editingMission(); as mission) {
+                  <app-mission-form
+                    [initialValue]="mission"
+                    [threatOptions]="vm.threatOptions()"
+                    submitLabel="Update"
+                    (saveMission)="vm.save($event); cardEditDialog.close()"
+                    (cancel)="cardEditDialog.close()"
+                  />
+                }
+              </hlm-dialog-content>
+            </hlm-dialog>
+            <hlm-dialog>
+              <button hlmBtn hlmDialogTrigger size="sm" variant="destructive" class="flex-1">
+                <ng-icon name="lucideTrash2" />
+                <span>Delete</span>
+              </button>
+              <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+                <hlm-dialog-header>
+                  <h2 hlmDialogTitle>Delete mission?</h2>
+                  <p hlmDialogDescription>
+                    This mission will be permanently removed. This cannot be undone.
+                  </p>
+                </hlm-dialog-header>
+                <hlm-dialog-footer>
+                  <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                  <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(mission.id)">
+                    Delete
+                  </button>
+                </hlm-dialog-footer>
+              </hlm-dialog-content>
+            </hlm-dialog>
+          </div>
+        </div>
+      </hlm-card>
+    } @empty {
+      <div class="text-center text-muted-foreground">
+        No missions match this filter.
+      </div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between text-sm text-muted-foreground">
+    <span>{{ vm.filtered().length }} of {{ vm.missions().length }} missions</span>
+  </div>
+</div>

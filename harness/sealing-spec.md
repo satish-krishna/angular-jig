@@ -54,6 +54,8 @@ Every Part 1 violation is one of exactly six kinds. `no-unknown-primitive` and `
 | [no-unknown-primitive](rules/no-unknown-primitive.md) | An `hlm*` attribute or element matching no installed selector |
 | [no-missing-composition-part](rules/no-missing-composition-part.md) | An overlay primitive present but not composed with its required title |
 
+`no-unportalled-overlay` is deliberately gate-only. It has no counter kind, so the two engines do not cross-check each other on it and its `messageId` maps to no `kind` in the tally. That is a decision, not an oversight: the counter's job is measuring drift across experimental trials, and the runtime half of this question is already covered by `check-interaction.mjs`, which clicks every overlay trigger and asserts the overlay opens, dismisses, and logs no console error. If trials resume, the counter needs a `REQUIRED_PORTAL` table, an `unportalled-overlay` key in `emptyTotals`, a downward walk from the container for content not wrapped in a template carrying the portal, plus the  even `toEqual` totals blocks in `counter.test.mjs` and a fixture pair.
+
 ## Where customization goes (why the seal is with the grain, not against it)
 
 Because Helm code is copied into the project, the documented way to customize a component is to edit its file in `libs/ui` (adjust the `cva` variants, change classes, add inputs) or to use its `variant`/`size` inputs, never to reach past it at the call site. The gate ignores `libs/**` entirely, so that customization path is fully open. `no-appearance-on-primitive` does not fight the framework; it enforces the framework's own "class is for layout only," and it points appearance changes at the place the docs point them.

@@ -32,6 +32,7 @@ export default [
       'seal/no-raw-icon': 'error',
       'seal/no-unknown-primitive': 'error',
       'seal/no-missing-composition-part': 'error',
+      'seal/no-unportalled-overlay': 'error',
     },
   },
 ];
