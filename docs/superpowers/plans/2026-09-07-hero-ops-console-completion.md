@@ -2075,6 +2075,18 @@ grep -rn "rounded-lg border border-border bg-card" src/app
 
 Expected: no output.
 
+- [ ] **Step 0b: Accessible names for every icon-only control**
+
+The table views in `src/app/roster/roster.html` and `src/app/missions/missions.html` render Edit and Delete as icon-only buttons with no `aria-label` and no visually-hidden text. That is axe-core's `button-name` rule and a WCAG 4.1.2 failure, and this project mandates AXE-clean. It is systemic rather than local — Task 5 fixed the same pattern in `threats.html` and this step finishes the sweep.
+
+Add an accessible name to every icon-only control in both files, naming the record so the control is unambiguous when read out of its row:
+
+```html
+[attr.aria-label]="'Edit ' + hero.name"
+```
+
+Leave card-view buttons alone where they already render visible text. Then search the whole of `src/app/` for any remaining `<button>` or `<a>` whose only content is an `<ng-icon>`, and give each one a name — including the top bar in `app.html`.
+
 - [ ] **Step 1: Reconcile the navigation**
 
 Open `src/app/app.html`. Task 1 wrapped `<hlm-sidebar>` in a `<nav>` landmark and left the interior content indented one level shallower than its new nesting depth — reindent that block. Then confirm the sidebar has exactly six `hlmSidebarMenuItem` entries routing to `/dashboard`, `/roster`, `/missions`, `/threats`, `/recruit` and `/settings`, each with the icon named in the build spec: `lucideLayoutDashboard`, `lucideUsers`, `lucideTarget`, `lucideShieldAlert`, `lucideUserPlus`, `lucideSettings`. Add any that are missing. Confirm the theme toggle in the top bar calls `vm.toggleTheme()` and renders `lucideSun` or `lucideMoon` from `vm.isDark()`.
