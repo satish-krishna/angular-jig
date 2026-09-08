@@ -3,7 +3,7 @@
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-bold">Threats</h1>
     <hlm-dialog>
-      <button hlmBtn hlmDialogTrigger variant="default">
+      <button hlmBtn hlmDialogTrigger variant="default" (click)="vm.startCreate()" data-testid="create-threat">
         <ng-icon name="lucidePlus" />
         <span>Log threat</span>
       </button>
@@ -99,7 +99,7 @@
             <td hlmTd>{{ vm.missionCount(threat.id) }}</td>
             <td hlmTd class="flex gap-2">
               <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(threat.id)" data-testid="edit-threat">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(threat.id)" data-testid="edit-threat" [attr.aria-label]="'Edit ' + threat.designation">
                   <ng-icon name="lucidePencil" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
@@ -118,7 +118,7 @@
                 </hlm-dialog-content>
               </hlm-dialog>
               <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + threat.designation">
                   <ng-icon name="lucideTrash2" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">

@@ -3,7 +3,7 @@
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-bold">Missions</h1>
     <hlm-dialog>
-      <button hlmBtn hlmDialogTrigger variant="default">
+      <button hlmBtn hlmDialogTrigger variant="default" (click)="vm.startCreate()">
         <ng-icon name="lucidePlus" />
         <span>New mission</span>
       </button>
