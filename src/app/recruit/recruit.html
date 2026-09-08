@@ -3,8 +3,10 @@
     <h1 class="text-3xl font-bold">Recruit New Hero</h1>
   </div>
   <div class="mx-auto w-full max-w-2xl">
-    <div class="rounded-lg border border-border bg-card p-6">
-      <app-hero-form [initialValue]="vm.newHeroTemplate" submitLabel="Recruit" (saveHero)="vm.createHero($event)" (cancel)="vm.cancel()" />
-    </div>
+    <hlm-card>
+      <div hlmCardContent>
+        <app-hero-form [initialValue]="vm.newHeroTemplate" submitLabel="Recruit" (saveHero)="vm.createHero($event)" (cancel)="vm.cancel()" />
+      </div>
+    </hlm-card>
   </div>
 </div>

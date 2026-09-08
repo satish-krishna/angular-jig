@@ -88,7 +88,7 @@
             <td hlmTd>{{ mission.startedOn | date: 'mediumDate' }}</td>
             <td hlmTd class="flex gap-2">
               <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)" data-testid="edit-mission">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)" data-testid="edit-mission" [attr.aria-label]="'Edit ' + mission.codename">
                   <ng-icon name="lucidePencil" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
@@ -108,7 +108,7 @@
                 </hlm-dialog-content>
               </hlm-dialog>
               <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + mission.codename">
                   <ng-icon name="lucideTrash2" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">

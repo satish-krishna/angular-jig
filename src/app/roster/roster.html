@@ -46,10 +46,10 @@
             </td>
             <td hlmTd>{{ hero.clearanceTier }}</td>
             <td hlmTd class="flex gap-2">
-              <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)">
+              <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)" [attr.aria-label]="'Edit ' + hero.name">
                 <ng-icon name="lucidePencil" />
               </button>
-              <button hlmBtn size="sm" variant="ghost" (click)="vm.retireHero(hero.id)">
+              <button hlmBtn size="sm" variant="ghost" (click)="vm.retireHero(hero.id)" [attr.aria-label]="'Delete ' + hero.name">
                 <ng-icon name="lucideTrash2" />
               </button>
             </td>

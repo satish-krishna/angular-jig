@@ -2,81 +2,81 @@
   <!-- Sidebar navigation rail (dark in both themes) -->
   <nav>
     <hlm-sidebar side="left">
-    <!-- Brand -->
-    <div hlmSidebarHeader>
-      <div class="flex items-center gap-2">
-        <div class="size-8 rounded-lg bg-primary"></div>
-        <span class="font-bold text-lg text-sidebar-foreground">Hero Ops</span>
-      </div>
-    </div>
-
-    <!-- Navigation menu -->
-    <div hlmSidebarContent>
-      <div hlmSidebarGroup>
-        <ul hlmSidebarMenu>
-          <li hlmSidebarMenuItem>
-            <a
-              hlmSidebarMenuButton
-              routerLink="/dashboard"
-              routerLinkActive="data-active"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ng-icon name="lucideLayoutDashboard" />
-              <span>Dashboard</span>
-            </a>
-          </li>
-
-          <li hlmSidebarMenuItem>
-            <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive="data-active" [routerLinkActiveOptions]="{ exact: true }">
-              <ng-icon name="lucideUsers" />
-              <span>Roster</span>
-            </a>
-          </li>
-
-          <li hlmSidebarMenuItem>
-            <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive="data-active">
-              <ng-icon name="lucideTarget" />
-              <span>Missions</span>
-            </a>
-          </li>
-
-          <li hlmSidebarMenuItem>
-            <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive="data-active">
-              <ng-icon name="lucideShieldAlert" />
-              <span>Threats</span>
-            </a>
-          </li>
-
-          <li hlmSidebarMenuItem>
-            <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive="data-active">
-              <ng-icon name="lucideUserPlus" />
-              <span>Recruit</span>
-            </a>
-          </li>
-
-          <li hlmSidebarMenuItem>
-            <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive="data-active">
-              <ng-icon name="lucideSettings" />
-              <span>Settings</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Footer user section -->
-    <div hlmSidebarFooter>
-      <div class="flex items-center gap-2">
-        <hlm-avatar>
-          <span hlmAvatarFallback>HC</span>
-        </hlm-avatar>
-        <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-sidebar-foreground">Hero Command</p>
-          <p class="text-xs text-sidebar-muted truncate">admin@heroops.local</p>
+      <!-- Brand -->
+      <div hlmSidebarHeader>
+        <div class="flex items-center gap-2">
+          <div class="size-8 rounded-lg bg-primary"></div>
+          <span class="font-bold text-lg text-sidebar-foreground">Hero Ops</span>
         </div>
       </div>
-    </div>
-  </hlm-sidebar>
+
+      <!-- Navigation menu -->
+      <div hlmSidebarContent>
+        <div hlmSidebarGroup>
+          <ul hlmSidebarMenu>
+            <li hlmSidebarMenuItem>
+              <a
+                hlmSidebarMenuButton
+                routerLink="/dashboard"
+                routerLinkActive="data-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <ng-icon name="lucideLayoutDashboard" />
+                <span>Dashboard</span>
+              </a>
+            </li>
+
+            <li hlmSidebarMenuItem>
+              <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive="data-active" [routerLinkActiveOptions]="{ exact: true }">
+                <ng-icon name="lucideUsers" />
+                <span>Roster</span>
+              </a>
+            </li>
+
+            <li hlmSidebarMenuItem>
+              <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive="data-active">
+                <ng-icon name="lucideTarget" />
+                <span>Missions</span>
+              </a>
+            </li>
+
+            <li hlmSidebarMenuItem>
+              <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive="data-active">
+                <ng-icon name="lucideShieldAlert" />
+                <span>Threats</span>
+              </a>
+            </li>
+
+            <li hlmSidebarMenuItem>
+              <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive="data-active">
+                <ng-icon name="lucideUserPlus" />
+                <span>Recruit</span>
+              </a>
+            </li>
+
+            <li hlmSidebarMenuItem>
+              <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive="data-active">
+                <ng-icon name="lucideSettings" />
+                <span>Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer user section -->
+      <div hlmSidebarFooter>
+        <div class="flex items-center gap-2">
+          <hlm-avatar>
+            <span hlmAvatarFallback>HC</span>
+          </hlm-avatar>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium text-sidebar-foreground">Hero Command</p>
+            <p class="text-xs text-sidebar-muted truncate">admin@heroops.local</p>
+          </div>
+        </div>
+      </div>
+    </hlm-sidebar>
   </nav>
 
   <!-- Main content area -->
@@ -85,19 +85,19 @@
     <header class="flex h-16 items-center justify-between border-b border-border bg-background px-6 gap-4">
       <!-- Left: Mobile menu trigger + breadcrumb -->
       <div class="flex items-center gap-4">
-        <button hlmSidebarTrigger></button>
+        <button hlmSidebarTrigger aria-label="Toggle sidebar"></button>
         <span class="text-sm text-muted-foreground">Hero Ops Console</span>
       </div>
 
       <!-- Right: Search, notifications, theme, avatar -->
       <div class="flex items-center gap-2">
         <!-- Search icon -->
-        <button hlmBtn size="icon" variant="ghost" [title]="'Search heroes'" hlmTooltip side="bottom">
+        <button hlmBtn size="icon" variant="ghost" [title]="'Search heroes'" hlmTooltip side="bottom" aria-label="Search heroes">
           <ng-icon name="lucideSearch" />
         </button>
 
         <!-- Notifications -->
-        <button hlmBtn size="icon" variant="ghost" [title]="'Notifications'" hlmTooltip side="bottom">
+        <button hlmBtn size="icon" variant="ghost" [title]="'Notifications'" hlmTooltip side="bottom" aria-label="Notifications">
           <ng-icon name="lucideBell" />
         </button>
 
@@ -110,6 +110,7 @@
           [title]="vm.isDark() ? 'Light mode' : 'Dark mode'"
           hlmTooltip
           side="bottom"
+          [attr.aria-label]="vm.isDark() ? 'Light mode' : 'Dark mode'"
         >
           @if (vm.isDark()) {
             <ng-icon name="lucideSun" />
