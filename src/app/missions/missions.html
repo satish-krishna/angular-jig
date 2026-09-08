@@ -88,12 +88,13 @@
             <td hlmTd>{{ mission.startedOn | date: 'mediumDate' }}</td>
             <td hlmTd class="flex gap-2">
               <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)">
+                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(mission.id)" data-testid="edit-mission">
                   <ng-icon name="lucidePencil" />
                 </button>
                 <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
                   <hlm-dialog-header>
                     <h2 hlmDialogTitle>Edit mission</h2>
+                    <p hlmDialogDescription>Change this mission's details and save.</p>
                   </hlm-dialog-header>
                   @if (vm.editingMission(); as mission) {
                     <app-mission-form
@@ -161,13 +162,14 @@
           }
           <div class="flex gap-2 pt-2">
             <hlm-dialog>
-              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1" (click)="vm.startEdit(mission.id)">
+              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1" (click)="vm.startEdit(mission.id)" data-testid="edit-mission">
                 <ng-icon name="lucidePencil" />
                 <span>Edit</span>
               </button>
               <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
                 <hlm-dialog-header>
                   <h2 hlmDialogTitle>Edit mission</h2>
+                  <p hlmDialogDescription>Change this mission's details and save.</p>
                 </hlm-dialog-header>
                 @if (vm.editingMission(); as mission) {
                   <app-mission-form
