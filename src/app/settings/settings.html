@@ -9,18 +9,17 @@
     <div hlmCardContent class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
         <label hlmLabel for="theme-select">Theme</label>
-        <hlm-select>
-          <hlm-select-trigger id="theme-select">
-            <hlm-select-value>{{ vm.theme() }}</hlm-select-value>
+        <hlm-select
+          [value]="vm.theme()"
+          (valueChange)="$event && vm.setTheme($event)"
+          [itemToString]="themeToString"
+        >
+          <hlm-select-trigger buttonId="theme-select" class="w-full">
+            <hlm-select-value placeholder="Select a theme" />
           </hlm-select-trigger>
-          <hlm-select-content>
+          <hlm-select-content *hlmSelectPortal>
             @for (option of vm.themeOptions; track option.value) {
-              <hlm-select-item
-                [value]="option.value"
-                (click)="vm.setTheme(option.value)"
-              >
-                {{ option.label }}
-              </hlm-select-item>
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
             }
           </hlm-select-content>
         </hlm-select>
@@ -44,68 +43,37 @@
     <div hlmCardContent class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
         <label hlmLabel for="sort-select">Default sort</label>
-        <hlm-select>
-          <hlm-select-trigger id="sort-select">
-            <hlm-select-value>
-              @for (option of vm.sortOptions; track option.value) {
-                @if (option.value === vm.rosterSort()) {
-                  {{ option.label }}
-                }
-              }
-            </hlm-select-value>
+        <hlm-select
+          [value]="vm.rosterSort()"
+          (valueChange)="$event && vm.setRosterSort($event)"
+          [itemToString]="sortToString"
+        >
+          <hlm-select-trigger buttonId="sort-select" class="w-full">
+            <hlm-select-value placeholder="Select a sort order" />
           </hlm-select-trigger>
-          <hlm-select-content>
+          <hlm-select-content *hlmSelectPortal>
             @for (option of vm.sortOptions; track option.value) {
-              <hlm-select-item
-                [value]="option.value"
-                (click)="vm.setRosterSort(option.value)"
-              >
-                {{ option.label }}
-              </hlm-select-item>
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
             }
           </hlm-select-content>
         </hlm-select>
       </div>
       <div class="flex flex-col gap-2">
         <label hlmLabel for="status-select">Default status filter</label>
-        <hlm-select>
-          <hlm-select-trigger id="status-select">
-            <hlm-select-value>
-              @switch (vm.rosterStatus()) {
-                @case ('all') {
-                  All statuses
-                }
-                @case ('Active') {
-                  Active
-                }
-                @case ('Injured') {
-                  Injured
-                }
-                @case ('Reserve') {
-                  Reserve
-                }
-                @case ('MIA') {
-                  MIA
-                }
-              }
-            </hlm-select-value>
+        <hlm-select
+          [value]="vm.rosterStatus()"
+          (valueChange)="$event && vm.setRosterStatus($event)"
+          [itemToString]="statusToString"
+        >
+          <hlm-select-trigger buttonId="status-select" class="w-full">
+            <hlm-select-value placeholder="Select a status filter" />
           </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-select-item value="all" (click)="vm.setRosterStatus('all')">
-              All statuses
-            </hlm-select-item>
-            <hlm-select-item value="Active" (click)="vm.setRosterStatus('Active')">
-              Active
-            </hlm-select-item>
-            <hlm-select-item value="Injured" (click)="vm.setRosterStatus('Injured')">
-              Injured
-            </hlm-select-item>
-            <hlm-select-item value="Reserve" (click)="vm.setRosterStatus('Reserve')">
-              Reserve
-            </hlm-select-item>
-            <hlm-select-item value="MIA" (click)="vm.setRosterStatus('MIA')">
-              MIA
-            </hlm-select-item>
+          <hlm-select-content *hlmSelectPortal>
+            <hlm-select-item value="all">All statuses</hlm-select-item>
+            <hlm-select-item value="Active">Active</hlm-select-item>
+            <hlm-select-item value="Injured">Injured</hlm-select-item>
+            <hlm-select-item value="Reserve">Reserve</hlm-select-item>
+            <hlm-select-item value="MIA">MIA</hlm-select-item>
           </hlm-select-content>
         </hlm-select>
       </div>
