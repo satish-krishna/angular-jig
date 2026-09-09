@@ -162,7 +162,7 @@ async function cli() {
   const args = process.argv.slice(2);
   const routes = [];
   for (let i = 0; i < args.length; i++) if (args[i] === '--route') routes.push(args[++i]);
-  if (routes.length === 0) routes.push('dashboard', 'roster', 'detail/11');
+  if (routes.length === 0) routes.push('dashboard', 'roster', 'detail/11', 'missions', 'threats', 'recruit', 'settings');
 
   // Built with the DEVELOPMENT configuration (optimization off) on purpose.
   // Against a production bundle this gate reports "ERROR T: NG0201", because the

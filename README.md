@@ -19,6 +19,10 @@ Two things at once.
 | ![Missions](docs/screenshots/missions.png) | ![Threats, dark](docs/screenshots/threats-dark.png) |
 | Missions — dialog CRUD | Threats, dark theme |
 
+![Settings](docs/screenshots/settings.png)
+
+Settings is the screen that proves the others are wired together: theme, default roster sort, status filter and table density are persisted preferences, and changing one here changes what the roster renders on the next visit. Theme resolves `system` through `prefers-color-scheme`, and survives an environment that has no `matchMedia` at all — which is what jsdom gives you, and what the original crash was.
+
 ## The house rules
 
 Twenty-seven rules in four planes. Each has a doc under `harness/rules/` explaining what it forbids, why, the accepted form, and — the part that matters — its known blind spots.
