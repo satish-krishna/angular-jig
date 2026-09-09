@@ -13,10 +13,16 @@
 // templates (including inline templates via processInlineTemplates). On any
 // violation, exit 2 with a corrective message.
 //
-// Self-contained: it builds its own eslint config for the shape rules and does
-// not touch the repo's eslint.config.mjs (which stays the sealing baseline), so
-// these rules are enforced only when this hook is registered (gate-on). The
-// counter is the independent auditor; this is the enforcement.
+// It builds its own eslint config for the shape rules rather than loading the
+// repo's, so it can lint a single edited file without a full project pass. The
+// same rules are ALSO enabled in the repo config, so `npm run lint` and CI
+// enforce them for human authors too -- this hook is the edit-time half, not
+// the only half. The counter is the independent auditor; this is enforcement.
+//
+// That means the rule list exists twice: here, and in the repo config. Adding a
+// shape rule to one and not the other makes the gate and the lint run disagree
+// about the house rules, and nothing detects the divergence. If that becomes a
+// real problem, extract the rules object to a module both import.
 //
 // Fails closed on an unparseable payload.
 
