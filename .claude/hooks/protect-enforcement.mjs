@@ -47,20 +47,9 @@
 
 import { logFiring } from './_hook-log.mjs';
 
-// Everything that defines or enforces the constitution, plus the harness that
-// measures it. Shares its enforcement core with ENFORCEMENT_PATHS in
-// harness/driver/run-capstone.mjs, which is the post-hoc backstop for anything
-// that gets past this - but the two lists are NOT required to be equal, and
-// harness/gate/protected-paths.test.mjs does not assert that they are. This
-// list carries one entry ENFORCEMENT_PATHS deliberately omits: 'experiments/'.
-// It is here because this guard also stops READ-contamination (an agent
-// finding a prior trial's answers under experiments/, which the capstone
-// found happening four times); ENFORCEMENT_PATHS polices WRITE-tampering on
-// the committed diff, where 'experiments/' would be dead weight (every
-// trial's own commit already excludes it, see run-capstone.mjs) and a future
-// landmine if that exclusion ever moves. Do not "fix" this by adding
-// 'experiments/' to ENFORCEMENT_PATHS to make the two lists match - that was
-// considered and rejected for exactly the landmine reason above.
+// Single source of truth for enforcement paths. This used to be cross-checked
+// against ENFORCEMENT_PATHS in the run driver by harness/gate/protected-paths.test.mjs;
+// the driver was removed, so nothing corroborates this list any more
 const PROTECTED = [
   'stylelint.config.mjs',
   'eslint.config.mjs',
