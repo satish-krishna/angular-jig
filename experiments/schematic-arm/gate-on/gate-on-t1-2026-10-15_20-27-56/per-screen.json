@@ -1,0 +1,24 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {}
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 16,
+      "messages": 16,
+      "byHook": {
+        "protect-enforcement": 16
+      }
+    },
+    "hero-detail": {
+      "firings": 1,
+      "messages": 4,
+      "byHook": {
+        "seal-templates": 1
+      }
+    }
+  }
+}

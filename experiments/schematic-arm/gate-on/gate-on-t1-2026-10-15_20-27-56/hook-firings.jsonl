@@ -1,0 +1,17 @@
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:28:31.968Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-15T20:28:40.253Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-15T20:28:45.187Z"}
+{"hook":"protect-enforcement","file":".agents/skills/","count":1,"messages":["Bash blocked on: .agents/skills/"],"ts":"2026-10-15T20:29:49.542Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-15T20:33:52.877Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:35:05.522Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:35:41.053Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:36:53.980Z"}
+{"hook":"protect-enforcement","file":".claude/skills/, package.json","count":1,"messages":["Bash blocked on: .claude/skills/, package.json"],"ts":"2026-10-15T20:37:02.867Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-15T20:39:02.821Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:52:55.868Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-15T20:53:04.349Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-15T20:53:09.068Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:53:38.477Z"}
+{"hook":"seal-templates","file":"D:/Repos/angular-jig/src/app/hero-detail/hero-detail.ts","count":4,"messages":["  D:/Repos/angular-jig/src/app/hero-detail/hero-detail.ts:110:11  Sealed vocabulary: \"pt-4\" overrides the appearance of <div>. Class on a primitive is for layout only; change its look through a variant input or the Helm file in libs/ui.","  D:/Repos/angular-jig/src/app/hero-detail/hero-detail.ts:157:11  Sealed vocabulary: \"pt-4\" overrides the appearance of <div>. Class on a primitive is for layout only; change its look through a variant input or the Helm file in libs/ui.","  D:/Repos/angular-jig/src/app/hero-detail/hero-detail.ts:185:11  Sealed vocabulary: \"pt-4\" overrides the appearance of <div>. Class on a primitive is for layout only; change its look through a variant input or the Helm file in libs/ui.","  D:/Repos/angular-jig/src/app/hero-detail/hero-detail.ts:203:11  Sealed vocabulary: \"pt-4\" overrides the appearance of <div>. Class on a primitive is for layout only; change its look through a variant input or the Helm file in libs/ui."],"ts":"2026-10-15T20:55:48.087Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T20:56:14.690Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-15T21:00:28.781Z"}

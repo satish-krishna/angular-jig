@@ -1,0 +1,91 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar>
+    <div hlmSidebarHeader>
+      <div class="flex items-center gap-2 px-2 py-1">
+        <ng-icon name="lucideRadar" class="text-sidebar-primary" />
+        <span class="truncate font-semibold">Hero Ops Console</span>
+      </div>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Main">
+        <ul hlmSidebarMenu>
+          @for (destination of vm.destinations; track destination.path) {
+            <li hlmSidebarMenuItem>
+              <a
+                hlmSidebarMenuButton
+                [routerLink]="['/', destination.path]"
+                routerLinkActive
+                #active="routerLinkActive"
+                [isActive]="active.isActive"
+              >
+                <ng-icon [name]="destination.icon" />
+                <span>{{ destination.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter>
+      <p class="truncate px-2 py-1 text-sm text-sidebar-muted">Operations desk</p>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset>
+    <header class="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3 md:px-6">
+      <button hlmSidebarTrigger></button>
+
+      <nav aria-label="Breadcrumb" class="min-w-0 flex-1">
+        <ol class="flex min-w-0 items-center gap-2 text-sm">
+          <li class="truncate text-muted-foreground">Hero Ops Console</li>
+          <li aria-hidden="true" class="text-muted-foreground">/</li>
+          <li aria-current="page" class="truncate font-medium">{{ vm.currentPage() }}</li>
+        </ol>
+      </nav>
+
+      <div class="order-last basis-full sm:order-none sm:basis-64">
+        <input
+          #search
+          hlmInput
+          type="search"
+          aria-label="Search heroes"
+          placeholder="Search heroes"
+          (search)="vm.search(search.value)"
+        />
+      </div>
+
+      <div class="flex items-center gap-1">
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          aria-label="Notifications"
+          hlmTooltip="Notifications"
+        >
+          <ng-icon name="lucideBell" />
+        </button>
+
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          [attr.aria-label]="vm.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+          [hlmTooltip]="vm.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon [name]="vm.isDark() ? 'lucideSun' : 'lucideMoon'" />
+        </button>
+
+        <hlm-avatar role="img" aria-label="Signed in as the duty commander">
+          <span hlmAvatarFallback>DC</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="flex min-w-0 flex-1 flex-col p-4 md:p-6">
+      <router-outlet />
+    </div>
+  </main>
+</div>

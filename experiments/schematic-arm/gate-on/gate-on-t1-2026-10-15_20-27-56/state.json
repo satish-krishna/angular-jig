@@ -1,0 +1,847 @@
+{
+  "runId": "gate-on-t1-2026-10-15_20-27-56",
+  "condition": "gate-on",
+  "trial": 1,
+  "root": "D:\\Repos\\angular-jig",
+  "work": "C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\gate-on-t1-2026-10-15_20-27-56",
+  "out": "D:\\Repos\\angular-jig\\experiments\\schematic-arm\\gate-on\\gate-on-t1-2026-10-15_20-27-56",
+  "config": {
+    "$comment": "Configuration for one schematic-arm measurement series. Recorded into every run's meta.json with its sha256, so a run says which configuration produced it. Change it between series, never between trials of one series.",
+    "repoRoot": "D:\\Repos\\angular-jig",
+    "substrate": "substrate/schematic-arm",
+    "stagesRef": "eaa5b3f6fe4114d554a70fabc592b9d9cce15bc5",
+    "gateSettings": "harness/gate/capstone-gate-on.settings.json",
+    "settingSources": "project,local",
+    "requiredOnSubstrate": [
+      "prototype/capstone-build-spec.md",
+      ".claude/hooks/protect-enforcement.mjs"
+    ],
+    "schematic": {
+      "$comment": "commandPattern must name the schematic itself, so a spartan `ng g @spartan-ng/cli:ui` install is not counted as generation. The schematic arm refuses to start while it is empty or while any requiredOnSubstrate path is missing from the substrate.",
+      "specPath": "specs/hero.slice.json",
+      "specSchemaPath": "",
+      "commandPattern": "",
+      "requiredOnSubstrate": [],
+      "protectedPaths": []
+    }
+  },
+  "configSha256": "422be57bef32d9279ca9c2f570f64e7f41fd19b5ab44cf7022286f2aa2f9f4d7",
+  "startBranch": "main",
+  "startSha": "aad2e5db6c74f4d57ff60d02fdd75cc55712bf39",
+  "substrate": {
+    "ref": "substrate/schematic-arm",
+    "sha": "de9c2cd64f162099ff40a9b1ed822ade072b9a71"
+  },
+  "stagesRef": {
+    "ref": "eaa5b3f6fe4114d554a70fabc592b9d9cce15bc5",
+    "sha": "eaa5b3f6fe4114d554a70fabc592b9d9cce15bc5",
+    "moduleSha256": "98d86f04faae82ad3b499fa5c38b701ba769c41bb480f8360a47ce6be957885e"
+  },
+  "branch": "run/schematic-arm-gate-on-t1-2026-10-15_20-27-56",
+  "settingsPath": "C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\gate-on-t1-2026-10-15_20-27-56\\gate.settings.json",
+  "settingsSha256": "f50e364ce6e64592c965e6a69d37069eb0c233b63c3187fc3302f79ef4a79b19",
+  "hookLog": "C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\gate-on-t1-2026-10-15_20-27-56\\hook-firings.jsonl",
+  "auditRoutes": [
+    "dashboard",
+    "roster",
+    "detail/11"
+  ],
+  "auditAnchor": "body",
+  "plan": [
+    {
+      "n": 1,
+      "name": "shell",
+      "promptFile": "capstone/stage-1-shell.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "d69b45c2a2c94fffca810afceb8fcd93856dac30e96827f7cbfdf370206541d0",
+      "promptBytes": 2382
+    },
+    {
+      "n": 2,
+      "name": "domain",
+      "promptFile": "capstone/stage-2-domain.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "9f303b725f51b30e8cda08bac73b1a04a3c55db8b895f3211a638bb9b43cf838",
+      "promptBytes": 1919
+    },
+    {
+      "n": 3,
+      "name": "dashboard",
+      "promptFile": "capstone/stage-3-dashboard.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "d8e22f145fea8b52a0043f0c167b19b10f3956081cd60a1204b674f68fdf6816",
+      "promptBytes": 1637
+    },
+    {
+      "n": 4,
+      "name": "roster",
+      "promptFile": "capstone/stage-4-roster.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "65107e2bb1acf052a288babe4eb9a5a33846c8333467ffc7d8980c24cc4e7f1e",
+      "promptBytes": 1634
+    },
+    {
+      "n": 5,
+      "name": "detail",
+      "promptFile": "capstone/stage-5-detail.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "8727b5441297b54ef433f1e44d6f34ebae3d6d78a529a8beb3fc2e72bdd3336b",
+      "promptBytes": 1754
+    },
+    {
+      "n": 6,
+      "name": "integrate",
+      "promptFile": "capstone/stage-6-integrate.md",
+      "responsiveGateApplied": true,
+      "promptSha256": "59a8c434de673d128776c9771f39773e42fd0eff92c619b38e1474e242b0b94b",
+      "promptBytes": 2774
+    }
+  ],
+  "records": [
+    {
+      "stage": 1,
+      "name": "shell",
+      "promptFile": "capstone/stage-1-shell.md",
+      "promptSha256": "d69b45c2a2c94fffca810afceb8fcd93856dac30e96827f7cbfdf370206541d0",
+      "promptBytes": 2382,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 72,
+      "costUsd": 0.26287146,
+      "durationMs": 388804,
+      "durationApiMs": 257475,
+      "sessionId": "7de959f1-1e2c-4aaa-9c6f-6cb4a5ce5f61",
+      "usage": {
+        "input_tokens": 76,
+        "cache_creation_input_tokens": 120062,
+        "cache_read_input_tokens": 3568932,
+        "output_tokens": 47657,
+        "output_tokens_details": {
+          "thinking_tokens": 30224
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 120062,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1021,
+            "cache_read_input_tokens": 135950,
+            "cache_creation_input_tokens": 381,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 381
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 419743,
+      "hookFiringsAfter": 5,
+      "toolCounts": {
+        "Bash": 17,
+        "Read": 26,
+        "Glob": 4,
+        "Grep": 12,
+        "Write": 8,
+        "Edit": 4
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "failed",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "failed",
+            "source": "dynamic"
+          },
+          {
+            "name": "claude.ai Claude Docs",
+            "status": "connected",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Drive",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Calendar",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Gmail",
+            "status": "needs-auth",
+            "source": "claudeai"
+          }
+        ],
+        "slashCommands": 56,
+        "tools": 36
+      },
+      "ok": true,
+      "resultCount": 1
+    },
+    {
+      "stage": 2,
+      "name": "domain",
+      "promptFile": "capstone/stage-2-domain.md",
+      "promptSha256": "9f303b725f51b30e8cda08bac73b1a04a3c55db8b895f3211a638bb9b43cf838",
+      "promptBytes": 1919,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 29,
+      "costUsd": 0.02333288,
+      "durationMs": 109362,
+      "durationApiMs": 94656,
+      "sessionId": "89dfcae8-7ad5-4385-99c3-b19b92b2a9a3",
+      "usage": {
+        "input_tokens": 32,
+        "cache_creation_input_tokens": 44628,
+        "cache_read_input_tokens": 797558,
+        "output_tokens": 12857,
+        "output_tokens_details": {
+          "thinking_tokens": 5227
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 44628,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1466,
+            "cache_read_input_tokens": 62666,
+            "cache_creation_input_tokens": 798,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 798
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 112393,
+      "hookFiringsAfter": 7,
+      "toolCounts": {
+        "Bash": 3,
+        "Read": 11,
+        "Glob": 1,
+        "Grep": 7,
+        "Write": 4,
+        "Edit": 2
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "claude.ai Claude Docs",
+            "status": "connected",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Drive",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Calendar",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Gmail",
+            "status": "needs-auth",
+            "source": "claudeai"
+          }
+        ],
+        "slashCommands": 61,
+        "tools": 65
+      },
+      "ok": true,
+      "resultCount": 1
+    },
+    {
+      "stage": 3,
+      "name": "dashboard",
+      "promptFile": "capstone/stage-3-dashboard.md",
+      "promptSha256": "d8e22f145fea8b52a0043f0c167b19b10f3956081cd60a1204b674f68fdf6816",
+      "promptBytes": 1637,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 22,
+      "costUsd": 0.029821260000000002,
+      "durationMs": 111629,
+      "durationApiMs": 91194,
+      "sessionId": "4b663d1c-f5f6-43b1-9c92-2f48158a4dce",
+      "usage": {
+        "input_tokens": 32,
+        "cache_creation_input_tokens": 57544,
+        "cache_read_input_tokens": 902476,
+        "output_tokens": 18569,
+        "output_tokens_details": {
+          "thinking_tokens": 10120
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 57544,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1150,
+            "cache_read_input_tokens": 75721,
+            "cache_creation_input_tokens": 659,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 659
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 114487,
+      "hookFiringsAfter": 9,
+      "toolCounts": {
+        "Bash": 11,
+        "Read": 2,
+        "Glob": 1,
+        "Write": 6,
+        "Edit": 1
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "claude.ai Claude Docs",
+            "status": "connected",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Drive",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Calendar",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Gmail",
+            "status": "needs-auth",
+            "source": "claudeai"
+          }
+        ],
+        "slashCommands": 61,
+        "tools": 65
+      },
+      "ok": true,
+      "resultCount": 1
+    },
+    {
+      "stage": 4,
+      "name": "roster",
+      "promptFile": "capstone/stage-4-roster.md",
+      "promptSha256": "65107e2bb1acf052a288babe4eb9a5a33846c8333467ffc7d8980c24cc4e7f1e",
+      "promptBytes": 1634,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 36,
+      "costUsd": 0.09631640999999999,
+      "durationMs": 324678,
+      "durationApiMs": 881576,
+      "sessionId": "124cea57-2df0-4b1e-85ab-a26365dd05c5",
+      "usage": {
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 1181,
+        "cache_read_input_tokens": 207122,
+        "output_tokens": 543,
+        "output_tokens_details": {
+          "thinking_tokens": 195
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1181,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 144,
+            "cache_read_input_tokens": 103903,
+            "cache_creation_input_tokens": 497,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 497
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 847404,
+      "hookFiringsAfter": 10,
+      "toolCounts": {
+        "Read": 3,
+        "Bash": 18,
+        "Skill": 1,
+        "mcp__spartan-ui__spartan_components_get": 1,
+        "Edit": 1,
+        "Monitor": 2,
+        "ScheduleWakeup": 3,
+        "TaskStop": 1
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "claude.ai Claude Docs",
+            "status": "connected",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Drive",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Calendar",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Gmail",
+            "status": "needs-auth",
+            "source": "claudeai"
+          }
+        ],
+        "slashCommands": 61,
+        "tools": 65
+      },
+      "ok": true,
+      "resultCount": 5
+    },
+    {
+      "stage": 5,
+      "name": "detail",
+      "promptFile": "capstone/stage-5-detail.md",
+      "promptSha256": "8727b5441297b54ef433f1e44d6f34ebae3d6d78a529a8beb3fc2e72bdd3336b",
+      "promptBytes": 1754,
+      "responsiveGateApplied": false,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 35,
+      "costUsd": 0.08438514000000001,
+      "durationMs": 195763,
+      "durationApiMs": 176208,
+      "sessionId": "db8e5ba3-275c-49c2-95fc-998238d5ba2e",
+      "usage": {
+        "input_tokens": 54,
+        "cache_creation_input_tokens": 89859,
+        "cache_read_input_tokens": 2063870,
+        "output_tokens": 28838,
+        "output_tokens_details": {
+          "thinking_tokens": 15618
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 89859,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1150,
+            "cache_read_input_tokens": 107701,
+            "cache_creation_input_tokens": 994,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 994
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 198780,
+      "hookFiringsAfter": 15,
+      "toolCounts": {
+        "Bash": 16,
+        "Read": 1,
+        "Glob": 1,
+        "Skill": 1,
+        "ToolSearch": 1,
+        "mcp__spartan-ui__spartan_components_get": 2,
+        "Grep": 8,
+        "Edit": 1,
+        "Write": 2
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "claude.ai Claude Docs",
+            "status": "connected",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Drive",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Calendar",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Gmail",
+            "status": "needs-auth",
+            "source": "claudeai"
+          }
+        ],
+        "slashCommands": 61,
+        "tools": 65
+      },
+      "ok": true,
+      "resultCount": 1
+    },
+    {
+      "stage": 6,
+      "name": "integrate",
+      "promptFile": "capstone/stage-6-integrate.md",
+      "promptSha256": "59a8c434de673d128776c9771f39773e42fd0eff92c619b38e1474e242b0b94b",
+      "promptBytes": 2774,
+      "responsiveGateApplied": true,
+      "model": {
+        "alias": "haiku",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 62,
+      "costUsd": 0.24178073000000003,
+      "durationMs": 379065,
+      "durationApiMs": 211218,
+      "sessionId": "a552c8a4-2459-4306-bdfd-6ef614d33d70",
+      "usage": {
+        "input_tokens": 58,
+        "cache_creation_input_tokens": 113737,
+        "cache_read_input_tokens": 2856505,
+        "output_tokens": 49754,
+        "output_tokens_details": {
+          "thinking_tokens": 23406
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 113737,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1020,
+            "cache_read_input_tokens": 131841,
+            "cache_creation_input_tokens": 732,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 732
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 381719,
+      "hookFiringsAfter": 17,
+      "toolCounts": {
+        "Bash": 15,
+        "Read": 19,
+        "Write": 17,
+        "Edit": 8,
+        "Grep": 2
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "claude.ai Claude Docs",
+            "status": "connected",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Drive",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Google Calendar",
+            "status": "needs-auth",
+            "source": "claudeai"
+          },
+          {
+            "name": "claude.ai Gmail",
+            "status": "needs-auth",
+            "source": "claudeai"
+          }
+        ],
+        "slashCommands": 61,
+        "tools": 65
+      },
+      "ok": true,
+      "resultCount": 1
+    }
+  ],
+  "spec": null,
+  "review": null,
+  "startedAt": "2026-10-15T20:27:56.743Z",
+  "subjectPid": null
+}
