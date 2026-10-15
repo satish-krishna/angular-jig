@@ -1,0 +1,82 @@
+<div class="flex flex-col gap-6">
+  <header class="flex min-w-0 flex-col gap-1">
+    <h1 class="text-2xl font-semibold">Recruit</h1>
+    <p class="text-sm text-muted-foreground">
+      File a new hero on the roster. Recruits start in Reserve until they are activated.
+    </p>
+  </header>
+
+  <section hlmCard class="max-w-3xl" aria-labelledby="recruit-heading">
+    <div hlmCardHeader>
+      <h2 id="recruit-heading" hlmCardTitle>New recruit</h2>
+      <p hlmCardDescription>Example data. The record lasts until the page reloads.</p>
+    </div>
+    <div hlmCardContent>
+      <form class="flex flex-col gap-6" (submit)="vm.save($event)">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-name">{{ vm.labels['name'].label }}</label>
+            <input hlmInput id="recruit-name" [formField]="vm.recruitForm.name" />
+            @for (error of vm.recruitForm.name().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-alias">{{ vm.labels['alias'].label }}</label>
+            <input hlmInput id="recruit-alias" [formField]="vm.recruitForm.alias" />
+            @for (error of vm.recruitForm.alias().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-class">{{ vm.labels['powerClass'].label }}</label>
+            <hlm-select
+              [value]="vm.recruitForm.powerClass().value()"
+              (valueChange)="vm.setPowerClass($event)"
+            >
+              <hlm-select-trigger buttonId="recruit-class" class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                @for (powerClass of vm.powerClasses; track powerClass) {
+                  <hlm-select-item [value]="powerClass">{{ powerClass }}</hlm-select-item>
+                }
+              </hlm-select-content>
+            </hlm-select>
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-power">{{ vm.labels['powerIndex'].label }}</label>
+            <input hlmInput id="recruit-power" type="number" [formField]="vm.recruitForm.powerIndex" />
+            @for (error of vm.recruitForm.powerIndex().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-clearance">{{ vm.labels['clearance'].label }}</label>
+            <input hlmInput id="recruit-clearance" type="number" [formField]="vm.recruitForm.clearance" />
+            @for (error of vm.recruitForm.clearance().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField class="sm:col-span-2">
+            <label hlmFieldLabel for="recruit-notes">{{ vm.labels['notes'].label }}</label>
+            <textarea hlmTextarea id="recruit-notes" rows="4" [formField]="vm.recruitForm.notes"></textarea>
+            @for (error of vm.recruitForm.notes().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a hlmBtn variant="outline" [routerLink]="['/roster']">Cancel</a>
+          <button hlmBtn type="submit">Recruit hero</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>

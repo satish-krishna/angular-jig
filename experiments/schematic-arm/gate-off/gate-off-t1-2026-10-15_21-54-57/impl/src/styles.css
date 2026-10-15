@@ -1,0 +1,136 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+/* You can add global styles to this file, and also import other style files */
+
+/*
+ * Hero Ops Console palette (prototype/capstone-build-spec.md, "Theme palette").
+ * Each role is mapped onto spartan's own token. Deviations from the spec table
+ * are the ones the contrast gate (npm run check:contrast) requires, and each is
+ * marked where it is set.
+ */
+
+:root {
+  color-scheme: light;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+
+  /* page background, text, and surfaces */
+  --background: #f6f7fa;
+  --foreground: #1b1e2b;
+  --card: #ffffff;
+  --card-foreground: #1b1e2b;
+  --popover: #ffffff;
+  --popover-foreground: #1b1e2b;
+  --muted: #eef0f6;
+  --muted-foreground: #5b6072;
+
+  /* action / primary. on-primary is dark ink, not white: white on #d8891a is 2.80:1 */
+  --primary: #d8891a;
+  --primary-foreground: #241a05;
+
+  /* secondary and accent (subtle hover background) both sit on the muted surface */
+  --secondary: #eef0f6;
+  --secondary-foreground: #1b1e2b;
+  --accent: #eef0f6;
+  --accent-foreground: #1b1e2b;
+
+  /* destructive. Darkened from #e5484d so white text clears 4.5:1 (it measures 3.9:1 at the spec value) */
+  --destructive: #c93237;
+  --destructive-foreground: #ffffff;
+
+  --border: #e4e7ef;
+  --input: #e4e7ef;
+  /* focus ring. Amber @35% does not reach 3:1 on the surfaces it lands on; this is the amber hue darkened to pass 3:1 */
+  --ring: #a86412;
+
+  /* semantic status colours, separate from the accent. Spartan has no token for these */
+  --success: #2fb574;
+  --warning: #e4802b;
+  --info: #4f7cf0;
+
+  /* navigation rail: dark in both themes */
+  --sidebar: #1e2233;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #d8891a;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #2a2f45;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-border: #2a2f45;
+  --sidebar-ring: #f5b843;
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --background: #0e1018;
+  --foreground: #eceef6;
+  --card: #171a26;
+  --card-foreground: #eceef6;
+  --popover: #171a26;
+  --popover-foreground: #eceef6;
+  --muted: #1e2231;
+  --muted-foreground: #9aa0b4;
+
+  --primary: #f5b843;
+  --primary-foreground: #241a05;
+
+  --secondary: #1e2231;
+  --secondary-foreground: #eceef6;
+  --accent: #1e2231;
+  --accent-foreground: #eceef6;
+
+  --destructive: #f2585d;
+  /* dark ink on the coral: white on #f2585d is 3.3:1 */
+  --destructive-foreground: #0e1018;
+
+  --border: #272b3b;
+  --input: #272b3b;
+  --ring: #f5b843;
+
+  --success: #3ecb84;
+  --warning: #f0983f;
+  --info: #6f97f6;
+
+  --sidebar: #10121c;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #f5b843;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #20263c;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-border: #20263c;
+  --sidebar-ring: #f5b843;
+}
+
+@theme inline {
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
