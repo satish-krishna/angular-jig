@@ -113,3 +113,9 @@ This is not a style preference. Every fatal runtime defect this repo has measure
 - Use the `providedIn: 'root'` option for singleton services
 - Prefer the `@Service` decorator over `@Injectable({providedIn: 'root'})` for new singleton services (Angular v22+)
 - Use the `inject()` function instead of constructor injection
+
+## House rules
+
+The enforced house rules, loaded here so you have them before you write rather than only when the gate rejects you. The gate quotes the same text back on a violation, because both come from `harness/rules/*.md`; this is the generated digest of every rule's guidance section.
+
+@harness/rules/HOUSE-RULES.md

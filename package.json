@@ -17,7 +17,8 @@
     "firings": "node harness/driver/firing-rollup.mjs",
     "check:wiring": "node harness/counter/check-wiring.mjs --root . src",
     "check:interaction": "node harness/gate/check-interaction.mjs",
-    "check:contrast": "node harness/gate/check-contrast.mjs"
+    "check:contrast": "node harness/gate/check-contrast.mjs",
+    "build:digest": "node harness/driver/build-house-digest.mjs"
   },
   "private": true,
   "packageManager": "npm@11.0.0",
