@@ -94,6 +94,8 @@ const DENY_MESSAGE =
   'This path defines or enforces the project constitution, or measures conformance to it:\n' +
   '  stylelint.config.mjs, eslint.config.mjs, harness/, .claude/hooks/, .claude/skills/,\n' +
   '  .agents/skills/, components.json\n\n' +
+  'Reading them with a read-only command (cat, head, ls, grep, sed -n) is allowed; experiments/\n' +
+  'is not readable at all.\n\n' +
   'If a rule is blocking you, the answer is to change the code so it passes, not to change\n' +
   'the rule so it stops asking. If you believe the rule itself is wrong, say so in your final\n' +
   'response and explain why; do not edit it.\n';
@@ -113,6 +115,10 @@ try {
   process.stderr.write('protect-enforcement: could not parse hook payload; failing closed.\n');
   process.exit(2);
 }
+
+const READ_ONLY_COMMANDS = new Set(['cat', 'head', 'tail', 'ls', 'grep', 'egrep', 'rg', 'wc', 'sort', 'cut', 'diff', 'stat', 'file', 'pwd', 'echo', 'printf', 'cd', 'true', 'jq',
+  // PowerShell reads, compared lowercased.
+  'get-content', 'get-childitem', 'select-string', 'get-item', 'gc', 'gci', 'sls', 'dir', 'type']);
 
 const norm = (p) => String(p).replaceAll('\\', '/').replace(/^\.\//, '');
 
@@ -134,27 +140,72 @@ let hits = [];
 
 if (toolName === 'Bash' || toolName === 'PowerShell') {
   // A shell command can rewrite a file without ever naming a file-editing tool.
-  // Scan the command text for any protected path. This is deliberately blunt:
-  // a read-only `cat harness/sealing-spec.md` is denied too, which costs the
-  // agent nothing (it can read the specs through Read) and removes the need to
-  // parse shell grammar correctly to stay safe.
+  // Scan the command text for any protected path, then let through only
+  // commands that cannot write (isReadOnlyCommand, below).
   const cmd = norm(input.command ?? '');
   hits = PROTECTED.filter((entry) => cmd.includes(entry));
-  if (hits.length) {
-    // Allow the read-only shapes the harness itself needs, so the agent can run
-    // the checks it is told to run. Anything that could write is still denied.
-    const readOnly = /^\s*(npm run (check:responsive|test:harness|count|lint|build)|npx vitest|node harness\/counter\/[a-z-]+\.mjs)\b/;
-    // Tested against the NORMALIZED command, not the raw one. Otherwise the
-    // Windows path form (`node harness\counter\counter.mjs`) is denied while the
-    // forward-slash form is allowed, an inconsistency no caller could predict.
-    if (readOnly.test(cmd.trim())) hits = [];
-  }
+  // Prior trials are the answers, so experiments/ stays unreadable. Every
+  // other protected path is read-only rather than invisible: schematic-arm
+  // gate-on trial 1 was denied 16 times, and every one was a read (cat
+  // package.json, cat .claude/skills/house-style/SKILL.md). Denying reads
+  // cost the agent the house rules it was told to follow.
+  if (hits.length && !hits.includes('experiments/') && isReadOnlyCommand(cmd, toolName === 'PowerShell')) hits = [];
 } else {
   const file = input.file_path ?? input.filePath ?? input.notebook_path ?? null;
   if (file) hits = hitsProtected(file);
 }
 
 if (hits.length === 0) process.exit(0);
+
+// True only when every part of the command is a shape that cannot write. It is
+// an allowlist, so anything it does not recognize (a loop, awk, xargs, cp, a
+// redirect into a file, a command substitution) counts as a write and is
+// denied. Tested against the NORMALIZED command, so the Windows path form and
+// the forward-slash form get the same answer.
+function isReadOnlyCommand(cmd, powershell) {
+  if (/`|\$\(|<\(|>\(/.test(cmd)) return false;
+  // PowerShell runs anything in (...), @(...) or a {...} script block.
+  if (powershell && /[({]/.test(cmd)) return false;
+  // Quoted text is blanked to the same length, so a | or > inside a grep or jq
+  // pattern neither splits the command nor reads as a redirect, and segment
+  // offsets still line up with the original text.
+  const masked = cmd.replace(/'[^']*'|"[^"]*"/g, (q) => q[0] + 'x'.repeat(q.length - 2) + q[0]);
+  // 2>&1 and >/dev/null go nowhere. A >&2 followed by more text is a redirect
+  // into a file whose name starts with a digit, so the lookahead keeps it.
+  const harmless = masked.replace(/\d?>&\d(?!\S)/g, (m) => ' '.repeat(m.length)).replace(/(&|\d)?>>?\s*\/dev\/null/g, (m) => ' '.repeat(m.length));
+  if (harmless.includes('>')) return false;
+  const segments = [];
+  let start = 0;
+  for (const m of harmless.matchAll(/&&|\|\||[;|&\n]/g)) {
+    segments.push(cmd.slice(start, m.index));
+    start = m.index + m[0].length;
+  }
+  segments.push(cmd.slice(start));
+  return segments
+    .map((s) => s.trim().replace(/^timeout\s+\d+[smh]?\s+/, ''))
+    .filter(Boolean)
+    .every(isReadOnlySegment);
+}
+
+function isReadOnlySegment(seg) {
+  // The checks the agent is told to run, with no flags that rewrite files
+  // (eslint --fix, a vitest snapshot update).
+  if (/^(npm run (check:responsive|check:boot|test:harness|count|lint|build)|npx vitest|node harness\/counter\/[a-z-]+\.mjs)(\s|$)/.test(seg)) {
+    return !/\s(--fix\S*|-u|--update\S*)(\s|=|$)/.test(seg);
+  }
+  // Flags that write a file or run a program: rg --pre, git diff --output,
+  // git grep -O.
+  if (/\s(-O\S*|--output\S*|--pre\S*|--open-files-in-pager\S*|--ext-diff)(\s|=|$)/.test(seg)) return false;
+  const [word] = seg.split(/\s+/);
+  if (word === 'sort') return !/\s-[a-zA-Z]*o/.test(seg);
+  if (READ_ONLY_COMMANDS.has(word.toLowerCase())) return true;
+  if (word === 'git') return /^git\s+(status|log|show|diff|ls-files|grep|blame)(\s|$)/.test(seg);
+  // Plain line-range prints of named files only: a sed script can write with
+  // its w command, and GNU sed takes -i after the script too.
+  if (word === 'sed') return /^sed\s+-n\s+(['"]?)[\d,$]*p\1(\s+[^-\s]\S*)*\s*$/.test(seg);
+  if (word === 'find') return !/\s-(exec\S*|ok\S*|delete|fprint\S*|fls)(\s|$)/.test(seg);
+  return false;
+}
 
 logFiring('protect-enforcement', hits.join(', '), [`${toolName} blocked on: ${hits.join(', ')}`], ['protect-enforcement']);
 process.stderr.write(`${DENY_MESSAGE}\nBlocked: ${toolName} touching ${hits.join(', ')}\n`);
