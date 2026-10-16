@@ -13,6 +13,15 @@ export const stringList = (n) => {
   return s == null ? [] : [s];
 };
 
+// String literals inside an Angular expression held in a TS string.
+function expressionLiterals(expr) {
+  const out = [];
+  const re = /'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)"|`((?:[^`\\]|\\.)*)`/g;
+  let m;
+  while ((m = re.exec(expr))) out.push((m[1] ?? m[2] ?? m[3]).replace(/\$\{[^}]*\}/g, ''));
+  return out;
+}
+
 export function readComponents(path, text) {
   const sf = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true);
   const lineOf = (n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
@@ -43,8 +52,17 @@ export function readComponents(path, text) {
       if (props.host && ts.isObjectLiteralExpression(props.host)) {
         for (const p of props.host.properties) {
           const value = ts.isPropertyAssignment(p) ? stringValue(p.initializer) : null;
-          if (value != null && (ts.isIdentifier(p.name) || ts.isStringLiteral(p.name)) && p.name.text === 'class') {
+          const keyOk = ts.isIdentifier(p.name) || ts.isStringLiteral(p.name);
+          if (!keyOk) continue;
+          const key = p.name.text;
+          if (value != null && key === 'class') {
             hostClasses.push({ text: value, line: lineOf(p) });
+            continue;
+          }
+          const binding = /^\[class\.(.+)\]$/.exec(key);
+          if (binding) hostClasses.push({ kind: 'binding', text: binding[1], line: lineOf(p) });
+          else if (key === '[class]' && value != null) {
+            for (const lit of expressionLiterals(value)) hostClasses.push({ kind: 'map', text: lit, line: lineOf(p) });
           }
         }
       }

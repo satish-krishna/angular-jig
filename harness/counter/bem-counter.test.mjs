@@ -130,6 +130,46 @@ describe('bemTally', () => {
     expect(r.totals.all).toBe(0);
   });
 
+  it('utility-in-ts: host [class.x] and [class] bindings', async () => {
+    const r = await bem({
+      'app/host/host.ts': ts('host', "templateUrl: './host.html',\n  styleUrl: './host.css',\n  host: { '[class.bg-red-500]': 'on()', '[class.host--on]': 'on()', '[class]': \"'flex gap-2'\" },"),
+      'app/host/host.html': '<p></p>',
+      'app/host/host.css': REF,
+    });
+    const details = r.violations.filter((v) => v.kind === 'utility-in-ts').map((v) => v.detail).sort();
+    expect(details).toEqual(['host [class.bg-red-500]', 'host [class]: flex gap-2']);
+  });
+
+  it('missing-triad: a template or stylesheet under app/ that no component claims', async () => {
+    const r = await bem({
+      ...triad('hero-card', CLEAN_HTML, CLEAN_CSS),
+      'app/ext/orphan.html': '<p class="flex"></p>',
+      'app/ext/orphan.css': '.x { color: red; }',
+      'index.html': '<body></body>',
+    });
+    expect(r.violations.filter((v) => v.kind === 'missing-triad').map((v) => v.file).sort()).toEqual(['app/ext/orphan.css', 'app/ext/orphan.html']);
+    expect(r.totals.all).toBe(2);
+  });
+
+  it('a component claims the files its templateUrl and styleUrl point at, whatever their stem', async () => {
+    const r = await bem({
+      'app/a/a.ts': ts('a', "templateUrl: './shared.html',\n  styleUrl: './a.css',"),
+      'app/a/shared.html': '<p></p>',
+      'app/a/a.css': REF,
+    });
+    expect(r.violations.map((v) => `${v.kind}:${v.file}`)).toEqual(['missing-triad:app/a/a.ts']);
+  });
+
+  it('foreign-block: a global stylesheet styling a component block', async () => {
+    const files = {
+      ...triad('hero-card', CLEAN_HTML, CLEAN_CSS),
+      'styles.css': '@import "tailwindcss";\n:root.dark { --x: 1; }\n.hero-card__name { @apply text-gray-700; }\n',
+    };
+    const r = await bem(files);
+    expect(r.violations.filter((v) => v.kind === 'foreign-block')).toMatchObject([{ file: 'styles.css', line: 3 }]);
+    expect(r.totals.all).toBe(1);
+  });
+
   it('is deterministic', async () => {
     const files = triad('hero-card', '<div class="flex hero-card roster__x"></div>', `${REF}.other { @apply flex; }\n`);
     const dir = tree(files);
@@ -171,6 +211,16 @@ describe('expandedTally: planted violations hidden behind BEM', () => {
   it('still counts a utility written straight into the template', () => {
     const r = expanded(triad('hero-card', '<p class="hero-card bg-blue-50"></p>', REF));
     expect(r.layout.totals['raw-palette-color']).toBe(1);
+  });
+
+  it('applies global stylesheet rules to every template, as the browser does', () => {
+    const files = {
+      ...triad('hero-card', CLEAN_HTML, CLEAN_CSS),
+      'styles.css': '@import "tailwindcss";\n.hero-card__name { @apply text-gray-700; }\n',
+    };
+    const r = expanded(files);
+    expect(r.layout.totals['raw-palette-color']).toBe(1);
+    expect(r.layout.violations.find((v) => v.kind === 'raw-palette-color')).toMatchObject({ file: 'app/hero-card/hero-card.html', line: 2 });
   });
 
   it('counts inline templates the series 1 way', () => {

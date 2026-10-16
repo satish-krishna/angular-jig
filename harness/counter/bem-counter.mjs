@@ -79,6 +79,8 @@ export async function bemTally(paths, { root, styles } = {}) {
     }
   };
 
+  const claimed = new Set();
+  const blocks = new Set();
   for (const tsPath of walkFiles(paths, ['.ts']).filter((p) => !p.endsWith('.spec.ts'))) {
     const text = readFileSync(tsPath, 'utf8');
     const { components, hostClasses, strings } = readComponents(tsPath, text);
@@ -90,6 +92,12 @@ export async function bemTally(paths, { root, styles } = {}) {
 
     components.forEach((c, index) => {
       const p = c.props;
+      for (const url of [stringValue(p.templateUrl), ...stringList(p.styleUrl), ...stringList(p.styleUrls)]) {
+        if (url == null) continue;
+        const f = join(dir, url);
+        if (existsSync(f)) claimed.add(norm(f));
+      }
+      blocks.add(block);
       const inlineTemplate = stringValue(p.template);
       if (p.template) add('inline-template', tsPath, c.line, 'template: in @Component');
       if (p.styles) add('inline-styles', tsPath, c.line, 'styles: in @Component');
@@ -115,10 +123,26 @@ export async function bemTally(paths, { root, styles } = {}) {
     });
 
     for (const h of hostClasses) {
-      if (h.text.split(/\s+/).some((t) => t && isUtility(t))) add('utility-in-ts', tsPath, h.line, `host class: ${h.text}`);
+      if (h.kind === 'binding') {
+        if (isUtility(h.text)) add('utility-in-ts', tsPath, h.line, `host [class.${h.text}]`);
+      } else if (h.kind === 'map') {
+        if (looksLikeClasses(h.text, isUtility)) add('utility-in-ts', tsPath, h.line, `host [class]: ${h.text}`);
+      } else if (h.text.split(/\s+/).some((t) => t && isUtility(t))) add('utility-in-ts', tsPath, h.line, `host class: ${h.text}`);
     }
     for (const s of strings) {
       if (looksLikeClasses(s.text, isUtility)) add('utility-in-ts', tsPath, s.line, s.text);
+    }
+  }
+
+  for (const f of walkFiles(paths, ['.html', '.css'])) {
+    if (claimed.has(norm(f))) continue;
+    if (/(^|\/)app\//.test(rel(f))) add('missing-triad', f, 1, 'no component claims this file');
+    if (f.endsWith('.css')) {
+      const s = parseStylesheet(readFileSync(f, 'utf8'), f);
+      for (const { cls, line } of s.selectorClasses) {
+        const b = blockOf(cls);
+        if (blocks.has(b)) add('foreign-block', f, line, `.${cls} styles ${b} from a stylesheet no component owns`);
+      }
     }
   }
 
@@ -132,8 +156,27 @@ export function expandedTally(paths, { root } = {}) {
     const css = f.replace(/\.html$/, '.css');
     return existsSync(css) ? css : null;
   };
-  const expand = (html, css) =>
-    expandTemplate(readFileSync(html, 'utf8'), parseStylesheet(readFileSync(css, 'utf8'), css).utilities, rel(html));
+  const globalMap = new Map();
+  for (const f of walkFiles(paths, ['.css'])) {
+    if (existsSync(f.replace(/\.css$/, '.html'))) continue;
+    for (const [cls, utils] of parseStylesheet(readFileSync(f, 'utf8'), f).utilities) {
+      const list = globalMap.get(cls) ?? [];
+      for (const u of utils) if (!list.includes(u)) list.push(u);
+      globalMap.set(cls, list);
+    }
+  }
+  const expand = (html, css) => {
+    const map = new Map();
+    const own = parseStylesheet(readFileSync(css, 'utf8'), css).utilities;
+    for (const m of [own, globalMap]) {
+      for (const [cls, utils] of m) {
+        const list = map.get(cls) ?? [];
+        for (const u of utils) if (!list.includes(u)) list.push(u);
+        map.set(cls, list);
+      }
+    }
+    return expandTemplate(readFileSync(html, 'utf8'), map, rel(html));
+  };
   const filesOf = (collect) => paths.flatMap((p) => (statSync(p).isDirectory() ? collect(p) : [p]));
 
   const sealV = [];
@@ -165,5 +208,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exit(2);
   }
   const bem = await bemTally(args, { root: root ?? process.cwd() });
-  process.stdout.write(JSON.stringify({ bem, expanded: expandedTally(args, { root }) }, null, 2) + '\n');
+  process.stdout.write(JSON.stringify({ bem, expanded: expandedTally(args, { root: root ?? process.cwd() }) }, null, 2) + '\n');
 }
