@@ -20,26 +20,44 @@ export function* elements(nodes) {
 }
 
 const parse = (html, file) => parseTemplate(html, file, { preserveWhitespaces: true }).nodes;
-const staticTokens = (el) => {
+const split = (s) => s.split(/\s+/).filter(Boolean);
+const lineOf = (el) => (el.sourceSpan?.start?.line ?? 0) + 1;
+
+// Every class source on one element, in a fixed order, shared by classUses()
+// and expandTemplate(): static tokens, interpolated-attribute tokens, [class.x]
+// names, then [class] expression tokens (string literals first, then bare keys).
+function sources(el, html) {
   const attr = el.attributes.find((a) => a.name === 'class');
-  return attr && typeof attr.value === 'string' ? attr.value.split(/\s+/).filter(Boolean) : [];
-};
+  const out = { attr, interp: null, tokens: [] };
+  if (attr && typeof attr.value === 'string') {
+    for (const token of split(attr.value)) out.tokens.push({ token, via: 'class' });
+  }
+  for (const i of el.inputs) {
+    const raw = html.slice(i.sourceSpan.start.offset, i.sourceSpan.end.offset);
+    const named = i.name === 'class' || i.name === 'className';
+    if (i.type === BindingType.Class) {
+      out.tokens.push({ token: i.name, via: '[class.x]' });
+    } else if (named && /^class\s*=/.test(raw) && i.valueSpan) {
+      out.interp = i;
+      const text = html.slice(i.valueSpan.start.offset, i.valueSpan.end.offset).replace(/\{\{[\s\S]*?\}\}/g, ' ');
+      for (const token of split(text)) out.tokens.push({ token, via: 'class' });
+    } else if (named) {
+      const src = i.valueSpan ? html.slice(i.valueSpan.start.offset, i.valueSpan.end.offset) : '';
+      for (const m of src.matchAll(/'([^']*)'|"([^"]*)"|`((?:[^`\$]|\[\s\S]|\$(?!\{)|\$\{[^}]*\})*)`/g)) {
+        const lit = m[1] ?? m[2] ?? (m[3] ?? '').replace(/\$\{[^}]*\}/g, ' ');
+        for (const token of split(lit)) out.tokens.push({ token, via: '[class]' });
+      }
+      for (const m of src.matchAll(/[{,]\s*([A-Za-z_][\w-]*)\s*:/g)) out.tokens.push({ token: m[1], via: '[class]' });
+    }
+  }
+  return out;
+}
 
 export function classUses(html, file = 'template.html') {
   const out = [];
   for (const el of elements(parse(html, file))) {
-    const line = (el.sourceSpan?.start?.line ?? 0) + 1;
-    for (const token of staticTokens(el)) out.push({ token, line, via: 'class' });
-    for (const i of el.inputs) {
-      if (i.type === BindingType.Class) {
-        out.push({ token: i.name, line, via: '[class.x]' });
-      } else if (i.name === 'class' || i.name === 'className') {
-        const src = i.valueSpan ? html.slice(i.valueSpan.start.offset, i.valueSpan.end.offset) : '';
-        for (const m of src.matchAll(/'([^']*)'|"([^"]*)"/g)) {
-          for (const token of (m[1] ?? m[2]).split(/\s+/).filter(Boolean)) out.push({ token, line, via: '[class]' });
-        }
-      }
-    }
+    const line = lineOf(el);
+    for (const { token, via } of sources(el, html).tokens) out.push({ token, line, via });
   }
   return out;
 }
@@ -47,16 +65,28 @@ export function classUses(html, file = 'template.html') {
 export function expandTemplate(html, utilities, file = 'template.html') {
   const edits = [];
   for (const el of elements(parse(html, file))) {
-    const own = staticTokens(el);
-    const bound = el.inputs.filter((i) => i.type === BindingType.Class).map((i) => i.name);
-    if (own.length === 0 && bound.length === 0) continue;
-    const value = [...own, ...bound].flatMap((t) => utilities.get(t) ?? (own.includes(t) ? [t] : [])).join(' ');
-    const attr = el.attributes.find((a) => a.name === 'class');
-    if (attr?.valueSpan) {
-      edits.push({ start: attr.valueSpan.start.offset, end: attr.valueSpan.end.offset, text: value });
-    } else if (value && !el.name.startsWith(':') && el.startSourceSpan) {
-      const at = el.startSourceSpan.start.offset + 1 + el.name.length;
-      edits.push({ start: at, end: at, text: ` class="${value}"` });
+    const { attr, interp, tokens } = sources(el, html);
+    if (tokens.length === 0) continue;
+    const value = tokens
+      .flatMap(({ token, via }) => utilities.get(token) ?? (via === 'class' ? [token] : []))
+      .join(' ');
+    const target = attr?.valueSpan ? attr : interp;
+    if (target?.valueSpan) {
+      const { start, end } = target.valueSpan;
+      const before = html[start.offset - 1];
+      const old = html.slice(start.offset, end.offset);
+      const pad = (old.match(/\r\n|\n|\r/g) ?? []).join('');
+      let text;
+      if (before === '"') text = value.replaceAll('"', "'");
+      else if (before === "'") text = value.replaceAll("'", '"');
+      else text = `"${value.replaceAll('"', "'")}"`;
+      edits.push({ start: start.offset, end: end.offset, text: text + pad });
+    } else if (value && el.startSourceSpan) {
+      const s = el.startSourceSpan.start.offset;
+      const name = html.slice(s + 1).match(/^[^\s/>]+/)?.[0];
+      if (!name) continue;
+      const at = s + 1 + name.length;
+      edits.push({ start: at, end: at, text: ` class="${value.replaceAll('"', "'")}"` });
     }
   }
   edits.sort((a, b) => b.start - a.start);

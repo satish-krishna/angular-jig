@@ -29,6 +29,21 @@ describe('classUses', () => {
       '9:[class.x]:roster__retire',
     ]);
   });
+  it('sees interpolated classes, template literals and unquoted object keys', () => {
+    const t = [
+      '<div class="roster {{ extra }} roster__a"></div>',
+      '<div [class]="`roster__b ${x}`"></div>',
+      '<div [class]="{ roster__c: on, \'roster__d flex\': off }"></div>',
+    ].join('\n');
+    expect(classUses(t).map((u) => `${u.line}:${u.via}:${u.token}`)).toEqual([
+      '1:class:roster',
+      '1:class:roster__a',
+      '2:[class]:roster__b',
+      '3:[class]:roster__d',
+      '3:[class]:flex',
+      '3:[class]:roster__c',
+    ]);
+  });
 });
 
 describe('expandTemplate', () => {
@@ -66,5 +81,36 @@ describe('expandTemplate', () => {
     expect(expandTemplate(t, utilities)).toBe(
       '@switch (x) { @case (1) { <p class="text-2xl font-semibold">a</p> } }\n@defer { <p class="text-2xl font-semibold">b</p> }',
     );
+  });
+
+  it('keeps the line count when a class attribute spans lines', () => {
+    const t = '<div class="roster\n  roster__title">x</div>\n<p class="roster__title">y</p>';
+    const out = expandTemplate(t, utilities);
+    expect(out.split('\n')).toHaveLength(3);
+    expect(out.split('\n')[2]).toBe('<p class="text-2xl font-semibold">y</p>');
+  });
+
+  it('folds [class] literal and interpolated classes into one static class attribute', () => {
+    const t = [
+      '<div [class]="on ? \'roster__retire\' : \'\'">a</div>',
+      '<div class="roster__title {{ x }}">b</div>',
+      '<div class="{{ x }}" [class.roster__retire]="on">c</div>',
+    ].join('\n');
+    expect(expandTemplate(t, utilities).split('\n')).toEqual([
+      '<div class="bg-red-500" [class]="on ? \'roster__retire\' : \'\'">a</div>',
+      '<div class="text-2xl font-semibold">b</div>',
+      '<div class="bg-red-500" [class.roster__retire]="on">c</div>',
+    ]);
+  });
+
+  it('adds the class attribute to SVG elements', () => {
+    const t = '<svg><path [class.roster__retire]="on" d="M0 0"></path></svg>';
+    expect(expandTemplate(t, utilities)).toBe('<svg><path class="bg-red-500" [class.roster__retire]="on" d="M0 0"></path></svg>');
+  });
+
+  it('keeps the copy well-formed when a utility contains a quote', () => {
+    const quoted = new Map([['roster__x', ['data-[state="open"]:bg-red-500']]]);
+    expect(expandTemplate('<p class="roster__x">a</p>', quoted)).toBe('<p class="data-[state=\'open\']:bg-red-500">a</p>');
+    expect(expandTemplate('<p class=roster__x>a</p>', quoted)).toBe('<p class="data-[state=\'open\']:bg-red-500">a</p>');
   });
 });
