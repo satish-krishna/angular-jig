@@ -107,7 +107,7 @@ A new branch `substrate/schematic-arm-2` from `substrate/schematic-arm`:
 1. Convert the placeholder screens (`dashboard`, `heroes`, `hero-detail`) and the shell (`app.ts` already has `app.html` and `app.css`) to triads that satisfy R1 to R4.
 2. Set `angular.json` component schematic defaults to `inlineTemplate: false`, `inlineStyle: false`, `style: css`, so `ng g component` produces a triad.
 3. Rewrite the house-style skill: a new "Markup is BEM, styling is in the stylesheet" section stating R1 to R6 with one worked example, and the layout grammar section restated in terms of what a class expands to. The skill states plainly that this overrides the spartan skill's examples, which put utilities in the `class` attribute. The vendored spartan skill is not edited: its pull toward inline utilities is the realistic pressure the gates are tested against.
-4. Add the `bem` counter and its tests under `harness/counter/`.
+4. Nothing under `harness/counter/`. As in series 1, the counters live on the launching branch (`research/schematic-arm`) and the mod measures with them after the run, so the subject never sees the counter.
 5. Confirm first, before anything else is built on it, that `@reference` plus `@apply` with variants and theme tokens compiles in a component `.css` under the Angular builder with `@tailwindcss/postcss`. This is the one technical assumption the design rests on.
 
 ## Series 2 mechanics
