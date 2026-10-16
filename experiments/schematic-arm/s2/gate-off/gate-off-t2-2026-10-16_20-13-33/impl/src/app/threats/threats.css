@@ -1,0 +1,14 @@
+@reference "../../styles.css";
+
+.threats { @apply grid min-w-0 gap-6; }
+.threats__header { @apply flex flex-wrap items-center justify-between gap-3; }
+.threats__title { @apply text-2xl font-semibold tracking-tight; }
+
+.threats__panel { @apply grid min-w-0 rounded-lg border border-border bg-card text-card-foreground shadow-sm; }
+.threats__caption { @apply sr-only; }
+.threats__name { @apply block font-medium; }
+.threats__id { @apply block text-xs text-muted-foreground; }
+
+.threats__footer { @apply flex flex-wrap items-center justify-between gap-2 border-t border-border p-4 text-sm; }
+.threats__count { @apply font-medium; }
+.threats__note { @apply text-xs text-muted-foreground; }

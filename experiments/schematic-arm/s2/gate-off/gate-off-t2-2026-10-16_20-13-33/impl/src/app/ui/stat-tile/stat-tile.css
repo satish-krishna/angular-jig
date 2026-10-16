@@ -1,0 +1,9 @@
+@reference "../../../styles.css";
+
+.stat-tile { @apply h-full; }
+.stat-tile__body { @apply grid gap-1; }
+.stat-tile__head { @apply flex items-center justify-between gap-2; }
+.stat-tile__label { @apply text-sm text-muted-foreground; }
+.stat-tile__icon { @apply size-4 shrink-0 text-primary; }
+.stat-tile__value { @apply text-2xl font-semibold tabular-nums; }
+.stat-tile__detail { @apply text-xs text-muted-foreground; }

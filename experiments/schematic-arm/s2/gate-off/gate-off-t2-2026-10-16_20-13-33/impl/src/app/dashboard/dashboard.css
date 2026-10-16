@@ -1,0 +1,14 @@
+@reference "../../styles.css";
+
+.dashboard { @apply grid min-w-0 gap-6; }
+.dashboard__header { @apply flex flex-wrap items-center justify-between gap-3; }
+.dashboard__title { @apply text-2xl font-semibold tracking-tight; }
+.dashboard__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
+.dashboard__section { @apply grid min-w-0 gap-4; }
+.dashboard__section-head { @apply flex flex-wrap items-center justify-between gap-3; }
+.dashboard__section-title-row { @apply flex flex-wrap items-center gap-2; }
+.dashboard__section-title { @apply text-lg font-semibold; }
+.dashboard__heroes { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
+.dashboard__caption { @apply sr-only; }
+.dashboard__hero-link { @apply font-medium underline-offset-4 hover:underline; }
+.dashboard__power { @apply font-semibold tabular-nums; }

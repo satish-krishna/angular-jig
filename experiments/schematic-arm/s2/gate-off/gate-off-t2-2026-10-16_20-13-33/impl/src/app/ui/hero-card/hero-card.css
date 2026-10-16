@@ -1,0 +1,11 @@
+@reference "../../../styles.css";
+
+.hero-card { @apply h-full min-w-0; }
+.hero-card__identity { @apply flex min-w-0 items-center gap-3; }
+.hero-card__avatar { @apply shrink-0; }
+.hero-card__names { @apply grid min-w-0 gap-0.5; }
+.hero-card__name { @apply break-words; }
+.hero-card__body { @apply grid gap-3; }
+.hero-card__badges { @apply flex flex-wrap items-center gap-2; }
+.hero-card__stats { @apply text-xs text-muted-foreground; }
+.hero-card__open { @apply w-full; }

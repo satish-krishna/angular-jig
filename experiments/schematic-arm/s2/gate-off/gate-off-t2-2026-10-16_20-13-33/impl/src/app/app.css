@@ -1,0 +1,28 @@
+@reference "../styles.css";
+
+.app__brand { @apply flex items-center gap-2 p-2; }
+.app__brand-icon { @apply size-5 shrink-0; color: var(--sidebar-primary); }
+.app__brand-name { @apply truncate text-sm font-semibold; }
+
+.app__account { @apply grid gap-0.5; }
+.app__account-name { @apply text-sm font-medium; }
+.app__account-role { @apply text-xs; color: var(--sidebar-muted); }
+
+.app__main { @apply min-w-0; }
+
+.app__topbar {
+  @apply sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b px-4 py-3 sm:px-6;
+  background: var(--background);
+}
+.app__start { @apply flex min-w-0 flex-1 items-center gap-3; }
+.app__crumbs { @apply min-w-0; }
+.app__crumb-list { @apply flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground; }
+.app__crumb { @apply whitespace-nowrap; }
+.app__crumb + .app__crumb::before { content: '/'; @apply me-2; }
+.app__crumb[aria-current='page'] { @apply font-medium text-foreground; }
+
+.app__search { @apply w-full sm:w-64; }
+.app__actions { @apply ms-auto flex items-center gap-1; }
+.app__avatar { @apply ms-1; }
+
+.app__content { @apply grid min-w-0 gap-6 p-4 sm:p-6; }

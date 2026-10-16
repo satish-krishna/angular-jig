@@ -1,0 +1,42 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 class="threats__title">Threats</h1>
+    <a hlmBtn variant="outline" routerLink="/missions">Plan a mission</a>
+  </header>
+
+  <div class="threats__panel">
+    <div hlmTableContainer>
+      <table hlmTable>
+        <caption hlmTableCaption class="threats__caption">Threats on the register, most severe first</caption>
+        <thead hlmTableHeader>
+          <tr hlmTableRow>
+            <th hlmTableHead scope="col">Threat</th>
+            <th hlmTableHead scope="col">Region</th>
+            <th hlmTableHead scope="col">Tier</th>
+            <th hlmTableHead scope="col">Missions</th>
+          </tr>
+        </thead>
+        <tbody hlmTableBody>
+          @for (row of vm.rows(); track row.threat.id) {
+            <tr hlmTableRow>
+              <td hlmTableCell>
+                <span class="threats__name">{{ row.threat.name }}</span>
+                <span class="threats__id">{{ row.threat.id }}</span>
+              </td>
+              <td hlmTableCell>{{ row.threat.region }}</td>
+              <td hlmTableCell>
+                <span hlmBadge [variant]="row.tone">{{ row.threat.tier }}</span>
+              </td>
+              <td hlmTableCell>{{ row.missions }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="threats__footer">
+      <p class="threats__count">{{ vm.summary() }}</p>
+      <p class="threats__note">Tier is the clearance a hero needs. Example data, not a real register.</p>
+    </footer>
+  </div>
+</section>

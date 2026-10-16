@@ -1,0 +1,7 @@
+{"hook":"protect-enforcement","file":"components.json","count":1,"messages":["Bash blocked on: components.json"],"ts":"2026-10-16T20:13:51.410Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-16T20:15:38.085Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-16T20:17:53.765Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-16T20:18:21.047Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-16T20:19:48.843Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-16T20:27:34.216Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-16T20:28:00.024Z"}

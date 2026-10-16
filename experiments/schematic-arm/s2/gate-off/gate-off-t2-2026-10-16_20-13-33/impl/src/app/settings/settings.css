@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+.settings { @apply grid min-w-0 gap-6; }
+.settings__header { @apply grid min-w-0; }
+.settings__title { @apply text-2xl font-semibold tracking-tight; }
+
+.settings__cards { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+.settings__card { @apply min-w-0; }
+.settings__row { @apply flex flex-wrap items-center justify-between gap-4; }
+.settings__text { @apply min-w-0 max-w-prose text-sm text-muted-foreground; }
+.settings__notice { @apply px-6 pb-4 text-sm text-success; }

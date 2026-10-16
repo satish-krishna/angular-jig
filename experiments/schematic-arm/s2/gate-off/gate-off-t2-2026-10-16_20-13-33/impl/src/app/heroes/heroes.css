@@ -1,0 +1,27 @@
+@reference "../../styles.css";
+
+.roster { @apply grid min-w-0 gap-6; }
+.roster__header { @apply flex flex-wrap items-center justify-between gap-3; }
+.roster__title { @apply text-2xl font-semibold tracking-tight; }
+
+.roster__panel { @apply grid min-w-0 rounded-lg border border-border bg-card text-card-foreground shadow-sm; }
+
+.roster__filters { @apply flex flex-wrap items-end gap-3 p-4; }
+.roster__field { @apply w-full sm:w-56; }
+.roster__field--search { @apply sm:w-72; }
+.roster__select { @apply w-full; }
+.roster__recruit { @apply ms-auto; }
+
+.roster__caption { @apply sr-only; }
+.roster__identity { @apply flex min-w-0 items-center gap-3; }
+.roster__avatar { @apply shrink-0; }
+.roster__names { @apply grid min-w-0 gap-0.5; }
+.roster__name { @apply font-medium; }
+.roster__id { @apply text-xs text-muted-foreground; }
+.roster__power { @apply block font-semibold tabular-nums; }
+.roster__actions { @apply flex items-center justify-end; }
+.roster__empty { @apply py-6 text-center text-muted-foreground; }
+
+.roster__footer { @apply flex flex-wrap items-center justify-between gap-2 border-t border-border p-4 text-sm; }
+.roster__count { @apply font-medium; }
+.roster__note { @apply text-xs text-muted-foreground; }

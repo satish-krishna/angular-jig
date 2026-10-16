@@ -1,0 +1,96 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <h1 class="recruit__title">Recruit</h1>
+    <p class="recruit__lede">Add a hero to the roster. A recruit starts Active with no missions on record, so they can be deployed at once.</p>
+  </header>
+
+  <section hlmCard class="recruit__card">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle>New recruit</h2>
+    </div>
+    <div hlmCardContent>
+      <form class="recruit__form" (submit)="$event.preventDefault(); vm.save()">
+        <hlm-field class="recruit__field">
+          <label hlmFieldLabel for="recruit-name">{{ vm.labels['name'].label }}</label>
+          <input
+            hlmInput
+            id="recruit-name"
+            class="recruit__input"
+            [attr.placeholder]="vm.labels['name'].placeholder"
+            [formField]="vm.form.name"
+          />
+          @for (e of vm.form.name().errors(); track e.kind) {
+            <hlm-field-error>{{ e.message }}</hlm-field-error>
+          }
+        </hlm-field>
+
+        <hlm-field class="recruit__field">
+          <label hlmFieldLabel for="recruit-alias">{{ vm.labels['alias'].label }}</label>
+          <input hlmInput id="recruit-alias" class="recruit__input" [formField]="vm.form.alias" />
+          @for (e of vm.form.alias().errors(); track e.kind) {
+            <hlm-field-error>{{ e.message }}</hlm-field-error>
+          }
+        </hlm-field>
+
+        <hlm-field class="recruit__field">
+          <label hlmFieldLabel for="recruit-class">{{ vm.labels['powerClass'].label }}</label>
+          <hlm-select
+            [value]="vm.form.powerClass().value()"
+            (valueChange)="vm.setPowerClass($event)"
+          >
+            <hlm-select-trigger buttonId="recruit-class" class="recruit__select">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content *hlmSelectPortal>
+              @for (option of vm.powerClasses; track option) {
+                <hlm-select-item [value]="option">{{ option }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+          @for (e of vm.form.powerClass().errors(); track e.kind) {
+            <hlm-field-error>{{ e.message }}</hlm-field-error>
+          }
+        </hlm-field>
+
+        <hlm-field class="recruit__field">
+          <label hlmFieldLabel for="recruit-clearance">{{ vm.labels['clearance'].label }}</label>
+          <hlm-select
+            [value]="vm.form.clearance().value()"
+            (valueChange)="vm.setClearance($event)"
+          >
+            <hlm-select-trigger buttonId="recruit-clearance" class="recruit__select">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content *hlmSelectPortal>
+              @for (option of vm.clearanceTiers; track option) {
+                <hlm-select-item [value]="option">{{ option }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+          @for (e of vm.form.clearance().errors(); track e.kind) {
+            <hlm-field-error>{{ e.message }}</hlm-field-error>
+          }
+        </hlm-field>
+
+        <hlm-field class="recruit__field">
+          <label hlmFieldLabel for="recruit-power">{{ vm.labels['powerIndex'].label }}</label>
+          <input
+            hlmInput
+            id="recruit-power"
+            type="number"
+            class="recruit__input"
+            [formField]="vm.form.powerIndex"
+          />
+          @for (e of vm.form.powerIndex().errors(); track e.kind) {
+            <hlm-field-error>{{ e.message }}</hlm-field-error>
+          }
+        </hlm-field>
+
+        <div class="recruit__actions">
+          <a hlmBtn variant="outline" routerLink="/roster">Cancel</a>
+          <button hlmBtn type="submit">Recruit hero</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</section>

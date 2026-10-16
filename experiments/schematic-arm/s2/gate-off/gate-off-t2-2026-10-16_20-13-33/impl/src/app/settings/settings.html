@@ -1,0 +1,62 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 class="settings__title">Settings</h1>
+  </header>
+
+  <div class="settings__cards">
+    <section hlmCard class="settings__card">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>Appearance</h2>
+      </div>
+      <div hlmCardContent class="settings__row">
+        <p class="settings__text">
+          The console is {{ vm.dark() ? 'in dark' : 'in light' }} theme. Your choice is remembered on this device.
+        </p>
+        <button hlmBtn variant="outline" type="button" (click)="vm.toggleTheme()">
+          <ng-icon [name]="vm.dark() ? 'lucideSun' : 'lucideMoon'" />
+          {{ vm.dark() ? 'Use light theme' : 'Use dark theme' }}
+        </button>
+      </div>
+    </section>
+
+    <section hlmCard class="settings__card">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>Example data</h2>
+      </div>
+      <div hlmCardContent class="settings__row">
+        <p class="settings__text">
+          The roster and deployment log are example data kept in memory. Edits, retirements, and recruits last until the page reloads.
+        </p>
+        <button hlmBtn variant="destructive" type="button" (click)="resetDialog.open()">
+          <ng-icon name="lucideRotateCcw" />
+          Restore example data
+        </button>
+      </div>
+      @if (vm.notice()) {
+        <p class="settings__notice" role="status">{{ vm.notice() }}</p>
+      }
+    </section>
+  </div>
+
+  <hlm-dialog #resetDialog>
+    <hlm-dialog-content *hlmDialogPortal>
+      <hlm-dialog-header>
+        <h2 hlmDialogTitle>Restore example data?</h2>
+        <p hlmDialogDescription>
+          Every edit, retirement, recruit, and deployment in this session will be discarded.
+        </p>
+      </hlm-dialog-header>
+      <hlm-dialog-footer>
+        <button hlmBtn variant="outline" type="button" (click)="resetDialog.close()">Cancel</button>
+        <button
+          hlmBtn
+          variant="destructive"
+          type="button"
+          (click)="resetDialog.close(); vm.resetExampleData()"
+        >
+          Restore
+        </button>
+      </hlm-dialog-footer>
+    </hlm-dialog-content>
+  </hlm-dialog>
+</section>

@@ -1,0 +1,19 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "appearance-on-primitive": 1,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "unknown-primitive": 0,
+    "missing-composition-part": 0,
+    "all": 1
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 3,
+      "detail": "appearance class p-2 on primitive div"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 class="missions__title">Missions</h1>
+    <p class="missions__lede">Deploy an Active hero onto a mission. A hero is only deployed against threats they are cleared for.</p>
+  </header>
+
+  <div class="missions__layout">
+    <section hlmCard class="missions__board">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>Mission board</h2>
+      </div>
+      <div hlmCardContent class="missions__board-body">
+        <hlm-field class="missions__hero-field">
+          <label hlmFieldLabel for="deploy-hero">Hero to deploy</label>
+          <hlm-select
+            [itemToString]="vm.heroLabel"
+            [value]="vm.heroId()"
+            (valueChange)="vm.selectHero($event)"
+          >
+            <hlm-select-trigger buttonId="deploy-hero" class="missions__select">
+              <hlm-select-value placeholder="Choose an active hero" />
+            </hlm-select-trigger>
+            <hlm-select-content *hlmSelectPortal>
+              @for (hero of vm.activeHeroes(); track hero.id) {
+                <hlm-select-item [value]="hero.id">{{ hero.name }} · {{ hero.clearance }}</hlm-select-item>
+              }
+            </hlm-select-content>
+          </hlm-select>
+        </hlm-field>
+
+        @if (vm.notice()) {
+          <p class="missions__notice" role="status">{{ vm.notice() }}</p>
+        }
+
+        <div hlmTableContainer>
+          <table hlmTable>
+            <caption hlmTableCaption class="missions__caption">Missions and the threats they target</caption>
+            <thead hlmTableHeader>
+              <tr hlmTableRow>
+                <th hlmTableHead scope="col">Mission</th>
+                <th hlmTableHead scope="col">Threat</th>
+                <th hlmTableHead scope="col">Tier</th>
+                <th hlmTableHead scope="col">Deployed</th>
+                <th hlmTableHead scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody hlmTableBody>
+              @for (row of vm.rows(); track row.mission.id) {
+                <tr hlmTableRow>
+                  <td hlmTableCell>
+                    <span class="missions__mission">{{ row.mission.title }}</span>
+                    <span class="missions__id">{{ row.mission.id }}</span>
+                  </td>
+                  <td hlmTableCell>
+                    {{ row.threat?.name }}
+                    <span class="missions__id">{{ row.threat?.region }}</span>
+                  </td>
+                  <td hlmTableCell>
+                    <span hlmBadge variant="outline">{{ row.threat?.tier }}</span>
+                  </td>
+                  <td hlmTableCell>{{ row.deployments }}</td>
+                  <td hlmTableCell>
+                    <button
+                      hlmBtn
+                      size="sm"
+                      type="button"
+                      [disabled]="!row.eligible"
+                      (click)="vm.deploy(row.mission.id)"
+                    >
+                      <ng-icon name="lucideCrosshair" />
+                      Deploy
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section hlmCard class="missions__log">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>Deployment log</h2>
+      </div>
+      <div hlmCardContent>
+        @if (vm.log().length) {
+          <ol class="missions__entries">
+            @for (entry of vm.log(); track entry.id) {
+              <li class="missions__entry">
+                <span class="missions__entry-hero">{{ entry.heroName }}</span>
+                <span class="missions__id">{{ entry.missionTitle }} · {{ entry.id }}</span>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="missions__note">No deployments this session. Deployments appear here and count toward the hero's record.</p>
+        }
+      </div>
+    </section>
+  </div>
+</section>
