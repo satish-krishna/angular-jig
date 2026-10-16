@@ -1,0 +1,169 @@
+// The BEM plane (series 2, harness/bem-house-style-spec.md). Two exports:
+//
+// bemTally: the eight rules that are new in series 2 (BEM-only templates, one
+// block per component, the file triad, @reference, no Sass-style nesting, no
+// utilities in TS).
+//
+// expandedTally: the series 1 seal and layout checks, run on each template
+// after its BEM classes are replaced by the utilities its stylesheet applies.
+// Moving `bg-red-500` from the template into `@apply` must not hide it.
+//
+// Counter side only: like counter.mjs, this imports nothing the gates import.
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { join, dirname, basename, relative } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import * as seal from './counter.mjs';
+import * as layout from './layout-counter.mjs';
+import { loadClassifier, BEM_RE, blockOf } from './bem/classify.mjs';
+import { parseStylesheet } from './bem/stylesheet.mjs';
+import { classUses, expandTemplate } from './bem/template.mjs';
+import { readComponents, stringValue, stringList } from './bem/components.mjs';
+
+export const BEM_KINDS = [
+  'template-utility-class',
+  'foreign-block',
+  'inline-template',
+  'inline-styles',
+  'missing-triad',
+  'missing-reference',
+  'broken-nesting',
+  'utility-in-ts',
+];
+
+const SKIP_DIRS = new Set(['node_modules', 'dist', '.git', '.angular', 'coverage']);
+const norm = (p) => p.replaceAll('\\', '/');
+
+function walkFiles(paths, exts) {
+  const out = [];
+  const visit = (p) => {
+    if (statSync(p).isDirectory()) {
+      for (const e of readdirSync(p)) if (!SKIP_DIRS.has(e)) visit(join(p, e));
+    } else if (exts.some((x) => p.endsWith(x))) out.push(p);
+  };
+  for (const p of paths) visit(p);
+  return out.sort();
+}
+
+const byFileLineKind = (a, b) =>
+  (a.file < b.file ? -1 : a.file > b.file ? 1 : 0) || a.line - b.line || (a.kind < b.kind ? -1 : a.kind > b.kind ? 1 : 0);
+
+function withTotals(zero, violations) {
+  const totals = { ...zero };
+  for (const v of violations) {
+    totals[v.kind] += 1;
+    totals.all += 1;
+  }
+  violations.sort(byFileLineKind);
+  return { totals, violations };
+}
+
+// A string that reads as a class list: two or more tokens that are all
+// utilities, or one utility with a separator in it (`w-full`, `sm:x`, `a/50`).
+// A lone bare word (`hidden`, `block`) is too often ordinary data.
+function looksLikeClasses(text, isUtility) {
+  const tokens = text.split(/\s+/).filter(Boolean);
+  if (tokens.length >= 2) return tokens.every(isUtility);
+  return tokens.length === 1 && isUtility(tokens[0]) && /[-:/[]/.test(tokens[0]);
+}
+
+export async function bemTally(paths, { root, styles } = {}) {
+  const { isUtility } = await loadClassifier(styles ?? join(root, 'src', 'styles.css'));
+  const rel = (p) => norm(root ? relative(root, p) : p);
+  const v = [];
+  const add = (kind, file, line, detail) => v.push({ kind, file: rel(file), line, detail });
+
+  const checkUses = (uses, file, block, lineOffset = 0) => {
+    for (const u of uses) {
+      if (isUtility(u.token) || !BEM_RE.test(u.token)) add('template-utility-class', file, u.line + lineOffset, `${u.via} ${u.token}`);
+      else if (blockOf(u.token) !== block) add('foreign-block', file, u.line + lineOffset, `${u.token} in ${block}`);
+    }
+  };
+
+  for (const tsPath of walkFiles(paths, ['.ts']).filter((p) => !p.endsWith('.spec.ts'))) {
+    const text = readFileSync(tsPath, 'utf8');
+    const { components, hostClasses, strings } = readComponents(tsPath, text);
+    const dir = dirname(tsPath);
+    const fileStem = basename(tsPath, '.ts');
+    const block = fileStem.replace(/\.component$/, '');
+    const htmlPath = join(dir, `${fileStem}.html`);
+    const cssPath = join(dir, `${fileStem}.css`);
+
+    components.forEach((c, index) => {
+      const p = c.props;
+      const inlineTemplate = stringValue(p.template);
+      if (p.template) add('inline-template', tsPath, c.line, 'template: in @Component');
+      if (p.styles) add('inline-styles', tsPath, c.line, 'styles: in @Component');
+      if (inlineTemplate != null) checkUses(classUses(inlineTemplate, rel(tsPath)), tsPath, block, c.templateLine - 1);
+      if (index > 0) {
+        add('missing-triad', tsPath, c.line, 'a second @Component in one file cannot own a triad');
+        return;
+      }
+      const templateOk = stringValue(p.templateUrl) === `./${fileStem}.html` && existsSync(htmlPath);
+      const styleUrls = [...stringList(p.styleUrl), ...stringList(p.styleUrls)];
+      const styleOk = styleUrls.length === 1 && styleUrls[0] === `./${fileStem}.css` && existsSync(cssPath);
+      if (!p.template && !templateOk) add('missing-triad', tsPath, c.line, `expected templateUrl './${fileStem}.html'`);
+      if (!p.styles && !styleOk) add('missing-triad', tsPath, c.line, `expected styleUrl './${fileStem}.css'`);
+      if (templateOk) checkUses(classUses(readFileSync(htmlPath, 'utf8'), rel(htmlPath)), htmlPath, block);
+      if (styleOk) {
+        const s = parseStylesheet(readFileSync(cssPath, 'utf8'), cssPath);
+        for (const { cls, line } of s.selectorClasses) {
+          if (blockOf(cls) !== block) add('foreign-block', cssPath, line, `.${cls} in ${fileStem}.css`);
+        }
+        if (s.hasApply && !s.hasReference) add('missing-reference', cssPath, 1, '@apply without @reference');
+        for (const b of s.brokenNesting) add('broken-nesting', cssPath, b.line, `${b.selector} appends to & (Sass only)`);
+      }
+    });
+
+    for (const h of hostClasses) {
+      if (h.text.split(/\s+/).some((t) => t && isUtility(t))) add('utility-in-ts', tsPath, h.line, `host class: ${h.text}`);
+    }
+    for (const s of strings) {
+      if (looksLikeClasses(s.text, isUtility)) add('utility-in-ts', tsPath, s.line, s.text);
+    }
+  }
+
+  return withTotals(Object.fromEntries([...BEM_KINDS.map((k) => [k, 0]), ['all', 0]]), v);
+}
+
+export function expandedTally(paths, { root } = {}) {
+  const rel = (p) => norm(root ? relative(root, p) : p);
+  const siblingCss = (f) => {
+    if (!f.endsWith('.html')) return null;
+    const css = f.replace(/\.html$/, '.css');
+    return existsSync(css) ? css : null;
+  };
+  const expand = (html, css) =>
+    expandTemplate(readFileSync(html, 'utf8'), parseStylesheet(readFileSync(css, 'utf8'), css).utilities, rel(html));
+  const filesOf = (collect) => paths.flatMap((p) => (statSync(p).isDirectory() ? collect(p) : [p]));
+
+  const sealV = [];
+  for (const f of filesOf(seal.collectTemplateFiles)) {
+    const css = siblingCss(f);
+    sealV.push(...(css ? seal.countTemplateSource(expand(f, css), { file: rel(f) }) : seal.countFile(f, { root })));
+  }
+  const layoutV = [];
+  for (const f of filesOf(layout.collectLayoutFiles)) {
+    const css = siblingCss(f);
+    layoutV.push(...(css ? layout.countTemplateSource(expand(f, css), { file: rel(f) }) : layout.layoutCountFile(f, { root })));
+  }
+  return {
+    seal: withTotals(seal.tally([]).totals, sealV),
+    layout: withTotals(layout.layoutTally([]).totals, layoutV),
+  };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const args = process.argv.slice(2);
+  let root;
+  const ri = args.indexOf('--root');
+  if (ri >= 0) {
+    root = args[ri + 1];
+    args.splice(ri, 2);
+  }
+  if (args.length === 0) {
+    process.stderr.write('usage: node bem-counter.mjs [--root <dir>] <path...>\n');
+    process.exit(2);
+  }
+  const bem = await bemTally(args, { root: root ?? process.cwd() });
+  process.stdout.write(JSON.stringify({ bem, expanded: expandedTally(args, { root }) }, null, 2) + '\n');
+}
