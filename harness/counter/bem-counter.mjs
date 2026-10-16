@@ -15,8 +15,8 @@ import { pathToFileURL } from 'node:url';
 import * as seal from './counter.mjs';
 import * as layout from './layout-counter.mjs';
 import { loadClassifier, BEM_RE, blockOf } from './bem/classify.mjs';
-import { parseStylesheet } from './bem/stylesheet.mjs';
-import { classUses, expandTemplate } from './bem/template.mjs';
+import { parseStylesheet, isConcat } from './bem/stylesheet.mjs';
+import { classUses, expandTemplate, normalizeUtility } from './bem/template.mjs';
 import { readComponents, stringValue, stringList } from './bem/components.mjs';
 
 export const BEM_KINDS = [
@@ -57,14 +57,24 @@ function withTotals(zero, violations) {
   return { totals, violations };
 }
 
-// A string that reads as a class list: two or more tokens that are all
-// utilities, or one utility with a separator in it (`w-full`, `sm:x`, `a/50`).
-// A lone bare word (`hidden`, `block`) is too often ordinary data.
+// A string that reads as a class list. Two or more tokens: every one is
+// class-shaped (a utility or a BEM name), and either two are utilities or one
+// has a separator in it (`w-full`, `sm:x`, `a/50`). One token: a utility with a
+// separator. A lone bare word (`hidden`, `block`) is too often ordinary data,
+// and so is `show hidden items`.
+const SEPARATED = /[-:/[]/;
 function looksLikeClasses(text, isUtility) {
   const tokens = text.split(/\s+/).filter(Boolean);
-  if (tokens.length >= 2) return tokens.every(isUtility);
-  return tokens.length === 1 && isUtility(tokens[0]) && /[-:/[]/.test(tokens[0]);
+  if (tokens.length >= 2) {
+    if (!tokens.every((t) => isUtility(t) || BEM_RE.test(t))) return false;
+    const utilities = tokens.filter(isUtility);
+    return utilities.length >= 2 || utilities.some((t) => SEPARATED.test(t));
+  }
+  return tokens.length === 1 && isUtility(tokens[0]) && SEPARATED.test(tokens[0]);
 }
+
+const brokenDetail = (selector) =>
+  isConcat(selector) ? `${selector} appends to & (Sass only)` : 'unparseable selector (Sass-style comment or syntax?)';
 
 export async function bemTally(paths, { root, styles } = {}) {
   const { isUtility } = await loadClassifier(styles ?? join(root, 'src', 'styles.css'));
@@ -74,8 +84,14 @@ export async function bemTally(paths, { root, styles } = {}) {
 
   const checkUses = (uses, file, block, lineOffset = 0) => {
     for (const u of uses) {
-      if (isUtility(u.token) || !BEM_RE.test(u.token)) add('template-utility-class', file, u.line + lineOffset, `${u.via} ${u.token}`);
-      else if (blockOf(u.token) !== block) add('foreign-block', file, u.line + lineOffset, `${u.token} in ${block}`);
+      const line = u.line + lineOffset;
+      // A class name built from data (`block__status--{{ s }}`) leaves a dangling
+      // separator; the counter cannot know what it expands to.
+      if (/(__|--)$/.test(u.token)) add('template-utility-class', file, line, `partial class name: ${u.token}`);
+      // A component named after a utility (`table`) may use its own name.
+      else if (BEM_RE.test(u.token) && blockOf(u.token) === block) continue;
+      else if (isUtility(u.token) || !BEM_RE.test(u.token)) add('template-utility-class', file, line, `${u.via} ${u.token}`);
+      else add('foreign-block', file, line, `${u.token} in ${block}`);
     }
   };
 
@@ -118,7 +134,7 @@ export async function bemTally(paths, { root, styles } = {}) {
           if (blockOf(cls) !== block) add('foreign-block', cssPath, line, `.${cls} in ${fileStem}.css`);
         }
         if (s.hasApply && !s.hasReference) add('missing-reference', cssPath, 1, '@apply without @reference');
-        for (const b of s.brokenNesting) add('broken-nesting', cssPath, b.line, `${b.selector} appends to & (Sass only)`);
+        for (const b of s.brokenNesting) add('broken-nesting', cssPath, b.line, brokenDetail(b.selector));
       }
     });
 
@@ -188,6 +204,15 @@ export function expandedTally(paths, { root } = {}) {
   for (const f of filesOf(layout.collectLayoutFiles)) {
     const css = siblingCss(f);
     layoutV.push(...(css ? layout.countTemplateSource(expand(f, css), { file: rel(f) }) : layout.layoutCountFile(f, { root })));
+    // `@apply` on :host, a bare element or a descendant styles no BEM class, so
+    // no template expansion carries it. Judge it as a template at its own line.
+    // Not sealed: appearance-on-primitive cannot apply to a host or a bare element.
+    if (f.endsWith('.css')) {
+      for (const { tokens, line } of parseStylesheet(readFileSync(f, 'utf8'), f).unmapped) {
+        const html = `<div class="${tokens.map(normalizeUtility).join(' ').replaceAll('"', "'")}"></div>`;
+        layoutV.push(...layout.countTemplateSource(html, { file: rel(f), lineOffset: line - 1 }));
+      }
+    }
   }
   return {
     seal: withTotals(seal.tally([]).totals, sealV),

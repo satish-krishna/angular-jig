@@ -170,6 +170,42 @@ describe('bemTally', () => {
     expect(r.totals.all).toBe(1);
   });
 
+  const tsKinds = async (extra) => {
+    const r = await bem({ 'app/x/x.view-model.ts': `${extra}\n` });
+    return r.violations.filter((v) => v.kind === 'utility-in-ts').map((v) => v.detail);
+  };
+
+  it('utility-in-ts: computed class strings, template literals and ternaries', async () => {
+    expect(await tsKinds("const a = true; const c = computed(() => `flex items-center ${a ? 'heroes__row--x' : ''}`);")).toHaveLength(1);
+    expect(await tsKinds("const c = a ? 'heroes__row flex gap-2' : 'heroes__row';")).toHaveLength(1);
+  });
+
+  it('utility-in-ts: ordinary words and all-BEM strings are not class lists', async () => {
+    expect(await tsKinds("const a = 'show hidden items'; const b = 'heroes__row heroes__row--x';")).toEqual([]);
+  });
+
+  it('template-utility-class: a class name built from data is a partial class name', async () => {
+    const html = '<div class="hero-card hero-card__status hero-card__status--{{ s }}"></div>';
+    const r = await bem(triad('hero-card', html, REF));
+    const hits = r.violations.filter((v) => v.kind === 'template-utility-class');
+    expect(hits).toHaveLength(1);
+    expect(hits[0].detail.startsWith('partial class name:')).toBe(true);
+    expect(r.totals.all).toBe(1);
+  });
+
+  it('a stylesheet with a Sass-style comment is one broken-nesting, never a throw', async () => {
+    const files = triad('hero-card', CLEAN_HTML, `@reference "../../styles.css";\n// header\n.hero-card { @apply grid; }\n`);
+    const r = await bem(files);
+    expect(r.totals['broken-nesting']).toBe(1);
+    expect(r.violations.find((v) => v.kind === 'broken-nesting').detail).toContain('unparseable selector');
+    expect(() => expanded(files)).not.toThrow();
+  });
+
+  it('a block named after a utility may use its own name', async () => {
+    const r = await bem(triad('table', '<div class="table"><p class="table__row"></p></div>', `${REF}.table { @apply grid; }\n.table__row { @apply flex; }\n`));
+    expect(r.violations).toEqual([]);
+  });
+
   it('is deterministic', async () => {
     const files = triad('hero-card', '<div class="flex hero-card roster__x"></div>', `${REF}.other { @apply flex; }\n`);
     const dir = tree(files);
@@ -221,6 +257,33 @@ describe('expandedTally: planted violations hidden behind BEM', () => {
     const r = expanded(files);
     expect(r.layout.totals['raw-palette-color']).toBe(1);
     expect(r.layout.violations.find((v) => v.kind === 'raw-palette-color')).toMatchObject({ file: 'app/hero-card/hero-card.html', line: 2 });
+  });
+
+  it('judges @apply on :host, bare elements and nested descendants, which style no BEM class', () => {
+    const css = `${REF}.hero-card { @apply grid; }\n:host { @apply flex space-y-4 bg-red-500; }\n`;
+    const r = expanded(triad('hero-card', CLEAN_HTML, css));
+    expect(r.layout.totals['space-utility']).toBe(1);
+    expect(r.layout.totals['raw-palette-color']).toBe(1);
+    for (const v of r.layout.violations) expect(v).toMatchObject({ file: 'app/hero-card/hero-card.css', line: 3 });
+  });
+
+  it('judges @apply in the global stylesheet on a bare element', () => {
+    const r = expanded({ ...triad('hero-card', CLEAN_HTML, CLEAN_CSS), 'styles.css': '@import "tailwindcss";\nbody { @apply bg-gray-100; }\n' });
+    expect(r.layout.totals['raw-palette-color']).toBe(1);
+    expect(r.layout.violations[0]).toMatchObject({ file: 'styles.css', line: 2 });
+  });
+
+  it('counts zero for clean host and global @apply', () => {
+    const css = `${CLEAN_CSS}:host { @apply block; }\n`;
+    const r = expanded({ ...triad('hero-card', CLEAN_HTML, css), 'styles.css': '@import "tailwindcss";\nbody { @apply bg-background text-foreground; }\n' });
+    expect(r.layout.totals.all).toBe(0);
+  });
+
+  it('sees raw palette colors with an opacity or important modifier, not themed ones', () => {
+    const run = (u) => expanded(triad('hero-card', CLEAN_HTML, `${REF}.hero-card__name { @apply ${u}; }\n`)).layout.totals['raw-palette-color'];
+    expect(run('bg-blue-500/50')).toBe(1);
+    expect(run('!bg-red-500')).toBe(1);
+    expect(run('bg-primary/50')).toBe(0);
   });
 
   it('counts inline templates the series 1 way', () => {

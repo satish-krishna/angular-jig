@@ -19,11 +19,24 @@ function ruleParent(node) {
 // inside `[data-a="&b"]` is not mistaken for nesting.
 const CONCAT_RE = /&[\w-]/;
 const blankStrings = (s) => s.replace(/"[^"]*"|'[^']*'|\[[^\]]*\]/g, '');
-const isConcat = (s) => CONCAT_RE.test(blankStrings(s));
+export const isConcat = (s) => CONCAT_RE.test(blankStrings(s));
+
+// A selector the parser rejects (`// header` is a Sass comment, not CSS, and
+// postcss reads it as the start of the next selector) must never crash the
+// counter: the rule is treated like broken nesting and reported.
+const parses = (s) => {
+  try {
+    selectorParser().astSync(s);
+    return true;
+  } catch {
+    return false;
+  }
+};
+const isBadSelector = (s) => isConcat(s) || !parses(s);
 
 function isBroken(rule) {
   const parent = ruleParent(rule);
-  return rule.selectors.some(isConcat) || (parent ? isBroken(parent) : false);
+  return rule.selectors.some(isBadSelector) || (parent ? isBroken(parent) : false);
 }
 
 export function resolvedSelectors(rule) {
@@ -66,6 +79,7 @@ function allClasses(sel) {
 export function parseStylesheet(css, from = 'component.css') {
   const root = postcss.parse(css, { from });
   const utilities = new Map();
+  const unmapped = [];
   let hasApply = false;
   let hasReference = false;
   root.walkAtRules((a) => {
@@ -76,13 +90,22 @@ export function parseStylesheet(css, from = 'component.css') {
     if (!rule || isBroken(rule)) return;
     // `!important` is a flag on the whole @apply, not a utility.
     const tokens = a.params.split(/\s+/).filter((t) => t && t !== '!important');
+    let styled = 0;
     for (const sel of resolvedSelectors(rule)) {
+      if (!parses(sel)) {
+        styled += 1; // reported as broken nesting instead
+        continue;
+      }
       for (const cls of styledClasses(sel)) {
+        styled += 1;
         if (!utilities.has(cls)) utilities.set(cls, []);
         const list = utilities.get(cls);
         for (const t of tokens) if (!list.includes(t)) list.push(t);
       }
     }
+    // `:host`, a bare element or a descendant: no BEM class carries these
+    // utilities, so the expansion could not place them anywhere.
+    if (styled === 0 && tokens.length > 0) unmapped.push({ tokens, line: a.source?.start?.line ?? 0 });
   });
   const seen = new Set();
   const selectorClasses = [];
@@ -90,10 +113,14 @@ export function parseStylesheet(css, from = 'component.css') {
   root.walkRules((rule) => {
     const line = rule.source?.start?.line ?? 0;
     if (isBroken(rule)) {
-      for (const selector of rule.selectors) if (isConcat(selector)) brokenNesting.push({ selector, line });
+      for (const selector of rule.selectors) if (isBadSelector(selector)) brokenNesting.push({ selector, line });
       return;
     }
     for (const sel of resolvedSelectors(rule)) {
+      if (!parses(sel)) {
+        brokenNesting.push({ selector: sel, line });
+        continue;
+      }
       for (const cls of allClasses(sel)) {
         const key = `${cls}@${line}`;
         if (seen.has(key)) continue;
@@ -102,5 +129,5 @@ export function parseStylesheet(css, from = 'component.css') {
       }
     }
   });
-  return { utilities, selectorClasses, brokenNesting, hasApply, hasReference };
+  return { utilities, unmapped, selectorClasses, brokenNesting, hasApply, hasReference };
 }

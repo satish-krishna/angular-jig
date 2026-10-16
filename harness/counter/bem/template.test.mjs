@@ -46,6 +46,26 @@ describe('classUses', () => {
   });
 });
 
+describe('classUses: interpolation literals', () => {
+  it('reads string literals inside {{ }} in a class attribute, after the static tokens', () => {
+    const t = `<div class="heroes__row {{ active ? 'bg-red-500 font-bold' : '' }}"></div>`;
+    expect(classUses(t).map((u) => `${u.via}:${u.token}`)).toEqual(['class:heroes__row', 'class:bg-red-500', 'class:font-bold']);
+  });
+});
+
+describe('expandTemplate: interpolation and modifiers', () => {
+  it('expands mapped tokens from an interpolation and drops unmapped ones', () => {
+    const m = new Map([['heroes__on', ['flex']]]);
+    const t = `<div class="heroes__row {{ a ? 'heroes__on' : 'zzz' }}"></div>`;
+    expect(expandTemplate(t, m)).toBe('<div class="heroes__row flex"></div>');
+  });
+
+  it('strips !, trailing ! and an opacity modifier from utilities it writes', () => {
+    const m = new Map([['a', ['bg-blue-500/50', '!bg-red-500', 'sm:bg-blue-500/50', 'bg-green-500!']]]);
+    expect(expandTemplate('<p class="a"></p>', m)).toBe('<p class="bg-blue-500 bg-red-500 sm:bg-blue-500 bg-green-500"></p>');
+  });
+});
+
 describe('expandTemplate', () => {
   const utilities = new Map([
     ['roster', ['grid', 'gap-6']],

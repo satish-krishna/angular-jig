@@ -27,7 +27,7 @@ export function readComponents(path, text) {
   const lineOf = (n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
   const skip = new Set();
   const markSkip = (node) => {
-    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) skip.add(node);
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateExpression(node)) skip.add(node);
     ts.forEachChild(node, markSkip);
   };
   const components = [];
@@ -70,6 +70,13 @@ export function readComponents(path, text) {
     }
     if ((ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) && !skip.has(node)) {
       strings.push({ text: node.text, line: lineOf(node) });
+    }
+    // `flex ${x ? 'a' : 'b'} gap-2`: the fixed parts are class text even though
+    // the whole literal is not a plain string.
+    if (ts.isTemplateExpression(node) && !skip.has(node)) {
+      const line = lineOf(node);
+      strings.push({ text: node.head.text, line });
+      for (const span of node.templateSpans) strings.push({ text: span.literal.text, line });
     }
     ts.forEachChild(node, visit);
   };

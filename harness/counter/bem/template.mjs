@@ -23,6 +23,26 @@ const parse = (html, file) => parseTemplate(html, file, { preserveWhitespaces: t
 const split = (s) => s.split(/\s+/).filter(Boolean);
 const lineOf = (el) => (el.sourceSpan?.start?.line ?? 0) + 1;
 
+// String literals inside an Angular expression: quoted, or a template literal
+// with its ${...} holes blanked.
+function literals(src) {
+  const out = [];
+  for (const m of src.matchAll(/'([^']*)'|"([^"]*)"|`((?:[^`\$]|\[\s\S]|\$(?!\{)|\$\{[^}]*\})*)`/g)) {
+    out.push(m[1] ?? m[2] ?? (m[3] ?? '').replace(/\$\{[^}]*\}/g, ' '));
+  }
+  return out;
+}
+
+// `!bg-red-500`, `bg-red-500!` and `sm:bg-blue-500/50` are the same palette
+// color as the bare utility, and the series 1 layout check only knows the bare
+// form, so the expanded copy is written in it.
+export function normalizeUtility(token) {
+  const s = token.replace(/^!|!$/g, '');
+  const i = s.lastIndexOf(':');
+  const base = s.slice(i + 1).replace(/^!/, '').replace(/\/[^/]*$/, '');
+  return s.slice(0, i + 1) + base;
+}
+
 // Every class source on one element, in a fixed order, shared by classUses()
 // and expandTemplate(): static tokens, interpolated-attribute tokens, [class.x]
 // names, then [class] expression tokens (string literals first, then bare keys).
@@ -41,12 +61,15 @@ function sources(el, html) {
       out.interp = i;
       const text = html.slice(i.valueSpan.start.offset, i.valueSpan.end.offset).replace(/\{\{[\s\S]*?\}\}/g, ' ');
       for (const token of split(text)) out.tokens.push({ token, via: 'class' });
+      // Literals inside {{ }} are bound tokens: they expand if mapped and are
+      // dropped otherwise, like a [class] binding's.
+      const full = html.slice(i.valueSpan.start.offset, i.valueSpan.end.offset);
+      for (const hole of full.matchAll(/\{\{([\s\S]*?)\}\}/g)) {
+        for (const lit of literals(hole[1])) for (const token of split(lit)) out.tokens.push({ token, via: 'class', bound: true });
+      }
     } else if (named) {
       const src = i.valueSpan ? html.slice(i.valueSpan.start.offset, i.valueSpan.end.offset) : '';
-      for (const m of src.matchAll(/'([^']*)'|"([^"]*)"|`((?:[^`\$]|\[\s\S]|\$(?!\{)|\$\{[^}]*\})*)`/g)) {
-        const lit = m[1] ?? m[2] ?? (m[3] ?? '').replace(/\$\{[^}]*\}/g, ' ');
-        for (const token of split(lit)) out.tokens.push({ token, via: '[class]' });
-      }
+      for (const lit of literals(src)) for (const token of split(lit)) out.tokens.push({ token, via: '[class]' });
       for (const m of src.matchAll(/[{,]\s*([A-Za-z_][\w-]*)\s*:/g)) out.tokens.push({ token: m[1], via: '[class]' });
     }
   }
@@ -58,6 +81,7 @@ export function classUses(html, file = 'template.html') {
   for (const el of elements(parse(html, file))) {
     const line = lineOf(el);
     for (const { token, via } of sources(el, html).tokens) out.push({ token, line, via });
+    // `bound` is for expandTemplate only
   }
   return out;
 }
@@ -68,7 +92,8 @@ export function expandTemplate(html, utilities, file = 'template.html') {
     const { attr, interp, tokens } = sources(el, html);
     if (tokens.length === 0) continue;
     const value = tokens
-      .flatMap(({ token, via }) => utilities.get(token) ?? (via === 'class' ? [token] : []))
+      .flatMap(({ token, via, bound }) => utilities.get(token) ?? (via === 'class' && !bound ? [token] : []))
+      .map(normalizeUtility)
       .join(' ');
     const target = attr?.valueSpan ? attr : interp;
     if (target?.valueSpan) {

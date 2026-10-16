@@ -113,6 +113,20 @@ describe('parseStylesheet', () => {
     expect(utilities.get('y')).toEqual(['grid']);
   });
 
+  it('lists @apply utilities whose rule styles no class as unmapped, with the @apply line', () => {
+    const { unmapped } = parseStylesheet(':host { @apply block; }\n.a h1 { @apply flex; }\n.a { @apply grid; }\n&__x { @apply p-2; }\n');
+    expect(unmapped).toEqual([
+      { tokens: ['block'], line: 1 },
+      { tokens: ['flex'], line: 2 },
+    ]);
+  });
+
+  it('skips an unparseable selector instead of throwing, and reports it', () => {
+    const r = parseStylesheet('// header\n.a { @apply grid; }\n');
+    expect(r.brokenNesting).toEqual([{ selector: '// header\n.a', line: 1 }]);
+    expect(r.utilities.size).toBe(0);
+  });
+
   it('parses CRLF stylesheets with the same lines', () => {
     const { selectorClasses } = parseStylesheet(css.replaceAll('\n', '\r\n'));
     expect(selectorClasses.find((s) => s.cls === 'badge-lite').line).toBe(16);
