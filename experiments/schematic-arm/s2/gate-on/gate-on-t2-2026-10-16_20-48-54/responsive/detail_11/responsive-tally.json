@@ -1,0 +1,64 @@
+{
+  "totals": {
+    "viewport-escape": 0,
+    "element-escape": 0,
+    "element-clip": 6,
+    "all": 6
+  },
+  "byBreakpoint": {
+    "375": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "768": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "1280": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 6
+    }
+  },
+  "violations": [
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.text-sm.w-full > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.text-sm.w-full > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.text-sm.w-full > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.text-sm.w-full > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.text-sm.w-full > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.text-sm.w-full > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    }
+  ],
+  "bootErrors": []
+}

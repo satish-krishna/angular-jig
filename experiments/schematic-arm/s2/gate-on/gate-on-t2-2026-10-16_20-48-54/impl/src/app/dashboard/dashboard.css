@@ -1,0 +1,57 @@
+@reference "../../styles.css";
+
+.dashboard {
+  @apply grid gap-6;
+}
+
+.dashboard__header {
+  @apply flex flex-wrap items-end justify-between gap-3;
+}
+
+.dashboard__intro {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.dashboard__title {
+  @apply text-2xl font-semibold tracking-tight text-foreground;
+}
+
+.dashboard__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.dashboard__stats {
+  @apply grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4;
+}
+
+.dashboard__section {
+  @apply grid gap-4;
+}
+
+.dashboard__section-head {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.dashboard__section-title {
+  @apply text-lg font-semibold text-foreground;
+}
+
+.dashboard__hero-grid {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(min(100%,14.5rem),1fr))] gap-4;
+}
+
+.dashboard__roster {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(min(100%,14rem),1fr))] gap-2;
+}
+
+.dashboard__roster-item {
+  @apply flex min-w-0 flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 py-2;
+}
+
+.dashboard__roster-link {
+  @apply min-w-0 truncate font-medium text-foreground underline-offset-4 hover:underline;
+}
+
+.dashboard__roster-id {
+  @apply text-xs text-muted-foreground;
+}

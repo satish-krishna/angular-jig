@@ -1,0 +1,35 @@
+<section class="settings">
+  <header class="settings__intro">
+    <h1 class="settings__title">Settings</h1>
+    <p class="settings__subtitle">Console preferences for this browser.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
+    </div>
+    <div hlmCardContent class="settings__row">
+      <p class="settings__text">
+        The console is in {{ vm.theme() === 'dark' ? 'dark' : 'light' }} theme. Your choice is
+        remembered; until you pick one, the operating system's preference applies.
+      </p>
+      <button hlmBtn variant="outline" [attr.aria-label]="vm.themeLabel()" (click)="vm.toggleTheme()">
+        <ng-icon [name]="vm.theme() === 'dark' ? 'lucideSun' : 'lucideMoon'" aria-hidden="true" />
+        {{ vm.themeLabel() }}
+      </button>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-heading">Console data</h2>
+    </div>
+    <div hlmCardContent>
+      <p class="settings__text">
+        The roster, missions and watch list are example data held in memory. There is no backend,
+        so changes last until the page reloads. The roster currently lists {{ vm.rosterCount() }}
+        heroes.
+      </p>
+    </div>
+  </section>
+</section>

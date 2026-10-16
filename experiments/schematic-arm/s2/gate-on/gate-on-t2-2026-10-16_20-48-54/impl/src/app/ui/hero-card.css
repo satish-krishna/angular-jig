@@ -1,0 +1,41 @@
+@reference "../../styles.css";
+
+.hero-card__header {
+  @apply flex items-center gap-3;
+}
+
+.hero-card__identity {
+  @apply flex min-w-0 flex-col;
+}
+
+.hero-card__meta {
+  @apply truncate text-xs text-muted-foreground;
+}
+
+.hero-card__body {
+  @apply flex flex-col gap-4;
+}
+
+.hero-card__badges {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.hero-card__dot {
+  @apply inline-block size-2 shrink-0 rounded-full bg-muted-foreground;
+}
+
+.hero-card__dot--active {
+  @apply bg-success;
+}
+
+.hero-card__dot--injured {
+  @apply bg-warning;
+}
+
+.hero-card__dot--reserve {
+  @apply bg-info;
+}
+
+.hero-card__dot--mia {
+  @apply bg-destructive;
+}

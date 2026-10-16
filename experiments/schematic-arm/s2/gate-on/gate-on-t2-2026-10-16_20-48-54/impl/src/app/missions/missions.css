@@ -1,0 +1,57 @@
+@reference "../../styles.css";
+
+.missions {
+  @apply grid min-w-0 grid-cols-1 gap-6;
+}
+
+.missions__intro {
+  @apply grid min-w-0 gap-1;
+}
+
+.missions__title {
+  @apply text-2xl font-semibold tracking-tight text-foreground;
+}
+
+.missions__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.missions__summary {
+  @apply mt-2 text-sm text-foreground;
+}
+
+.missions__list {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+}
+
+.missions__item {
+  @apply min-w-0;
+}
+
+.missions__card {
+  @apply h-full;
+}
+
+.missions__head {
+  @apply grid gap-1;
+}
+
+.missions__code {
+  @apply text-xs font-medium text-muted-foreground;
+}
+
+.missions__body {
+  @apply grid gap-3;
+}
+
+.missions__badges {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.missions__heroes {
+  @apply break-words text-sm text-muted-foreground;
+}
+
+.missions__empty {
+  @apply text-sm text-muted-foreground;
+}

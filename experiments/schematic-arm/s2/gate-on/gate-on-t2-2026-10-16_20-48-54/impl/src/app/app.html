@@ -1,0 +1,183 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar>
+    <hlm-sidebar-header>
+      <div class="app-brand">
+        <ng-icon name="lucideShieldAlert" />
+        <span class="app-brand__name">Hero Ops Console</span>
+      </div>
+    </hlm-sidebar-header>
+
+    <hlm-sidebar-content>
+      <hlm-sidebar-group>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <div hlmSidebarGroupContent>
+          <nav aria-label="Primary">
+            <ul hlmSidebarMenu>
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  routerLink="/dashboard"
+                  routerLinkActive
+                  #dashboardLink="routerLinkActive"
+                  [isActive]="dashboardLink.isActive"
+                  ariaCurrentWhenActive="page"
+                >
+                  <ng-icon name="lucideLayoutDashboard" />
+                  <span>Dashboard</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  routerLink="/roster"
+                  routerLinkActive
+                  #rosterLink="routerLinkActive"
+                  [isActive]="rosterLink.isActive"
+                  ariaCurrentWhenActive="page"
+                >
+                  <ng-icon name="lucideUsers" />
+                  <span>Roster</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  routerLink="/missions"
+                  routerLinkActive
+                  #missionsLink="routerLinkActive"
+                  [isActive]="missionsLink.isActive"
+                  ariaCurrentWhenActive="page"
+                >
+                  <ng-icon name="lucideTarget" />
+                  <span>Missions</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  routerLink="/threats"
+                  routerLinkActive
+                  #threatsLink="routerLinkActive"
+                  [isActive]="threatsLink.isActive"
+                  ariaCurrentWhenActive="page"
+                >
+                  <ng-icon name="lucideShieldAlert" />
+                  <span>Threats</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  routerLink="/recruit"
+                  routerLinkActive
+                  #recruitLink="routerLinkActive"
+                  [isActive]="recruitLink.isActive"
+                  ariaCurrentWhenActive="page"
+                >
+                  <ng-icon name="lucideUserPlus" />
+                  <span>Recruit</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  routerLink="/settings"
+                  routerLinkActive
+                  #settingsLink="routerLinkActive"
+                  [isActive]="settingsLink.isActive"
+                  ariaCurrentWhenActive="page"
+                >
+                  <ng-icon name="lucideSettings" />
+                  <span>Settings</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </hlm-sidebar-group>
+    </hlm-sidebar-content>
+
+    <hlm-sidebar-footer>
+      <div class="app-account">
+        <hlm-avatar size="sm" role="img" aria-label="Ops Commander, signed in">
+          <span hlmAvatarFallback>OC</span>
+        </hlm-avatar>
+        <div class="app-account__text">
+          <span>Ops Commander</span>
+          <span class="app-account__meta">Clearance tier 1</span>
+        </div>
+      </div>
+    </hlm-sidebar-footer>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset>
+    <header class="app-topbar">
+      <div class="app-topbar__leading">
+        <button hlmSidebarTrigger></button>
+        <nav aria-label="Breadcrumb" class="app-crumbs">
+          <ol class="app-crumbs__list">
+            @for (crumb of vm.crumbs(); track $index) {
+              <li class="app-crumbs__item">
+                @if (!$first) {
+                  <ng-icon name="lucideChevronRight" aria-hidden="true" />
+                }
+                @if (crumb.link) {
+                  <a class="app-crumbs__link" [routerLink]="crumb.link">{{ crumb.label }}</a>
+                } @else {
+                  <span class="app-crumbs__current" aria-current="page">{{ crumb.label }}</span>
+                }
+              </li>
+            }
+          </ol>
+        </nav>
+      </div>
+
+      <form
+        role="search"
+        class="app-topbar__search"
+        (submit)="$event.preventDefault(); vm.searchRoster(search.value)"
+      >
+        <input
+          #search
+          hlmInput
+          type="search"
+          aria-label="Search heroes"
+          placeholder="Search heroes"
+        />
+      </form>
+
+      <div class="app-topbar__controls">
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Notifications"
+          [hlmTooltip]="'Notifications'"
+        >
+          <ng-icon name="lucideBell" />
+        </button>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon-sm"
+          [attr.aria-label]="vm.themeLabel()"
+          [hlmTooltip]="vm.themeLabel()"
+          (click)="vm.toggleTheme()"
+        >
+          @if (vm.theme() === 'dark') {
+            <ng-icon name="lucideSun" />
+          } @else {
+            <ng-icon name="lucideMoon" />
+          }
+        </button>
+        <hlm-avatar size="sm" role="img" aria-label="Ops Commander, signed in">
+          <span hlmAvatarFallback>OC</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

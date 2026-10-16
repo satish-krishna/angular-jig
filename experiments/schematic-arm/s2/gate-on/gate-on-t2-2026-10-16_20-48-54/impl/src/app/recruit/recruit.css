@@ -1,0 +1,45 @@
+@reference "../../styles.css";
+
+.recruit {
+  @apply grid min-w-0 grid-cols-1 gap-6;
+}
+
+.recruit__intro {
+  @apply grid min-w-0 gap-1;
+}
+
+.recruit__title {
+  @apply text-2xl font-semibold tracking-tight text-foreground;
+}
+
+.recruit__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.recruit__card {
+  @apply min-w-0;
+}
+
+.recruit__form {
+  @apply grid min-w-0 gap-6;
+}
+
+.recruit__fields {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+.recruit__field {
+  @apply min-w-0;
+}
+
+.recruit__field--wide {
+  @apply sm:col-span-2;
+}
+
+.recruit__select {
+  @apply w-full;
+}
+
+.recruit__actions {
+  @apply flex flex-wrap justify-end gap-2;
+}

@@ -1,0 +1,31 @@
+<section class="missions">
+  <header class="missions__intro">
+    <h1 class="missions__title">Missions</h1>
+    <p class="missions__subtitle">Example operations. Nothing here reflects a real deployment.</p>
+    <p class="missions__summary" aria-live="polite">
+      {{ vm.rows().length }} on record · {{ vm.inProgressCount() }} in progress · {{ vm.successCount() }} successful
+    </p>
+  </header>
+
+  <ul class="missions__list">
+    @for (row of vm.rows(); track row.mission.id) {
+      <li class="missions__item">
+        <article hlmCard class="missions__card">
+          <div hlmCardHeader class="missions__head">
+            <p class="missions__code">{{ row.mission.id }}</p>
+            <h2 hlmCardTitle>{{ row.mission.title }}</h2>
+          </div>
+          <div hlmCardContent class="missions__body">
+            <div class="missions__badges">
+              <span hlmBadge variant="outline">Tier {{ row.mission.threatTier }}</span>
+              <span hlmBadge variant="secondary">{{ row.mission.outcome }}</span>
+            </div>
+            <p class="missions__heroes">{{ row.heroNames }}</p>
+          </div>
+        </article>
+      </li>
+    } @empty {
+      <li class="missions__empty">No operations on record.</li>
+    }
+  </ul>
+</section>

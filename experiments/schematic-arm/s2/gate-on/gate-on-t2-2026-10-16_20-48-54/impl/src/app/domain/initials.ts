@@ -1,0 +1,10 @@
+/** Up to two letters from the codename, for the avatar fallback. */
+export function initialsOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((word) => word.charAt(0))
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}

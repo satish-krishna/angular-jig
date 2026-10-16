@@ -1,0 +1,195 @@
+{
+  "totals": {
+    "template-utility-class": 0,
+    "foreign-block": 30,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "all": 30
+  },
+  "violations": [
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 8,
+      "detail": ".app-brand in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 12,
+      "detail": ".app-brand__name in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 16,
+      "detail": ".app-account in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 20,
+      "detail": ".app-account__text in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 24,
+      "detail": ".app-account__meta in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 28,
+      "detail": ".app-topbar in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 32,
+      "detail": ".app-topbar__leading in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 36,
+      "detail": ".app-topbar__search in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 40,
+      "detail": ".app-topbar__controls in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 44,
+      "detail": ".app-crumbs in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 48,
+      "detail": ".app-crumbs__list in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 52,
+      "detail": ".app-crumbs__item in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 56,
+      "detail": ".app-crumbs__link in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 60,
+      "detail": ".app-crumbs__current in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 64,
+      "detail": ".app-content in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "app-brand in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 6,
+      "detail": "app-brand__name in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 101,
+      "detail": "app-account in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 105,
+      "detail": "app-account__text in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "app-account__meta in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 114,
+      "detail": "app-topbar in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 115,
+      "detail": "app-topbar__leading in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 117,
+      "detail": "app-crumbs in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 118,
+      "detail": "app-crumbs__list in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 120,
+      "detail": "app-crumbs__item in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 125,
+      "detail": "app-crumbs__link in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 127,
+      "detail": "app-crumbs__current in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 135,
+      "detail": "app-topbar__search in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 149,
+      "detail": "app-topbar__controls in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 179,
+      "detail": "app-content in app"
+    }
+  ]
+}

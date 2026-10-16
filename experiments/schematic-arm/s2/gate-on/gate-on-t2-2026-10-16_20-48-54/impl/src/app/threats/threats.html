@@ -1,0 +1,33 @@
+<section class="threats">
+  <header class="threats__intro">
+    <h1 class="threats__title">Threats</h1>
+    <p class="threats__subtitle">Example watch list. Nothing here reflects a real threat.</p>
+    <p class="threats__summary" aria-live="polite">
+      {{ vm.openCount() }} open · {{ vm.seniorCount() }} need tier 4 clearance or higher
+    </p>
+  </header>
+
+  @for (group of vm.groups(); track group.tier) {
+    <section class="threats__tier" [attr.aria-labelledby]="'tier-' + group.tier">
+      <h2 class="threats__tier-title" [id]="'tier-' + group.tier">Tier {{ group.tier }}</h2>
+      <ul class="threats__grid">
+        @for (row of group.threats; track row.threat.id) {
+          <li class="threats__item">
+            <article hlmCard class="threats__card">
+              <div hlmCardHeader class="threats__head">
+                <p class="threats__code">{{ row.threat.id }}</p>
+                <h3 hlmCardTitle>{{ row.threat.name }}</h3>
+              </div>
+              <div hlmCardContent class="threats__body">
+                <span hlmBadge [variant]="row.badge">{{ row.threat.status }}</span>
+                <p class="threats__region">{{ row.threat.region }}</p>
+              </div>
+            </article>
+          </li>
+        }
+      </ul>
+    </section>
+  } @empty {
+    <p class="threats__empty">No threats on the watch list.</p>
+  }
+</section>

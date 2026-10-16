@@ -1,0 +1,101 @@
+@reference "../../styles.css";
+
+.heroes {
+  @apply grid min-w-0 grid-cols-1 gap-6;
+}
+
+.heroes__header {
+  @apply flex flex-wrap items-end justify-between gap-3;
+}
+
+.heroes__intro {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.heroes__title {
+  @apply text-2xl font-semibold tracking-tight text-foreground;
+}
+
+.heroes__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.heroes__filters {
+  @apply flex flex-wrap items-center gap-3;
+}
+
+.heroes__label {
+  @apply sr-only;
+}
+
+.heroes__search {
+  @apply flex w-full min-w-0 items-center gap-2 sm:w-80;
+}
+
+.heroes__search-icon {
+  @apply shrink-0 text-muted-foreground;
+}
+
+.heroes__search-input {
+  @apply min-w-0 flex-1;
+}
+
+.heroes__class-filter {
+  @apply w-full sm:w-48;
+}
+
+.heroes__class-trigger {
+  @apply w-full;
+}
+
+.heroes__table-wrap {
+  @apply min-w-0;
+}
+
+.heroes__table {
+  @apply min-w-[40rem];
+}
+
+.heroes__caption {
+  @apply sr-only;
+}
+
+.heroes__identity {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.heroes__names {
+  @apply flex min-w-0 flex-col;
+}
+
+.heroes__name {
+  @apply truncate font-medium text-foreground;
+}
+
+.heroes__id {
+  @apply text-xs text-muted-foreground;
+}
+
+.heroes__dot {
+  @apply inline-block size-2 shrink-0 rounded-full bg-muted-foreground;
+}
+
+.heroes__dot--active {
+  @apply bg-success;
+}
+
+.heroes__dot--injured {
+  @apply bg-warning;
+}
+
+.heroes__dot--reserve {
+  @apply bg-info;
+}
+
+.heroes__dot--mia {
+  @apply bg-destructive;
+}
+
+.heroes__footer {
+  @apply flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground;
+}

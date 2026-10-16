@@ -1,0 +1,61 @@
+@reference "../../styles.css";
+
+.threats {
+  @apply grid min-w-0 grid-cols-1 gap-6;
+}
+
+.threats__intro {
+  @apply grid min-w-0 gap-1;
+}
+
+.threats__title {
+  @apply text-2xl font-semibold tracking-tight text-foreground;
+}
+
+.threats__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.threats__summary {
+  @apply mt-2 text-sm text-foreground;
+}
+
+.threats__tier {
+  @apply grid min-w-0 gap-3;
+}
+
+.threats__tier-title {
+  @apply text-lg font-semibold text-foreground;
+}
+
+.threats__grid {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3;
+}
+
+.threats__item {
+  @apply min-w-0;
+}
+
+.threats__card {
+  @apply h-full;
+}
+
+.threats__head {
+  @apply grid gap-1;
+}
+
+.threats__code {
+  @apply text-xs font-medium text-muted-foreground;
+}
+
+.threats__body {
+  @apply grid justify-items-start gap-2;
+}
+
+.threats__region {
+  @apply break-words text-sm text-muted-foreground;
+}
+
+.threats__empty {
+  @apply text-sm text-muted-foreground;
+}

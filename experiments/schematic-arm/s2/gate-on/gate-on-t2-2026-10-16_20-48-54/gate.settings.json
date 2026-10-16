@@ -1,0 +1,23 @@
+{
+  "$comment": "Series 2 gate-ON condition (harness/bem-phase-2-gate-spec.md): every hook capstone-gate-on.settings.json registers, plus check-applied-appearance.mjs, the one gate series 2 adds. The series 1 file is left unchanged. protect-enforcement is present in both conditions and is an experimental control, not a gate. PostToolUse hooks are registered through $CLAUDE_PROJECT_DIR so they still load when the subject has cd'd into a subfolder; a relative path there fails to load, which Claude Code treats as a non-blocking error, so the gate would pass silently. The shared guard keeps its series 1 form in both arms.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/protect-enforcement.mjs" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/seal-templates.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-layout.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-component-shape.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-freeloader.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-applied-appearance.mjs\"" }
+        ]
+      }
+    ]
+  }
+}
