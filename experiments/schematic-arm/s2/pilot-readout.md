@@ -51,3 +51,9 @@ The drift is not where the series 2 design expected it. The new BEM rules were f
 ## Limits of this readout
 
 One trial. Cost is 30 percent above the series 1 gate-off mean ($0.97, 190 turns) for the same six stages; one trial cannot separate the house style from run-to-run variance.
+
+## Second pilot, on the fixed skill
+
+Run `gate-off-t1-2026-10-16_14-41-17`, substrate `dd3f29e` (the skill now states the variant remedy). Valid, $1.04 over 227 turns. bem 0, layout 0, shape 0, freeloader 0, seal (expanded) 11, all `appearance-on-primitive`: `px-2` on the sidebar header (2), `py-8` on empty-state table cells (3), `font-semibold` on table header and body cells (2), and `rounded-lg`, `rounded-full`, `shadow-sm`, `text-sm` on four other primitives. The run touched no file outside `src/` except the two control files: no variant was added to any primitive.
+
+The drift survives clear instructions. Told in the skill that a primitive's look changes only through a variant on the primitive, the model still styled primitives from the app stylesheet in 11 places and added no variant anywhere. Phase 2 proceeds, and this run, not the first pilot, is the gate-off reference for it.

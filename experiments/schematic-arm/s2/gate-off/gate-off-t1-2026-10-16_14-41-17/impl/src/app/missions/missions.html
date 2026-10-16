@@ -1,0 +1,58 @@
+<header class="missions__header">
+  <h1 class="missions__title">Missions</h1>
+  <p class="missions__subtitle">Deployments across the roster. Only Active heroes can deploy. Example data.</p>
+</header>
+
+<section class="missions__stats" aria-label="Mission summary">
+  <app-stat-tile label="Missions logged" [value]="vm.missionTotal()" hint="Across the roster, all time">
+    <ng-icon statIcon name="lucideActivity" />
+  </app-stat-tile>
+  <app-stat-tile label="Ready to deploy" [value]="vm.deployableCount()" hint="Active heroes">
+    <ng-icon statIcon name="lucideUserCheck" />
+  </app-stat-tile>
+  <app-stat-tile label="Average success" [value]="vm.averageSuccess() + '%'" hint="Across all heroes">
+    <ng-icon statIcon name="lucideCheck" />
+  </app-stat-tile>
+</section>
+
+<p class="missions__notice" role="status">{{ vm.notice() }}</p>
+
+<div class="missions__panel">
+  <div hlmTableContainer>
+    <table hlmTable aria-label="Mission ledger">
+      <thead hlmTableHeader>
+        <tr hlmTableRow>
+          <th hlmTableHead scope="col">Hero</th>
+          <th hlmTableHead scope="col" class="missions__num">Missions</th>
+          <th hlmTableHead scope="col" class="missions__num">Success</th>
+          <th hlmTableHead scope="col">Status</th>
+          <th hlmTableHead scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody hlmTableBody>
+        @for (hero of vm.heroes(); track hero.id) {
+          <tr hlmTableRow>
+            <td hlmTableCell>
+              <a class="missions__link" [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+            </td>
+            <td hlmTableCell class="missions__num">{{ hero.missionCount }}</td>
+            <td hlmTableCell class="missions__num">{{ hero.successRate }}%</td>
+            <td hlmTableCell>
+              <span hlmBadge variant="secondary">{{ hero.status }}</span>
+            </td>
+            <td hlmTableCell>
+              <button hlmBtn type="button" variant="outline" size="sm" [disabled]="hero.status !== 'Active'" (click)="vm.deploy(hero.id)">
+                <ng-icon name="lucideCrosshair" aria-hidden="true" />
+                Deploy
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTableRow>
+            <td hlmTableCell colspan="5" class="missions__empty">No heroes on the roster.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

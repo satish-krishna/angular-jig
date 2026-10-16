@@ -1,0 +1,25 @@
+@reference "../../../styles.css";
+
+.stat-tile__header {
+  @apply grid grid-cols-[1fr_auto] items-center gap-2;
+}
+
+.stat-tile__label {
+  @apply text-sm font-medium text-muted-foreground;
+}
+
+.stat-tile__icon {
+  @apply inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-primary;
+}
+
+.stat-tile__icon > ng-icon {
+  @apply size-4;
+}
+
+.stat-tile__value {
+  @apply tabular-nums;
+}
+
+.stat-tile__hint {
+  @apply mt-1 text-xs text-muted-foreground;
+}

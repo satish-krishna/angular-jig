@@ -1,0 +1,98 @@
+@reference "../../styles.css";
+
+:host {
+  @apply grid min-w-0 gap-6;
+}
+
+.heroes__header {
+  @apply flex min-w-0 flex-wrap items-end justify-between gap-4;
+}
+
+.heroes__title {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.heroes__sr-only {
+  @apply sr-only;
+}
+
+.heroes__toolbar {
+  @apply flex min-w-0 flex-wrap items-center gap-3;
+}
+
+.heroes__filters {
+  @apply flex min-w-0 flex-1 flex-wrap items-center gap-3;
+}
+
+.heroes__search {
+  @apply w-full sm:w-64;
+}
+
+.heroes__class {
+  @apply w-full sm:w-44;
+}
+
+.heroes__recruit {
+  @apply ms-auto shrink-0;
+}
+
+.heroes__panel {
+  @apply flex min-w-0 flex-col rounded-lg border border-border bg-card text-card-foreground shadow-sm;
+}
+
+.heroes__hero {
+  @apply flex items-center gap-3;
+}
+
+.heroes__avatar {
+  @apply shrink-0;
+}
+
+.heroes__identity {
+  @apply flex min-w-0 flex-col;
+}
+
+.heroes__name {
+  @apply font-medium text-foreground;
+}
+
+.heroes__id {
+  @apply text-xs text-muted-foreground;
+}
+
+.heroes__power {
+  @apply text-end font-semibold tabular-nums;
+}
+
+.heroes__actions {
+  @apply text-end;
+}
+
+.heroes__status {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-xs font-medium text-foreground;
+}
+
+.heroes__status::before {
+  @apply size-2 rounded-full bg-muted-foreground;
+  content: '';
+}
+
+.heroes__status--active::before {
+  background: var(--success);
+}
+
+.heroes__status--injured::before {
+  background: var(--warning);
+}
+
+.heroes__status--mia::before {
+  background: var(--destructive);
+}
+
+.heroes__empty {
+  @apply py-8 text-center text-muted-foreground;
+}
+
+.heroes__footer {
+  @apply flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-3 text-sm text-muted-foreground;
+}

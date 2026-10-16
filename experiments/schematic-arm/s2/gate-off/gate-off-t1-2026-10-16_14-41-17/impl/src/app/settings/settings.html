@@ -1,0 +1,28 @@
+<header class="settings__header">
+  <h1 class="settings__title">Settings</h1>
+  <p class="settings__subtitle">Console preferences and example data.</p>
+</header>
+
+<section hlmCard class="settings__card" aria-labelledby="settings-appearance">
+  <div hlmCardHeader>
+    <h2 hlmCardTitle id="settings-appearance">Appearance</h2>
+    <p hlmCardDescription>
+      The theme follows your system setting until you choose one. Use the sun or moon control in the top bar to switch;
+      the choice is remembered on this device.
+    </p>
+  </div>
+</section>
+
+<section hlmCard class="settings__card" aria-labelledby="settings-data">
+  <div hlmCardHeader>
+    <h2 hlmCardTitle id="settings-data">Example data</h2>
+    <p hlmCardDescription>
+      The roster holds {{ vm.rosterCount() }} heroes. Edits, recruits and retirements last until the page reloads.
+      Restore the example roster to discard them now.
+    </p>
+  </div>
+  <hlm-card-footer class="settings__footer">
+    <button hlmBtn variant="outline" type="button" (click)="vm.restoreExampleRoster()">Restore example roster</button>
+    <p class="settings__notice" role="status">{{ vm.notice() }}</p>
+  </hlm-card-footer>
+</section>

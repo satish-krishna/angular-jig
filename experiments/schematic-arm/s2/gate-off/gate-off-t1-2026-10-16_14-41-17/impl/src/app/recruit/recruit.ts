@@ -1,0 +1,33 @@
+import { Component, inject } from '@angular/core';
+import { FormField } from '@angular/forms/signals';
+import { RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideCheck, lucideChevronLeft } from '@ng-icons/lucide';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmInputImports } from '@spartan-ng/helm/input';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
+import { RecruitViewModel } from './recruit.view-model';
+
+@Component({
+  selector: 'app-recruit',
+  imports: [
+    FormField,
+    RouterLink,
+    NgIcon,
+    HlmButtonImports,
+    HlmFieldImports,
+    HlmInputImports,
+    HlmLabelImports,
+    HlmSelectImports,
+    HlmTextareaImports,
+  ],
+  providers: [RecruitViewModel, provideIcons({ lucideCheck, lucideChevronLeft })],
+  templateUrl: './recruit.html',
+  styleUrl: './recruit.css',
+})
+export class Recruit {
+  protected readonly vm = inject(RecruitViewModel);
+}

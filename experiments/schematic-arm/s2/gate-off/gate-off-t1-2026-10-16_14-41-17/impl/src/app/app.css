@@ -1,0 +1,79 @@
+@reference "../styles.css";
+
+.app__main {
+  @apply min-w-0;
+}
+
+.app__topbar {
+  @apply sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b bg-background px-4 py-3 sm:px-6;
+}
+
+.app__menu {
+  @apply shrink-0;
+}
+
+.app__crumbs {
+  @apply min-w-0 flex-1;
+}
+
+.app__crumb-list {
+  @apply flex flex-wrap items-center gap-2 text-sm text-muted-foreground;
+}
+
+.app__crumb + .app__crumb::before {
+  @apply me-2;
+  content: '/';
+}
+
+.app__crumb-link {
+  @apply hover:text-foreground;
+}
+
+.app__crumb--current {
+  @apply font-medium text-foreground;
+}
+
+/* Below sm the search takes a full line under the crumbs and actions; above, it sits inline. */
+.app__search {
+  @apply order-last w-full sm:order-none sm:w-64;
+}
+
+.app__actions {
+  @apply flex shrink-0 items-center gap-1;
+}
+
+.app__avatar {
+  @apply ms-1;
+}
+
+.app__content {
+  @apply grid min-w-0 gap-6 p-4 sm:p-6;
+}
+
+.app__brand {
+  @apply flex items-center gap-2 px-2 py-1;
+}
+
+.app__brand-icon {
+  @apply size-5 shrink-0 text-sidebar-primary;
+}
+
+.app__brand-name {
+  @apply text-sm font-semibold;
+}
+
+.app__account {
+  @apply flex items-center gap-3 px-2 py-1;
+}
+
+.app__account-text {
+  @apply flex min-w-0 flex-col;
+}
+
+.app__account-name {
+  @apply text-sm font-medium;
+}
+
+.app__account-role {
+  @apply text-xs text-sidebar-muted;
+}

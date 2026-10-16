@@ -1,0 +1,37 @@
+@reference "../../styles.css";
+
+:host {
+  @apply grid min-w-0 gap-6;
+}
+
+.recruit__back {
+  @apply justify-self-start;
+}
+
+.recruit__header {
+  @apply grid gap-1;
+}
+
+.recruit__title {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.recruit__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.recruit__form {
+  @apply grid min-w-0 gap-6 rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm sm:p-6;
+}
+
+.recruit__fields {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+.recruit__field--wide {
+  @apply sm:col-span-2;
+}
+
+.recruit__actions {
+  @apply flex flex-wrap justify-end gap-2;
+}

@@ -1,0 +1,50 @@
+<div hlmCard class="hero-card">
+  <div hlmCardHeader class="hero-card__header">
+    <div class="hero-card__identity">
+      <hlm-avatar size="lg">
+        <span hlmAvatarFallback>{{ initials() }}</span>
+      </hlm-avatar>
+      <div class="hero-card__names">
+        <h3 hlmCardTitle class="hero-card__name">{{ hero().name }}</h3>
+        <p hlmCardDescription class="hero-card__alias">{{ hero().alias }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__facts">
+      <div class="hero-card__fact">
+        <span class="hero-card__key">Class</span>
+        <span hlmBadge variant="outline">{{ hero().powerClass }}</span>
+      </div>
+      <div class="hero-card__fact">
+        <span class="hero-card__key">Status</span>
+        <span hlmBadge variant="secondary">
+          <span
+            class="hero-card__dot"
+            aria-hidden="true"
+            [class.hero-card__dot--active]="hero().status === 'Active'"
+            [class.hero-card__dot--injured]="hero().status === 'Injured'"
+            [class.hero-card__dot--reserve]="hero().status === 'Reserve'"
+            [class.hero-card__dot--mia]="hero().status === 'MIA'"
+          ></span>
+          {{ hero().status }}
+        </span>
+      </div>
+    </div>
+
+    <div class="hero-card__power">
+      <div class="hero-card__power-head">
+        <span class="hero-card__key">Power</span>
+        <span class="hero-card__power-value">{{ hero().powerIndex }}</span>
+      </div>
+      <app-power-meter [value]="hero().powerIndex" [label]="'Power index of ' + hero().name" />
+    </div>
+  </div>
+
+  <hlm-card-footer class="hero-card__footer">
+    <button hlmBtn variant="outline" size="sm" type="button" (click)="open.emit(hero().id)">
+      View dossier
+    </button>
+  </hlm-card-footer>
+</div>

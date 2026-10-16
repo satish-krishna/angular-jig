@@ -1,0 +1,10 @@
+<div
+  class="power-meter"
+  role="meter"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  [attr.aria-valuenow]="value()"
+  [attr.aria-label]="label()"
+>
+  <div class="power-meter__fill" [style.width.%]="value()"></div>
+</div>

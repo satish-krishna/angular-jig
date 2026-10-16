@@ -1,0 +1,38 @@
+<header class="threats__header">
+  <h1 class="threats__title">Threats</h1>
+  <p class="threats__subtitle" role="status">{{ vm.openCount() }} open of {{ vm.threats().length }} logged. Example data.</p>
+</header>
+
+<div class="threats__grid">
+  @for (threat of vm.threats(); track threat.id) {
+    <article hlmCard class="threats__card">
+      <div hlmCardHeader class="threats__card-head">
+        <div class="threats__card-title">
+          <h2 hlmCardTitle>{{ threat.title }}</h2>
+          <p hlmCardDescription>{{ threat.sector }}</p>
+        </div>
+        <span hlmBadge variant="outline">Tier {{ threat.tier }}</span>
+      </div>
+
+      <div hlmCardContent class="threats__card-body">
+        <span hlmBadge [variant]="threat.status === 'Open' ? 'destructive' : 'secondary'">{{ threat.status }}</span>
+        <p class="threats__summary">{{ threat.summary }}</p>
+
+        <div class="threats__assigned">
+          <span class="threats__label">Assigned</span>
+          <ul class="threats__heroes" aria-label="Assigned heroes">
+            @for (hero of threat.heroes; track hero.id) {
+              <li>
+                <a hlmBtn variant="outline" size="sm" [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+              </li>
+            } @empty {
+              <li class="threats__none">No heroes assigned</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </article>
+  } @empty {
+    <p class="threats__none">No threats logged.</p>
+  }
+</div>

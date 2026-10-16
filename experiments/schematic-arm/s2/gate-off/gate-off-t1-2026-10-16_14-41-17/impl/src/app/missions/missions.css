@@ -1,0 +1,41 @@
+@reference "../../styles.css";
+
+:host {
+  @apply grid min-w-0 gap-6;
+}
+
+.missions__header {
+  @apply grid gap-1;
+}
+
+.missions__title {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.missions__subtitle {
+  @apply text-sm text-muted-foreground;
+}
+
+.missions__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-3;
+}
+
+.missions__notice {
+  @apply min-h-5 text-sm text-muted-foreground;
+}
+
+.missions__panel {
+  @apply flex min-w-0 flex-col rounded-lg border border-border bg-card text-card-foreground shadow-sm;
+}
+
+.missions__num {
+  @apply text-end tabular-nums;
+}
+
+.missions__link {
+  @apply font-medium text-foreground underline-offset-4 hover:underline;
+}
+
+.missions__empty {
+  @apply py-8 text-center text-muted-foreground;
+}
