@@ -36,7 +36,11 @@ All 13 violations are one series 1 rule, `appearance-on-primitive`, which the te
 
 Example: `<div hlmSidebarHeader class="app__brand">` with `.app__brand { @apply flex items-center gap-2 px-2 py-3 font-semibold text-sidebar-foreground; }`. The counter reports the first appearance utility per element, so `py-3`, `font-semibold` and `text-sidebar-foreground` on the same element are inside the one violation.
 
-None of the four series 1 runs had a single `appearance-on-primitive`. With utilities written beside the primitive in the template, the model kept padding, radius and typography off it; with the same utilities behind a BEM name in another file, it put them on in 13 places. Some are arguable on design grounds (`ps-9` makes room for a search icon, `py-6` pads an empty-state cell), but every one is a violation of the house rule as written and as counted in series 1.
+None of the four series 1 runs had a single `appearance-on-primitive`. With utilities written beside the primitive in the template, the model kept padding, radius and typography off it; with the same utilities behind a BEM name in another file, it put them on in 13 places. All 13 stand as violations (owner ruling, 2026-10-16): even the ones with a design reason (`ps-9` to make room for a search icon, `py-6` on an empty-state cell) belong on the primitive as a variant in `libs/ui`, selected with its `variant` input, not in the app's stylesheet.
+
+## Substrate change after the pilot
+
+The house-style skill told the model that a primitive's color and typography come from its `variant`/`size` inputs, but not what to do when no variant fits. The remedy (edit the owned copy in `libs/ui` and add a variant) was only in `harness/rules/no-appearance-on-primitive.md`, which reaches the subject only through the gate-on hooks. Left as is, phase 2's gate-on arm would get the remedy and gate-off would not, so the arms would differ in information as well as enforcement. The skill now states it (`substrate/schematic-arm-2` at `dd3f29e`, both skill copies). This pilot ran on `88bff10`, before that change, and is a pre-series run: it decided whether phase 2 is built, and it is not one of phase 2's trials.
 
 ## Decision
 
