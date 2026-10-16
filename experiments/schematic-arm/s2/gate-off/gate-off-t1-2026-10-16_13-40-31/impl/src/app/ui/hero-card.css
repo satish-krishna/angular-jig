@@ -1,0 +1,15 @@
+@reference "../../styles.css";
+
+.hero-card { @apply h-full min-w-0; }
+.hero-card__header { @apply min-w-0; }
+.hero-card__identity { @apply flex min-w-0 items-center gap-3; }
+.hero-card__avatar { @apply shrink-0; }
+.hero-card__names { @apply grid min-w-0 gap-0.5; }
+.hero-card__name { @apply wrap-break-word; }
+.hero-card__alias { @apply wrap-break-word; }
+.hero-card__body { @apply grid gap-4; }
+.hero-card__meta { @apply flex flex-wrap items-center gap-2; }
+.hero-card__dot { @apply inline-block size-2 shrink-0 rounded-full; background: var(--muted-foreground); }
+.hero-card__dot[data-status='Active'] { background: var(--success); }
+.hero-card__dot[data-status='Injured'] { background: var(--warning); }
+.hero-card__dot[data-status='MIA'] { background: var(--destructive); }

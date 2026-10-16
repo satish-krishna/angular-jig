@@ -1,0 +1,78 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 class="missions__title">Missions</h1>
+    <p class="missions__lede">Every deployment on record, newest first. Deploying from a hero's detail screen logs here.</p>
+  </header>
+
+  <div class="missions__stats">
+    <app-stat-tile label="Missions logged" [value]="vm.total()">
+      <ng-icon name="lucideTarget" aria-hidden="true" />
+    </app-stat-tile>
+    <app-stat-tile label="In field" [value]="vm.inFieldCount()" hint="deployed now">
+      <ng-icon name="lucideActivity" aria-hidden="true" />
+    </app-stat-tile>
+    <app-stat-tile label="Clean success" [value]="vm.successRate() + '%'" hint="of resolved missions">
+      <ng-icon name="lucideCheck" aria-hidden="true" />
+    </app-stat-tile>
+  </div>
+
+  <section class="missions__panel" aria-label="Mission log">
+    <div class="missions__filters">
+      <span id="mission-result-label" class="missions__filter-label">Result</span>
+      <hlm-select
+        class="missions__result-filter"
+        [value]="vm.resultFilter()"
+        (valueChange)="vm.setResultFilter($event)"
+      >
+        <hlm-select-trigger aria-labelledby="mission-result-label">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-item value="all">All results</hlm-select-item>
+          @for (result of vm.resultOptions; track result) {
+            <hlm-select-item [value]="result">{{ result }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmTableContainer class="missions__table-wrap">
+      <table hlmTable>
+        <caption hlmTableCaption class="missions__sr-only">Missions, newest first</caption>
+        <thead hlmTableHeader>
+          <tr hlmTableRow>
+            <th hlmTableHead scope="col">Mission</th>
+            <th hlmTableHead scope="col">Hero</th>
+            <th hlmTableHead scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody hlmTableBody>
+          @for (row of vm.rows(); track row.id) {
+            <tr hlmTableRow>
+              <td hlmTableCell>
+                <div class="missions__mission">
+                  <span class="missions__name">{{ row.title }}</span>
+                  <span class="missions__id">{{ row.id }}</span>
+                </div>
+              </td>
+              <td hlmTableCell>
+                @if (row.heroName) {
+                  <a class="missions__hero-link" [routerLink]="['/detail', row.heroId]">{{ row.heroName }}</a>
+                } @else {
+                  <span class="missions__id">Retired hero</span>
+                }
+              </td>
+              <td hlmTableCell>
+                <span hlmBadge [variant]="row.variant">{{ row.result }}</span>
+              </td>
+            </tr>
+          } @empty {
+            <tr hlmTableRow>
+              <td hlmTableCell colspan="3" class="missions__empty">No missions match this result.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

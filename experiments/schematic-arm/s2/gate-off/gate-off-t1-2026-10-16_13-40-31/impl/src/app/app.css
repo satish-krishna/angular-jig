@@ -1,0 +1,82 @@
+@reference "../styles.css";
+
+.app {
+  @apply min-w-0;
+}
+
+.app__main {
+  @apply min-w-0;
+}
+
+.app__brand {
+  @apply flex items-center gap-2 px-2 py-3 font-semibold text-sidebar-foreground;
+}
+
+.app__brand-icon {
+  @apply size-5 shrink-0 text-sidebar-primary;
+}
+
+.app__footer {
+  @apply px-2 pb-3;
+}
+
+.app__footer-note {
+  @apply text-xs;
+  color: var(--sidebar-muted);
+}
+
+.app__topbar {
+  @apply sticky top-0 z-10 flex min-w-0 flex-wrap items-center gap-3 border-b border-border bg-background px-4 py-3 md:px-6;
+}
+
+.app__menu {
+  @apply shrink-0;
+}
+
+.app__crumbs {
+  @apply min-w-0 flex-1;
+}
+
+.app__crumb-list {
+  @apply flex flex-wrap items-center gap-1 text-sm text-muted-foreground;
+}
+
+.app__crumb {
+  @apply flex items-center gap-1;
+}
+
+.app__crumb-link {
+  @apply underline-offset-4 hover:text-foreground hover:underline;
+}
+
+.app__crumb-current {
+  @apply font-medium text-foreground;
+}
+
+.app__crumb-sep {
+  @apply size-4 shrink-0 text-muted-foreground;
+}
+
+.app__search {
+  @apply relative order-last w-full basis-full sm:order-none sm:w-64 sm:basis-auto;
+}
+
+.app__search-icon {
+  @apply pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground;
+}
+
+.app__search-input {
+  @apply ps-9;
+}
+
+.app__actions {
+  @apply ms-auto flex shrink-0 items-center gap-2;
+}
+
+.app__avatar {
+  @apply shrink-0;
+}
+
+.app__content {
+  @apply min-w-0 flex-1 p-4 md:p-6;
+}

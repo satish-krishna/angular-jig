@@ -1,0 +1,91 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "appearance-on-primitive": 13,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "unknown-primitive": 0,
+    "missing-composition-part": 0,
+    "all": 13
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 3,
+      "detail": "appearance class px-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 34,
+      "detail": "appearance class px-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 62,
+      "detail": "appearance class ps-9 on primitive input"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/dashboard/dashboard.html",
+      "line": 44,
+      "detail": "appearance class rounded-md on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 67,
+      "detail": "appearance class pt-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 100,
+      "detail": "appearance class pt-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 122,
+      "detail": "appearance class pt-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 141,
+      "detail": "appearance class pt-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 11,
+      "detail": "appearance class ps-9 on primitive input"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 45,
+      "detail": "appearance class rounded-md on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 99,
+      "detail": "appearance class py-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/missions/missions.html",
+      "line": 39,
+      "detail": "appearance class rounded-md on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/missions/missions.html",
+      "line": 71,
+      "detail": "appearance class py-6 on primitive td"
+    }
+  ]
+}

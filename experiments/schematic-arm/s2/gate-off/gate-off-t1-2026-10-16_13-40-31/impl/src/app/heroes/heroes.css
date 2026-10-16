@@ -1,0 +1,26 @@
+@reference "../../styles.css";
+
+.heroes { @apply grid gap-6; }
+.heroes__header { @apply flex flex-wrap items-center justify-between gap-4; }
+.heroes__title { @apply text-2xl font-semibold tracking-tight wrap-break-word; }
+.heroes__panel { @apply grid min-w-0 gap-4 rounded-lg border border-border bg-card p-4 shadow-sm; }
+.heroes__filters { @apply flex flex-wrap items-center gap-3; }
+.heroes__sr-only { @apply sr-only; }
+.heroes__search { @apply relative w-full sm:w-72; }
+.heroes__search-icon { @apply pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground; }
+.heroes__search-input { @apply w-full ps-9; }
+.heroes__class-filter { @apply w-full sm:w-48; }
+.heroes__recruit { @apply ms-auto; }
+.heroes__table-wrap { @apply min-w-0 rounded-md border border-border; }
+.heroes__identity { @apply flex min-w-0 items-center gap-3; }
+.heroes__avatar { @apply shrink-0; }
+.heroes__names { @apply grid min-w-0 gap-0.5; }
+.heroes__name { @apply font-medium wrap-break-word; }
+.heroes__id { @apply text-xs text-muted-foreground wrap-break-word; }
+.heroes__num { @apply text-end tabular-nums; }
+.heroes__empty { @apply py-6 text-center text-muted-foreground; }
+.heroes__dot { @apply inline-block size-2 shrink-0 rounded-full; background: var(--muted-foreground); }
+.heroes__dot[data-status='Active'] { background: var(--success); }
+.heroes__dot[data-status='Injured'] { background: var(--warning); }
+.heroes__dot[data-status='MIA'] { background: var(--destructive); }
+.heroes__footer { @apply flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground; }

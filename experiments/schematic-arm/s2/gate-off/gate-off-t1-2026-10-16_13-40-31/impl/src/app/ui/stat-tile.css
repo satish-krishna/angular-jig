@@ -1,0 +1,9 @@
+@reference "../../styles.css";
+
+.stat-tile { @apply h-full min-w-0; }
+.stat-tile__body { @apply grid gap-3; }
+.stat-tile__head { @apply flex items-center justify-between gap-3; }
+.stat-tile__label { @apply min-w-0 text-sm text-muted-foreground wrap-break-word; }
+.stat-tile__icon { @apply inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground; }
+.stat-tile__value { @apply text-3xl font-semibold tabular-nums; }
+.stat-tile__hint { @apply justify-self-start; }

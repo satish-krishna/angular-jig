@@ -1,0 +1,38 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 class="threats__title">Threats</h1>
+    <p class="threats__lede">Hazards the agency is tracking. Example data: nothing here is a live incident.</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile label="Open threats" [value]="vm.openCount" hint="not yet contained">
+      <ng-icon name="lucideShieldAlert" aria-hidden="true" />
+    </app-stat-tile>
+    <app-stat-tile label="Escalating" [value]="vm.escalatingCount" hint="needs a response">
+      <ng-icon name="lucideTriangleAlert" aria-hidden="true" />
+    </app-stat-tile>
+    <app-stat-tile label="Highest tier" [value]="'Tier ' + vm.highestTier" hint="of 5">
+      <ng-icon name="lucideRadar" aria-hidden="true" />
+    </app-stat-tile>
+  </div>
+
+  <ul class="threats__grid" aria-label="Threat board">
+    @for (threat of vm.threats; track threat.id) {
+      <li>
+        <article hlmCard class="threats__card">
+          <div hlmCardHeader class="threats__card-header">
+            <h2 hlmCardTitle class="threats__card-title">{{ threat.name }}</h2>
+            <p hlmCardDescription>{{ threat.region }} · {{ threat.id }}</p>
+          </div>
+          <div hlmCardContent class="threats__card-body">
+            <div class="threats__badges">
+              <span hlmBadge variant="outline">Tier {{ threat.tier }}</span>
+              <span hlmBadge [variant]="vm.statusVariant(threat.status)">{{ threat.status }}</span>
+            </div>
+            <p class="threats__summary">{{ threat.summary }}</p>
+          </div>
+        </article>
+      </li>
+    }
+  </ul>
+</section>

@@ -1,0 +1,25 @@
+<article hlmCard class="hero-card">
+  <div hlmCardHeader class="hero-card__header">
+    <div class="hero-card__identity">
+      <hlm-avatar class="hero-card__avatar" aria-hidden="true">
+        <span hlmAvatarFallback>{{ initials() }}</span>
+      </hlm-avatar>
+      <div class="hero-card__names">
+        <h3 hlmCardTitle class="hero-card__name">{{ hero().name }}</h3>
+        <p hlmCardDescription class="hero-card__alias">{{ hero().id }} · {{ hero().alias }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__meta">
+      <span hlmBadge variant="outline">{{ hero().powerClass }}</span>
+      <span hlmBadge variant="secondary">
+        <span class="hero-card__dot" [attr.data-status]="hero().status" aria-hidden="true"></span>
+        {{ hero().status }}
+      </span>
+    </div>
+
+    <app-power-meter [value]="hero().powerIndex" [label]="hero().name + ' power index'" />
+  </div>
+</article>

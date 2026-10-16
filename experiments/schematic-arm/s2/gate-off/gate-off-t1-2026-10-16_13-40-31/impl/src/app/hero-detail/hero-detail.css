@@ -1,0 +1,48 @@
+@reference "../../styles.css";
+
+.hero-detail { @apply grid min-w-0 gap-6; }
+.hero-detail__back { @apply justify-self-start; }
+
+.hero-detail__header { @apply flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between; }
+.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
+.hero-detail__avatar { @apply shrink-0; }
+.hero-detail__names { @apply grid min-w-0 gap-1; }
+.hero-detail__id { @apply text-xs font-medium tabular-nums text-muted-foreground; }
+.hero-detail__title { @apply text-2xl font-semibold wrap-break-word; }
+.hero-detail__alias { @apply text-sm wrap-break-word text-muted-foreground; }
+.hero-detail__badges { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__dot { @apply inline-block size-2 shrink-0 rounded-full; background: var(--muted-foreground); }
+.hero-detail__dot[data-status='Active'] { background: var(--success); }
+.hero-detail__dot[data-status='Injured'] { background: var(--warning); }
+.hero-detail__dot[data-status='MIA'] { background: var(--destructive); }
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+
+.hero-detail__notice { @apply min-h-5 text-sm text-muted-foreground; }
+
+.hero-detail__tabs { @apply w-full min-w-0; }
+.hero-detail__tab-list { @apply max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply grid min-w-0 gap-6 pt-2; }
+
+.hero-detail__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.hero-detail__columns { @apply grid grid-cols-1 gap-6 lg:grid-cols-2; }
+.hero-detail__section { @apply grid min-w-0 content-start gap-3; }
+.hero-detail__heading { @apply text-lg font-semibold; }
+.hero-detail__text { @apply text-sm wrap-break-word text-muted-foreground; }
+.hero-detail__note { @apply text-xs text-muted-foreground; }
+
+.hero-detail__facts { @apply grid gap-2; }
+.hero-detail__fact { @apply flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border pb-2; }
+.hero-detail__term { @apply text-sm text-muted-foreground; }
+.hero-detail__definition { @apply text-sm font-medium wrap-break-word; }
+
+.hero-detail__log { @apply grid gap-2; }
+.hero-detail__log-item { @apply flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3; }
+.hero-detail__log-title { @apply min-w-0 text-sm wrap-break-word; }
+
+.hero-detail__form { @apply grid min-w-0 gap-6; }
+.hero-detail__fields { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.hero-detail__wide { @apply sm:col-span-2; }
+.hero-detail__switch { @apply flex items-center gap-3; }
+.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2; }
+
+.hero-detail__missing { @apply grid gap-2; }

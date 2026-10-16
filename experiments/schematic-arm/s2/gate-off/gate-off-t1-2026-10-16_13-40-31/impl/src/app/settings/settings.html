@@ -1,0 +1,32 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 class="settings__title">Settings</h1>
+    <p class="settings__lede">Console preferences. The theme choice is remembered on this device.</p>
+  </header>
+
+  <section class="settings__panel" aria-labelledby="settings-appearance-heading">
+    <h2 id="settings-appearance-heading" class="settings__heading">Appearance</h2>
+    <hlm-field class="settings__field">
+      <label hlmFieldLabel id="settings-theme-label">Theme</label>
+      <hlm-select [value]="vm.preference()" (valueChange)="vm.setPreference($event)">
+        <hlm-select-trigger aria-labelledby="settings-theme-label">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.preferenceOptions; track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+      <p hlmFieldDescription>"Match system" follows your operating system's light or dark setting.</p>
+    </hlm-field>
+  </section>
+
+  <section class="settings__panel" aria-labelledby="settings-data-heading">
+    <h2 id="settings-data-heading" class="settings__heading">Data</h2>
+    <p class="settings__text">
+      The roster is example data held in memory: {{ vm.rosterCount() }} heroes. Edits, recruits and
+      deployments last until the page is reloaded.
+    </p>
+  </section>
+</section>

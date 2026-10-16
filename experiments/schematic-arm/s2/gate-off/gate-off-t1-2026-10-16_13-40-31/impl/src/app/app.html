@@ -1,0 +1,107 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader class="app__brand">
+      <ng-icon name="lucideCrosshair" class="app__brand-icon" aria-hidden="true" />
+      <span>Hero Ops Console</span>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Primary">
+        <div hlmSidebarGroup>
+          <div hlmSidebarGroupLabel>Operations</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (item of vm.navItems; track item.path) {
+                <li hlmSidebarMenuItem>
+                  <a
+                    hlmSidebarMenuButton
+                    [routerLink]="item.path"
+                    routerLinkActive
+                    #active="routerLinkActive"
+                    [isActive]="active.isActive"
+                  >
+                    <ng-icon [name]="item.icon" aria-hidden="true" />
+                    <span>{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter class="app__footer">
+      <p class="app__footer-note">Example data: demo console</p>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <header class="app__topbar">
+      <button hlmSidebarTrigger class="app__menu"></button>
+
+      <nav aria-label="Breadcrumb" class="app__crumbs">
+        <ol class="app__crumb-list">
+          @for (crumb of vm.crumbs(); track $index; let last = $last) {
+            <li class="app__crumb">
+              @if (last || !crumb.path) {
+                <span class="app__crumb-current" aria-current="page">{{ crumb.label }}</span>
+              } @else {
+                <a class="app__crumb-link" [routerLink]="crumb.path">{{ crumb.label }}</a>
+              }
+              @if (!last) {
+                <ng-icon name="lucideChevronRight" class="app__crumb-sep" aria-hidden="true" />
+              }
+            </li>
+          }
+        </ol>
+      </nav>
+
+      <div class="app__search">
+        <ng-icon name="lucideSearch" class="app__search-icon" aria-hidden="true" />
+        <input
+          hlmInput
+          #search
+          type="search"
+          class="app__search-input"
+          placeholder="Search heroes"
+          aria-label="Search heroes"
+          (search)="vm.search(search.value)"
+        />
+      </div>
+
+      <div class="app__actions">
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          hlmTooltip="Notifications"
+          aria-label="Notifications"
+        >
+          <ng-icon name="lucideBell" aria-hidden="true" />
+        </button>
+
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          [hlmTooltip]="vm.themeLabel()"
+          [attr.aria-label]="vm.themeLabel()"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon [name]="vm.themeIcon()" aria-hidden="true" />
+        </button>
+
+        <hlm-avatar class="app__avatar" role="img" aria-label="Signed-in commander">
+          <span hlmAvatarFallback>CO</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

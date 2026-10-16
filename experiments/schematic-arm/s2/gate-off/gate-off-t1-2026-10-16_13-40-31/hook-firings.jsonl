@@ -1,0 +1,6 @@
+{"hook":"protect-enforcement","file":"package.json, tsconfig.json","count":1,"messages":["Bash blocked on: package.json, tsconfig.json"],"ts":"2026-10-16T13:49:55.606Z"}
+{"hook":"protect-enforcement","file":"tsconfig.app.json","count":1,"messages":["Bash blocked on: tsconfig.app.json"],"ts":"2026-10-16T13:50:40.908Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-16T13:51:41.126Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-16T13:55:35.757Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-16T14:02:26.151Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-16T14:07:48.271Z"}

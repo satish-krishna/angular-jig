@@ -1,0 +1,14 @@
+<article hlmCard class="stat-tile">
+  <div hlmCardContent class="stat-tile__body">
+    <div class="stat-tile__head">
+      <span class="stat-tile__label">{{ label() }}</span>
+      <span class="stat-tile__icon">
+        <ng-content select="ng-icon" />
+      </span>
+    </div>
+    <p class="stat-tile__value">{{ value() }}</p>
+    @if (hint()) {
+      <span hlmBadge variant="secondary" class="stat-tile__hint">{{ hint() }}</span>
+    }
+  </div>
+</article>
