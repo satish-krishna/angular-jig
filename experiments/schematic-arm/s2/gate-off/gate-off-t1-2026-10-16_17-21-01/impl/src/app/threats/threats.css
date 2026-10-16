@@ -1,0 +1,41 @@
+@reference "../../styles.css";
+
+.threats {
+  @apply grid gap-6;
+}
+
+.threats__heading {
+  @apply grid gap-1;
+}
+
+.threats__title {
+  @apply text-2xl font-bold tracking-tight text-foreground;
+}
+
+.threats__note {
+  @apply text-sm text-muted-foreground;
+}
+
+.threats__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.threats__list {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+}
+
+.threats__item {
+  @apply list-none;
+}
+
+.threats__body {
+  @apply grid gap-3;
+}
+
+.threats__badges {
+  @apply flex flex-wrap gap-2;
+}
+
+.threats__summary {
+  @apply text-sm text-muted-foreground;
+}

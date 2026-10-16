@@ -1,0 +1,121 @@
+<section class="heroes">
+  <header class="heroes__header">
+    <div class="heroes__heading">
+      <h1 class="heroes__title">Roster</h1>
+      <p class="heroes__note">Example data. Not a live feed.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit" class="heroes__recruit">
+      <ng-icon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="heroes__filters" role="search">
+    <label hlmLabel for="heroes-search" class="heroes__sr-only">Search heroes</label>
+    <div class="heroes__search-field">
+      <ng-icon name="lucideSearch" class="heroes__search-icon" aria-hidden="true" />
+      <input
+        #search
+        hlmInput
+        id="heroes-search"
+        type="search"
+        class="heroes__search"
+        placeholder="Name, alias or ID"
+        [value]="vm.query()"
+        (input)="vm.setQuery(search.value)"
+      />
+    </div>
+
+    <label hlmLabel for="heroes-class-filter" class="heroes__sr-only">Filter by class</label>
+    <hlm-select
+      class="heroes__class-filter"
+      [value]="vm.classFilter()"
+      (valueChange)="vm.setClassFilter($event)"
+    >
+      <hlm-select-trigger buttonId="heroes-class-filter">
+        <hlm-select-value placeholder="All classes" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.classOptions; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </div>
+
+  <div hlmTableContainer class="heroes__table">
+    <table hlmTable>
+      <caption hlmTableCaption class="heroes__sr-only">
+        Heroes on the roster, strongest first
+      </caption>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh scope="col">Hero</th>
+          <th hlmTh scope="col">Class</th>
+          <th hlmTh scope="col">Power</th>
+          <th hlmTh scope="col">Status</th>
+          <th hlmTh scope="col">Clearance</th>
+          <th hlmTh scope="col" class="heroes__actions-head">
+            <span class="heroes__sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (hero of vm.visible(); track hero.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="heroes__identity">
+                <hlm-avatar class="heroes__avatar">
+                  <span hlmAvatarFallback>{{ vm.initialsFor(hero) }}</span>
+                </hlm-avatar>
+                <div class="heroes__names">
+                  <span class="heroes__name">{{ hero.name }}</span>
+                  <span class="heroes__id">{{ hero.id }} · {{ hero.alias }}</span>
+                </div>
+              </div>
+            </td>
+            <td hlmTd>
+              <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
+            </td>
+            <td hlmTd class="heroes__power">{{ hero.powerIndex }}</td>
+            <td hlmTd>
+              <span hlmBadge variant="outline" class="heroes__status">
+                <span
+                  class="heroes__dot"
+                  [class.heroes__dot--active]="hero.status === 'Active'"
+                  [class.heroes__dot--injured]="hero.status === 'Injured'"
+                  [class.heroes__dot--reserve]="hero.status === 'Reserve'"
+                  [class.heroes__dot--mia]="hero.status === 'MIA'"
+                ></span>
+                {{ hero.status }}
+              </span>
+            </td>
+            <td hlmTd class="heroes__clearance">T{{ hero.clearanceTier }}</td>
+            <td hlmTd class="heroes__actions">
+              <button
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                type="button"
+                [attr.aria-label]="'Edit ' + hero.name"
+                [hlmTooltip]="'Edit ' + hero.name"
+                (click)="openHero(hero)"
+              >
+                <ng-icon name="lucidePencil" />
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6" class="heroes__empty">No heroes match these filters.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="heroes__footer">
+    <p class="heroes__count">{{ vm.visibleCount() }} of {{ vm.totalCount() }} heroes</p>
+    <p class="heroes__sort">Sorted by power, strongest first</p>
+  </footer>
+</section>

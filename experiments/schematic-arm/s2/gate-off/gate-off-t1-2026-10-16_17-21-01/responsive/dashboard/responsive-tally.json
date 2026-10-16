@@ -1,0 +1,70 @@
+{
+  "totals": {
+    "viewport-escape": 0,
+    "element-escape": 0,
+    "element-clip": 7,
+    "all": 7
+  },
+  "byBreakpoint": {
+    "375": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "768": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "1280": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 7
+    }
+  },
+  "violations": [
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.no-scrollbar.gap-2 > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 255x34 clipped to 255x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.no-scrollbar.gap-2 > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 255x34 clipped to 255x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.no-scrollbar.gap-2 > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 255x34 clipped to 255x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.no-scrollbar.gap-2 > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 255x34 clipped to 255x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.no-scrollbar.gap-2 > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 255x34 clipped to 255x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-card.ring-foreground/10.bg-card > hlm-card-header.gap-1.rounded-t-xl > div.hero-card__identity > div.hero-card__names > p.text-muted-foreground.text-sm",
+      "detail": "content 134x20 clipped to 132x20"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "hlm-card.ring-foreground/10.bg-card > hlm-card-header.gap-1.rounded-t-xl > div.hero-card__identity > div.hero-card__names > p.text-muted-foreground.text-sm",
+      "detail": "content 159x20 clipped to 132x20"
+    }
+  ],
+  "bootErrors": []
+}

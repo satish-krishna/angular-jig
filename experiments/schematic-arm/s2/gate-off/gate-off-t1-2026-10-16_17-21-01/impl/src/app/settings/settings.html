@@ -1,0 +1,32 @@
+<section class="settings">
+  <header class="settings__heading">
+    <h1 class="settings__title">Settings</h1>
+    <p class="settings__note">Console preferences and example data. Example data only.</p>
+  </header>
+
+  <section hlmCard>
+    <div hlmCardHeader>
+      <h2 hlmCardTitle>Appearance</h2>
+      <p hlmCardDescription>
+        Switch between light and dark with the theme button in the top bar. The choice is
+        remembered in this browser; until you pick one, the system setting decides.
+      </p>
+    </div>
+  </section>
+
+  <section hlmCard>
+    <div hlmCardHeader>
+      <h2 hlmCardTitle>Example roster</h2>
+      <p hlmCardDescription>
+        The roster holds {{ vm.rosterCount() }} example heroes. Edits, recruits and retirements last
+        only until the page is reloaded; use reset to restore the original roster now.
+      </p>
+    </div>
+    <div hlmCardContent class="settings__actions">
+      <button hlmBtn variant="outline" type="button" (click)="vm.resetRoster()">Reset roster</button>
+      @if (vm.notice()) {
+        <p class="settings__notice" role="status">{{ vm.notice() }}</p>
+      }
+    </div>
+  </section>
+</section>

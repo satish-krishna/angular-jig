@@ -1,0 +1,61 @@
+@reference "../../styles.css";
+
+.dashboard {
+  @apply grid gap-8;
+}
+
+.dashboard__header {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.dashboard__heading {
+  @apply grid gap-1;
+}
+
+.dashboard__title {
+  @apply text-2xl font-bold tracking-tight text-foreground;
+}
+
+.dashboard__note {
+  @apply text-sm text-muted-foreground;
+}
+
+.dashboard__recruit {
+  @apply shrink-0;
+}
+
+.dashboard__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.dashboard__section {
+  @apply grid gap-4;
+}
+
+.dashboard__section-header {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.dashboard__section-title {
+  @apply text-lg font-semibold text-foreground;
+}
+
+.dashboard__hero-grid {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4;
+}
+
+.dashboard__status-grid {
+  @apply grid grid-cols-2 gap-4 lg:grid-cols-4;
+}
+
+.dashboard__status {
+  @apply grid gap-1 rounded-lg border border-border bg-card p-4 shadow-sm;
+}
+
+.dashboard__status-label {
+  @apply text-sm text-muted-foreground;
+}
+
+.dashboard__status-count {
+  @apply text-2xl font-bold tabular-nums text-foreground;
+}

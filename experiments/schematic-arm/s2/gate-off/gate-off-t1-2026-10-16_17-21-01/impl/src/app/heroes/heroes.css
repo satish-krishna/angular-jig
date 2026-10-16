@@ -1,0 +1,122 @@
+@reference "../../styles.css";
+
+.heroes {
+  @apply grid gap-6;
+}
+
+.heroes__header {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.heroes__heading {
+  @apply grid gap-1;
+}
+
+.heroes__title {
+  @apply text-2xl font-bold tracking-tight text-foreground;
+}
+
+.heroes__note {
+  @apply text-sm text-muted-foreground;
+}
+
+.heroes__recruit {
+  @apply shrink-0;
+}
+
+.heroes__sr-only {
+  @apply sr-only;
+}
+
+.heroes__filters {
+  @apply flex flex-wrap items-center gap-3;
+}
+
+.heroes__search-field {
+  @apply flex w-full items-center gap-2 sm:w-72;
+}
+
+.heroes__search-icon {
+  @apply size-4 shrink-0 text-muted-foreground;
+}
+
+.heroes__search {
+  @apply min-w-0 flex-1;
+}
+
+.heroes__class-filter {
+  @apply w-full sm:w-48;
+}
+
+.heroes__table {
+  @apply rounded-lg border border-border bg-card shadow-sm;
+}
+
+.heroes__actions-head {
+  @apply w-12;
+}
+
+.heroes__identity {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.heroes__avatar {
+  @apply size-8 shrink-0;
+}
+
+.heroes__names {
+  @apply flex min-w-0 flex-col;
+}
+
+.heroes__name {
+  @apply font-medium text-foreground;
+}
+
+.heroes__id {
+  @apply text-xs text-muted-foreground;
+}
+
+.heroes__power,
+.heroes__clearance {
+  @apply font-semibold tabular-nums;
+}
+
+.heroes__status {
+  @apply gap-1.5;
+}
+
+.heroes__dot {
+  @apply size-2 shrink-0 rounded-full bg-muted-foreground;
+}
+
+.heroes__dot--active {
+  @apply bg-success;
+}
+
+.heroes__dot--injured {
+  @apply bg-warning;
+}
+
+.heroes__dot--reserve {
+  @apply bg-info;
+}
+
+.heroes__dot--mia {
+  @apply bg-destructive;
+}
+
+.heroes__actions {
+  @apply text-end;
+}
+
+.heroes__empty {
+  @apply py-6 text-center text-muted-foreground;
+}
+
+.heroes__footer {
+  @apply flex flex-wrap justify-between gap-2 text-sm text-muted-foreground;
+}
+
+.heroes__count {
+  @apply font-medium text-foreground;
+}

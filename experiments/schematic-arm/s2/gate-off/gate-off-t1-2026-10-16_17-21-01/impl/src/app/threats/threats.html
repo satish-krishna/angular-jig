@@ -1,0 +1,42 @@
+<section class="threats">
+  <header class="threats__heading">
+    <h1 class="threats__title">Threats</h1>
+    <p class="threats__note">Open threats by tier, highest first. Example data only.</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile label="Open threats" [value]="vm.openCount" icon="lucideTriangleAlert" tone="warning" />
+    <app-stat-tile label="Peak tier" [value]="'T' + vm.peakTier" icon="lucideActivity" tone="info" />
+    <app-stat-tile
+      label="Active heroes cleared for peak tier"
+      [value]="vm.clearedForPeak()"
+      icon="lucideUserCheck"
+      tone="success"
+    />
+  </div>
+
+  <ul class="threats__list">
+    @for (threat of vm.threats; track threat.id) {
+      <li hlmCard class="threats__item">
+        <div hlmCardHeader>
+          <h2 hlmCardTitle>{{ threat.name }}</h2>
+          <p hlmCardDescription>{{ threat.id }} · {{ threat.region }}</p>
+        </div>
+        <div hlmCardContent class="threats__body">
+          <div class="threats__badges">
+            <span hlmBadge variant="secondary">Tier {{ threat.tier }}</span>
+            <span
+              hlmBadge
+              [variant]="threat.status === 'Open' ? 'destructive' : 'outline'"
+            >
+              {{ threat.status }}
+            </span>
+          </div>
+          <p class="threats__summary">{{ threat.summary }}</p>
+        </div>
+      </li>
+    } @empty {
+      <li class="threats__note">No threats are on file.</li>
+    }
+  </ul>
+</section>

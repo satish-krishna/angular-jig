@@ -1,0 +1,17 @@
+<hlm-card class="stat-tile">
+  <div hlmCardContent class="stat-tile__content">
+    <div class="stat-tile__top">
+      <p hlmCardDescription class="stat-tile__label">{{ label() }}</p>
+      <span
+        class="stat-tile__icon"
+        [class.stat-tile__icon--info]="tone() === 'info'"
+        [class.stat-tile__icon--success]="tone() === 'success'"
+        [class.stat-tile__icon--warning]="tone() === 'warning'"
+        [class.stat-tile__icon--neutral]="tone() === 'neutral'"
+      >
+        <ng-icon class="stat-tile__glyph" [name]="icon()" />
+      </span>
+    </div>
+    <p hlmCardTitle emphasis="stat" class="stat-tile__value">{{ value() }}</p>
+  </div>
+</hlm-card>

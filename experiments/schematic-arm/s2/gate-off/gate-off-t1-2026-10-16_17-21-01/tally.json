@@ -1,0 +1,55 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "appearance-on-primitive": 7,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "unknown-primitive": 0,
+    "missing-composition-part": 0,
+    "all": 7
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 3,
+      "detail": "appearance class px-2 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/app.html",
+      "line": 29,
+      "detail": "appearance class border-t on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 46,
+      "detail": "appearance class rounded-lg on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 80,
+      "detail": "appearance class font-semibold on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 93,
+      "detail": "appearance class font-semibold on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 110,
+      "detail": "appearance class py-6 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/ui/stat-tile/stat-tile.html",
+      "line": 4,
+      "detail": "appearance class text-sm on primitive p"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+@reference "../../../styles.css";
+
+.stat-tile {
+  @apply h-full;
+}
+
+.stat-tile__content {
+  @apply grid gap-3;
+}
+
+.stat-tile__top {
+  @apply flex items-start justify-between gap-3;
+}
+
+.stat-tile__label {
+  @apply text-sm;
+}
+
+.stat-tile__icon {
+  @apply flex size-8 shrink-0 items-center justify-center rounded-lg;
+}
+
+.stat-tile__icon--info {
+  @apply bg-info/15 text-info;
+}
+
+.stat-tile__icon--success {
+  @apply bg-success/15 text-success;
+}
+
+.stat-tile__icon--warning {
+  @apply bg-warning/15 text-warning;
+}
+
+.stat-tile__icon--neutral {
+  @apply bg-muted text-muted-foreground;
+}
+
+.stat-tile__glyph {
+  @apply size-4;
+}
+
+.stat-tile__value {
+  @apply tabular-nums;
+}

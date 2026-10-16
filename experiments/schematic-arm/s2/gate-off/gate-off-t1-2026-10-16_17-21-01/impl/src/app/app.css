@@ -1,0 +1,77 @@
+@reference "../styles.css";
+
+.app {
+  @apply min-h-svh;
+}
+
+.app__brand {
+  @apply flex items-center gap-2 px-2 py-2 text-sidebar-foreground;
+}
+
+.app__brand-icon {
+  @apply size-5 shrink-0 text-sidebar-primary;
+}
+
+.app__brand-name {
+  @apply truncate text-sm font-semibold;
+}
+
+.app__account {
+  @apply flex items-center gap-3 border-t border-sidebar-border px-2 py-3;
+}
+
+.app__account-text {
+  @apply flex min-w-0 flex-col;
+}
+
+.app__account-name {
+  @apply truncate text-sm font-medium text-sidebar-foreground;
+}
+
+.app__account-role {
+  @apply truncate text-xs text-sidebar-muted;
+}
+
+.app__avatar {
+  @apply size-8 shrink-0;
+}
+
+.app__main {
+  @apply min-w-0;
+}
+
+.app__topbar {
+  @apply flex flex-wrap items-center gap-2 border-b border-border bg-card px-4 py-3 md:px-6;
+}
+
+.app__crumbs {
+  @apply min-w-0 flex-1;
+}
+
+.app__crumb-list {
+  @apply flex min-w-0 items-center gap-1 overflow-hidden text-sm whitespace-nowrap text-muted-foreground;
+}
+
+.app__crumb {
+  @apply min-w-0 truncate;
+}
+
+.app__crumb-link {
+  @apply rounded-sm hover:text-foreground hover:underline underline-offset-4;
+}
+
+.app__crumb-current {
+  @apply font-medium text-foreground;
+}
+
+.app__search-form {
+  @apply order-last flex w-full min-w-0 md:order-none md:w-64;
+}
+
+.app__search {
+  @apply w-full min-w-0;
+}
+
+.app__content {
+  @apply flex min-w-0 flex-1 flex-col p-4 md:p-6;
+}

@@ -1,0 +1,46 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__heading">
+      <h1 class="dashboard__title">Operations Dashboard</h1>
+      <p class="dashboard__note">Example data. Not a live feed.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit" class="dashboard__recruit">
+      <ng-icon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    <app-stat-tile label="Heroes on roster" [value]="vm.rosterCount()" icon="lucideUserCheck" tone="info" />
+    <app-stat-tile label="Missions logged" [value]="vm.missionTotal()" icon="lucideActivity" tone="success" />
+    <app-stat-tile label="Average power" [value]="vm.averagePower()" icon="lucideZap" tone="neutral" />
+    <app-stat-tile label="Needs attention" [value]="vm.needsAttention()" icon="lucideTriangleAlert" tone="warning" />
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="dashboard-top-heroes">
+    <div class="dashboard__section-header">
+      <h2 id="dashboard-top-heroes" class="dashboard__section-title">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" size="sm" routerLink="/roster">View all roster</a>
+    </div>
+    <div class="dashboard__hero-grid">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" (open)="openHero($event)" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="dashboard-roster">
+    <div class="dashboard__section-header">
+      <h2 id="dashboard-roster" class="dashboard__section-title">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.rosterCount() }} heroes</span>
+    </div>
+    <dl class="dashboard__status-grid">
+      @for (entry of vm.statusCounts(); track entry.status) {
+        <div class="dashboard__status">
+          <dt class="dashboard__status-label">{{ entry.status }}</dt>
+          <dd class="dashboard__status-count">{{ entry.count }}</dd>
+        </div>
+      }
+    </dl>
+  </section>
+</section>

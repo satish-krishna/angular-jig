@@ -1,0 +1,103 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader class="app__brand">
+      <ng-icon name="lucideCrosshair" class="app__brand-icon" />
+      <span class="app__brand-name">Hero Ops Console</span>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Primary">
+        <ul hlmSidebarMenu>
+          @for (item of vm.navItems; track item.path) {
+            <li hlmSidebarMenuItem>
+              <a
+                hlmSidebarMenuButton
+                [routerLink]="item.path"
+                routerLinkActive
+                #active="routerLinkActive"
+                [isActive]="active.isActive"
+              >
+                <ng-icon [name]="item.icon" />
+                <span>{{ item.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter class="app__account">
+      <hlm-avatar class="app__avatar">
+        <span hlmAvatarFallback>CO</span>
+      </hlm-avatar>
+      <div class="app__account-text">
+        <span class="app__account-name">Commander</span>
+        <span class="app__account-role">Example data</span>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <header class="app__topbar">
+      <button hlmSidebarTrigger></button>
+
+      <nav aria-label="Breadcrumb" class="app__crumbs">
+        <ol class="app__crumb-list">
+          @for (crumb of vm.crumbs(); track crumb.label; let last = $last) {
+            <li class="app__crumb">
+              @if (crumb.link && !last) {
+                <a class="app__crumb-link" [routerLink]="crumb.link">{{ crumb.label }}</a>
+              } @else {
+                <span class="app__crumb-current" [attr.aria-current]="last ? 'page' : null">
+                  {{ crumb.label }}
+                </span>
+              }
+            </li>
+          }
+        </ol>
+      </nav>
+
+      <form role="search" class="app__search-form" (submit)="$event.preventDefault(); vm.search(query.value)">
+        <input
+          #query
+          hlmInput
+          type="search"
+          class="app__search"
+          aria-label="Search heroes"
+          placeholder="Search heroes…"
+        />
+      </form>
+
+      <button
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        type="button"
+        aria-label="Notifications"
+        hlmTooltip="Notifications"
+      >
+        <ng-icon name="lucideBell" />
+      </button>
+
+      <button
+        hlmBtn
+        variant="ghost"
+        size="icon-sm"
+        type="button"
+        [attr.aria-label]="vm.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+        [hlmTooltip]="vm.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+        (click)="vm.toggleTheme()"
+      >
+        <ng-icon [name]="vm.isDark() ? 'lucideSun' : 'lucideMoon'" />
+      </button>
+
+      <hlm-avatar class="app__avatar">
+        <span hlmAvatarFallback>CO</span>
+      </hlm-avatar>
+    </header>
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

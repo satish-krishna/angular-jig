@@ -1,0 +1,13 @@
+<div
+  class="power-meter"
+  role="meter"
+  [attr.aria-label]="label()"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  [attr.aria-valuenow]="clamped()"
+>
+  <div class="power-meter__track">
+    <div class="power-meter__fill" [style.width.%]="clamped()"></div>
+  </div>
+  <span class="power-meter__value">{{ clamped() }}</span>
+</div>

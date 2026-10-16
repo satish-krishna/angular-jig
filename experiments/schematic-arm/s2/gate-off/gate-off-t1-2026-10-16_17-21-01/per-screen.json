@@ -1,0 +1,31 @@
+{
+  "counters": {
+    "seal": {
+      "shell": {
+        "all": 2,
+        "appearance-on-primitive": 2
+      },
+      "heroes": {
+        "all": 4,
+        "appearance-on-primitive": 4
+      },
+      "ui": {
+        "all": 1,
+        "appearance-on-primitive": 1
+      }
+    },
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {}
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 11,
+      "messages": 11,
+      "byHook": {
+        "protect-enforcement": 11
+      }
+    }
+  }
+}

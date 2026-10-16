@@ -1,0 +1,73 @@
+@reference "../../../styles.css";
+
+.hero-card {
+  @apply h-full;
+}
+
+.hero-card__identity {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.hero-card__avatar {
+  @apply shrink-0;
+}
+
+.hero-card__names {
+  @apply flex min-w-0 flex-col;
+}
+
+.hero-card__name {
+  @apply truncate;
+}
+
+.hero-card__alias {
+  @apply truncate;
+}
+
+.hero-card__body {
+  @apply grid gap-4;
+}
+
+.hero-card__badges {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.hero-card__dot {
+  @apply size-2 shrink-0 rounded-full bg-muted-foreground;
+}
+
+.hero-card__dot--active {
+  @apply bg-success;
+}
+
+.hero-card__dot--injured {
+  @apply bg-warning;
+}
+
+.hero-card__dot--reserve {
+  @apply bg-info;
+}
+
+.hero-card__dot--mia {
+  @apply bg-destructive;
+}
+
+.hero-card__stats {
+  @apply grid grid-cols-3 gap-2 text-center;
+}
+
+.hero-card__stat {
+  @apply grid gap-0.5;
+}
+
+.hero-card__stat-label {
+  @apply text-xs text-muted-foreground;
+}
+
+.hero-card__stat-value {
+  @apply text-sm font-semibold tabular-nums;
+}
+
+.hero-card__open {
+  @apply w-full;
+}
