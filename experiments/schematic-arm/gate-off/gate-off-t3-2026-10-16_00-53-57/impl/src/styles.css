@@ -1,0 +1,139 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+/* You can add global styles to this file, and also import other style files */
+
+/* Utilities for the tokens the spartan preset does not map. */
+@theme inline {
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-sidebar-muted: var(--sidebar-muted);
+}
+
+/*
+ * Hero Ops Console palette. Each role from the capstone build spec is mapped
+ * onto spartan's own token. Values are six-digit hex so the contrast gate
+ * (npm run check:contrast) can read every pair. Where the spec's value fails
+ * WCAG AA, the corrected value is noted inline.
+ */
+
+:root {
+  color-scheme: light;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+
+  /* Surfaces and text */
+  --background: #f6f7fa;
+  --foreground: #1b1e2b;
+  --card: #ffffff;
+  --card-foreground: #1b1e2b;
+  --popover: #ffffff;
+  --popover-foreground: #1b1e2b;
+  --muted: #eef0f6;
+  --muted-foreground: #5b6072;
+  --border: #e4e7ef;
+  --input: #e4e7ef;
+
+  /* Action colour. #ffffff on the amber measures 2.80:1, so on-primary is the dark ink (6.13:1). */
+  --primary: #d8891a;
+  --primary-foreground: #241a05;
+  /* Subtle hover surface: spartan's --accent is a background, not the action colour. */
+  --accent: #eef0f6;
+  --accent-foreground: #1b1e2b;
+  --secondary: #eef0f6;
+  --secondary-foreground: #1b1e2b;
+
+  /* Destructive is darkened from #e5484d: white on that measures 3.91:1, white on #c53a3f measures 5.18:1. */
+  --destructive: #c53a3f;
+  --destructive-foreground: #ffffff;
+
+  /* Focus ring. The spec's 35% amber is not a readable hex and blends to about 1.3:1; this opaque amber clears 3:1. */
+  --ring: #9c5d0b;
+
+  /* Semantic states, separate from the accent. */
+  --success: #2fb574;
+  --warning: #e4802b;
+  --info: #4f7cf0;
+
+  /* Navigation rail: dark in both themes. */
+  --sidebar: #1e2233;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #d8891a;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #2a2f45;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-muted: #9aa0b4;
+  --sidebar-border: #2a2f45;
+  --sidebar-ring: #f5b843;
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  /* Surfaces and text */
+  --background: #0e1018;
+  --foreground: #eceef6;
+  --card: #171a26;
+  --card-foreground: #eceef6;
+  --popover: #171a26;
+  --popover-foreground: #eceef6;
+  --muted: #1e2231;
+  --muted-foreground: #9aa0b4;
+  --border: #272b3b;
+  --input: #272b3b;
+
+  --primary: #f5b843;
+  --primary-foreground: #241a05;
+  --accent: #1e2231;
+  --accent-foreground: #eceef6;
+  --secondary: #1e2231;
+  --secondary-foreground: #eceef6;
+
+  /* Dark destructive takes dark ink: white on #f2585d measures about 3.3:1, the ink measures 5.72:1. */
+  --destructive: #f2585d;
+  --destructive-foreground: #0e1018;
+
+  --ring: #f5b843;
+
+  --success: #3ecb84;
+  --warning: #f0983f;
+  --info: #6f97f6;
+
+  --sidebar: #10121c;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #f5b843;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #20263c;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-muted: #8b90a6;
+  --sidebar-border: #20263c;
+  --sidebar-ring: #f5b843;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

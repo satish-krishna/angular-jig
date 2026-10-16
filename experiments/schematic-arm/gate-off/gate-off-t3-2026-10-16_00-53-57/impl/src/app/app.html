@@ -1,0 +1,106 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar>
+    <div hlmSidebarHeader>
+      <div class="flex items-center gap-2 px-2 py-1">
+        <ng-icon name="lucideRadar" aria-hidden="true" />
+        <span class="truncate text-sm font-semibold">Hero Ops Console</span>
+      </div>
+    </div>
+
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <div hlmSidebarGroupContent>
+          <ul hlmSidebarMenu>
+            @for (item of vm.navItems; track item.path) {
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  [routerLink]="'/' + item.path"
+                  routerLinkActive
+                  #active="routerLinkActive"
+                  [isActive]="active.isActive"
+                >
+                  <ng-icon [name]="item.icon" aria-hidden="true" />
+                  <span>{{ item.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div hlmSidebarFooter>
+      <div class="flex items-center gap-2 px-2 py-1">
+        <hlm-avatar size="sm" role="img" aria-label="Commander account">
+          <span hlmAvatarFallback aria-hidden="true">OC</span>
+        </hlm-avatar>
+        <div class="min-w-0 text-sm">
+          <p class="truncate font-medium">Operations Commander</p>
+          <p class="truncate text-xs">Clearance tier 4</p>
+        </div>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="min-w-0">
+    <header class="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border px-4 py-3 sm:px-6">
+      <button hlmSidebarTrigger></button>
+
+      <nav aria-label="Breadcrumb" class="min-w-0 flex-1">
+        <ol class="flex flex-wrap items-center gap-2 text-sm">
+          <li class="text-muted-foreground">Hero Ops</li>
+          @for (crumb of vm.crumbs(); track $index; let last = $last) {
+            <li aria-hidden="true" class="text-muted-foreground">/</li>
+            <li [attr.aria-current]="last ? 'page' : null" class="font-medium">{{ crumb }}</li>
+          }
+        </ol>
+      </nav>
+
+      <form
+        role="search"
+        class="order-last w-full basis-full sm:order-none sm:w-64 sm:basis-auto"
+        (submit)="vm.search($event, search.value)"
+      >
+        <input
+          #search
+          hlmInput
+          type="search"
+          name="q"
+          placeholder="Search heroes"
+          aria-label="Search heroes"
+        />
+      </form>
+
+      <div class="flex shrink-0 items-center gap-1">
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          hlmTooltip="Notifications"
+          aria-label="Notifications"
+        >
+          <ng-icon name="lucideBell" aria-hidden="true" />
+        </button>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          [hlmTooltip]="vm.themeLabel()"
+          [attr.aria-label]="vm.themeLabel()"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon [name]="vm.isDark() ? 'lucideSun' : 'lucideMoon'" aria-hidden="true" />
+        </button>
+        <hlm-avatar size="sm" role="img" aria-label="Commander account">
+          <span hlmAvatarFallback aria-hidden="true">OC</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="min-w-0 flex-1 p-4 sm:p-6">
+      <router-outlet />
+    </div>
+  </main>
+</div>
