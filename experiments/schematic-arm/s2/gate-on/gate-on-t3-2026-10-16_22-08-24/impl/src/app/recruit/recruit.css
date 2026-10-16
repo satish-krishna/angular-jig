@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+.recruit { @apply grid min-w-0 gap-6; }
+.recruit__header { @apply grid gap-1; }
+.recruit__title { @apply text-2xl font-semibold; }
+.recruit__lede { @apply text-sm text-muted-foreground; }
+
+.recruit__card { @apply min-w-0 max-w-2xl; }
+.recruit__form { @apply grid min-w-0 gap-6; }
+.recruit__grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.recruit__actions { @apply flex flex-wrap justify-end gap-2; }

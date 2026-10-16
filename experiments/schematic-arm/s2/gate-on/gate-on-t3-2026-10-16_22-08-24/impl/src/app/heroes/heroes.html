@@ -1,0 +1,103 @@
+<section class="roster">
+  <h1 class="roster__title">Roster</h1>
+
+  <div class="roster__filters">
+    <label hlmLabel for="roster-search" class="roster__label">Search heroes</label>
+    <input
+      hlmInput
+      #search
+      id="roster-search"
+      type="search"
+      class="roster__search"
+      placeholder="Search by codename, alias or ID"
+      (input)="vm.setQuery(search.value)"
+    />
+
+    <label hlmLabel for="roster-class" class="roster__label">Power class</label>
+    <hlm-select class="roster__class" [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
+      <hlm-select-trigger buttonId="roster-class">
+        <hlm-select-value placeholder="All classes" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        <hlm-select-group>
+          @for (option of vm.classOptions; track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-group>
+      </hlm-select-content>
+    </hlm-select>
+
+    <a hlmBtn routerLink="/recruit" class="roster__recruit">
+      <ng-icon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </div>
+
+  <div class="roster__panel">
+    <div hlmTableContainer>
+      <table hlmTable>
+        <caption hlmTableCaption>Heroes on the roster, strongest first</caption>
+        <thead hlmTableHeader>
+          <tr hlmTableRow>
+            <th hlmTableHead>Hero</th>
+            <th hlmTableHead>Class</th>
+            <th hlmTableHead>Power</th>
+            <th hlmTableHead>Status</th>
+            <th hlmTableHead>Clearance</th>
+            <th hlmTableHead class="roster__actions-head">Actions</th>
+          </tr>
+        </thead>
+        <tbody hlmTableBody>
+          @for (row of vm.rows(); track row.hero.id) {
+            <tr hlmTableRow>
+              <td hlmTableCell>
+                <div class="roster__identity">
+                  <hlm-avatar size="sm">
+                    <span hlmAvatarFallback>{{ row.initials }}</span>
+                  </hlm-avatar>
+                  <span class="roster__names">
+                    <span class="roster__codename">{{ row.hero.name }}</span>
+                    <span class="roster__id">{{ row.hero.id }}</span>
+                  </span>
+                </div>
+              </td>
+              <td hlmTableCell>
+                <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
+              </td>
+              <td hlmTableCell>
+                <span class="roster__power">{{ row.hero.powerIndex }}</span>
+              </td>
+              <td hlmTableCell>
+                <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
+              </td>
+              <td hlmTableCell>Tier {{ row.hero.clearanceTier }}</td>
+              <td hlmTableCell class="roster__actions">
+                <a
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  [routerLink]="['/detail', row.hero.id]"
+                  [attr.aria-label]="'Edit ' + row.hero.name"
+                >
+                  <ng-icon name="lucidePencil" />
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr hlmTableRow>
+              <td hlmTableCell colspan="6">
+                <span class="roster__empty">No heroes match these filters.</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="roster__footer">
+      <span>{{ vm.visibleCount() }} of {{ vm.total() }} heroes</span>
+      <span>Sorted by power, highest first</span>
+      <span>Example data</span>
+    </footer>
+  </div>
+</section>

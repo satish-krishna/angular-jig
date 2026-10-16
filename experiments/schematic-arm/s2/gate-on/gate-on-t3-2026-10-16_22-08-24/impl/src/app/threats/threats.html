@@ -1,0 +1,32 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 class="threats__title">Threats</h1>
+    <p class="threats__lede">Known threats across the city, most dangerous first.</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile label="Threats tracked" [value]="vm.trackedLabel" hint="Across every district" icon="lucideShieldAlert" />
+    <app-stat-tile label="Active" [value]="vm.activeLabel" hint="Heroes can be tasked now" icon="lucideActivity" />
+    <app-stat-tile label="Highest level" [value]="vm.topLevelLabel" hint="Level 5 is critical" icon="lucideZap" />
+  </div>
+
+  <ul class="threats__grid">
+    @for (card of vm.cards; track card.threat.id) {
+      <li class="threats__item">
+        <article hlmCard class="threats__card">
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ card.threat.name }}</h2>
+            <p hlmCardDescription>{{ card.threat.region }} · {{ card.threat.powerClass }}</p>
+          </div>
+          <div hlmCardContent class="threats__body">
+            <div class="threats__badges">
+              <span hlmBadge [variant]="card.levelVariant">Level {{ card.threat.level }}</span>
+              <span hlmBadge [variant]="card.statusVariant">{{ card.threat.status }}</span>
+            </div>
+            <p class="threats__summary">{{ card.threat.summary }}</p>
+          </div>
+        </article>
+      </li>
+    }
+  </ul>
+</section>

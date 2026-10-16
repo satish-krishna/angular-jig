@@ -1,0 +1,12 @@
+@reference "../../styles.css";
+
+.settings { @apply grid min-w-0 gap-6; }
+.settings__header { @apply grid gap-1; }
+.settings__title { @apply text-2xl font-semibold; }
+.settings__lede { @apply text-sm text-muted-foreground; }
+
+.settings__card { @apply min-w-0 max-w-2xl; }
+.settings__row { @apply flex flex-wrap items-center gap-3; }
+.settings__current { @apply text-sm text-muted-foreground; }
+.settings__footer { @apply flex flex-wrap items-center gap-3; }
+.settings__notice { @apply text-sm text-muted-foreground; }

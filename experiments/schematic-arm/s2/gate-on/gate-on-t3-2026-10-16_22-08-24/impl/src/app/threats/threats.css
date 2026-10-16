@@ -1,0 +1,15 @@
+@reference "../../styles.css";
+
+.threats { @apply grid min-w-0 gap-6; }
+.threats__header { @apply grid gap-1; }
+.threats__title { @apply text-2xl font-semibold; }
+.threats__lede { @apply text-sm text-muted-foreground; }
+
+.threats__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+
+.threats__grid { @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3; }
+.threats__item { @apply min-w-0; }
+.threats__card { @apply h-full; }
+.threats__body { @apply grid gap-3; }
+.threats__badges { @apply flex flex-wrap items-center gap-2; }
+.threats__summary { @apply break-words text-sm text-muted-foreground; }

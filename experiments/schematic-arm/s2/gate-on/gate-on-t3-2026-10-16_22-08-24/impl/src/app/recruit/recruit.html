@@ -1,0 +1,84 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <h1 class="recruit__title">Recruit</h1>
+    <p class="recruit__lede">Enlist a new hero. Recruits start on Reserve until they are cleared for duty.</p>
+  </header>
+
+  <section hlmCard class="recruit__card" aria-labelledby="enlist-heading">
+    <div hlmCardHeader>
+      <h2 id="enlist-heading" hlmCardTitle>Enlistment file</h2>
+      <p hlmCardDescription>Every field is required. The file is checked before the hero joins the roster.</p>
+    </div>
+    <div hlmCardContent>
+      <form class="recruit__form" [formRoot]="vm.recruitForm">
+        <div class="recruit__grid">
+          <hlm-field>
+            <label hlmFieldLabel for="recruit-name">{{ vm.fields.name.label }}</label>
+            <input hlmInput id="recruit-name" [formField]="vm.recruitForm.name" [placeholder]="vm.fields.name.placeholder ?? ''" />
+            @if (vm.recruitForm.name().touched()) {
+              @for (error of vm.recruitForm.name().errors(); track error.kind) {
+                <hlm-field-error>{{ error.message }}</hlm-field-error>
+              }
+            }
+          </hlm-field>
+
+          <hlm-field>
+            <label hlmFieldLabel for="recruit-alias">{{ vm.fields.alias.label }}</label>
+            <input hlmInput id="recruit-alias" [formField]="vm.recruitForm.alias" [placeholder]="vm.fields.alias.placeholder ?? ''" />
+            @if (vm.recruitForm.alias().touched()) {
+              @for (error of vm.recruitForm.alias().errors(); track error.kind) {
+                <hlm-field-error>{{ error.message }}</hlm-field-error>
+              }
+            }
+          </hlm-field>
+
+          <hlm-field>
+            <label hlmFieldLabel for="recruit-power-class">{{ vm.fields.powerClass.label }}</label>
+            <hlm-select [value]="vm.recruitForm.powerClass().value()" (valueChange)="vm.setPowerClass($event)">
+              <hlm-select-trigger buttonId="recruit-power-class">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                <hlm-select-group>
+                  @for (option of vm.powerClassOptions; track option.value) {
+                    <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
+            </hlm-select>
+          </hlm-field>
+
+          <hlm-field>
+            <label hlmFieldLabel for="recruit-power-index">{{ vm.fields.powerIndex.label }}</label>
+            <input hlmInput id="recruit-power-index" type="number" [formField]="vm.recruitForm.powerIndex" />
+            <hlm-field-description>{{ vm.fields.powerIndex.help }}</hlm-field-description>
+            @if (vm.recruitForm.powerIndex().touched()) {
+              @for (error of vm.recruitForm.powerIndex().errors(); track error.kind) {
+                <hlm-field-error>{{ error.message }}</hlm-field-error>
+              }
+            }
+          </hlm-field>
+
+          <hlm-field>
+            <label hlmFieldLabel for="recruit-clearance">{{ vm.fields.clearanceTier.label }}</label>
+            <input hlmInput id="recruit-clearance" type="number" [formField]="vm.recruitForm.clearanceTier" />
+            <hlm-field-description>{{ vm.fields.clearanceTier.help }}</hlm-field-description>
+            @if (vm.recruitForm.clearanceTier().touched()) {
+              @for (error of vm.recruitForm.clearanceTier().errors(); track error.kind) {
+                <hlm-field-error>{{ error.message }}</hlm-field-error>
+              }
+            }
+          </hlm-field>
+        </div>
+
+        <div class="recruit__actions">
+          <a hlmBtn variant="outline" routerLink="/roster">Cancel</a>
+          <button hlmBtn type="submit">
+            <ng-icon name="lucideUserPlus" />
+            Enlist hero
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</section>

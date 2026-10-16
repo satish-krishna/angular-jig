@@ -1,0 +1,32 @@
+@reference "../styles.css";
+
+.app { @apply min-h-svh; }
+
+.app__brand { @apply flex items-center gap-2 px-2 py-1 font-semibold; }
+.app__brand-name { @apply truncate; }
+
+.app__nav { @apply flex flex-col gap-2 p-2; }
+
+.app__operator { @apply flex min-w-0 flex-col gap-0.5 px-2 py-1 text-sm; }
+.app__operator-name { @apply truncate font-medium; }
+.app__operator-clearance { @apply truncate text-xs text-sidebar-muted; }
+
+.app__main { @apply min-w-0; }
+
+.app__topbar {
+  @apply sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b border-border bg-background px-4 py-3 md:px-6;
+}
+.app__menu { @apply shrink-0; }
+
+.app__crumbs { @apply min-w-0 flex-1; }
+.app__crumb-list { @apply flex min-w-0 items-center gap-2 text-sm text-muted-foreground; }
+.app__crumb { @apply truncate; }
+.app__crumb + .app__crumb::before { content: '/'; @apply me-2; }
+.app__crumb-link { @apply rounded-sm hover:text-foreground; }
+.app__crumb--current { @apply font-medium text-foreground; }
+
+.app__search { @apply w-full sm:w-56 md:w-72; }
+
+.app__actions { @apply flex shrink-0 items-center gap-1; }
+
+.app__content { @apply grid grid-cols-1 min-w-0 gap-6 p-4 md:p-6; }

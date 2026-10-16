@@ -1,0 +1,106 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader>
+      <div class="app__brand">
+        <ng-icon name="lucideShield" />
+        <span class="app__brand-name">Hero Ops Console</span>
+      </div>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Primary" class="app__nav">
+        <div hlmSidebarGroup>
+          <div hlmSidebarGroupLabel>Operations</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (item of vm.navItems; track item.path) {
+                <li hlmSidebarMenuItem>
+                  <a
+                    hlmSidebarMenuButton
+                    [routerLink]="item.path"
+                    routerLinkActive
+                    #active="routerLinkActive"
+                    [isActive]="active.isActive"
+                  >
+                    <ng-icon [name]="item.icon" />
+                    <span>{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter>
+      <div class="app__operator">
+        <span class="app__operator-name">{{ vm.operator.name }}</span>
+        <span class="app__operator-clearance">{{ vm.operator.clearance }}</span>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <header class="app__topbar">
+      <button hlmSidebarTrigger class="app__menu"></button>
+
+      <nav aria-label="Breadcrumb" class="app__crumbs">
+        <ol class="app__crumb-list">
+          <li class="app__crumb">
+            <a routerLink="/dashboard" class="app__crumb-link">Hero Ops</a>
+          </li>
+          <li class="app__crumb app__crumb--current" aria-current="page">{{ vm.section() }}</li>
+        </ol>
+      </nav>
+
+      <input
+        hlmInput
+        type="search"
+        class="app__search"
+        aria-label="Search the console"
+        placeholder="Search heroes, missions, threats"
+      />
+
+      <div class="app__actions">
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          aria-label="Notifications"
+          hlmTooltip="Notifications"
+        >
+          <ng-icon name="lucideBell" />
+        </button>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          [attr.aria-label]="vm.themeLabel()"
+          [hlmTooltip]="vm.themeLabel()"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon [name]="vm.themeIcon()" />
+        </button>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          [attr.aria-label]="'Account: ' + vm.operator.name"
+          [hlmTooltip]="vm.operator.name"
+        >
+          <hlm-avatar size="sm">
+            <span hlmAvatarFallback>{{ vm.operator.initials }}</span>
+          </hlm-avatar>
+        </button>
+      </div>
+    </header>
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

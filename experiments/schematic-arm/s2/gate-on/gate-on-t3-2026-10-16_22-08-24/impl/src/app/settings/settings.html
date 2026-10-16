@@ -1,0 +1,32 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 class="settings__title">Settings</h1>
+    <p class="settings__lede">Console preferences, and the example records behind the screens.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 id="appearance-heading" hlmCardTitle>Appearance</h2>
+      <p hlmCardDescription>Follows your system setting until you choose. Your choice is remembered on this device.</p>
+    </div>
+    <div hlmCardContent class="settings__row">
+      <label hlmLabel for="settings-dark">Dark theme</label>
+      <hlm-switch inputId="settings-dark" [checked]="vm.isDark()" (checkedChange)="vm.toggleTheme()" />
+      <span class="settings__current">Currently {{ vm.themeName() }}</span>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-heading">
+    <div hlmCardHeader>
+      <h2 id="data-heading" hlmCardTitle>Example data</h2>
+      <p hlmCardDescription>
+        The roster, missions and threats are example records held in memory. Edits last until the page reloads.
+        Restoring puts every record back to its starting values.
+      </p>
+    </div>
+    <div hlmCardFooter class="settings__footer">
+      <button hlmBtn variant="outline" type="button" (click)="vm.restoreExampleData()">Restore example data</button>
+      <p class="settings__notice" role="status">{{ vm.notice() }}</p>
+    </div>
+  </section>
+</section>

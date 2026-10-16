@@ -1,0 +1,38 @@
+@reference "../../styles.css";
+
+.hero-detail { @apply grid min-w-0 gap-6; }
+.hero-detail__back { @apply justify-self-start; }
+
+.hero-detail__header { @apply flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between; }
+.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
+.hero-detail__names { @apply grid min-w-0 gap-1; }
+.hero-detail__title { @apply min-w-0 break-words text-2xl font-semibold; }
+.hero-detail__alias { @apply break-words text-sm text-muted-foreground; }
+.hero-detail__badges { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+
+.hero-detail__tab-strip { @apply max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply grid min-w-0 gap-4; }
+
+.hero-detail__overview { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+.hero-detail__summary { @apply grid min-w-0 gap-4; }
+.hero-detail__stats { @apply grid grid-cols-1 gap-3 sm:grid-cols-3; }
+.hero-detail__split { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+.hero-detail__card { @apply min-w-0; }
+.hero-detail__text { @apply break-words text-sm; }
+
+.hero-detail__dossier { @apply grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm; }
+.hero-detail__term { @apply text-muted-foreground; }
+.hero-detail__value { @apply min-w-0 break-words font-medium; }
+
+.hero-detail__form { @apply grid min-w-0 gap-4; }
+.hero-detail__form-grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2; }
+.hero-detail__notice { @apply min-h-5 text-sm text-muted-foreground; }
+
+.hero-detail__record { @apply grid min-w-0 gap-4; }
+.hero-detail__subheading { @apply text-sm font-semibold; }
+.hero-detail__mission { @apply flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-sm; }
+.hero-detail__mission-target { @apply min-w-0 break-words; }
+
+.hero-detail__missing { @apply text-sm text-muted-foreground; }

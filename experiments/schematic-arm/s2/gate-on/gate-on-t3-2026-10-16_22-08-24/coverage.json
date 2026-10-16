@@ -1,0 +1,22 @@
+{
+  "totalLines": 2195,
+  "linesByScreen": {
+    "shell": 332,
+    "dashboard": 173,
+    "domain": 221,
+    "forms": 57,
+    "hero-detail": 443,
+    "heroes": 209,
+    "missions": 138,
+    "recruit": 186,
+    "settings": 93,
+    "theme": 53,
+    "threats": 108,
+    "ui": 182
+  },
+  "generatedFiles": [],
+  "generatedFileLines": 0,
+  "generatedShare": 0,
+  "generatedScreens": [],
+  "note": "Generated lines are the final line counts of the files the schematic reported creating. A file the agent edited after generation still counts in full, so this is an upper bound on generated code."
+}

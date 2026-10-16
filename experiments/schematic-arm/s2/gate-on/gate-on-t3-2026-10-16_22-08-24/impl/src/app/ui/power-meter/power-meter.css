@@ -1,0 +1,8 @@
+@reference "../../../styles.css";
+
+.power-meter { @apply grid gap-1.5; }
+.power-meter__head { @apply flex items-baseline justify-between gap-2 text-xs; }
+.power-meter__label { @apply text-muted-foreground; }
+.power-meter__value { @apply font-semibold tabular-nums; }
+.power-meter__track { @apply h-2 w-full overflow-hidden rounded-full bg-muted; }
+.power-meter__fill { @apply h-full rounded-full bg-primary; }

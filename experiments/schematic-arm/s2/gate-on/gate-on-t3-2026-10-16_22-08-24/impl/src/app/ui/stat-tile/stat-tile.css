@@ -1,0 +1,6 @@
+@reference "../../../styles.css";
+
+:host { @apply block min-w-0; }
+.stat-tile { @apply gap-2; }
+.stat-tile__head { @apply flex items-center justify-between gap-3; }
+.stat-tile__icon { @apply shrink-0 text-muted-foreground; }

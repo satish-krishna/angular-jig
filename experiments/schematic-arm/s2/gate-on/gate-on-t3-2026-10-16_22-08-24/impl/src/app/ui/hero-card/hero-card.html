@@ -1,0 +1,36 @@
+<div hlmCard class="hero-card">
+  <div hlmCardHeader class="hero-card__header">
+    <hlm-avatar size="lg">
+      <span hlmAvatarFallback>{{ initials() }}</span>
+    </hlm-avatar>
+    <div class="hero-card__identity">
+      <h3 hlmCardTitle class="hero-card__name">{{ hero().name }}</h3>
+      <p hlmCardDescription>{{ hero().alias }}</p>
+    </div>
+  </div>
+
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__badges">
+      <span hlmBadge variant="outline">{{ hero().powerClass }}</span>
+      <span hlmBadge [variant]="statusVariant()">{{ hero().status }}</span>
+    </div>
+    <app-power-meter [value]="hero().powerIndex" [label]="hero().name + ' power index'" />
+    <p hlmCardDescription>
+      {{ hero().missionCount }} missions, {{ hero().successRate | percent: '1.0-0' }} success
+    </p>
+  </div>
+
+  <div hlmCardFooter class="hero-card__footer">
+    <span class="hero-card__clearance">Clearance {{ hero().clearanceTier }}</span>
+    <button
+      hlmBtn
+      variant="outline"
+      size="sm"
+      type="button"
+      [attr.aria-label]="'Open dossier for ' + hero().name"
+      (click)="opened.emit(hero())"
+    >
+      Dossier
+    </button>
+  </div>
+</div>

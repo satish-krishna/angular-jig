@@ -1,0 +1,60 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 class="missions__title">Missions</h1>
+    <p class="missions__lede">Every deployment on record, most recent first.</p>
+  </header>
+
+  <div class="missions__stats">
+    <app-stat-tile label="Live missions" [value]="vm.liveLabel()" hint="Deployed, awaiting outcome" icon="lucideActivity" />
+    <app-stat-tile label="Completed" [value]="vm.completedLabel()" hint="Success, partial or failed" icon="lucideTarget" />
+    <app-stat-tile label="Success rate" [value]="vm.successLabel()" hint="Of completed missions" icon="lucideCheck" />
+  </div>
+
+  <section hlmCard class="missions__card" aria-labelledby="missions-heading">
+    <div hlmCardHeader>
+      <h2 id="missions-heading" hlmCardTitle>Deployment log</h2>
+      <p hlmCardDescription>Hero names open their dossier. A retired hero keeps its ID on the record.</p>
+    </div>
+    <div hlmCardContent>
+      <div hlmTableContainer>
+        <table hlmTable>
+          <caption hlmTableCaption>Deployments, most recent first</caption>
+          <thead hlmTableHeader>
+            <tr hlmTableRow>
+              <th hlmTableHead>Mission</th>
+              <th hlmTableHead>Hero</th>
+              <th hlmTableHead>Target</th>
+              <th hlmTableHead>Outcome</th>
+            </tr>
+          </thead>
+          <tbody hlmTableBody>
+            @for (row of vm.rows(); track row.mission.id) {
+              <tr hlmTableRow>
+                <td hlmTableCell>
+                  <span class="missions__id">{{ row.mission.id }}</span>
+                </td>
+                <td hlmTableCell>
+                  @if (row.hero; as hero) {
+                    <a class="missions__hero" [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+                  } @else {
+                    <span class="missions__retired">{{ row.mission.heroId }}, retired</span>
+                  }
+                </td>
+                <td hlmTableCell>{{ row.mission.target }}</td>
+                <td hlmTableCell>
+                  <span hlmBadge [variant]="row.outcomeVariant">{{ row.mission.outcome }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr hlmTableRow>
+                <td hlmTableCell colspan="4">
+                  <span class="missions__empty">No deployments on record.</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>

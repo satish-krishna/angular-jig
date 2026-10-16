@@ -1,0 +1,14 @@
+@reference "../../styles.css";
+
+.missions { @apply grid min-w-0 gap-6; }
+.missions__header { @apply grid gap-1; }
+.missions__title { @apply text-2xl font-semibold; }
+.missions__lede { @apply text-sm text-muted-foreground; }
+
+.missions__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.missions__card { @apply min-w-0; }
+
+.missions__id { @apply font-medium tabular-nums; }
+.missions__hero { @apply font-medium hover:underline; }
+.missions__retired { @apply text-muted-foreground; }
+.missions__empty { @apply block py-6 text-center; }
