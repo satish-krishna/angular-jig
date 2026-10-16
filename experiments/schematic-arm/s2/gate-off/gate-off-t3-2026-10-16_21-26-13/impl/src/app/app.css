@@ -1,0 +1,67 @@
+@reference "../styles.css";
+
+.shell__brand {
+  @apply flex items-center gap-2 px-2 py-3 font-semibold;
+}
+
+.shell__brand-icon {
+  @apply size-5 shrink-0;
+}
+
+.shell__brand-name {
+  @apply truncate;
+}
+
+.shell__example-note {
+  @apply px-2 text-xs;
+  color: var(--sidebar-muted);
+}
+
+.shell__main {
+  @apply min-w-0;
+}
+
+.shell__topbar {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-background px-4 py-3 sm:px-6;
+}
+
+.shell__crumbs {
+  @apply min-w-0 flex-1;
+}
+
+.shell__crumb-list {
+  @apply flex flex-wrap items-center gap-1 text-sm;
+}
+
+.shell__crumb {
+  @apply flex items-center gap-1;
+}
+
+.shell__crumb-link {
+  @apply text-muted-foreground hover:text-foreground;
+}
+
+.shell__crumb-current {
+  @apply truncate font-medium text-foreground;
+}
+
+.shell__crumb-sep {
+  @apply size-3.5 shrink-0 text-muted-foreground;
+}
+
+/* Below sm the search takes its own full-width row under the crumbs. */
+.shell__search {
+  @apply order-last flex w-full min-w-0 items-center gap-1 sm:order-0 sm:w-56;
+}
+
+.shell__search-input {
+  @apply min-w-0 flex-1;
+}
+
+.shell__tools {
+  @apply flex items-center gap-1;
+}
+
+.shell__content {
+  @apply flex min-w-0 flex-1 flex-col gap-6 p-4 sm:p-6;
+}

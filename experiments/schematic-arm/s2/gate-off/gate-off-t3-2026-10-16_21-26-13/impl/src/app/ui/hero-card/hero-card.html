@@ -1,0 +1,33 @@
+<article hlmCard class="hero-card">
+  <div hlmCardHeader class="hero-card__header">
+    <hlm-avatar size="lg">
+      <span hlmAvatarFallback>{{ initials() }}</span>
+    </hlm-avatar>
+    <div class="hero-card__identity">
+      <h3 hlmCardTitle class="hero-card__name">
+        <a class="hero-card__link" [routerLink]="['/detail', hero().id]">{{ hero().name }}</a>
+      </h3>
+      <p hlmCardDescription class="hero-card__alias">{{ hero().id }} · {{ hero().alias }}</p>
+    </div>
+  </div>
+
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__badges">
+      <hlm-badge variant="outline">{{ hero().powerClass }}</hlm-badge>
+      <hlm-badge [variant]="statusVariant()">{{ hero().status }}</hlm-badge>
+    </div>
+
+    <app-power-meter [value]="hero().powerIndex" />
+
+    <dl class="hero-card__stats">
+      <div class="hero-card__stat">
+        <dt class="hero-card__term">Missions</dt>
+        <dd class="hero-card__figure">{{ hero().missionCount }}</dd>
+      </div>
+      <div class="hero-card__stat">
+        <dt class="hero-card__term">Success</dt>
+        <dd class="hero-card__figure">{{ hero().successRate }}%</dd>
+      </div>
+    </dl>
+  </div>
+</article>

@@ -1,0 +1,14 @@
+<div
+  class="power-meter"
+  role="meter"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  [attr.aria-valuenow]="value()"
+  [attr.aria-label]="label()"
+  [attr.aria-valuetext]="value() + ' of 100'"
+>
+  <div class="power-meter__track">
+    <div class="power-meter__fill" [style.width.%]="percent()"></div>
+  </div>
+  <span class="power-meter__value" aria-hidden="true">{{ value() }}</span>
+</div>

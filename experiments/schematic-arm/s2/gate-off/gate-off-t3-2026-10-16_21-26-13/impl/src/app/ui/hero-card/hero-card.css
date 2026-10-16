@@ -1,0 +1,49 @@
+@reference "../../../styles.css";
+
+.hero-card {
+  @apply h-full min-w-0;
+}
+
+.hero-card__header {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.hero-card__identity {
+  @apply flex min-w-0 flex-col;
+}
+
+.hero-card__name {
+  @apply min-w-0;
+}
+
+.hero-card__link {
+  @apply hover:underline;
+}
+
+.hero-card__alias {
+  @apply truncate;
+}
+
+.hero-card__body {
+  @apply flex min-w-0 flex-col gap-4;
+}
+
+.hero-card__badges {
+  @apply flex flex-wrap gap-2;
+}
+
+.hero-card__stats {
+  @apply grid grid-cols-2 gap-3;
+}
+
+.hero-card__stat {
+  @apply flex min-w-0 flex-col;
+}
+
+.hero-card__term {
+  @apply text-xs text-muted-foreground;
+}
+
+.hero-card__figure {
+  @apply text-lg font-semibold tabular-nums;
+}

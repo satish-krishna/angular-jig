@@ -1,0 +1,132 @@
+@reference "../../styles.css";
+
+.detail {
+  @apply flex min-w-0 flex-col gap-6;
+}
+
+.detail__back {
+  @apply self-start;
+}
+
+/* Identity and actions are two regions: side by side from sm, stacked below. */
+.detail__header {
+  @apply grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start;
+}
+
+.detail__identity {
+  @apply flex min-w-0 items-center gap-4;
+}
+
+.detail__names {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.detail__id {
+  @apply text-xs text-muted-foreground;
+}
+
+.detail__title {
+  @apply text-2xl font-semibold break-words;
+}
+
+.detail__alias {
+  @apply text-sm text-muted-foreground;
+}
+
+.detail__badges {
+  @apply flex flex-wrap items-center gap-2 pt-1;
+}
+
+.detail__actions {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+/* The tab strip scrolls inside its own box if four triggers ever outgrow a phone. */
+.detail__tabs-list {
+  @apply max-w-full overflow-x-auto;
+}
+
+.detail__panel {
+  @apply flex flex-col gap-6;
+}
+
+.detail__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-3;
+}
+
+.detail__stat-icon {
+  @apply size-5 shrink-0 text-muted-foreground;
+}
+
+.detail__columns {
+  @apply grid grid-cols-1 gap-6 lg:grid-cols-2;
+}
+
+.detail__card {
+  @apply min-w-0;
+}
+
+.detail__notes {
+  @apply text-sm;
+}
+
+.detail__facts {
+  @apply grid grid-cols-1 gap-3 sm:grid-cols-2;
+}
+
+.detail__fact {
+  @apply flex flex-col gap-0.5;
+}
+
+.detail__term {
+  @apply text-xs text-muted-foreground;
+}
+
+.detail__value {
+  @apply text-sm font-medium break-words;
+}
+
+.detail__form {
+  @apply flex flex-col gap-6;
+}
+
+/* The schema form is one column on a phone and two from sm; notes spans both. */
+.detail__fields {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+.detail__wide {
+  @apply sm:col-span-2;
+}
+
+.detail__select {
+  @apply w-full;
+}
+
+.detail__form-actions {
+  @apply flex flex-wrap items-center justify-end gap-2;
+}
+
+.detail__saved {
+  @apply me-auto text-sm text-muted-foreground;
+}
+
+.detail__record {
+  @apply flex flex-col gap-6;
+}
+
+.detail__deployments {
+  @apply flex flex-col divide-y divide-border;
+}
+
+.detail__deployment {
+  @apply flex flex-wrap items-center justify-between gap-2 py-3;
+}
+
+.detail__deployment-main {
+  @apply flex min-w-0 flex-col;
+}
+
+.detail__deployment-operation {
+  @apply text-sm font-medium break-words;
+}

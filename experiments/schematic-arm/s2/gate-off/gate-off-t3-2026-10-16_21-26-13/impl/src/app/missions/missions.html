@@ -1,0 +1,58 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 class="missions__title">Missions</h1>
+    <p class="missions__intro">Every deployment on record, newest first. Deploy a hero from their dossier to log a new one.</p>
+  </header>
+
+  <div class="missions__stats">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [detail]="stat.detail">
+        <ng-icon [name]="stat.icon" class="missions__stat-icon" aria-hidden="true" />
+      </app-stat-tile>
+    }
+  </div>
+
+  <section hlmCard aria-label="Mission log">
+    <div hlmCardContent>
+      <div hlmTableContainer>
+        <table hlmTable aria-label="Missions, newest first">
+          <thead hlmTableHeader>
+            <tr hlmTableRow>
+              <th hlmTableHead>Operation</th>
+              <th hlmTableHead>Operative</th>
+              <th hlmTableHead>Threat</th>
+              <th hlmTableHead>Cycle</th>
+              <th hlmTableHead>Outcome</th>
+            </tr>
+          </thead>
+          <tbody hlmTableBody>
+            @for (row of vm.rows(); track row.id) {
+              <tr hlmTableRow>
+                <td hlmTableCell>
+                  <span class="missions__operation">{{ row.operation }}</span>
+                  <span class="missions__id">{{ row.id }}</span>
+                </td>
+                <td hlmTableCell>
+                  @if (row.heroId) {
+                    <a class="missions__link" [routerLink]="['/detail', row.heroId]">{{ row.hero }}</a>
+                  } @else {
+                    <span class="missions__muted">{{ row.hero }}</span>
+                  }
+                </td>
+                <td hlmTableCell>{{ row.threat }}</td>
+                <td hlmTableCell class="missions__num">{{ row.cycle }}</td>
+                <td hlmTableCell>
+                  <hlm-badge [variant]="row.outcomeTone">{{ row.outcome }}</hlm-badge>
+                </td>
+              </tr>
+            } @empty {
+              <tr hlmTableRow>
+                <td hlmTableCell colspan="5" class="missions__empty">No missions on record yet.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>

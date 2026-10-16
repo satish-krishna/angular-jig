@@ -1,0 +1,55 @@
+<div hlmTableContainer class="roster-table">
+  <table hlmTable aria-label="Heroes, sorted by power">
+    <thead hlmTableHeader>
+      <tr hlmTableRow>
+        <th hlmTableHead>Hero</th>
+        <th hlmTableHead>Class</th>
+        <th hlmTableHead class="roster-table__num">Power</th>
+        <th hlmTableHead>Status</th>
+        <th hlmTableHead>Clearance</th>
+        <th hlmTableHead>Actions</th>
+      </tr>
+    </thead>
+    <tbody hlmTableBody>
+      @for (row of rows(); track row.hero.id) {
+        <tr hlmTableRow>
+          <td hlmTableCell>
+            <div class="roster-table__hero">
+              <hlm-avatar size="sm">
+                <span hlmAvatarFallback>{{ row.initials }}</span>
+              </hlm-avatar>
+              <div class="roster-table__identity">
+                <a class="roster-table__name" [routerLink]="['/detail', row.hero.id]">{{ row.hero.name }}</a>
+                <span class="roster-table__id">{{ row.hero.id }}</span>
+              </div>
+            </div>
+          </td>
+          <td hlmTableCell>
+            <hlm-badge variant="outline">{{ row.hero.powerClass }}</hlm-badge>
+          </td>
+          <td hlmTableCell class="roster-table__num roster-table__power">{{ row.hero.powerIndex }}</td>
+          <td hlmTableCell>
+            <hlm-badge [variant]="row.statusVariant">{{ row.hero.status }}</hlm-badge>
+          </td>
+          <td hlmTableCell>{{ row.hero.clearance }}</td>
+          <td hlmTableCell>
+            <a
+              hlmBtn
+              variant="ghost"
+              size="icon"
+              [routerLink]="['/detail', row.hero.id]"
+              [attr.aria-label]="'Edit ' + row.hero.name"
+              hlmTooltip="Edit hero"
+            >
+              <ng-icon name="lucidePencil" aria-hidden="true" />
+            </a>
+          </td>
+        </tr>
+      } @empty {
+        <tr hlmTableRow>
+          <td hlmTableCell colspan="6" class="roster-table__empty">{{ emptyMessage() }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

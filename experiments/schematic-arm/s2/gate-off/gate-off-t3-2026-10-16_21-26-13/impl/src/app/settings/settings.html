@@ -1,0 +1,38 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 class="settings__title">Settings</h1>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-title">Appearance</h2>
+      <p hlmCardDescription>System follows your operating system until you choose a theme. Your choice is remembered.</p>
+    </div>
+    <div hlmCardContent>
+      <div class="settings__themes" role="group" aria-label="Theme">
+        @for (option of vm.options; track option.value) {
+          <button
+            hlmBtn
+            type="button"
+            [variant]="vm.selected() === option.value ? 'default' : 'outline'"
+            [attr.aria-pressed]="vm.selected() === option.value"
+            (click)="vm.choose(option.value)"
+          >
+            <ng-icon [name]="option.icon" aria-hidden="true" />
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-title">Example data</h2>
+      <p hlmCardDescription>
+        Every hero, mission and threat in this console is invented for illustration. Edits, recruits and deployments
+        are kept in memory and are lost when the page reloads.
+      </p>
+    </div>
+  </section>
+</section>

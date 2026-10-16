@@ -1,0 +1,103 @@
+<div hlmSidebarWrapper class="shell">
+  <hlm-sidebar collapsible="icon">
+    <div hlmSidebarHeader>
+      <div class="shell__brand">
+        <ng-icon name="lucideShield" class="shell__brand-icon" />
+        <span class="shell__brand-name">Hero Ops</span>
+      </div>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Primary">
+        <ul hlmSidebarMenu>
+          @for (item of vm.nav; track item.path) {
+            <li hlmSidebarMenuItem>
+              <a
+                hlmSidebarMenuButton
+                [routerLink]="item.path"
+                routerLinkActive
+                #active="routerLinkActive"
+                [isActive]="active.isActive"
+                [tooltip]="item.label"
+              >
+                <ng-icon [name]="item.icon" />
+                <span>{{ item.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter>
+      <p class="shell__example-note">Example data for illustration only.</p>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="shell__main">
+    <header class="shell__topbar">
+      <button hlmSidebarTrigger></button>
+
+      <nav aria-label="Breadcrumb" class="shell__crumbs">
+        <ol class="shell__crumb-list">
+          @for (crumb of vm.crumbs(); track $index; let last = $last) {
+            <li class="shell__crumb">
+              @if (crumb.path && !last) {
+                <a class="shell__crumb-link" [routerLink]="crumb.path">{{ crumb.label }}</a>
+              } @else {
+                <span class="shell__crumb-current" [attr.aria-current]="last ? 'page' : null">{{ crumb.label }}</span>
+              }
+              @if (!last) {
+                <ng-icon name="lucideChevronRight" class="shell__crumb-sep" aria-hidden="true" />
+              }
+            </li>
+          }
+        </ol>
+      </nav>
+
+      <form role="search" class="shell__search" (submit)="$event.preventDefault(); vm.search(query.value)">
+        <input
+          #query
+          hlmInput
+          type="search"
+          class="shell__search-input"
+          placeholder="Search heroes"
+          aria-label="Search heroes"
+        />
+        <button hlmBtn variant="ghost" size="icon" type="submit" hlmTooltip="Search" aria-label="Search heroes">
+          <ng-icon name="lucideSearch" aria-hidden="true" />
+        </button>
+      </form>
+
+      <div class="shell__tools">
+        <a
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          routerLink="/threats"
+          hlmTooltip="Threat alerts"
+          aria-label="Threat alerts"
+        >
+          <ng-icon name="lucideBell" aria-hidden="true" />
+        </a>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          [hlmTooltip]="vm.darkMode() ? 'Light theme' : 'Dark theme'"
+          [attr.aria-label]="vm.darkMode() ? 'Switch to light theme' : 'Switch to dark theme'"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon [name]="vm.darkMode() ? 'lucideSun' : 'lucideMoon'" />
+        </button>
+        <hlm-avatar role="img" aria-label="Signed-in operator">
+          <span hlmAvatarFallback>OP</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="shell__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

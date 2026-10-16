@@ -1,0 +1,43 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <h1 class="dashboard__title">Operations Dashboard</h1>
+    <a hlmBtn routerLink="/recruit" class="dashboard__primary">
+      <ng-icon name="lucideUserPlus" aria-hidden="true" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [detail]="stat.detail">
+        <ng-icon [name]="stat.icon" class="dashboard__stat-icon" aria-hidden="true" />
+      </app-stat-tile>
+    }
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-title">
+    <header class="dashboard__section-header">
+      <h2 id="top-heroes-title" class="dashboard__section-title">Top heroes this cycle</h2>
+      <a hlmBtn variant="ghost" routerLink="/roster">View all roster</a>
+    </header>
+
+    <div class="dashboard__hero-grid">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-title">
+    <header class="dashboard__section-header">
+      <h2 id="roster-title" class="dashboard__section-title">Roster</h2>
+      <hlm-badge variant="secondary">{{ vm.rosterCount() }} heroes</hlm-badge>
+    </header>
+
+    <section hlmCard class="dashboard__roster">
+      <div hlmCardContent>
+        <app-roster-table [rows]="vm.rosterRows()" />
+      </div>
+    </section>
+  </section>
+</section>

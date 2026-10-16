@@ -1,0 +1,46 @@
+<section class="roster">
+  <header class="roster__header">
+    <h1 class="roster__title">Roster</h1>
+    <a hlmBtn routerLink="/recruit" class="roster__recruit">
+      <ng-icon name="lucideUserPlus" aria-hidden="true" />
+      Recruit
+    </a>
+  </header>
+
+  <section hlmCard class="roster__panel" aria-label="Hero roster">
+    <div hlmCardHeader class="roster__filters" role="search">
+      <label hlmLabel for="roster-search" class="roster__label">Search heroes</label>
+      <input
+        #search
+        hlmInput
+        id="roster-search"
+        type="search"
+        class="roster__search"
+        placeholder="Name, alias or ID"
+        [value]="vm.query()"
+        (input)="vm.setQuery(search.value)"
+      />
+
+      <label hlmLabel for="roster-class" class="roster__label">Power class</label>
+      <hlm-select [itemToString]="vm.classLabel" [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
+        <hlm-select-trigger buttonId="roster-class" class="roster__class">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.classOptions; track option) {
+            <hlm-select-item [value]="option">{{ vm.classLabel(option) }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmCardContent class="roster__content">
+      <app-roster-table [rows]="vm.rows()" emptyMessage="No heroes match these filters." />
+    </div>
+
+    <div hlmCardFooter class="roster__footer">
+      <p class="roster__count">{{ vm.shownCount() }} of {{ vm.totalCount() }} heroes</p>
+      <p class="roster__sort">Sorted by power</p>
+    </div>
+  </section>
+</section>

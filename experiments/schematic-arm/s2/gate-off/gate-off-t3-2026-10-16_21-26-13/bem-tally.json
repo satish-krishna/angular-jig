@@ -1,0 +1,963 @@
+{
+  "totals": {
+    "template-utility-class": 0,
+    "foreign-block": 158,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "all": 158
+  },
+  "violations": [
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 3,
+      "detail": ".shell__brand in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 7,
+      "detail": ".shell__brand-icon in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 11,
+      "detail": ".shell__brand-name in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 15,
+      "detail": ".shell__example-note in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 20,
+      "detail": ".shell__main in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 24,
+      "detail": ".shell__topbar in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 28,
+      "detail": ".shell__crumbs in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 32,
+      "detail": ".shell__crumb-list in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 36,
+      "detail": ".shell__crumb in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 40,
+      "detail": ".shell__crumb-link in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 44,
+      "detail": ".shell__crumb-current in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 48,
+      "detail": ".shell__crumb-sep in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 53,
+      "detail": ".shell__search in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 57,
+      "detail": ".shell__search-input in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 61,
+      "detail": ".shell__tools in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 65,
+      "detail": ".shell__content in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 1,
+      "detail": "shell in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "shell__brand in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 5,
+      "detail": "shell__brand-icon in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 6,
+      "detail": "shell__brand-name in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 33,
+      "detail": "shell__example-note in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 37,
+      "detail": "shell__main in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 38,
+      "detail": "shell__topbar in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 41,
+      "detail": "shell__crumbs in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 42,
+      "detail": "shell__crumb-list in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 44,
+      "detail": "shell__crumb in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 46,
+      "detail": "shell__crumb-link in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 48,
+      "detail": "shell__crumb-current in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 51,
+      "detail": "shell__crumb-sep in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 58,
+      "detail": "shell__search in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 59,
+      "detail": "shell__search-input in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 72,
+      "detail": "shell__tools in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 99,
+      "detail": "shell__content in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 3,
+      "detail": ".detail in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 7,
+      "detail": ".detail__back in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 12,
+      "detail": ".detail__header in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 16,
+      "detail": ".detail__identity in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 20,
+      "detail": ".detail__names in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 24,
+      "detail": ".detail__id in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 28,
+      "detail": ".detail__title in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 32,
+      "detail": ".detail__alias in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 36,
+      "detail": ".detail__badges in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 40,
+      "detail": ".detail__actions in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 45,
+      "detail": ".detail__tabs-list in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 49,
+      "detail": ".detail__panel in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 53,
+      "detail": ".detail__stats in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 57,
+      "detail": ".detail__stat-icon in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 61,
+      "detail": ".detail__columns in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 65,
+      "detail": ".detail__card in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 69,
+      "detail": ".detail__notes in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 73,
+      "detail": ".detail__facts in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 77,
+      "detail": ".detail__fact in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 81,
+      "detail": ".detail__term in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 85,
+      "detail": ".detail__value in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 89,
+      "detail": ".detail__form in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 94,
+      "detail": ".detail__fields in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 98,
+      "detail": ".detail__wide in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 102,
+      "detail": ".detail__select in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 106,
+      "detail": ".detail__form-actions in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 110,
+      "detail": ".detail__saved in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 114,
+      "detail": ".detail__record in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 118,
+      "detail": ".detail__deployments in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 122,
+      "detail": ".detail__deployment in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 126,
+      "detail": ".detail__deployment-main in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.css",
+      "line": 130,
+      "detail": ".detail__deployment-operation in hero-detail.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 1,
+      "detail": "detail in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 2,
+      "detail": "detail__back in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 8,
+      "detail": "detail__header in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 9,
+      "detail": "detail__identity in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 13,
+      "detail": "detail__names in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 14,
+      "detail": "detail__id in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 15,
+      "detail": "detail__title in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 16,
+      "detail": "detail__alias in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 17,
+      "detail": "detail__badges in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 25,
+      "detail": "detail__actions in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 55,
+      "detail": "detail__tabs-list in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 62,
+      "detail": "detail__panel in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 63,
+      "detail": "detail__stats in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 66,
+      "detail": "detail__stat-icon in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 71,
+      "detail": "detail__columns in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 72,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 77,
+      "detail": "detail__notes in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 81,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 86,
+      "detail": "detail__facts in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 87,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 88,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 89,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 91,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 92,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 93,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 95,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 96,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 97,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 99,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 100,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 101,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 103,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 104,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 105,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 113,
+      "detail": "detail__panel in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 114,
+      "detail": "detail__columns in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 115,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 124,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 134,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 139,
+      "detail": "detail__badges in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 147,
+      "detail": "detail__panel in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 148,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 153,
+      "detail": "detail__record in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 154,
+      "detail": "detail__facts in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 155,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 156,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 157,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 159,
+      "detail": "detail__fact in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 160,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 161,
+      "detail": "detail__value in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 165,
+      "detail": "detail__deployments in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 167,
+      "detail": "detail__deployment in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 168,
+      "detail": "detail__deployment-main in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 169,
+      "detail": "detail__deployment-operation in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 170,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 175,
+      "detail": "detail__term in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 182,
+      "detail": "detail__panel in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 183,
+      "detail": "detail__card in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 188,
+      "detail": "detail__form in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 189,
+      "detail": "detail__fields in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 209,
+      "detail": "detail__select in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 232,
+      "detail": "detail__select in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 243,
+      "detail": "detail__wide in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 252,
+      "detail": "detail__form-actions in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 254,
+      "detail": "detail__saved in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 265,
+      "detail": "detail__names in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 266,
+      "detail": "detail__title in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 267,
+      "detail": "detail__alias in hero-detail"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 3,
+      "detail": ".roster in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 7,
+      "detail": ".roster__header in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 11,
+      "detail": ".roster__title in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 15,
+      "detail": ".roster__panel in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 20,
+      "detail": ".roster__filters in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 24,
+      "detail": ".roster__label in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 28,
+      "detail": ".roster__search in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 32,
+      "detail": ".roster__class in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 36,
+      "detail": ".roster__content in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 40,
+      "detail": ".roster__footer in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 44,
+      "detail": ".roster__count in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 1,
+      "detail": "roster in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 2,
+      "detail": "roster__header in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 3,
+      "detail": "roster__title in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 4,
+      "detail": "roster__recruit in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 10,
+      "detail": "roster__panel in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 11,
+      "detail": "roster__filters in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 12,
+      "detail": "roster__label in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 13,
+      "detail": "roster__search in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 24,
+      "detail": "roster__label in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 26,
+      "detail": "roster__class in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 37,
+      "detail": "roster__content in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 41,
+      "detail": "roster__footer in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 42,
+      "detail": "roster__count in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 43,
+      "detail": "roster__sort in heroes"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "appearance-on-primitive": 5,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "unknown-primitive": 0,
+    "missing-composition-part": 0,
+    "all": 5
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 41,
+      "detail": "appearance class text-sm on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/missions/missions.html",
+      "line": 50,
+      "detail": "appearance class py-8 on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/threats/threats.html",
+      "line": 14,
+      "detail": "appearance class text-base on primitive h2"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/ui/roster-table/roster-table.html",
+      "line": 30,
+      "detail": "appearance class font-semibold on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/ui/roster-table/roster-table.html",
+      "line": 50,
+      "detail": "appearance class py-8 on primitive td"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "counters": {
+    "seal": {
+      "heroes": {
+        "all": 1,
+        "appearance-on-primitive": 1
+      },
+      "missions": {
+        "all": 1,
+        "appearance-on-primitive": 1
+      },
+      "threats": {
+        "all": 1,
+        "appearance-on-primitive": 1
+      },
+      "ui": {
+        "all": 2,
+        "appearance-on-primitive": 2
+      }
+    },
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {
+      "shell": {
+        "all": 33,
+        "foreign-block": 33
+      },
+      "hero-detail": {
+        "all": 100,
+        "foreign-block": 100
+      },
+      "heroes": {
+        "all": 25,
+        "foreign-block": 25
+      }
+    }
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 5,
+      "messages": 5,
+      "byHook": {
+        "protect-enforcement": 5
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+@reference "../../../styles.css";
+
+.power-meter {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.power-meter__track {
+  @apply relative h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-muted;
+}
+
+.power-meter__fill {
+  @apply absolute inset-y-0 start-0 rounded-full bg-primary;
+}
+
+.power-meter__value {
+  @apply w-8 shrink-0 text-end text-sm font-medium tabular-nums;
+}

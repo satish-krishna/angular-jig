@@ -1,0 +1,46 @@
+@reference "../../styles.css";
+
+.roster {
+  @apply flex min-w-0 flex-col gap-6;
+}
+
+.roster__header {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.roster__title {
+  @apply text-2xl font-semibold;
+}
+
+.roster__panel {
+  @apply min-w-0;
+}
+
+/* Below sm the filters stack; the search and class filter each take a full row. */
+.roster__filters {
+  @apply flex flex-wrap items-center gap-3;
+}
+
+.roster__label {
+  @apply sr-only;
+}
+
+.roster__search {
+  @apply w-full sm:w-64;
+}
+
+.roster__class {
+  @apply w-full sm:w-48;
+}
+
+.roster__content {
+  @apply min-w-0;
+}
+
+.roster__footer {
+  @apply flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground;
+}
+
+.roster__count {
+  @apply font-medium text-foreground;
+}

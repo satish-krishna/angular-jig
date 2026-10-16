@@ -1,0 +1,42 @@
+@reference "../../styles.css";
+
+.recruit {
+  @apply flex min-w-0 flex-col gap-6;
+}
+
+.recruit__header {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.recruit__title {
+  @apply text-2xl font-semibold;
+}
+
+.recruit__intro {
+  @apply max-w-prose text-sm text-muted-foreground;
+}
+
+.recruit__card {
+  @apply min-w-0;
+}
+
+.recruit__form {
+  @apply flex flex-col gap-6;
+}
+
+/* The form is one column on a phone and two from sm; notes spans both. */
+.recruit__fields {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+.recruit__wide {
+  @apply sm:col-span-2;
+}
+
+.recruit__select {
+  @apply w-full;
+}
+
+.recruit__actions {
+  @apply flex flex-wrap items-center justify-end gap-2;
+}

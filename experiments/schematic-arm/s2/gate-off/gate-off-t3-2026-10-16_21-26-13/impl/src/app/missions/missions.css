@@ -1,0 +1,49 @@
+@reference "../../styles.css";
+
+.missions {
+  @apply flex min-w-0 flex-col gap-6;
+}
+
+.missions__header {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.missions__title {
+  @apply text-2xl font-semibold;
+}
+
+.missions__intro {
+  @apply text-sm text-muted-foreground;
+}
+
+.missions__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-3;
+}
+
+.missions__stat-icon {
+  @apply size-5 shrink-0 text-muted-foreground;
+}
+
+.missions__operation {
+  @apply block font-medium;
+}
+
+.missions__id {
+  @apply block text-xs text-muted-foreground;
+}
+
+.missions__link {
+  @apply font-medium hover:underline;
+}
+
+.missions__muted {
+  @apply text-muted-foreground;
+}
+
+.missions__num {
+  @apply text-end tabular-nums;
+}
+
+.missions__empty {
+  @apply py-8 text-center text-muted-foreground;
+}

@@ -1,0 +1,25 @@
+@reference "../../../styles.css";
+
+.stat-tile {
+  @apply h-full min-w-0;
+}
+
+.stat-tile__header {
+  @apply flex min-w-0 items-center justify-between gap-2;
+}
+
+.stat-tile__label {
+  @apply min-w-0 truncate;
+}
+
+.stat-tile__body {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.stat-tile__value {
+  @apply truncate;
+}
+
+.stat-tile__detail {
+  @apply truncate;
+}

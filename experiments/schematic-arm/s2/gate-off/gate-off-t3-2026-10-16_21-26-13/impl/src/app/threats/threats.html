@@ -1,0 +1,35 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 class="threats__title">Threats</h1>
+    <p class="threats__summary">
+      {{ vm.openCount() }} open · {{ vm.monitoringCount() }} monitoring · {{ vm.containedCount() }} contained
+    </p>
+  </header>
+
+  <ul class="threats__grid" aria-label="Threat register, most severe first">
+    @for (row of vm.rows(); track row.threat.id) {
+      <li>
+        <article hlmCard class="threats__card">
+          <div hlmCardHeader class="threats__card-header">
+            <h2 hlmCardTitle class="threats__name">{{ row.threat.codename }}</h2>
+            <hlm-badge [variant]="row.levelTone">{{ row.threat.level }}</hlm-badge>
+          </div>
+          <div hlmCardContent class="threats__body">
+            <p class="threats__location">
+              <ng-icon name="lucideMapPin" aria-hidden="true" />
+              {{ row.threat.location }}
+            </p>
+            <p class="threats__text">{{ row.threat.summary }}</p>
+            <div class="threats__meta">
+              <hlm-badge [variant]="row.statusTone">{{ row.threat.status }}</hlm-badge>
+              <hlm-badge variant="outline">Needs {{ row.threat.requiredClearance }}</hlm-badge>
+              <span class="threats__count">{{ row.missions }} {{ row.missions === 1 ? 'mission' : 'missions' }}</span>
+            </div>
+          </div>
+        </article>
+      </li>
+    } @empty {
+      <li class="threats__empty">No threats on the register.</li>
+    }
+  </ul>
+</section>
