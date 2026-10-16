@@ -1,0 +1,18 @@
+@reference "../../styles.css";
+
+.threats { @apply grid gap-8; }
+.threats__header { @apply grid gap-1; }
+.threats__title { @apply text-2xl font-semibold; }
+.threats__subtitle { @apply text-sm text-muted-foreground; }
+
+.threats__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.threats__empty { @apply py-8 text-center text-muted-foreground; }
+
+.threats__list { @apply m-0 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2 xl:grid-cols-3; }
+.threats__card { @apply h-full min-w-0; }
+.threats__card-header { @apply flex flex-wrap items-center justify-between gap-2; }
+.threats__body { @apply grid gap-4; }
+.threats__facts { @apply grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 text-sm; }
+.threats__facts dt { @apply text-muted-foreground; }
+.threats__facts dd { @apply m-0 break-words; }
+.threats__open { @apply justify-self-start; }

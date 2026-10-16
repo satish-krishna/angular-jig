@@ -1,0 +1,104 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar class="app__rail">
+    <div hlmSidebarHeader>
+      <div class="app__brand">
+        <ng-icon name="lucideCrosshair" class="app__brand-icon" />
+        <span class="app__brand-name">Hero Ops Console</span>
+      </div>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Primary" class="app__nav">
+        <div hlmSidebarGroup>
+          <div hlmSidebarGroupLabel>Operations</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              <li hlmSidebarMenuItem>
+                <a hlmSidebarMenuButton routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive" [isActive]="dashboard.isActive">
+                  <ng-icon name="lucideLayoutDashboard" />
+                  <span>Dashboard</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive #roster="routerLinkActive" [isActive]="roster.isActive">
+                  <ng-icon name="lucideUsers" />
+                  <span>Roster</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive #missions="routerLinkActive" [isActive]="missions.isActive">
+                  <ng-icon name="lucideRadar" />
+                  <span>Missions</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive #threats="routerLinkActive" [isActive]="threats.isActive">
+                  <ng-icon name="lucideShieldAlert" />
+                  <span>Threats</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive #recruit="routerLinkActive" [isActive]="recruit.isActive">
+                  <ng-icon name="lucideUserPlus" />
+                  <span>Recruit</span>
+                </a>
+              </li>
+              <li hlmSidebarMenuItem>
+                <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive #settings="routerLinkActive" [isActive]="settings.isActive">
+                  <ng-icon name="lucideSettings" />
+                  <span>Settings</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter>
+      <div class="app__account">
+        <span class="app__account-name">Ops Commander</span>
+        <span class="app__account-clearance">Clearance tier 4</span>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <header class="app__topbar">
+      <button hlmSidebarTrigger class="app__menu"></button>
+
+      <nav aria-label="Breadcrumb" class="app__crumbs">
+        <ol class="app__crumb-list">
+          <li class="app__crumb">Operations</li>
+          <li class="app__crumb app__crumb--current" aria-current="page">{{ vm.section() }}</li>
+        </ol>
+      </nav>
+
+      <search class="app__search">
+        <input hlmInput type="search" class="app__search-input" placeholder="Search heroes, missions, threats" aria-label="Search heroes, missions, threats" />
+      </search>
+
+      <div class="app__actions">
+        <button hlmBtn variant="ghost" size="icon" aria-label="Notifications" [hlmTooltip]="'Notifications'">
+          <ng-icon name="lucideBell" />
+        </button>
+
+        <button hlmBtn variant="ghost" size="icon" [attr.aria-label]="vm.themeLabel()" [hlmTooltip]="vm.themeLabel()" (click)="vm.toggleTheme()">
+          @if (vm.dark()) {
+            <ng-icon name="lucideSun" />
+          } @else {
+            <ng-icon name="lucideMoon" />
+          }
+        </button>
+
+        <hlm-avatar size="sm">
+          <span hlmAvatarFallback>OC</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

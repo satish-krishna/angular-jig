@@ -1,0 +1,31 @@
+@reference "../../styles.css";
+
+.roster { @apply grid gap-6; }
+.roster__header { @apply grid gap-1; }
+.roster__title { @apply text-2xl font-semibold; }
+.roster__subtitle { @apply text-sm text-muted-foreground; }
+.roster__sr-only { @apply sr-only; }
+
+.roster__toolbar { @apply flex flex-wrap items-center gap-3; }
+.roster__search-field { @apply flex min-w-0 flex-1 basis-56 items-center gap-2; }
+.roster__search-icon { @apply shrink-0 text-muted-foreground; }
+.roster__search { @apply min-w-0 flex-1; }
+.roster__class-field { @apply flex min-w-0; }
+.roster__class { @apply w-full sm:w-44; }
+.roster__recruit { @apply ms-auto; }
+
+.roster__body { @apply grid gap-4; }
+.roster__identity { @apply flex items-center gap-3; }
+.roster__portrait { @apply shrink-0; }
+.roster__name-block { @apply grid min-w-0 gap-0.5; }
+.roster__name {
+  @apply rounded-sm font-medium break-words underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+}
+.roster__meta { @apply text-xs text-muted-foreground; }
+.roster__power { @apply font-semibold tabular-nums; }
+.roster__actions { @apply flex items-center gap-1; }
+.roster__empty { @apply py-8 text-center text-muted-foreground; }
+
+.roster__footer { @apply flex flex-wrap items-center justify-between gap-2; }
+.roster__summary { @apply text-sm text-muted-foreground; }
+.roster__sort { @apply text-sm text-muted-foreground; }

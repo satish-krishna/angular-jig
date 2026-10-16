@@ -1,0 +1,61 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 class="missions__title">Missions</h1>
+    <p class="missions__subtitle">
+      Example data for the Hero Ops Console. Deployment logs are not held here; figures come from each hero's record.
+    </p>
+  </header>
+
+  <div class="missions__stats">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [hint]="stat.hint" [icon]="stat.icon" />
+    }
+  </div>
+
+  <section hlmCard class="missions__card" aria-labelledby="deployable-heading">
+    <div hlmCardHeader>
+      <h2 id="deployable-heading" hlmCardTitle>Deployable heroes</h2>
+      <p hlmCardDescription>Active heroes, best success rate first. Open a hero to review the full record.</p>
+    </div>
+    <div hlmCardContent>
+      @if (vm.deployable().length === 0) {
+        <p class="missions__empty" role="status">No heroes are Active. Check the roster for injured or reserve heroes.</p>
+      } @else {
+        <div hlmTableContainer>
+          <table hlmTable>
+            <caption hlmCaption class="missions__sr-only">Deployable heroes, best success rate first</caption>
+            <thead hlmTHead>
+              <tr hlmTr>
+                <th hlmTh scope="col">Hero</th>
+                <th hlmTh scope="col">Class</th>
+                <th hlmTh scope="col">Missions</th>
+                <th hlmTh scope="col">Success rate</th>
+              </tr>
+            </thead>
+            <tbody hlmTBody>
+              @for (hero of vm.deployable(); track hero.id) {
+                <tr hlmTr>
+                  <td hlmTd>
+                    <a class="missions__name" [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+                  </td>
+                  <td hlmTd>
+                    <span hlmBadge variant="outline">{{ hero.powerClass }}</span>
+                  </td>
+                  <td hlmTd>
+                    <span class="missions__figure">{{ hero.missionCount }}</span>
+                  </td>
+                  <td hlmTd>
+                    <div class="missions__rate">
+                      <app-power-meter [value]="hero.successRate" [label]="hero.name + ' success rate'" />
+                      <span class="missions__figure">{{ hero.successRate }}%</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </section>
+</section>

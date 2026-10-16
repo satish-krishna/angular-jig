@@ -1,0 +1,18 @@
+@reference "../../styles.css";
+
+.missions { @apply grid gap-8; }
+.missions__header { @apply grid gap-1; }
+.missions__title { @apply text-2xl font-semibold; }
+.missions__subtitle { @apply text-sm text-muted-foreground; }
+.missions__sr-only { @apply sr-only; }
+
+.missions__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.missions__card { @apply min-w-0; }
+.missions__empty { @apply py-8 text-center text-muted-foreground; }
+
+.missions__name {
+  @apply rounded-sm font-medium break-words underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+}
+.missions__figure { @apply font-semibold tabular-nums; }
+.missions__rate { @apply flex min-w-0 items-center gap-3; }
+.missions__rate app-power-meter { @apply min-w-0 flex-1; }

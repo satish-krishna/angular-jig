@@ -1,0 +1,51 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {
+      "heroes": {
+        "all": 52,
+        "foreign-block": 52
+      }
+    }
+  },
+  "gateFirings": {
+    "shell": {
+      "firings": 1,
+      "messages": 2,
+      "byHook": {
+        "check-applied-appearance": 1
+      }
+    },
+    "other": {
+      "firings": 8,
+      "messages": 8,
+      "byHook": {
+        "protect-enforcement": 8
+      }
+    },
+    "heroes": {
+      "firings": 3,
+      "messages": 6,
+      "byHook": {
+        "check-applied-appearance": 3
+      }
+    },
+    "hero-detail": {
+      "firings": 1,
+      "messages": 4,
+      "byHook": {
+        "check-applied-appearance": 1
+      }
+    },
+    "threats": {
+      "firings": 1,
+      "messages": 1,
+      "byHook": {
+        "check-applied-appearance": 1
+      }
+    }
+  }
+}

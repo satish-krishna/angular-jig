@@ -1,0 +1,79 @@
+@reference "../styles.css";
+
+.app__brand {
+  @apply flex items-center gap-2 px-2 py-3;
+}
+
+.app__brand-icon {
+  @apply size-5 shrink-0 text-sidebar-primary;
+}
+
+.app__brand-name {
+  @apply truncate text-sm font-semibold;
+}
+
+.app__nav {
+  @apply flex flex-col;
+}
+
+.app__account {
+  @apply flex flex-col gap-0.5 px-2 py-3;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.app__account-name {
+  @apply text-sm font-medium;
+}
+
+.app__account-clearance {
+  @apply text-xs text-sidebar-muted;
+}
+
+.app__main {
+  @apply min-w-0;
+}
+
+.app__topbar {
+  @apply sticky top-0 z-20 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-background/90 px-4 py-2 backdrop-blur;
+}
+
+.app__menu {
+  @apply shrink-0;
+}
+
+.app__crumbs {
+  @apply min-w-0 flex-1;
+}
+
+.app__crumb-list {
+  @apply flex flex-wrap items-center gap-2 text-sm;
+}
+
+.app__crumb {
+  @apply text-muted-foreground;
+}
+
+.app__crumb--current {
+  @apply font-medium text-foreground;
+}
+
+.app__crumb + .app__crumb::before {
+  @apply me-2;
+  content: '/';
+}
+
+.app__search {
+  @apply order-last w-full sm:order-none sm:w-64;
+}
+
+.app__search-input {
+  @apply w-full;
+}
+
+.app__actions {
+  @apply flex shrink-0 items-center gap-1;
+}
+
+.app__content {
+  @apply min-w-0 flex-1 p-4 sm:p-6;
+}

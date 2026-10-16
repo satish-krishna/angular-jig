@@ -1,0 +1,111 @@
+<section class="roster">
+  <header class="roster__header">
+    <h1 class="roster__title">Roster</h1>
+    <p class="roster__subtitle">Example data for the Hero Ops Console.</p>
+  </header>
+
+  <section hlmCard class="roster__card" aria-label="Heroes">
+    <div hlmCardHeader class="roster__toolbar">
+      <div class="roster__search-field">
+        <ng-icon name="lucideSearch" class="roster__search-icon" aria-hidden="true" />
+        <label hlmLabel for="roster-search" class="roster__sr-only">Search heroes</label>
+        <input
+          #search
+          hlmInput
+          id="roster-search"
+          type="search"
+          class="roster__search"
+          placeholder="Search name, alias or ID"
+          [value]="vm.query()"
+          (input)="vm.setQuery(search.value)"
+        />
+      </div>
+
+      <div class="roster__class-field">
+        <label hlmLabel for="roster-class" class="roster__sr-only">Filter by class</label>
+        <hlm-select class="roster__class" [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
+          <hlm-select-trigger [buttonId]="'roster-class'">
+            <hlm-select-value placeholder="Class" />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            @for (option of vm.classOptions; track option) {
+              <hlm-select-item [value]="option">{{ option }}</hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+      </div>
+
+      <a hlmBtn routerLink="/recruit" class="roster__recruit">
+        <ng-icon name="lucideUserPlus" />
+        Recruit
+      </a>
+    </div>
+
+    <div hlmCardContent class="roster__body">
+      <div hlmTableContainer>
+        <table hlmTable class="roster__table">
+          <caption hlmCaption class="roster__sr-only">Heroes, strongest first</caption>
+          <thead hlmTHead>
+            <tr hlmTr>
+              <th hlmTh scope="col">Hero</th>
+              <th hlmTh scope="col">Class</th>
+              <th hlmTh scope="col">Power</th>
+              <th hlmTh scope="col">Status</th>
+              <th hlmTh scope="col">Clearance</th>
+              <th hlmTh scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody hlmTBody>
+            @for (row of vm.rows(); track row.hero.id) {
+              <tr hlmTr>
+                <td hlmTd>
+                  <div class="roster__identity">
+                    <hlm-avatar class="roster__portrait">
+                      <span hlmAvatarFallback>{{ row.initials }}</span>
+                    </hlm-avatar>
+                    <div class="roster__name-block">
+                      <a class="roster__name" [routerLink]="['/detail', row.hero.id]">{{ row.hero.name }}</a>
+                      <span class="roster__meta">{{ row.hero.id }} · {{ row.hero.alias }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td hlmTd>
+                  <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
+                </td>
+                <td hlmTd>
+                  <span class="roster__power">{{ row.hero.powerIndex }}</span>
+                </td>
+                <td hlmTd>
+                  <app-status-badge [status]="row.hero.status" />
+                </td>
+                <td hlmTd>{{ row.hero.clearance }}</td>
+                <td hlmTd>
+                  <div class="roster__actions">
+                    <a
+                      hlmBtn
+                      variant="ghost"
+                      size="icon"
+                      [routerLink]="['/detail', row.hero.id]"
+                      [attr.aria-label]="'Edit ' + row.hero.name"
+                      [hlmTooltip]="'Edit ' + row.hero.name"
+                    >
+                      <ng-icon name="lucidePencil" aria-hidden="true" />
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (vm.shown() === 0) {
+        <p class="roster__empty" role="status">No heroes match these filters.</p>
+      }
+    </div>
+
+    <div class="roster__footer">
+      <p class="roster__summary" aria-live="polite">{{ vm.shown() }} of {{ vm.total() }} heroes</p>
+      <p class="roster__sort">Sorted by power</p>
+    </div>
+  </section>
+</section>

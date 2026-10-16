@@ -1,0 +1,47 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 class="threats__title">Threats</h1>
+    <p class="threats__subtitle">
+      Example data for the Hero Ops Console. Open incidents are heroes who are injured or missing.
+    </p>
+  </header>
+
+  <div class="threats__stats">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [hint]="stat.hint" [icon]="stat.icon" />
+    }
+  </div>
+
+  @if (vm.incidents().length === 0) {
+    <p class="threats__empty" role="status">No open incidents. Every hero is Active or in Reserve.</p>
+  } @else {
+    <ul class="threats__list" aria-label="Open incidents">
+      @for (incident of vm.incidents(); track incident.hero.id) {
+        <li>
+          <section hlmCard class="threats__card" [attr.aria-label]="incident.hero.name + ' incident'">
+            <div hlmCardHeader class="threats__card-header">
+              <h2 hlmCardTitle>{{ incident.hero.name }}</h2>
+              <span hlmBadge [variant]="incident.variant">{{ incident.severity }}</span>
+            </div>
+            <div hlmCardContent class="threats__body">
+              <app-status-badge [status]="incident.hero.status" />
+              <dl class="threats__facts">
+                <dt>Hero ID</dt>
+                <dd>{{ incident.hero.id }}</dd>
+                <dt>Power class</dt>
+                <dd>{{ incident.hero.powerClass }}</dd>
+                <dt>Clearance</dt>
+                <dd>{{ incident.hero.clearance }}</dd>
+                <dt>Power index</dt>
+                <dd>{{ incident.hero.powerIndex }}</dd>
+              </dl>
+              <a hlmBtn variant="outline" size="sm" class="threats__open" [routerLink]="['/detail', incident.hero.id]">
+                Open dossier
+              </a>
+            </div>
+          </section>
+        </li>
+      }
+    </ul>
+  }
+</section>

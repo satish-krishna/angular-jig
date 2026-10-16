@@ -1,0 +1,45 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 class="settings__title">Settings</h1>
+    <p class="settings__subtitle">Console preferences for this browser.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 id="appearance-heading" hlmCardTitle>Appearance</h2>
+      <p hlmCardDescription>Your choice is saved in this browser. System follows the device setting.</p>
+    </div>
+    <div hlmCardContent>
+      <div class="settings__options" role="group" aria-label="Theme">
+        @for (option of vm.options; track option.value) {
+          <button
+            hlmBtn
+            type="button"
+            [variant]="vm.preference() === option.value ? 'default' : 'outline'"
+            [attr.aria-pressed]="vm.preference() === option.value"
+            (click)="vm.choose(option.value)"
+          >
+            <ng-icon [name]="option.icon" aria-hidden="true" />
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="operator-heading">
+    <div hlmCardHeader>
+      <h2 id="operator-heading" hlmCardTitle>Operator</h2>
+    </div>
+    <div hlmCardContent>
+      <dl class="settings__facts">
+        <dt>Name</dt>
+        <dd>Ops Commander</dd>
+        <dt>Clearance</dt>
+        <dd>Tier 4</dd>
+        <dt>Data</dt>
+        <dd>Example roster held in memory. Edits last until the page reloads.</dd>
+      </dl>
+    </div>
+  </section>
+</section>

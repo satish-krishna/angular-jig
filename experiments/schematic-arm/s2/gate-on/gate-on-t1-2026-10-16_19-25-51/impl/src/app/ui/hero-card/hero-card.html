@@ -1,0 +1,41 @@
+<article hlmCard class="hero-card">
+  <div hlmCardHeader class="hero-card__header">
+    <hlm-avatar class="hero-card__portrait">
+      <span hlmAvatarFallback>{{ initials() }}</span>
+    </hlm-avatar>
+    <div class="hero-card__identity">
+      <h3 hlmCardTitle>
+        <a class="hero-card__link" [routerLink]="['/detail', hero().id]">{{ hero().name }}</a>
+      </h3>
+      <p hlmCardDescription>{{ hero().alias }} · {{ hero().id }}</p>
+    </div>
+  </div>
+
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__badges">
+      <span hlmBadge variant="outline">{{ hero().powerClass }}</span>
+      <app-status-badge [status]="hero().status" />
+    </div>
+
+    <div class="hero-card__power">
+      <span class="hero-card__power-label">Power index</span>
+      <span class="hero-card__power-value">{{ hero().powerIndex }}</span>
+    </div>
+    <app-power-meter [value]="hero().powerIndex" [label]="'Power index for ' + hero().name" />
+
+    <dl class="hero-card__stats">
+      <div class="hero-card__stat">
+        <dt class="hero-card__stat-label">Missions</dt>
+        <dd class="hero-card__stat-value">{{ hero().missionCount }}</dd>
+      </div>
+      <div class="hero-card__stat">
+        <dt class="hero-card__stat-label">Success</dt>
+        <dd class="hero-card__stat-value">{{ hero().successRate }}%</dd>
+      </div>
+      <div class="hero-card__stat">
+        <dt class="hero-card__stat-label">Clearance</dt>
+        <dd class="hero-card__stat-value">{{ hero().clearance }}</dd>
+      </div>
+    </dl>
+  </div>
+</article>
