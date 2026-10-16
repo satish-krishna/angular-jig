@@ -28,7 +28,7 @@ The block name is the component's file stem: `hero-card.ts` owns `.hero-card`, `
 
 ### R3. Every component is a triad
 
-Every `@Component` under `src/app` uses `templateUrl` and `styleUrl` and has the sibling `.html` and `.css` files with the same stem. `template:` and `styles:` are violations, with no exception for small components. A component whose template has no class to style still ships an empty-bodied stylesheet containing only the `@reference` line.
+Every `@Component` under `src/app` uses `templateUrl` and `styleUrl` and has the sibling `.html` and `.css` files with the same stem. `template:` and `styles:` are violations, with no exception for small components. A component whose template has no class to style still ships an empty-bodied stylesheet containing only the `@reference` line. Building a class name from data (`roster__row--{{ status }}`) is forbidden: bind each modifier with `[class.roster__row--active]`, so every class a template can carry is written out in full.
 
 ### R4. Stylesheets are plain CSS with flat BEM selectors
 
@@ -43,7 +43,7 @@ Component stylesheets are `.css`, not `.scss`: Tailwind v4 states it is not desi
 .roster__label { @apply sr-only; }
 ```
 
-Nesting is allowed only where native CSS supports it: a pseudo-class, pseudo-element or attribute on the same element (`&:hover`, `&::before`, `&[aria-expanded]`) and at-rules such as `@media` inside a rule. Sass-style concatenation (`&__filters`, `&--active`) is forbidden: native CSS cannot append text to `&`, so the Angular build compiles it to `:is(.roster)__filters`, a selector that matches nothing, and it does so with a warning rather than an error. (Found by the phase B spike, 2026-10-16; the first draft of this spec prescribed exactly that form.)
+Nesting is allowed wherever every class is still written out in full: a pseudo-class, pseudo-element or attribute on the same element (`&:hover`, `&::before`, `&[aria-expanded]`), at-rules such as `@media` inside a rule, or a nested rule naming a full BEM class (`.roster { .roster__row { ... } }`). Only Sass-style concatenation (`&__filters`, `&--active`) is forbidden: native CSS cannot append text to `&`, so the Angular build compiles it to `:is(.roster)__filters`, a selector that matches nothing, and it does so with a warning rather than an error. (Found by the phase B spike, 2026-10-16; the first draft of this spec prescribed exactly that form.)
 
 ### R5. Everything series 1 forbade in a template is still forbidden, wherever it now lives
 
