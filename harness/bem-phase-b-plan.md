@@ -18,7 +18,7 @@
 - Template class tokens: BEM only, `^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)?(?:--[a-z0-9]+(?:-[a-z0-9]+)*)?$`, and not a Tailwind utility. No allowlist, not even `sr-only`.
 - Block = the component's file stem with a trailing `.component` removed (`hero-card.ts` and `hero-card.component.ts` both own `hero-card`).
 - Every component is a triad: `templateUrl: './<file-stem>.html'`, `styleUrl: './<file-stem>.css'`, both files present. No exception for small components.
-- Component stylesheets are `.css` with native nesting and `@reference` to the theme; never `.scss`.
+- Component stylesheets are `.css` with `@reference` to the theme and flat BEM selectors written out in full (`.roster__row`); never `.scss`. Nesting only for `&:pseudo`, `&::pseudo`, `&[attr]` and at-rules; Sass-style `&__x`/`&--x` is forbidden (native CSS compiles it to a selector that matches nothing). Ruling from Task 1, see ledger.
 - Series 2 evidence goes to `experiments/schematic-arm/s2/<condition>/<runId>/`; series 1 evidence is never touched.
 - Nothing is committed to `main`. Measurement and docs commit on `research/schematic-arm`; substrate work on `substrate/schematic-arm-2`.
 - Never `--no-verify`. Commit footer: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` and `Claude-Session: https://claude.ai/code/session_014EzSJGU5jRgKLqcS4g2Mgr`.
@@ -269,7 +269,7 @@ A template says what things are; the stylesheet says how they look. Utility clas
 1. **Template classes are BEM names only.** Every token in a `class` attribute, every `[class.x]` binding, and every string inside a `[class]` binding is `block`, `block__element`, `block--modifier` or `block__element--modifier`, lowercase kebab-case. No Tailwind utility appears in a template. That includes `sr-only`: write `class="roster__label"` and `@apply sr-only` it.
 2. **One block per component, named after the component file.** `hero-card.ts` owns `.hero-card`, `.hero-card__name`, `.hero-card--retired`, and nothing else. A template must not use another component's block, and a stylesheet must not define one. `:host` is allowed.
 3. **Every component is three files.** `hero-card.ts` with `templateUrl: './hero-card.html'` and `styleUrl: './hero-card.css'`. Never `template:` or `styles:`, however small the component. `ng g component` already produces this shape.
-4. **Stylesheets are plain `.css` with nesting.** Not `.scss`: Tailwind v4 does not support running behind Sass. The first line is always `@reference "../../styles.css";` (adjust the `../` count to the file's depth under `src/app`), which lets `@apply` resolve the theme's tokens and variants.
+4. **Stylesheets are plain `.css` with every BEM class written out in full.** Not `.scss`: Tailwind v4 does not support running behind Sass. The first line is always `@reference "../../styles.css";` (adjust the `../` count to the file's depth under `src/app`), which lets `@apply` resolve the theme's tokens and variants. Write `.roster__row { ... }`, never `.roster { &__row { ... } }`: that is Sass syntax, and native CSS compiles it to a selector that matches nothing, with only a warning. Nesting is fine for states and breakpoints on the same element: `&:hover`, `&::before`, `&[aria-expanded="true"]`, `@media`.
 5. **Utilities live in `@apply`, and every rule below still applies to them.** Semantic color tokens only, `gap-*` not `space-*`, grid for regions, appearance never on a primitive. Moving a utility from the template into `@apply` does not change whether it is allowed.
 6. **No utility classes in TypeScript.** No `cva` variant strings, no `host: { class: '...' }`, no computed class strings. A state that changes appearance is a BEM modifier bound with `[class.block--modifier]`.
 
@@ -296,17 +296,17 @@ Helm directives and their inputs are not classes and stay in the template: `vari
 /* roster.css */
 @reference "../../styles.css";
 
-.roster {
-  @apply grid gap-6;
-
-  &__title { @apply text-2xl font-semibold; }
-  &__filters { @apply flex flex-wrap items-center gap-3; }
-  &__label { @apply sr-only; }
-  &__search { @apply w-full sm:w-64; }
-  &__recruit { @apply ms-auto; }
-  &__row { @apply text-sm; }
-  &__row--retired { @apply text-muted-foreground; }
+.roster { @apply grid gap-6; }
+.roster__title { @apply text-2xl font-semibold; }
+.roster__filters { @apply flex flex-wrap items-center gap-3; }
+.roster__label { @apply sr-only; }
+.roster__search { @apply w-full sm:w-64; }
+.roster__recruit { @apply ms-auto; }
+.roster__row {
+  @apply text-sm;
+  &:hover { @apply bg-accent; }
 }
+.roster__row--retired { @apply text-muted-foreground; }
 ```
 
 Note the primitives: `roster__search` and `roster__recruit` apply only width and margin, because a primitive's class is for layout only. Color and typography for a primitive come from its own `variant`/`size` inputs.
@@ -359,7 +359,7 @@ All remaining code tasks run in `D:/Repos/angular-jig` on `research/schematic-ar
   - `BEM_RE: RegExp`
   - `blockOf(token: string): string`
   - `loadClassifier(stylesPath: string): Promise<{ isUtility(token: string): boolean }>`
-  - `parseStylesheet(css: string, from?: string): { utilities: Map<string, string[]>, selectorClasses: { cls: string, line: number }[], hasApply: boolean, hasReference: boolean }`
+  - `parseStylesheet(css: string, from?: string): { utilities: Map<string, string[]>, selectorClasses: { cls: string, line: number }[], brokenNesting: { selector: string, line: number }[], hasApply: boolean, hasReference: boolean }`
 
 - [ ] **Step 1: Write the fixture theme**
 
@@ -416,21 +416,22 @@ describe('parseStylesheet', () => {
     '@reference "../../styles.css";',
     '',
     ':host { @apply block; }',
-    '.roster {',
-    '  @apply grid gap-6;',
-    '  &__filters { @apply flex flex-wrap gap-3; }',
-    '  &__retire {',
-    '    @apply ms-auto;',
-    '    &:hover { @apply bg-red-500; }',
-    '  }',
-    '  @media (width >= 40rem) {',
-    '    &__search { @apply w-64; }',
-    '  }',
+    '.roster { @apply grid gap-6; }',
+    '.roster__filters { @apply flex flex-wrap gap-3; }',
+    '.roster__retire {',
+    '  @apply ms-auto;',
+    '  &:hover { @apply bg-red-500; }',
+    '}',
+    '.roster__search {',
+    '  @media (width >= 40rem) { @apply w-64; }',
+    '}',
+    '.roster__row {',
+    '  &__name { @apply flex; }',
     '}',
     '.badge-lite { color: var(--primary); }',
   ].join('\n');
 
-  it('maps each class to the utilities it applies, through nesting, pseudo-classes and @media', () => {
+  it('maps each class to the utilities it applies, through pseudo-class nesting and @media', () => {
     const { utilities } = parseStylesheet(css);
     expect(utilities.get('roster')).toEqual(['grid', 'gap-6']);
     expect(utilities.get('roster__filters')).toEqual(['flex', 'flex-wrap', 'gap-3']);
@@ -438,11 +439,20 @@ describe('parseStylesheet', () => {
     expect(utilities.get('roster__search')).toEqual(['w-64']);
   });
 
+  it('treats Sass-style &__x as broken: it maps nothing, names no class, and is reported', () => {
+    const { utilities, selectorClasses, brokenNesting } = parseStylesheet(css);
+    expect(utilities.has('roster__row')).toBe(false);
+    expect(utilities.has('roster__row__name')).toBe(false);
+    expect(utilities.has('roster__name')).toBe(false);
+    expect(selectorClasses.some((s) => s.line === 14)).toBe(false);
+    expect(brokenNesting).toEqual([{ selector: '&__name', line: 14 }]);
+  });
+
   it('lists every selector class with its line, and :host contributes none', () => {
     const { selectorClasses } = parseStylesheet(css);
     const names = [...new Set(selectorClasses.map((s) => s.cls))].sort();
-    expect(names).toEqual(['badge-lite', 'roster', 'roster__filters', 'roster__retire', 'roster__search']);
-    expect(selectorClasses.find((s) => s.cls === 'badge-lite').line).toBe(15);
+    expect(names).toEqual(['badge-lite', 'roster', 'roster__filters', 'roster__retire', 'roster__row', 'roster__search']);
+    expect(selectorClasses.find((s) => s.cls === 'badge-lite').line).toBe(16);
   });
 
   it('detects @apply and @reference', () => {
@@ -453,7 +463,7 @@ describe('parseStylesheet', () => {
 
   it('parses CRLF stylesheets with the same lines', () => {
     const { selectorClasses } = parseStylesheet(css.replaceAll('\n', '\r\n'));
-    expect(selectorClasses.find((s) => s.cls === 'badge-lite').line).toBe(15);
+    expect(selectorClasses.find((s) => s.cls === 'badge-lite').line).toBe(16);
   });
 });
 ```
@@ -496,14 +506,26 @@ export async function loadClassifier(stylesPath) {
 ```js
 // Reads a component stylesheet the way the expansion needs it: which
 // utilities each class applies, and which classes the selectors name.
-// Nesting is resolved by hand (`&` substitution, descendant otherwise), so
-// `.roster { &__row { ... } }` is `.roster__row`.
+// Nesting is resolved the way native CSS resolves it (`&` is the parent
+// selector, descendant otherwise). Native CSS cannot append text to `&`, so
+// a Sass-style `.roster { &__row { ... } }` styles nothing in the browser:
+// such a rule, and everything nested in it, maps no utilities and names no
+// class here either, and is reported in brokenNesting instead.
 import postcss from 'postcss';
 
 function ruleParent(node) {
   let p = node.parent;
   while (p && p.type !== 'rule' && p.type !== 'root') p = p.parent;
   return p && p.type === 'rule' ? p : null;
+}
+
+// `&` followed by an identifier character is concatenation, which only Sass does.
+const CONCAT_RE = /&[\w-]/;
+
+function isBroken(rule) {
+  const parent = ruleParent(rule);
+  if (!parent) return false;
+  return rule.selectors.some((s) => CONCAT_RE.test(s)) || isBroken(parent);
 }
 
 export function resolvedSelectors(rule) {
@@ -527,7 +549,7 @@ export function parseStylesheet(css, from = 'component.css') {
     if (a.name !== 'apply') return;
     hasApply = true;
     const rule = ruleParent(a);
-    if (!rule) return;
+    if (!rule || isBroken(rule)) return;
     const tokens = a.params.split(/\s+/).filter(Boolean);
     for (const sel of resolvedSelectors(rule)) {
       for (const cls of classesIn(lastCompound(sel))) {
@@ -538,8 +560,13 @@ export function parseStylesheet(css, from = 'component.css') {
   });
   const seen = new Set();
   const selectorClasses = [];
+  const brokenNesting = [];
   root.walkRules((rule) => {
     const line = rule.source?.start?.line ?? 0;
+    if (isBroken(rule)) {
+      for (const selector of rule.selectors) if (CONCAT_RE.test(selector)) brokenNesting.push({ selector, line });
+      return;
+    }
     for (const sel of resolvedSelectors(rule)) {
       for (const cls of classesIn(sel)) {
         const key = `${cls}@${line}`;
@@ -549,7 +576,7 @@ export function parseStylesheet(css, from = 'component.css') {
       }
     }
   });
-  return { utilities, selectorClasses, hasApply, hasReference };
+  return { utilities, selectorClasses, brokenNesting, hasApply, hasReference };
 }
 ```
 
@@ -557,7 +584,7 @@ export function parseStylesheet(css, from = 'component.css') {
 
 Run: `npx vitest run --config harness/vitest.config.mjs harness/counter/bem/stylesheet.test.mjs`
 
-Expected: PASS, 6 tests. If a classifier expectation fails, print `ds.candidatesToCss([token])` for that token and fix the expectation only if Tailwind's answer is defensible (for example a token that really is a utility); never special-case a token in `classify.mjs`.
+Expected: PASS, 7 tests. If a classifier expectation fails, print `ds.candidatesToCss([token])` for that token and fix the expectation only if Tailwind's answer is defensible (for example a token that really is a utility); never special-case a token in `classify.mjs`.
 
 - [ ] **Step 7: Commit**
 
@@ -813,7 +840,7 @@ const CLEAN_HTML = [
   '  <button hlmBtn variant="ghost" class="hero-card__retire">Retire</button>',
   '</article>',
 ].join('\n');
-const CLEAN_CSS = `${REF}\n.hero-card {\n  @apply grid gap-4;\n  &--retired { @apply opacity-60; }\n  &__name { @apply text-lg font-semibold; }\n  &__retire { @apply ms-auto; }\n}\n`;
+const CLEAN_CSS = `${REF}\n.hero-card { @apply grid gap-4; }\n.hero-card--retired { @apply opacity-60; }\n.hero-card__name { @apply text-lg font-semibold; }\n.hero-card__retire { @apply ms-auto; }\n`;
 
 const bem = async (files) => {
   const dir = tree(files);
@@ -869,6 +896,14 @@ describe('bemTally', () => {
     expect(r.totals['missing-triad']).toBe(2);
   });
 
+  it('broken-nesting: Sass-style &__x is counted, and its utilities are not expanded', async () => {
+    const css = `${REF}.hero-card {\n  @apply grid;\n  &__name { @apply bg-red-500; }\n}\n`;
+    const r = await bem(triad('hero-card', CLEAN_HTML, css));
+    expect(r.totals['broken-nesting']).toBe(1);
+    expect(r.violations.find((v) => v.kind === 'broken-nesting')).toMatchObject({ file: 'app/hero-card/hero-card.css', line: 4 });
+    expect(expanded(triad('hero-card', CLEAN_HTML, css)).layout.totals['raw-palette-color']).toBe(0);
+  });
+
   it('missing-reference: @apply without @reference', async () => {
     const r = await bem(triad('hero-card', '<p class="hero-card"></p>', '.hero-card { @apply grid; }\n'));
     expect(r.totals['missing-reference']).toBe(1);
@@ -919,7 +954,7 @@ describe('expandedTally: planted violations hidden behind BEM', () => {
   });
 
   it('sees a raw palette color applied to a primitive, at the template line', () => {
-    const css = `${REF}.hero-card {\n  &__retire { @apply bg-red-500; }\n}\n`;
+    const css = `${REF}.hero-card__retire { @apply bg-red-500; }\n`;
     const r = expanded(triad('hero-card', CLEAN_HTML, css));
     expect(r.layout.totals['raw-palette-color']).toBe(1);
     expect(r.layout.violations[0]).toMatchObject({ file: 'app/hero-card/hero-card.html', line: 3 });
@@ -927,7 +962,7 @@ describe('expandedTally: planted violations hidden behind BEM', () => {
   });
 
   it('sees space-* and a hover-only palette color', () => {
-    const css = `${REF}.hero-card {\n  @apply space-y-4;\n  &__name { &:hover { @apply text-gray-700; } }\n}\n`;
+    const css = `${REF}.hero-card { @apply space-y-4; }\n.hero-card__name {\n  &:hover { @apply text-gray-700; }\n}\n`;
     const r = expanded(triad('hero-card', CLEAN_HTML, css));
     expect(r.layout.totals['space-utility']).toBe(1);
     expect(r.layout.totals['raw-palette-color']).toBe(1);
@@ -935,7 +970,7 @@ describe('expandedTally: planted violations hidden behind BEM', () => {
 
   it('sees a row of flex columns built from BEM classes', () => {
     const html = '<div class="hero-card">\n  <div class="hero-card__col">a</div>\n  <div class="hero-card__col">b</div>\n</div>';
-    const css = `${REF}.hero-card {\n  @apply flex;\n  &__col { @apply flex flex-col; }\n}\n`;
+    const css = `${REF}.hero-card { @apply flex; }\n.hero-card__col { @apply flex flex-col; }\n`;
     const r = expanded(triad('hero-card', html, css));
     expect(r.layout.totals['nested-flex-grid']).toBe(1);
   });
@@ -1028,8 +1063,9 @@ export function readComponents(path, text) {
 ```js
 // The BEM plane (series 2, harness/bem-house-style-spec.md). Two exports:
 //
-// bemTally: the seven rules that are new in series 2 (BEM-only templates, one
-// block per component, the file triad, @reference, no utilities in TS).
+// bemTally: the eight rules that are new in series 2 (BEM-only templates, one
+// block per component, the file triad, @reference, no Sass-style nesting, no
+// utilities in TS).
 //
 // expandedTally: the series 1 seal and layout checks, run on each template
 // after its BEM classes are replaced by the utilities its stylesheet applies.
@@ -1053,6 +1089,7 @@ export const BEM_KINDS = [
   'inline-styles',
   'missing-triad',
   'missing-reference',
+  'broken-nesting',
   'utility-in-ts',
 ];
 
@@ -1136,6 +1173,7 @@ export async function bemTally(paths, { root, styles } = {}) {
           if (blockOf(cls) !== block) add('foreign-block', cssPath, line, `.${cls} in ${fileStem}.css`);
         }
         if (s.hasApply && !s.hasReference) add('missing-reference', cssPath, 1, '@apply without @reference');
+        for (const b of s.brokenNesting) add('broken-nesting', cssPath, b.line, `${b.selector} appends to & (Sass only)`);
       }
     });
 
@@ -1198,7 +1236,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 
 Run: `npx vitest run --config harness/vitest.config.mjs harness/counter/bem-counter.test.mjs`
 
-Expected: PASS, 16 tests. If `seal.tally([])` or `layout.layoutTally([])` throws on an empty list, build the zero totals by calling them on an empty temporary directory instead; do not export new functions from `counter.mjs` or `layout-counter.mjs`.
+Expected: PASS, 17 tests. If `seal.tally([])` or `layout.layoutTally([])` throws on an empty list, build the zero totals by calling them on an empty temporary directory instead; do not export new functions from `counter.mjs` or `layout-counter.mjs`.
 
 - [ ] **Step 6: Run the whole harness suite**
 

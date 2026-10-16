@@ -30,20 +30,20 @@ The block name is the component's file stem: `hero-card.ts` owns `.hero-card`, `
 
 Every `@Component` under `src/app` uses `templateUrl` and `styleUrl` and has the sibling `.html` and `.css` files with the same stem. `template:` and `styles:` are violations, with no exception for small components. A component whose template has no class to style still ships an empty-bodied stylesheet containing only the `@reference` line.
 
-### R4. Stylesheets are plain CSS with nesting
+### R4. Stylesheets are plain CSS with flat BEM selectors
 
-Component stylesheets are `.css`, not `.scss`: Tailwind v4 states it is not designed to run behind Sass. Each starts with `@reference` to the theme stylesheet so `@apply` can resolve tokens and variants, and uses native nesting for elements and modifiers:
+Component stylesheets are `.css`, not `.scss`: Tailwind v4 states it is not designed to run behind Sass. Each starts with `@reference` to the theme stylesheet so `@apply` can resolve tokens and variants. Every BEM class is written out in full as its own flat selector:
 
 ```css
 @reference "../../styles.css";
 
-.roster {
-  @apply grid gap-6;
-  &__filters { @apply flex flex-wrap items-center gap-3; }
-  &__filter { @apply w-full sm:w-48; }
-  &__label { @apply sr-only; }
-}
+.roster { @apply grid gap-6; }
+.roster__filters { @apply flex flex-wrap items-center gap-3; }
+.roster__filter { @apply w-full sm:w-48; }
+.roster__label { @apply sr-only; }
 ```
+
+Nesting is allowed only where native CSS supports it: a pseudo-class, pseudo-element or attribute on the same element (`&:hover`, `&::before`, `&[aria-expanded]`) and at-rules such as `@media` inside a rule. Sass-style concatenation (`&__filters`, `&--active`) is forbidden: native CSS cannot append text to `&`, so the Angular build compiles it to `:is(.roster)__filters`, a selector that matches nothing, and it does so with a warning rather than an error. (Found by the phase B spike, 2026-10-16; the first draft of this spec prescribed exactly that form.)
 
 ### R5. Everything series 1 forbade in a template is still forbidden, wherever it now lives
 
@@ -61,7 +61,7 @@ The counter is built first and gates nothing; it is the independent auditor ever
 
 ### Expansion
 
-The central mechanism. For each component, the counter parses its `.css` with postcss, resolves nesting, and builds a map from each BEM class to the utilities its rules `@apply` (including utilities under nested pseudo-classes and variants on that class). It then rewrites a copy of the template, replacing each BEM class with its expansion, and runs the existing `seal` and `layout` template checks on the expanded copy. The existing rules, tests and fixtures are reused as they are; only their input changes.
+The central mechanism. For each component, the counter parses its `.css` with postcss, resolves nesting, and builds a map from each BEM class to the utilities its rules `@apply` (including utilities under nested pseudo-classes and variants on that class). A rule whose selector appends to `&` maps nothing, because in the browser it styles nothing; it is counted as `broken-nesting` instead. It then rewrites a copy of the template, replacing each BEM class with its expansion, and runs the existing `seal` and `layout` template checks on the expanded copy. The existing rules, tests and fixtures are reused as they are; only their input changes.
 
 ```mermaid
 flowchart LR
@@ -88,6 +88,7 @@ flowchart LR
 | `inline-styles` | `styles:` in a component under `src/app` (R3) |
 | `missing-triad` | a component without its sibling `.html` or `.css` (R3) |
 | `missing-reference` | a component stylesheet with `@apply` but no `@reference` (R4) |
+| `broken-nesting` | a nested selector that appends text to `&` (`&__x`, `&--x`), which native CSS cannot concatenate and which silently styles nothing (R4) |
 | `utility-in-ts` | a Tailwind class token inside a TypeScript string literal (R6) |
 
 `utility-in-ts` uses a token classifier shared with `template-utility-class`, so the two cannot disagree about what a utility is.
@@ -108,7 +109,7 @@ A new branch `substrate/schematic-arm-2` from `substrate/schematic-arm`:
 2. Set `angular.json` component schematic defaults to `inlineTemplate: false`, `inlineStyle: false`, `style: css`, so `ng g component` produces a triad.
 3. Rewrite the house-style skill: a new "Markup is BEM, styling is in the stylesheet" section stating R1 to R6 with one worked example, and the layout grammar section restated in terms of what a class expands to. The skill states plainly that this overrides the spartan skill's examples, which put utilities in the `class` attribute. The vendored spartan skill is not edited: its pull toward inline utilities is the realistic pressure the gates are tested against.
 4. Nothing under `harness/counter/`. As in series 1, the counters live on the launching branch (`research/schematic-arm`) and the mod measures with them after the run, so the subject never sees the counter.
-5. Confirm first, before anything else is built on it, that `@reference` plus `@apply` with variants and theme tokens compiles in a component `.css` under the Angular builder with `@tailwindcss/postcss`. This is the one technical assumption the design rests on.
+5. Confirm first, before anything else is built on it, that `@reference` plus `@apply` with variants and theme tokens compiles in a component `.css` under the Angular builder with `@tailwindcss/postcss`. This is the one technical assumption the design rests on. Confirmed by the phase B spike with `@reference "../../styles.css";` and flat selectors; the same spike found that Sass-style `&__x` nesting silently compiles to nothing (see R4).
 
 ## Series 2 mechanics
 
