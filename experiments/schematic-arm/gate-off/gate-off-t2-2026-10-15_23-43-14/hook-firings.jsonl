@@ -1,0 +1,7 @@
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-15T23:46:37.431Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-15T23:47:37.552Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-15T23:51:01.339Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-15T23:53:16.737Z"}
+{"hook":"protect-enforcement","file":".claude/skills/, tsconfig.json","count":1,"messages":["Bash blocked on: .claude/skills/, tsconfig.json"],"ts":"2026-10-15T23:54:05.402Z"}
+{"hook":"protect-enforcement","file":".claude/settings.json, tsconfig.json","count":1,"messages":["Bash blocked on: .claude/settings.json, tsconfig.json"],"ts":"2026-10-15T23:56:43.565Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-16T00:01:59.469Z"}

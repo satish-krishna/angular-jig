@@ -1,0 +1,78 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar>
+    <div hlmSidebarContent>
+      <div hlmSidebarHeader>
+        <div class="flex items-center gap-2 px-2 py-3">
+          <ng-icon name="lucideCrosshair" class="text-sidebar-primary" />
+          <span class="font-semibold">Hero Ops</span>
+        </div>
+      </div>
+
+      <nav aria-label="Primary">
+        <ul hlmSidebarMenu>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive" [isActive]="dashboard.isActive">
+              <ng-icon name="lucideLayoutDashboard" />
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive #roster="routerLinkActive" [isActive]="roster.isActive">
+              <ng-icon name="lucideUsers" />
+              <span>Roster</span>
+            </a>
+          </li>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive #missions="routerLinkActive" [isActive]="missions.isActive">
+              <ng-icon name="lucideTarget" />
+              <span>Missions</span>
+            </a>
+          </li>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive #threats="routerLinkActive" [isActive]="threats.isActive">
+              <ng-icon name="lucideShieldAlert" />
+              <span>Threats</span>
+            </a>
+          </li>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive #recruit="routerLinkActive" [isActive]="recruit.isActive">
+              <ng-icon name="lucideUserPlus" />
+              <span>Recruit</span>
+            </a>
+          </li>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive #settings="routerLinkActive" [isActive]="settings.isActive">
+              <ng-icon name="lucideSettings" />
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter>
+      <div class="flex items-center gap-2 px-2 py-3">
+        <hlm-avatar size="sm">
+          <span hlmAvatarFallback>OP</span>
+        </hlm-avatar>
+        <div class="flex min-w-0 flex-col text-sm">
+          <span class="truncate font-medium">Ops Commander</span>
+          <span class="truncate text-sidebar-foreground/70">Example data</span>
+        </div>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="min-w-0">
+    <app-topbar
+      [crumb]="vm.crumb()"
+      [theme]="vm.theme()"
+      (themeToggle)="vm.toggleTheme()"
+      (submitSearch)="vm.search($event)"
+    />
+
+    <div class="flex min-w-0 flex-1 flex-col p-4 md:p-6">
+      <router-outlet />
+    </div>
+  </main>
+</div>
