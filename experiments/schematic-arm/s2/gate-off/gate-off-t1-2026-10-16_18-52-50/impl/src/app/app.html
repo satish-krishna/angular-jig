@@ -1,0 +1,111 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar>
+    <div hlmSidebarHeader>
+      <div class="flex items-center gap-2 px-2 py-1.5">
+        <ng-icon name="lucideShield" class="text-sidebar-primary size-5" />
+        <span class="text-sm font-semibold">Hero Ops Console</span>
+      </div>
+    </div>
+
+    <div hlmSidebarContent>
+      <nav aria-label="Primary">
+        <div hlmSidebarGroup>
+          <div hlmSidebarGroupLabel>Command</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (item of vm.navigation; track item.path) {
+                <li hlmSidebarMenuItem>
+                  <a
+                    hlmSidebarMenuButton
+                    [routerLink]="item.path"
+                    routerLinkActive
+                    #active="routerLinkActive"
+                    [isActive]="active.isActive"
+                  >
+                    <ng-icon [name]="item.icon" />
+                    <span>{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div hlmSidebarFooter>
+      <div class="flex items-center gap-3 px-2 py-1.5">
+        <hlm-avatar size="sm">
+          <span hlmAvatarFallback>OP</span>
+        </hlm-avatar>
+        <div class="min-w-0">
+          <p class="truncate text-sm font-medium">Operator</p>
+          <p class="text-sidebar-muted truncate text-xs">Command desk</p>
+        </div>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset>
+    <header class="flex flex-wrap items-center gap-x-2 gap-y-2 border-b px-4 py-3 sm:px-6">
+      <button hlmSidebarTrigger></button>
+
+      <nav aria-label="Breadcrumb" class="basis-40 min-w-0 flex-1">
+        <ol class="flex min-w-0 items-center gap-1 text-sm">
+          @for (crumb of vm.crumbs(); track $index; let last = $last) {
+            <li class="flex min-w-0 items-center gap-1">
+              @if (crumb.link && !last) {
+                <a [routerLink]="crumb.link" class="text-muted-foreground hover:text-foreground truncate">{{ crumb.label }}</a>
+              } @else {
+                <span aria-current="page" class="truncate font-medium">{{ crumb.label }}</span>
+              }
+              @if (!last) {
+                <ng-icon name="lucideChevronRight" class="text-muted-foreground size-4 shrink-0" />
+              }
+            </li>
+          }
+        </ol>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-2">
+        <input
+          #query
+          hlmInput
+          type="search"
+          class="w-40 sm:w-64"
+          placeholder="Search heroes"
+          aria-label="Search heroes"
+          (search)="vm.search(query.value)"
+        />
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          aria-label="Notifications"
+          hlmTooltip="Notifications"
+        >
+          <ng-icon name="lucideBell" />
+        </button>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          type="button"
+          [attr.aria-label]="vm.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+          hlmTooltip="Toggle theme"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon [name]="vm.isDark() ? 'lucideSun' : 'lucideMoon'" />
+        </button>
+        <hlm-avatar size="sm">
+          <span hlmAvatarFallback>OP</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="flex min-w-0 flex-1 flex-col p-4 sm:p-6">
+      <router-outlet />
+    </div>
+  </main>
+</div>

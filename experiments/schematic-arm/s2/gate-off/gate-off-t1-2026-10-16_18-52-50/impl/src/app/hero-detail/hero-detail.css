@@ -1,0 +1,38 @@
+@reference "../../styles.css";
+
+.hero-detail, .hero-detail__section, .hero-detail__tabs, .hero-detail__panel, .hero-detail__names { @apply min-w-0; }
+.hero-detail { @apply grid gap-6; }
+.hero-detail__back { @apply justify-self-start; }
+
+.hero-detail__header { @apply flex flex-wrap items-start justify-between gap-4; }
+.hero-detail__identity { @apply flex min-w-0 flex-1 items-center gap-4; }
+.hero-detail__names { @apply grid gap-1; }
+.hero-detail__id { @apply text-muted-foreground text-xs tabular-nums; }
+.hero-detail__title { @apply text-2xl font-semibold break-words sm:text-3xl; }
+.hero-detail__alias { @apply text-muted-foreground text-sm break-words; }
+.hero-detail__badges { @apply flex flex-wrap items-center gap-2; }
+
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+
+.hero-detail__tab-list { @apply max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply pt-4; }
+
+.hero-detail__columns { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+.hero-detail__section-body { @apply grid gap-4; }
+.hero-detail__heading { @apply text-base font-semibold; }
+
+.hero-detail__stats { @apply grid grid-cols-1 gap-3 sm:grid-cols-3; }
+
+.hero-detail__facts { @apply grid min-w-0 gap-3; }
+.hero-detail__fact { @apply grid min-w-0 gap-0.5; }
+.hero-detail__term { @apply text-muted-foreground text-xs tracking-wide uppercase; }
+.hero-detail__value { @apply font-medium break-words; }
+.hero-detail__note { @apply text-muted-foreground text-sm; }
+
+.hero-detail__form { @apply grid min-w-0 gap-6; }
+.hero-detail__fields { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.hero-detail__field--wide { @apply sm:col-span-2; }
+.hero-detail__select { @apply w-full; }
+.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2; }
+
+.hero-detail__not-found { @apply grid min-w-0 gap-2; }

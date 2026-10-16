@@ -1,0 +1,37 @@
+<section class="settings" aria-labelledby="settings-title">
+  <div class="settings__heading">
+    <h1 id="settings-title" class="settings__title">Settings</h1>
+    <p class="settings__intro">Console preferences. Your choices are saved in this browser.</p>
+  </div>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardContent class="settings__body">
+      <h2 id="appearance-heading" class="settings__section-title">Appearance</h2>
+
+      <hlm-field>
+        <label hlmFieldLabel for="settings-theme">Theme</label>
+        <hlm-select [value]="vm.themePreference()" (valueChange)="vm.setThemePreference($event)">
+          <hlm-select-trigger buttonId="settings-theme" class="settings__select">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            @for (option of vm.themeOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+        <p hlmFieldDescription>Match system follows your device setting and changes with it.</p>
+      </hlm-field>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-heading">
+    <div hlmCardContent class="settings__body">
+      <h2 id="data-heading" class="settings__section-title">Example data</h2>
+      <p class="settings__note">
+        The roster, missions and threats are invented for this demo and are not real people or operations.
+        Edits, deployments and recruits last until the page reloads.
+      </p>
+    </div>
+  </section>
+</section>

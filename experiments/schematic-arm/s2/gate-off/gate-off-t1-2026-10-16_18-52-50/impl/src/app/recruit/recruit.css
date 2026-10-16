@@ -1,0 +1,14 @@
+@reference "../../styles.css";
+
+.recruit { @apply grid min-w-0 gap-6; }
+.recruit__heading { @apply grid min-w-0 gap-1; }
+.recruit__title { @apply text-2xl font-semibold; }
+.recruit__intro { @apply text-muted-foreground text-sm; }
+.recruit__card { @apply min-w-0 max-w-3xl; }
+.recruit__body { @apply grid gap-4; }
+.recruit__section-title { @apply text-lg font-semibold; }
+.recruit__form { @apply grid gap-6; }
+.recruit__fields { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.recruit__field--wide { @apply sm:col-span-2; }
+.recruit__select { @apply w-full; }
+.recruit__actions { @apply flex flex-wrap justify-end gap-2; }

@@ -1,0 +1,55 @@
+{
+  "totals": {
+    "raw-control": 0,
+    "appearance-on-primitive": 7,
+    "style-attribute": 0,
+    "raw-icon": 0,
+    "unknown-primitive": 0,
+    "missing-composition-part": 0,
+    "all": 7
+  },
+  "violations": [
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 75,
+      "detail": "appearance class pt-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 109,
+      "detail": "appearance class pt-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 129,
+      "detail": "appearance class pt-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/hero-detail/hero-detail.html",
+      "line": 154,
+      "detail": "appearance class pt-4 on primitive div"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/heroes/heroes.html",
+      "line": 88,
+      "detail": "appearance class text-muted-foreground on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/missions/missions.html",
+      "line": 60,
+      "detail": "appearance class text-muted-foreground on primitive td"
+    },
+    {
+      "kind": "appearance-on-primitive",
+      "file": "src/app/missions/missions.html",
+      "line": 108,
+      "detail": "appearance class text-muted-foreground on primitive td"
+    }
+  ]
+}

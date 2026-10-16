@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+.settings { @apply grid min-w-0 gap-6; }
+.settings__heading { @apply grid min-w-0 gap-1; }
+.settings__title { @apply text-2xl font-semibold; }
+.settings__intro { @apply text-muted-foreground text-sm; }
+.settings__card { @apply min-w-0 max-w-2xl; }
+.settings__body { @apply grid gap-4; }
+.settings__section-title { @apply text-lg font-semibold; }
+.settings__select { @apply w-full sm:w-56; }
+.settings__note { @apply text-muted-foreground text-sm; }

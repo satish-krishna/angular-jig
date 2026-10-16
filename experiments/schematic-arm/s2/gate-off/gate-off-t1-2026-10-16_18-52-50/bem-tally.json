@@ -1,0 +1,657 @@
+{
+  "totals": {
+    "template-utility-class": 62,
+    "foreign-block": 45,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "all": 107
+  },
+  "violations": [
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "class items-center"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "class gap-2"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "class px-2"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "class py-1.5"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 5,
+      "detail": "class text-sidebar-primary"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 5,
+      "detail": "class size-5"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 6,
+      "detail": "class text-sm"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 6,
+      "detail": "class font-semibold"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 37,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 37,
+      "detail": "class items-center"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 37,
+      "detail": "class gap-3"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 37,
+      "detail": "class px-2"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 37,
+      "detail": "class py-1.5"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 41,
+      "detail": "class min-w-0"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 42,
+      "detail": "class truncate"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 42,
+      "detail": "class text-sm"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 42,
+      "detail": "class font-medium"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 43,
+      "detail": "class text-sidebar-muted"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 43,
+      "detail": "class truncate"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 43,
+      "detail": "class text-xs"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class flex-wrap"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class items-center"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class gap-x-2"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class gap-y-2"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class border-b"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class px-4"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class py-3"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 50,
+      "detail": "class sm:px-6"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 53,
+      "detail": "class basis-40"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 53,
+      "detail": "class min-w-0"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 53,
+      "detail": "class flex-1"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 54,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 54,
+      "detail": "class min-w-0"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 54,
+      "detail": "class items-center"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 54,
+      "detail": "class gap-1"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 54,
+      "detail": "class text-sm"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 56,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 56,
+      "detail": "class min-w-0"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 56,
+      "detail": "class items-center"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 56,
+      "detail": "class gap-1"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 58,
+      "detail": "class text-muted-foreground"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 58,
+      "detail": "class hover:text-foreground"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 58,
+      "detail": "class truncate"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 60,
+      "detail": "class truncate"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 60,
+      "detail": "class font-medium"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 63,
+      "detail": "class text-muted-foreground"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 63,
+      "detail": "class size-4"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 63,
+      "detail": "class shrink-0"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 70,
+      "detail": "class ml-auto"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 70,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 70,
+      "detail": "class items-center"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 70,
+      "detail": "class gap-2"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 71,
+      "detail": "class w-40"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 71,
+      "detail": "class sm:w-64"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "class flex"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "class min-w-0"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "class flex-1"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "class flex-col"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "class p-4"
+    },
+    {
+      "kind": "template-utility-class",
+      "file": "src/app/app.html",
+      "line": 107,
+      "detail": "class sm:p-6"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 3,
+      "detail": ".roster in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 4,
+      "detail": ".roster__heading in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 5,
+      "detail": ".roster__title in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 6,
+      "detail": ".roster__intro in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 8,
+      "detail": ".roster__toolbar in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 9,
+      "detail": ".roster__label in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 9,
+      "detail": ".roster__caption in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 11,
+      "detail": ".roster__search-field in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 12,
+      "detail": ".roster__search-icon in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 13,
+      "detail": ".roster__search in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 14,
+      "detail": ".roster__class in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 15,
+      "detail": ".roster__class-trigger in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 16,
+      "detail": ".roster__recruit in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 18,
+      "detail": ".roster__table in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 19,
+      "detail": ".roster__hero in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 20,
+      "detail": ".roster__identity in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 21,
+      "detail": ".roster__name in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 22,
+      "detail": ".roster__id in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 23,
+      "detail": ".roster__power in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 23,
+      "detail": ".roster__tier in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 25,
+      "detail": ".roster__empty in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 27,
+      "detail": ".roster__footer in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 1,
+      "detail": "roster in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 2,
+      "detail": "roster__heading in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 3,
+      "detail": "roster__title in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 4,
+      "detail": "roster__intro in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 7,
+      "detail": "roster__toolbar in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 8,
+      "detail": "roster__search-field in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 9,
+      "detail": "roster__label in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 10,
+      "detail": "roster__search-icon in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 11,
+      "detail": "roster__search in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 23,
+      "detail": "roster__label in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 24,
+      "detail": "roster__class in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 25,
+      "detail": "roster__class-trigger in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 35,
+      "detail": "roster__recruit in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 41,
+      "detail": "roster__table in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 43,
+      "detail": "roster__caption in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 58,
+      "detail": "roster__hero in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 62,
+      "detail": "roster__identity in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 63,
+      "detail": "roster__name in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 64,
+      "detail": "roster__id in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 69,
+      "detail": "roster__power in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 71,
+      "detail": "roster__tier in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 88,
+      "detail": "roster__empty in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 95,
+      "detail": "roster__footer in heroes"
+    }
+  ]
+}

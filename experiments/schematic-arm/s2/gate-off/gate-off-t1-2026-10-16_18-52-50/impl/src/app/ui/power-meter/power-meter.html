@@ -1,0 +1,16 @@
+<div class="power-meter">
+  <div class="power-meter__header">
+    <span class="power-meter__label">{{ label() }}</span>
+    <span class="power-meter__value">{{ fill() }}</span>
+  </div>
+  <div
+    class="power-meter__track"
+    role="meter"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-valuenow]="fill()"
+    [attr.aria-label]="label()"
+  >
+    <div class="power-meter__fill" [style.width.%]="fill()"></div>
+  </div>
+</div>

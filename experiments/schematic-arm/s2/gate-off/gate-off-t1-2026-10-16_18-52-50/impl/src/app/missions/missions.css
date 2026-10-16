@@ -1,0 +1,18 @@
+@reference "../../styles.css";
+
+.missions { @apply grid min-w-0 gap-6; }
+.missions__heading { @apply grid min-w-0 gap-1; }
+.missions__title { @apply text-2xl font-semibold; }
+.missions__intro { @apply text-muted-foreground text-sm; }
+.missions__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3; }
+.missions__section { @apply grid min-w-0 gap-4; }
+.missions__section-title { @apply text-lg font-semibold; }
+.missions__table { @apply min-w-0; }
+.missions__caption { @apply sr-only; }
+.missions__codename { @apply grid min-w-0; }
+.missions__name { @apply truncate font-medium; }
+.missions__id { @apply text-muted-foreground truncate text-xs; }
+.missions__objective { @apply text-muted-foreground; }
+.missions__power { @apply tabular-nums; }
+.missions__action { @apply shrink-0; }
+.missions__empty { @apply text-muted-foreground text-center; }

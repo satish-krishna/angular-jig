@@ -1,0 +1,115 @@
+<section class="missions" aria-labelledby="missions-title">
+  <div class="missions__heading">
+    <h1 id="missions-title" class="missions__title">Missions</h1>
+    <p class="missions__intro">Example data. Deploying a hero opens a live mission and adds one to their record. Changes last until the page reloads.</p>
+  </div>
+
+  <section class="missions__stats" aria-label="Mission figures">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [detail]="stat.detail"
+        [icon]="stat.icon"
+      />
+    }
+  </section>
+
+  <section class="missions__section" aria-labelledby="live-heading">
+    <h2 id="live-heading" class="missions__section-title">Live missions</h2>
+    <div hlmTableContainer class="missions__table">
+      <table hlmTable>
+        <caption hlmCaption class="missions__caption">Missions currently in the field</caption>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh scope="col">Codename</th>
+            <th hlmTh scope="col">Hero</th>
+            <th hlmTh scope="col">District</th>
+            <th hlmTh scope="col">Objective</th>
+            <th hlmTh scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (mission of vm.liveMissions(); track mission.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <div class="missions__codename">
+                  <span class="missions__name">{{ mission.codename }}</span>
+                  <span class="missions__id">{{ mission.id }}</span>
+                </div>
+              </td>
+              <td hlmTd>{{ mission.heroName }}</td>
+              <td hlmTd>{{ mission.district }}</td>
+              <td hlmTd><span class="missions__objective">{{ mission.objective }}</span></td>
+              <td hlmTd>
+                <button
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  class="missions__action"
+                  [attr.aria-label]="'Stand down ' + mission.codename"
+                  (click)="vm.standDown(mission.id)"
+                >
+                  Stand down
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr hlmTr>
+              <td hlmTd colspan="5" class="missions__empty">No missions in the field.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="missions__section" aria-labelledby="ready-heading">
+    <h2 id="ready-heading" class="missions__section-title">Ready for deployment</h2>
+    <div hlmTableContainer class="missions__table">
+      <table hlmTable>
+        <caption hlmCaption class="missions__caption">Active heroes who are not in the field</caption>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh scope="col">Hero</th>
+            <th hlmTh scope="col">Class</th>
+            <th hlmTh scope="col">Power</th>
+            <th hlmTh scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.readyHeroes(); track row.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <div class="missions__codename">
+                  <span class="missions__name">{{ row.name }}</span>
+                  <span class="missions__id">{{ row.id }}</span>
+                </div>
+              </td>
+              <td hlmTd><span hlmBadge variant="outline">{{ row.powerClass }}</span></td>
+              <td hlmTd><span class="missions__power">{{ row.powerIndex }}</span></td>
+              <td hlmTd>
+                <button
+                  hlmBtn
+                  size="sm"
+                  type="button"
+                  class="missions__action"
+                  [attr.aria-label]="'Deploy ' + row.name"
+                  (click)="vm.deploy(row.id)"
+                >
+                  <ng-icon name="lucideCrosshair" aria-hidden="true" />
+                  Deploy
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr hlmTr>
+              <td hlmTd colspan="4" class="missions__empty">No Active heroes are waiting for a mission.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

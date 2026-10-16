@@ -1,0 +1,27 @@
+@reference "../../styles.css";
+
+.roster { @apply grid gap-4; }
+.roster__heading { @apply grid min-w-0 gap-1; }
+.roster__title { @apply text-2xl font-semibold; }
+.roster__intro { @apply text-muted-foreground text-sm; }
+
+.roster__toolbar { @apply flex flex-wrap items-center gap-3; }
+.roster__label,
+.roster__caption { @apply sr-only; }
+.roster__search-field { @apply flex w-full min-w-0 items-center gap-2 sm:w-72; }
+.roster__search-icon { @apply text-muted-foreground size-4 shrink-0; }
+.roster__search { @apply min-w-0 flex-1; }
+.roster__class { @apply w-full sm:w-44; }
+.roster__class-trigger { @apply w-full; }
+.roster__recruit { @apply shrink-0 ms-auto; }
+
+.roster__table { @apply min-w-0; }
+.roster__hero { @apply flex min-w-0 items-center gap-3; }
+.roster__identity { @apply grid min-w-0; }
+.roster__name { @apply truncate font-medium; }
+.roster__id { @apply text-muted-foreground truncate text-xs; }
+.roster__power,
+.roster__tier { @apply tabular-nums; }
+.roster__empty { @apply text-muted-foreground text-center; }
+
+.roster__footer { @apply text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-sm; }

@@ -1,0 +1,12 @@
+@reference "../../styles.css";
+
+.threats { @apply grid min-w-0 gap-6; }
+.threats__heading { @apply grid min-w-0 gap-1; }
+.threats__title { @apply text-2xl font-semibold; }
+.threats__intro { @apply text-muted-foreground flex flex-wrap items-center gap-2 text-sm; }
+.threats__table { @apply min-w-0; }
+.threats__caption { @apply sr-only; }
+.threats__identity { @apply grid min-w-0; }
+.threats__name { @apply truncate font-medium; }
+.threats__id { @apply text-muted-foreground truncate text-xs; }
+.threats__action { @apply shrink-0; }

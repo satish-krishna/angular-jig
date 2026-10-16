@@ -1,0 +1,42 @@
+<article hlmCard class="hero-card">
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__identity">
+      <hlm-avatar class="hero-card__avatar">
+        <span hlmAvatarFallback>{{ initials() }}</span>
+      </hlm-avatar>
+      <div class="hero-card__names">
+        <h3 class="hero-card__name">{{ hero().name }}</h3>
+        <p class="hero-card__alias">{{ hero().alias }}</p>
+      </div>
+    </div>
+
+    <div class="hero-card__meta">
+      <span hlmBadge variant="secondary">{{ hero().powerClass }}</span>
+      <p class="hero-card__status">
+        <span
+          aria-hidden="true"
+          class="hero-card__dot"
+          [class.hero-card__dot--active]="hero().status === 'Active'"
+          [class.hero-card__dot--injured]="hero().status === 'Injured'"
+          [class.hero-card__dot--reserve]="hero().status === 'Reserve'"
+          [class.hero-card__dot--mia]="hero().status === 'MIA'"
+        ></span>
+        {{ hero().status }} · Tier {{ hero().clearanceTier }}
+      </p>
+    </div>
+
+    <app-power-meter [value]="hero().powerIndex" />
+
+    <button
+      hlmBtn
+      variant="outline"
+      size="sm"
+      type="button"
+      class="hero-card__dossier"
+      [attr.aria-label]="'Open dossier for ' + hero().name"
+      (click)="dossierRequested.emit(hero())"
+    >
+      Dossier
+    </button>
+  </div>
+</article>

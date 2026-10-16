@@ -1,0 +1,53 @@
+<section class="threats" aria-labelledby="threats-title">
+  <div class="threats__heading">
+    <h1 id="threats-title" class="threats__title">Threats</h1>
+    <p class="threats__intro">
+      Example data. Open threats are listed first, most severe first.
+      <span hlmBadge variant="destructive">{{ vm.openCount() }} open</span>
+    </p>
+  </div>
+
+  <div hlmTableContainer class="threats__table">
+    <table hlmTable>
+      <caption hlmCaption class="threats__caption">Threats on the board</caption>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh scope="col">Threat</th>
+          <th hlmTh scope="col">District</th>
+          <th hlmTh scope="col">Tier</th>
+          <th hlmTh scope="col">Status</th>
+          <th hlmTh scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (threat of vm.rows(); track threat.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="threats__identity">
+                <span class="threats__name">{{ threat.title }}</span>
+                <span class="threats__id">{{ threat.id }}</span>
+              </div>
+            </td>
+            <td hlmTd>{{ threat.district }}</td>
+            <td hlmTd><span hlmBadge [variant]="threat.tierVariant">Tier {{ threat.tier }}</span></td>
+            <td hlmTd><span hlmBadge [variant]="threat.statusVariant">{{ threat.status }}</span></td>
+            <td hlmTd>
+              <button
+                hlmBtn
+                variant="outline"
+                size="sm"
+                type="button"
+                class="threats__action"
+                [disabled]="threat.contained"
+                [attr.aria-label]="'Contain ' + threat.title"
+                (click)="vm.contain(threat.id)"
+              >
+                Contain
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

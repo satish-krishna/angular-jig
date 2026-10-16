@@ -1,0 +1,99 @@
+<section class="roster" aria-labelledby="roster-title">
+  <div class="roster__heading">
+    <h1 id="roster-title" class="roster__title">Roster</h1>
+    <p class="roster__intro">Example data. Heroes are invented for the demo and edits last until the page reloads.</p>
+  </div>
+
+  <div class="roster__toolbar">
+    <div class="roster__search-field">
+      <label hlmLabel for="roster-search" class="roster__label">Search heroes</label>
+      <ng-icon name="lucideSearch" class="roster__search-icon" aria-hidden="true" />
+      <input
+        #search
+        hlmInput
+        id="roster-search"
+        type="search"
+        class="roster__search"
+        placeholder="Name, alias or ID"
+        [value]="vm.query()"
+        (input)="vm.setQuery(search.value)"
+      />
+    </div>
+
+    <label hlmLabel for="roster-class" class="roster__label">Filter by class</label>
+    <hlm-select class="roster__class" [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
+      <hlm-select-trigger buttonId="roster-class" class="roster__class-trigger">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.classOptions; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+
+    <a hlmBtn routerLink="/recruit" class="roster__recruit">
+      <ng-icon name="lucideUserPlus" aria-hidden="true" />
+      Recruit
+    </a>
+  </div>
+
+  <div hlmTableContainer class="roster__table">
+    <table hlmTable>
+      <caption hlmCaption class="roster__caption">Heroes on the roster, sorted by power index</caption>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh scope="col">Hero</th>
+          <th hlmTh scope="col">Class</th>
+          <th hlmTh scope="col">Power</th>
+          <th hlmTh scope="col">Status</th>
+          <th hlmTh scope="col">Clearance</th>
+          <th hlmTh scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of vm.rows(); track row.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="roster__hero">
+                <hlm-avatar size="sm">
+                  <span hlmAvatarFallback>{{ row.initials }}</span>
+                </hlm-avatar>
+                <div class="roster__identity">
+                  <span class="roster__name">{{ row.name }}</span>
+                  <span class="roster__id">{{ row.id }}</span>
+                </div>
+              </div>
+            </td>
+            <td hlmTd><span hlmBadge variant="outline">{{ row.powerClass }}</span></td>
+            <td hlmTd><span class="roster__power">{{ row.powerIndex }}</span></td>
+            <td hlmTd><span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span></td>
+            <td hlmTd><span class="roster__tier">Tier {{ row.clearanceTier }}</span></td>
+            <td hlmTd>
+              <button
+                hlmBtn
+                variant="ghost"
+                size="icon"
+                type="button"
+                hlmTooltip="Edit dossier"
+                [attr.aria-label]="'Edit ' + row.name"
+                (click)="vm.openDossier(row.id)"
+              >
+                <ng-icon name="lucidePencil" aria-hidden="true" />
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6" class="roster__empty">No heroes match these filters.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="roster__footer">
+    <span>{{ vm.shownCount() }} of {{ vm.totalCount() }} heroes</span>
+    <span>Sorted by power</span>
+  </p>
+</section>

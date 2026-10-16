@@ -1,0 +1,10 @@
+<section hlmCard class="stat-tile">
+  <div hlmCardContent class="stat-tile__body">
+    <div class="stat-tile__top">
+      <p hlmCardDescription class="stat-tile__label">{{ label() }}</p>
+      <ng-icon class="stat-tile__icon" [name]="icon()" aria-hidden="true" />
+    </div>
+    <p hlmCardTitle emphasis="stat">{{ value() }}</p>
+    <p hlmCardDescription class="stat-tile__detail">{{ detail() }}</p>
+  </div>
+</section>

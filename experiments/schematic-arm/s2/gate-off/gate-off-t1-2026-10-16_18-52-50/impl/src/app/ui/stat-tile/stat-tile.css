@@ -1,0 +1,8 @@
+@reference "../../../styles.css";
+
+.stat-tile { @apply h-full; }
+.stat-tile__body { @apply flex h-full flex-col gap-2; }
+.stat-tile__top { @apply flex items-center justify-between gap-2; }
+.stat-tile__label { @apply min-w-0; }
+.stat-tile__icon { @apply text-primary size-5 shrink-0; }
+.stat-tile__detail { @apply tabular-nums; }
