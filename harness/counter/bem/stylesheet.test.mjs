@@ -81,6 +81,38 @@ describe('parseStylesheet', () => {
     expect(parseStylesheet('@reference "../../styles.css";\n')).toMatchObject({ hasApply: false, hasReference: true });
   });
 
+  it('reads only the styled element: paren-aware, ignores :not/:has/:host() arguments and attribute values', () => {
+    const { utilities, selectorClasses } = parseStylesheet([
+      '.c:nth-child(2n+1) { @apply grid; }',
+      '.j:is(.k, .l) { @apply flex; }',
+      '.a:not(.b) { @apply gap-2; }',
+      ':host(.x) { @apply block; }',
+      'a[href$=".pdf"].m { @apply underline; }',
+      '.sm\\:w-48 { @apply w-48; }',
+      '.e { @apply flex; }',
+      '.e:hover { @apply flex font-bold !important; }',
+    ].join('\n'));
+    expect(utilities.get('c')).toEqual(['grid']);
+    expect(utilities.get('j')).toEqual(['flex']);
+    expect(utilities.get('k')).toEqual(['flex']);
+    expect(utilities.get('l')).toEqual(['flex']);
+    expect(utilities.get('a')).toEqual(['gap-2']);
+    expect(utilities.has('b')).toBe(false);
+    expect(utilities.has('x')).toBe(false);
+    expect(utilities.has('pdf')).toBe(false);
+    expect(utilities.get('m')).toEqual(['underline']);
+    expect(utilities.get('sm:w-48')).toEqual(['w-48']);
+    expect(utilities.get('e')).toEqual(['flex', 'font-bold']);
+    expect(selectorClasses.map((s) => s.cls)).toContain('b');
+    expect(selectorClasses.map((s) => s.cls)).not.toContain('pdf');
+  });
+
+  it('flags &__x at the root too, and ignores & inside attribute values', () => {
+    const { brokenNesting, utilities } = parseStylesheet('&__x { @apply flex; }\n.y[data-a="&b"] { @apply grid; }');
+    expect(brokenNesting).toEqual([{ selector: '&__x', line: 1 }]);
+    expect(utilities.get('y')).toEqual(['grid']);
+  });
+
   it('parses CRLF stylesheets with the same lines', () => {
     const { selectorClasses } = parseStylesheet(css.replaceAll('\n', '\r\n'));
     expect(selectorClasses.find((s) => s.cls === 'badge-lite').line).toBe(16);

@@ -6,6 +6,7 @@
 // such a rule, and everything nested in it, maps no utilities and names no
 // class here either, and is reported in brokenNesting instead.
 import postcss from 'postcss';
+import selectorParser from 'postcss-selector-parser';
 
 function ruleParent(node) {
   let p = node.parent;
@@ -13,13 +14,16 @@ function ruleParent(node) {
   return p && p.type === 'rule' ? p : null;
 }
 
-// `&` followed by an identifier character is concatenation, which only Sass does.
+// `&` followed by an identifier character is concatenation, which only Sass
+// does. Quoted strings and attribute brackets are blanked first, so an `&`
+// inside `[data-a="&b"]` is not mistaken for nesting.
 const CONCAT_RE = /&[\w-]/;
+const blankStrings = (s) => s.replace(/"[^"]*"|'[^']*'|\[[^\]]*\]/g, '');
+const isConcat = (s) => CONCAT_RE.test(blankStrings(s));
 
 function isBroken(rule) {
   const parent = ruleParent(rule);
-  if (!parent) return false;
-  return rule.selectors.some((s) => CONCAT_RE.test(s)) || isBroken(parent);
+  return rule.selectors.some(isConcat) || (parent ? isBroken(parent) : false);
 }
 
 export function resolvedSelectors(rule) {
@@ -28,10 +32,36 @@ export function resolvedSelectors(rule) {
   return rule.selectors.flatMap((s) => parents.map((p) => (s.includes('&') ? s.replaceAll('&', p) : p ? `${p} ${s}` : s)));
 }
 
-const CLASS_RE = /\.(-?[_a-zA-Z][\w-]*)/g;
-const classesIn = (sel) => [...sel.matchAll(CLASS_RE)].map((m) => m[1]);
-// The element a selector styles is its last compound: `.a .b:hover` styles .b.
-const lastCompound = (sel) => sel.trim().split(/\s*[>+~]\s*|\s+/).pop() ?? '';
+// Selectors are parsed, not pattern-matched: a regex cannot tell the `+` in
+// `:nth-child(2n+1)` from a combinator, or the `.b` in `:not(.b)` from a class
+// on the element. The element a selector styles is its last compound; inside
+// it, the alternatives of :is()/:where() are also that element, while the
+// arguments of :not(), :has(), :host() and other pseudo-functions are not.
+const ALTERNATIVES = new Set([':is', ':where', ':matches']);
+const parseSelector = (sel) => selectorParser().astSync(sel);
+
+function compoundClasses(selector) {
+  let start = 0;
+  selector.nodes.forEach((n, i) => {
+    if (n.type === 'combinator') start = i + 1;
+  });
+  const out = [];
+  for (const n of selector.nodes.slice(start)) {
+    if (n.type === 'class') out.push(n.value);
+    else if (n.type === 'pseudo' && ALTERNATIVES.has(n.value.toLowerCase())) {
+      for (const alt of n.nodes) out.push(...compoundClasses(alt));
+    }
+  }
+  return out;
+}
+
+const styledClasses = (sel) => parseSelector(sel).nodes.flatMap(compoundClasses);
+
+function allClasses(sel) {
+  const out = [];
+  parseSelector(sel).walkClasses((c) => out.push(c.value));
+  return out;
+}
 
 export function parseStylesheet(css, from = 'component.css') {
   const root = postcss.parse(css, { from });
@@ -44,11 +74,13 @@ export function parseStylesheet(css, from = 'component.css') {
     hasApply = true;
     const rule = ruleParent(a);
     if (!rule || isBroken(rule)) return;
-    const tokens = a.params.split(/\s+/).filter(Boolean);
+    // `!important` is a flag on the whole @apply, not a utility.
+    const tokens = a.params.split(/\s+/).filter((t) => t && t !== '!important');
     for (const sel of resolvedSelectors(rule)) {
-      for (const cls of classesIn(lastCompound(sel))) {
+      for (const cls of styledClasses(sel)) {
         if (!utilities.has(cls)) utilities.set(cls, []);
-        utilities.get(cls).push(...tokens);
+        const list = utilities.get(cls);
+        for (const t of tokens) if (!list.includes(t)) list.push(t);
       }
     }
   });
@@ -58,11 +90,11 @@ export function parseStylesheet(css, from = 'component.css') {
   root.walkRules((rule) => {
     const line = rule.source?.start?.line ?? 0;
     if (isBroken(rule)) {
-      for (const selector of rule.selectors) if (CONCAT_RE.test(selector)) brokenNesting.push({ selector, line });
+      for (const selector of rule.selectors) if (isConcat(selector)) brokenNesting.push({ selector, line });
       return;
     }
     for (const sel of resolvedSelectors(rule)) {
-      for (const cls of classesIn(sel)) {
+      for (const cls of allClasses(sel)) {
         const key = `${cls}@${line}`;
         if (seen.has(key)) continue;
         seen.add(key);
