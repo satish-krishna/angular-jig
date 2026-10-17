@@ -1,0 +1,90 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__heading">
+      <h1 hlmH1>Operations Dashboard</h1>
+      <p hlmMuted>Example data. Every figure here is derived from the demo roster.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    @for (stat of vm.stats(); track stat.id) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [detail]="stat.detail"
+        [icon]="stat.icon"
+      />
+    }
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="top-heroes-heading">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" routerLink="/roster">View all roster</a>
+    </div>
+    <div class="dashboard__hero-grid">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" (open)="vm.openHero($event)" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="roster-heading">Roster</h2>
+      <span hlmBadge variant="outline">{{ vm.rosterCount() }} heroes</span>
+    </div>
+
+    <!-- At 375px the table scrolls inside its own container; the page itself does not. -->
+    <div hlmTableContainer class="dashboard__table-wrap">
+      <table hlmTable aria-labelledby="roster-heading">
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh>Hero</th>
+            <th hlmTh>Class</th>
+            <th hlmTh>Power</th>
+            <th hlmTh>Status</th>
+            <th hlmTh><span class="dashboard__label">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.roster(); track row.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <div class="dashboard__hero">
+                  <hlm-avatar>
+                    <span hlmAvatarFallback>{{ row.initials }}</span>
+                  </hlm-avatar>
+                  <div class="dashboard__identity">
+                    <span hlmSmall>{{ row.name }}</span>
+                    <span hlmMuted>{{ row.id }}</span>
+                  </div>
+                </div>
+              </td>
+              <td hlmTd><span hlmBadge variant="outline">{{ row.powerClass }}</span></td>
+              <td hlmTd>{{ row.powerIndex }}</td>
+              <td hlmTd><span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span></td>
+              <td hlmTd>
+                <div class="dashboard__actions">
+                  <a
+                    hlmBtn
+                    variant="ghost"
+                    size="icon"
+                    [routerLink]="['/detail', row.id]"
+                    [attr.aria-label]="'Edit ' + row.name"
+                  >
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

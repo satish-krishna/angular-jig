@@ -1,0 +1,79 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH1>Missions</h1>
+    <p hlmMuted>Example data. Field units by missions on record. Deploy sends an available hero out.</p>
+  </header>
+
+  <div class="missions__stats">
+    @for (stat of vm.stats(); track stat.id) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [detail]="stat.detail"
+        [icon]="stat.icon"
+      />
+    }
+  </div>
+
+  @if (vm.notice()) {
+    <p hlmMuted role="status">{{ vm.notice() }}</p>
+  }
+
+  <section class="missions__section" aria-labelledby="units-heading">
+    <h2 hlmH2 id="units-heading">Field units</h2>
+
+    <!-- At 375px the table scrolls inside its own container; the page itself does not. -->
+    <div hlmTableContainer class="missions__table-wrap">
+      <table hlmTable aria-labelledby="units-heading">
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh>Hero</th>
+            <th hlmTh>Status</th>
+            <th hlmTh>Missions</th>
+            <th hlmTh>Success</th>
+            <th hlmTh><span class="missions__label">Deploy</span></th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.rows(); track row.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <div class="missions__hero">
+                  <hlm-avatar>
+                    <span hlmAvatarFallback>{{ row.initials }}</span>
+                  </hlm-avatar>
+                  <div class="missions__identity">
+                    <span hlmSmall>{{ row.name }}</span>
+                    <span hlmMuted>{{ row.id }}</span>
+                  </div>
+                </div>
+              </td>
+              <td hlmTd><span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span></td>
+              <td hlmTd>{{ row.missionCount }}</td>
+              <td hlmTd>{{ row.successRate }}%</td>
+              <td hlmTd>
+                <div class="missions__actions">
+                  <button
+                    hlmBtn
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    [disabled]="!row.canDeploy"
+                    [attr.aria-label]="'Deploy ' + row.name"
+                    (click)="vm.deploy(row.id)"
+                  >
+                    <ng-icon hlmIcon name="lucideCrosshair" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr hlmTr>
+              <td hlmTd colspan="5">No heroes on the roster.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

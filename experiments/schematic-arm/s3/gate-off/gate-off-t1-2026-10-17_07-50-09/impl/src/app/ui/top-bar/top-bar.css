@@ -1,0 +1,23 @@
+@reference "../../../styles.css";
+
+.top-bar {
+  @apply flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6;
+}
+.top-bar__start {
+  @apply flex min-w-0 items-center gap-2;
+}
+.top-bar__crumbs {
+  @apply min-w-0;
+}
+.top-bar__crumb-list {
+  @apply flex min-w-0 flex-wrap items-center gap-2;
+}
+.top-bar__actions {
+  @apply flex w-full flex-wrap items-center gap-2 sm:ms-auto sm:w-auto;
+}
+.top-bar__search {
+  @apply flex w-full items-center gap-2 sm:w-64;
+}
+.top-bar__search-input {
+  @apply min-w-0 grow;
+}

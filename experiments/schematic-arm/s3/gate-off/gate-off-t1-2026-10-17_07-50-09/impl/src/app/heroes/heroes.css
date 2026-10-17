@@ -1,0 +1,16 @@
+@reference "../../styles.css";
+
+.heroes { @apply grid gap-6 p-4 sm:p-6; }
+.heroes__header { @apply grid min-w-0 gap-1; }
+.heroes__label { @apply sr-only; }
+.heroes__filters { @apply flex flex-wrap items-center gap-3; }
+.heroes__search { @apply w-full sm:w-64; }
+.heroes__class { @apply w-full sm:w-48; }
+.heroes__class-trigger { @apply w-full; }
+.heroes__recruit { @apply ms-auto; }
+.heroes__table-wrap { @apply min-w-0; }
+.heroes__hero { @apply flex items-center gap-3; }
+.heroes__identity { @apply grid min-w-0; }
+.heroes__actions { @apply flex items-center gap-1; }
+.heroes__empty { @apply text-center; }
+.heroes__summary { @apply flex flex-wrap items-center justify-between gap-2; }

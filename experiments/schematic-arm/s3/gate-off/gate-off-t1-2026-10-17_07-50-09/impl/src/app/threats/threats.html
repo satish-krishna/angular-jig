@@ -1,0 +1,52 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>Example data. The incident log by severe tier, with the responder on each.</p>
+  </header>
+
+  <div class="threats__stats">
+    @for (stat of vm.stats(); track stat.id) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [detail]="stat.detail"
+        [icon]="stat.icon"
+      />
+    }
+  </div>
+
+  <section class="threats__section" aria-labelledby="incidents-heading">
+    <h2 hlmH2 id="incidents-heading">Incident log</h2>
+
+    <!-- At 375px the table scrolls inside its own container; the page itself does not. -->
+    <div hlmTableContainer class="threats__table-wrap">
+      <table hlmTable aria-labelledby="incidents-heading">
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh>Incident</th>
+            <th hlmTh>Tier</th>
+            <th hlmTh>Status</th>
+            <th hlmTh>Location</th>
+            <th hlmTh>Responder</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.rows(); track row.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <div class="threats__incident">
+                  <span hlmSmall>{{ row.title }}</span>
+                  <span hlmMuted>{{ row.id }} · {{ row.reportedOn }}</span>
+                </div>
+              </td>
+              <td hlmTd><span hlmBadge [variant]="row.tierVariant">{{ row.tier }}</span></td>
+              <td hlmTd><span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span></td>
+              <td hlmTd>{{ row.location }}</td>
+              <td hlmTd>{{ row.responder }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

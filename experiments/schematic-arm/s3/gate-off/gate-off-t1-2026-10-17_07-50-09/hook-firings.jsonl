@@ -1,0 +1,12 @@
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-17T07:51:26.886Z"}
+{"hook":"protect-enforcement","file":"package.json, tsconfig.json","count":1,"messages":["Bash blocked on: package.json, tsconfig.json"],"ts":"2026-10-17T07:58:40.506Z"}
+{"hook":"protect-enforcement","file":"tsconfig.app.json","count":1,"messages":["Bash blocked on: tsconfig.app.json"],"ts":"2026-10-17T07:59:45.265Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Edit blocked on: tsconfig.json"],"ts":"2026-10-17T08:02:01.198Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-17T08:05:13.492Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-17T08:06:41.748Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-17T08:08:41.202Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-17T08:10:16.476Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Edit blocked on: tsconfig.json"],"ts":"2026-10-17T08:13:01.680Z"}
+{"hook":"protect-enforcement","file":"package.json","count":1,"messages":["Bash blocked on: package.json"],"ts":"2026-10-17T08:13:15.707Z"}
+{"hook":"protect-enforcement","file":"package.json, tsconfig.json","count":1,"messages":["Bash blocked on: package.json, tsconfig.json"],"ts":"2026-10-17T08:14:17.145Z"}
+{"hook":"protect-enforcement","file":".claude/skills/","count":1,"messages":["Bash blocked on: .claude/skills/"],"ts":"2026-10-17T08:14:50.818Z"}

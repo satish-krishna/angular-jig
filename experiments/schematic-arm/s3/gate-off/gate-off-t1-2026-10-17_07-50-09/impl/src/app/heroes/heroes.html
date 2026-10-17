@@ -1,0 +1,105 @@
+<section class="heroes">
+  <header class="heroes__header">
+    <h1 hlmH1>Roster</h1>
+    <p hlmMuted>Example data. Every hero on the books, strongest first.</p>
+  </header>
+
+  <div class="heroes__filters" role="search">
+    <label hlmLabel for="roster-search" class="heroes__label">Search heroes</label>
+    <input
+      hlmInput
+      #search
+      id="roster-search"
+      type="search"
+      placeholder="Search name, alias or ID"
+      class="heroes__search"
+      (input)="vm.setQuery(search.value)"
+    />
+
+    <label hlmLabel for="roster-class" class="heroes__label">Power class</label>
+    <hlm-select
+      class="heroes__class"
+      [itemToString]="vm.classLabel"
+      [value]="vm.powerClass()"
+      (valueChange)="vm.setPowerClass($event)"
+    >
+      <hlm-select-trigger buttonId="roster-class" class="heroes__class-trigger">
+        <hlm-select-value placeholder="All classes" />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.classOptions; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+
+    <a hlmBtn routerLink="/recruit" class="heroes__recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </div>
+
+  <!-- At 375px the table scrolls inside its own container; the page itself does not. -->
+  <div hlmTableContainer class="heroes__table-wrap">
+    <table hlmTable aria-label="Hero roster">
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Hero</th>
+          <th hlmTh>Class</th>
+          <th hlmTh>Power</th>
+          <th hlmTh>Status</th>
+          <th hlmTh>Clearance</th>
+          <th hlmTh><span class="heroes__label">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of vm.rows(); track row.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="heroes__hero">
+                <hlm-avatar>
+                  <span hlmAvatarFallback>{{ row.initials }}</span>
+                </hlm-avatar>
+                <div class="heroes__identity">
+                  <span hlmSmall>{{ row.name }}</span>
+                  <span hlmMuted>{{ row.id }}</span>
+                </div>
+              </div>
+            </td>
+            <td hlmTd><span hlmBadge variant="outline">{{ row.powerClass }}</span></td>
+            <td hlmTd>{{ row.powerIndex }}</td>
+            <td hlmTd><span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span></td>
+            <td hlmTd>{{ row.clearance }}</td>
+            <td hlmTd>
+              <div class="heroes__actions">
+                <a
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  [routerLink]="['/detail', row.id]"
+                  [attr.aria-label]="'Edit ' + row.name"
+                >
+                  <ng-icon hlmIcon name="lucidePencil" />
+                </a>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6" class="heroes__empty">No heroes match these filters.</td>
+          </tr>
+        }
+      </tbody>
+      <tfoot hlmTFoot>
+        <tr hlmTr>
+          <td hlmTd colspan="6">
+            <div class="heroes__summary">
+              <span hlmSmall>{{ vm.rows().length }} of {{ vm.total() }} heroes</span>
+              <span hlmMuted>sorted by power</span>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>

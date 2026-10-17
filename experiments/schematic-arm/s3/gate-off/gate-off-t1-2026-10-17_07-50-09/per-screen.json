@@ -1,0 +1,23 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {
+      "shell": {
+        "all": 6,
+        "foreign-block": 6
+      }
+    }
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 12,
+      "messages": 12,
+      "byHook": {
+        "protect-enforcement": 12
+      }
+    }
+  }
+}

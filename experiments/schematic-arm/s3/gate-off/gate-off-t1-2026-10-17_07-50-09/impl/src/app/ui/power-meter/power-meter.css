@@ -1,0 +1,3 @@
+@reference "../../../styles.css";
+
+.power-meter { @apply shrink-0; }

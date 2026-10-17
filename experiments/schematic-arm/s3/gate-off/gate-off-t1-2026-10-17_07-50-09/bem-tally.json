@@ -1,0 +1,52 @@
+{
+  "totals": {
+    "template-utility-class": 0,
+    "foreign-block": 6,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "appearance-in-app-css": 0,
+    "all": 6
+  },
+  "violations": [
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 3,
+      "detail": ".app-shell__brand in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 6,
+      "detail": ".app-shell__account in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 9,
+      "detail": ".app-shell__main in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 4,
+      "detail": "app-shell__brand in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 95,
+      "detail": "app-shell__account in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 104,
+      "detail": "app-shell__main in app"
+    }
+  ]
+}

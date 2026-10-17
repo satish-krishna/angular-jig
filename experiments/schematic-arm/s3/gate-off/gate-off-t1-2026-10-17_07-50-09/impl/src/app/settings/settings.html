@@ -1,0 +1,47 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Console preferences. The theme switch lives in the top bar.</p>
+  </header>
+
+  <section class="settings__section" aria-labelledby="data-heading">
+    <h2 hlmH2 id="data-heading">Example data</h2>
+    <p hlmMuted>
+      The roster lives in memory for this session only. Edits, recruits and retirements are not
+      saved between visits.
+    </p>
+
+    <div class="settings__row">
+      <span hlmSmall>{{ vm.rosterCount() }} heroes on the roster</span>
+
+      <hlm-dialog #resetDialog>
+        <button hlmBtn type="button" variant="outline" hlmDialogTrigger>Reset roster</button>
+        <hlm-dialog-content *hlmDialogPortal>
+          <hlm-dialog-header>
+            <h2 hlmDialogTitle>Reset the example roster?</h2>
+            <p hlmDialogDescription>
+              Every edit, recruit, deployment and retirement this session is discarded.
+            </p>
+          </hlm-dialog-header>
+          <hlm-dialog-footer>
+            <button hlmBtn type="button" variant="outline" (click)="resetDialog.close()">
+              Cancel
+            </button>
+            <button
+              hlmBtn
+              type="button"
+              variant="destructive"
+              (click)="resetDialog.close(); vm.resetRoster()"
+            >
+              Reset roster
+            </button>
+          </hlm-dialog-footer>
+        </hlm-dialog-content>
+      </hlm-dialog>
+    </div>
+
+    @if (vm.notice()) {
+      <p hlmMuted role="status">{{ vm.notice() }}</p>
+    }
+  </section>
+</section>

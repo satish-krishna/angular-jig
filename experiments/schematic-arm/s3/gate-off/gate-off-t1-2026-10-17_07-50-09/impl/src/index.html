@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AngularJig</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Apply the saved or system theme before first paint, so a dark-mode user never
+    // sees a flash of light. Mirrors AppShellViewModel; keep the storage key in sync.
+    (function () {
+      var dark = false;
+      try {
+        var stored = localStorage.getItem('hero-ops-theme');
+        dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      } catch (e) {
+        dark = false;
+      }
+      document.documentElement.classList.toggle('dark', dark);
+    })();
+  </script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

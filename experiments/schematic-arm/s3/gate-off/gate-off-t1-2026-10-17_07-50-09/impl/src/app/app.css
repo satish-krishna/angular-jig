@@ -1,0 +1,11 @@
+@reference "../styles.css";
+
+.app-shell__brand {
+  @apply flex items-center gap-2;
+}
+.app-shell__account {
+  @apply flex items-center gap-2;
+}
+.app-shell__main {
+  @apply min-w-0;
+}

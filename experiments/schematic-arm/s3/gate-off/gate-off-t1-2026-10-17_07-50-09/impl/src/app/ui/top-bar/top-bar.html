@@ -1,0 +1,56 @@
+<header class="top-bar">
+  <div class="top-bar__start">
+    <button hlmSidebarTrigger srOnlyText="Toggle navigation"></button>
+    <nav aria-label="Breadcrumb" class="top-bar__crumbs">
+      <ol class="top-bar__crumb-list" hlmSmall>
+        <li class="top-bar__crumb">Hero Ops</li>
+        @for (crumb of crumbs(); track $index; let last = $last) {
+          <li class="top-bar__crumb" aria-hidden="true">/</li>
+          <li class="top-bar__crumb" [attr.aria-current]="last ? 'page' : null">{{ crumb }}</li>
+        }
+      </ol>
+    </nav>
+  </div>
+
+  <div class="top-bar__actions">
+    <div class="top-bar__search" role="search">
+      <ng-icon hlmIcon name="lucideSearch" tone="muted" />
+      <input
+        hlmInput
+        type="search"
+        class="top-bar__search-input"
+        aria-label="Search heroes, missions and threats"
+        placeholder="Search heroes, missions, threats"
+      />
+    </div>
+
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      aria-label="Notifications"
+      hlmTooltip="Notifications"
+    >
+      <ng-icon hlmIcon name="lucideBell" />
+    </button>
+
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      [attr.aria-label]="dark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      [hlmTooltip]="dark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      (click)="themeToggle.emit()"
+    >
+      @if (dark()) {
+        <ng-icon hlmIcon name="lucideSun" />
+      } @else {
+        <ng-icon hlmIcon name="lucideMoon" />
+      }
+    </button>
+
+    <hlm-avatar>
+      <span hlmAvatarFallback>OC</span>
+    </hlm-avatar>
+  </div>
+</header>
