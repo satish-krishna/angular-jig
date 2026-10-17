@@ -1,0 +1,51 @@
+<section class="missions">
+  <header class="missions__header">
+    <div class="missions__title">
+      <ng-icon hlmIcon name="lucideTarget" tone="primary" />
+      <h1 hlmH1>Missions</h1>
+    </div>
+    <p hlmMuted>{{ vm.liveCount() }} live, {{ vm.missions().length }} on record</p>
+  </header>
+
+  <ul class="missions__grid">
+    @for (mission of vm.missions(); track mission.id) {
+      <li>
+        <article hlmCard>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ mission.operation }}</h2>
+            <p hlmCardDescription>Launched {{ mission.launched }}</p>
+          </div>
+          <div hlmCardContent class="missions__body">
+            <p hlmSmall>{{ vm.heroNames(mission.heroIds) }}</p>
+            <span hlmBadge [variant]="vm.missionVariant(mission)">{{ vm.missionLabel(mission) }}</span>
+          </div>
+          @if (mission.status === 'Live') {
+            <div hlmCardFooter class="missions__actions">
+              <button
+                hlmBtn
+                size="sm"
+                [attr.aria-label]="'Complete ' + mission.operation"
+                (click)="vm.complete(mission.id)"
+              >
+                <ng-icon hlmIcon name="lucideCheck" />
+                <span>Complete</span>
+              </button>
+              <button
+                hlmBtn
+                size="sm"
+                variant="destructive"
+                [attr.aria-label]="'Abort ' + mission.operation"
+                (click)="vm.abort(mission.id)"
+              >
+                <ng-icon hlmIcon name="lucideCircleX" />
+                <span>Abort</span>
+              </button>
+            </div>
+          }
+        </article>
+      </li>
+    } @empty {
+      <li><p hlmMuted>No missions on record.</p></li>
+    }
+  </ul>
+</section>

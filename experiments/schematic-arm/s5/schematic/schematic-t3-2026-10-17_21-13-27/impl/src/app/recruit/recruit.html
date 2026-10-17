@@ -1,0 +1,10 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <h1 hlmH1>Recruit a hero</h1>
+    <p hlmMuted>A new recruit joins the roster as soon as you submit. You can change any field later.</p>
+  </header>
+
+  <div class="recruit__form">
+    <app-hero-form submitLabel="Recruit" (saveHero)="vm.recruit($event)" (cancel)="vm.cancel()" />
+  </div>
+</section>

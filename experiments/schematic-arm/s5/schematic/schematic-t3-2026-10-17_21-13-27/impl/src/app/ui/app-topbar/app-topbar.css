@@ -1,0 +1,12 @@
+@reference "../../../styles.css";
+
+.app-topbar { @apply flex flex-wrap items-center gap-3 px-4 py-3 md:px-6; }
+.app-topbar__lead { @apply flex min-w-0 flex-1 items-center gap-2; }
+.app-topbar__nav { @apply min-w-0; }
+.app-topbar__trail { @apply flex min-w-0 flex-wrap items-center gap-2; }
+.app-topbar__crumb { @apply flex items-center gap-2; }
+.app-topbar__sep { @apply size-3.5 shrink-0; }
+.app-topbar__actions { @apply flex w-full items-center gap-2 sm:w-auto; }
+.app-topbar__search { @apply min-w-0 flex-1 sm:w-64 sm:flex-none; }
+.app-topbar__button { @apply shrink-0; }
+.app-topbar__avatar { @apply shrink-0; }

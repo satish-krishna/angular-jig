@@ -1,0 +1,12 @@
+<article hlmCard>
+  <div hlmCardContent class="stat-tile">
+    <div class="stat-tile__top">
+      <span hlmMuted>{{ label() }}</span>
+      <ng-icon hlmIcon [name]="icon()" tone="muted" aria-hidden="true" />
+    </div>
+    <p hlmLarge>{{ value() }}</p>
+    @if (hint()) {
+      <p hlmSmall>{{ hint() }}</p>
+    }
+  </div>
+</article>

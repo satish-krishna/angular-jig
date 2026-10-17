@@ -1,0 +1,136 @@
+diff --git "a/C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27\\spec.proposed.json" "b/C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27\\spec.approved.json"
+index 2f7563e..075512d 100644
+--- "a/C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27\\spec.proposed.json"
++++ "b/C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27\\spec.approved.json"
+@@ -5,7 +5,11 @@
+     "singular": "Hero",
+     "plural": "Heroes"
+   },
+-  "kinds": ["entity", "form", "manage"],
++  "kinds": [
++    "entity",
++    "form",
++    "manage"
++  ],
+   "fields": [
+     {
+       "name": "name",
+@@ -28,7 +32,16 @@
+       "label": "Power class",
+       "required": true,
+       "type": "enum",
+-      "options": ["Aerial", "Energy", "Psionic", "Tech", "Mutant", "Cosmic", "Enhanced"]
++      "options": [
++        "Aerial",
++        "Energy",
++        "Psionic",
++        "Tech",
++        "Mutant",
++        "Cosmic",
++        "Enhanced"
++      ],
++      "default": "Enhanced"
+     },
+     {
+       "name": "power",
+@@ -37,14 +50,20 @@
+       "min": 0,
+       "max": 100,
+       "help": "Scored from 0 to 100. Higher is stronger.",
+-      "type": "number"
++      "type": "number",
++      "default": 80
+     },
+     {
+       "name": "status",
+       "label": "Status",
+       "required": true,
+       "type": "enum",
+-      "options": ["Active", "Injured", "Reserve", "MIA"],
++      "options": [
++        "Active",
++        "Injured",
++        "Reserve",
++        "MIA"
++      ],
+       "default": "Active"
+     },
+     {
+@@ -52,7 +71,14 @@
+       "label": "Clearance",
+       "required": true,
+       "type": "enum",
+-      "options": ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"]
++      "options": [
++        "Tier 1",
++        "Tier 2",
++        "Tier 3",
++        "Tier 4",
++        "Tier 5"
++      ],
++      "default": "Tier 1"
+     },
+     {
+       "name": "notes",
+@@ -197,12 +223,27 @@
+     "createLabel": "Recruit",
+     "createRoute": "/recruit",
+     "columns": [
+-      { "field": "name" },
++      {
++        "field": "name"
++      },
+       {
+         "field": "powerClass",
+-        "badge": { "variants": {}, "fallback": "outline" }
++        "badge": {
++          "variants": {
++            "Aerial": "default",
++            "Energy": "secondary",
++            "Psionic": "destructive",
++            "Tech": "secondary",
++            "Mutant": "default",
++            "Cosmic": "outline",
++            "Enhanced": "default"
++          },
++          "fallback": "outline"
++        }
++      },
++      {
++        "field": "power"
+       },
+-      { "field": "power" },
+       {
+         "field": "status",
+         "badge": {
+@@ -215,11 +256,24 @@
+           "fallback": "outline"
+         }
+       },
+-      { "field": "clearance" }
++      {
++        "field": "clearance"
++      }
++    ],
++    "search": [
++      "name",
++      "alias"
+     ],
+-    "search": ["name", "alias"],
+-    "filters": [{ "field": "powerClass", "control": "select" }],
+-    "sort": { "field": "power", "direction": "desc" },
++    "filters": [
++      {
++        "field": "powerClass",
++        "control": "select"
++      }
++    ],
++    "sort": {
++      "field": "power",
++      "direction": "desc"
++    },
+     "summary": true
+   }
+-}
++}
+\ No newline at end of file

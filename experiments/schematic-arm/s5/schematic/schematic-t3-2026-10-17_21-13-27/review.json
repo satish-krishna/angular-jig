@@ -1,0 +1,27 @@
+{
+  "startedAt": "2026-10-17T21:14:38.017Z",
+  "endedAt": "2026-10-17T21:18:41.827Z",
+  "minutes": 4.06,
+  "unchanged": false,
+  "proposedParsed": true,
+  "fieldsChanged": 4,
+  "detail": [
+    {
+      "change": "field-changed",
+      "name": "powerClass"
+    },
+    {
+      "change": "field-changed",
+      "name": "power"
+    },
+    {
+      "change": "field-changed",
+      "name": "clearance"
+    },
+    {
+      "change": "key-changed",
+      "name": "manage"
+    }
+  ],
+  "approvedSha256": "1bcca049b0af52c9a29070f8c098e4b78ce24d6c6acc38012cf8dea075792bdc"
+}

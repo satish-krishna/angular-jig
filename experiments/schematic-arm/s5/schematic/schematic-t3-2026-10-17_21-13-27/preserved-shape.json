@@ -1,0 +1,78 @@
+{
+  "kinds": [
+    "entity",
+    "form",
+    "manage"
+  ],
+  "generatedLines": 1117,
+  "preservedLines": 1071,
+  "share": 0.9588,
+  "files": {
+    "src/app/hero/hero.model.ts": {
+      "lines": 17,
+      "preserved": 17,
+      "present": true
+    },
+    "src/app/hero/hero.schema.ts": {
+      "lines": 75,
+      "preserved": 75,
+      "present": true
+    },
+    "src/app/hero/hero.service.ts": {
+      "lines": 36,
+      "preserved": 36,
+      "present": true
+    },
+    "src/app/hero/hero-example-data.ts": {
+      "lines": 141,
+      "preserved": 141,
+      "present": true
+    },
+    "src/app/hero/hero.service.spec.ts": {
+      "lines": 62,
+      "preserved": 62,
+      "present": true
+    },
+    "src/app/ui/hero-form/hero-form.ts": {
+      "lines": 103,
+      "preserved": 103,
+      "present": true
+    },
+    "src/app/ui/hero-form/hero-form.html": {
+      "lines": 130,
+      "preserved": 130,
+      "present": true
+    },
+    "src/app/ui/hero-form/hero-form.css": {
+      "lines": 13,
+      "preserved": 13,
+      "present": true
+    },
+    "src/app/heroes/heroes.ts": {
+      "lines": 43,
+      "preserved": 43,
+      "present": true
+    },
+    "src/app/heroes/heroes.html": {
+      "lines": 150,
+      "preserved": 144,
+      "present": true
+    },
+    "src/app/heroes/heroes.css": {
+      "lines": 49,
+      "preserved": 49,
+      "present": true
+    },
+    "src/app/heroes/heroes.view-model.ts": {
+      "lines": 132,
+      "preserved": 98,
+      "present": true
+    },
+    "src/app/heroes/heroes.view-model.spec.ts": {
+      "lines": 166,
+      "preserved": 160,
+      "present": true
+    }
+  },
+  "note": "Generator output is regenerated from spec.approved.json with the substrate generator at the result commit. Lines are matched per file by longest common subsequence, line endings aside. A file missing at its generated path preserves nothing. Only reached kinds count."
+}

@@ -1,0 +1,33 @@
+<article hlmCard>
+  <div hlmCardHeader>
+    <div class="hero-card__head">
+      <hlm-avatar aria-hidden="true">
+        <span hlmAvatarFallback>{{ initials() }}</span>
+      </hlm-avatar>
+      <div class="hero-card__identity">
+        <h3 hlmH4 class="hero-card__name">{{ hero().name }}</h3>
+        <p hlmMuted>{{ hero().alias }}</p>
+      </div>
+    </div>
+  </div>
+  <div hlmCardContent>
+    <div class="hero-card__body">
+      <div class="hero-card__badges">
+        <span hlmBadge [variant]="classVariant()">{{ hero().powerClass }}</span>
+        <span hlmBadge [variant]="statusVariant()">{{ hero().status }}</span>
+      </div>
+      <app-power-meter [value]="hero().power" [label]="hero().name + ' power index'" />
+    </div>
+  </div>
+  <div hlmCardFooter>
+    <div class="hero-card__foot">
+      <a
+        hlmBtn
+        variant="outline"
+        size="sm"
+        [routerLink]="['/detail', hero().id]"
+        [attr.aria-label]="'View dossier for ' + hero().name"
+      >View dossier</a>
+    </div>
+  </div>
+</article>

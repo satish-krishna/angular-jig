@@ -1,0 +1,7 @@
+<div class="power-meter">
+  <div class="power-meter__head">
+    <span hlmSmall>Power index</span>
+    <span hlmSmall>{{ value() }} / 100</span>
+  </div>
+  <meter class="power-meter__gauge" min="0" max="100" [value]="value()" [attr.aria-label]="label()"></meter>
+</div>

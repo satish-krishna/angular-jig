@@ -1,0 +1,49 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader>
+      <p hlmLarge>Hero Ops Console</p>
+    </div>
+
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <ul hlmSidebarMenu>
+          @for (destination of vm.destinations; track destination.path) {
+            <li hlmSidebarMenuItem>
+              <a
+                hlmSidebarMenuButton
+                #active="routerLinkActive"
+                routerLinkActive
+                [routerLink]="'/' + destination.path"
+                [isActive]="active.isActive"
+                closeMobileSidebarOnClick
+              >
+                <ng-icon [name]="destination.icon" />
+                <span>{{ destination.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div hlmSidebarFooter>
+      <div class="app__user">
+        <hlm-avatar>
+          <span hlmAvatarFallback>OC</span>
+        </hlm-avatar>
+        <span hlmSmall>Ops Commander</span>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <app-topbar
+      [crumbs]="vm.crumbs()"
+      [dark]="vm.dark()"
+      (toggleTheme)="vm.toggleTheme()"
+      (search)="vm.search($event)"
+    />
+    <router-outlet />
+  </main>
+</div>

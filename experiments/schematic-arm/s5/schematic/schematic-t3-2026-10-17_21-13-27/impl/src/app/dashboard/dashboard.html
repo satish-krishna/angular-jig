@@ -1,0 +1,48 @@
+<div class="dashboard">
+  <header class="dashboard__header">
+    <h1 hlmH1>Operations dashboard</h1>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <section class="dashboard__stats" aria-label="Operations summary">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [hint]="stat.hint" [icon]="stat.icon" />
+    }
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="top-heroes-heading">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" routerLink="/roster">
+        <ng-icon hlmIcon name="lucideUsers" />
+        View all roster
+      </a>
+    </div>
+    <div class="dashboard__heroes">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="roster-heading">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.rosterCount() }} heroes</span>
+    </div>
+    <ul class="dashboard__roster">
+      @for (hero of vm.roster(); track hero.id) {
+        <li class="dashboard__row">
+          <a hlmBtn variant="ghost" size="sm" [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+          <div class="dashboard__row-meta">
+            <span hlmBadge [variant]="vm.statusVariant(hero.status)">{{ hero.status }}</span>
+            <span hlmSmall>Power {{ hero.power }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+</div>

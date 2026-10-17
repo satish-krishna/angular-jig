@@ -1,0 +1,943 @@
+{
+  "runId": "schematic-t3-2026-10-17_21-13-27",
+  "condition": "schematic",
+  "trial": 3,
+  "root": "D:\\Repos\\angular-jig",
+  "work": "C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27",
+  "out": "D:\\Repos\\angular-jig\\experiments\\schematic-arm\\s5\\schematic\\schematic-t3-2026-10-17_21-13-27",
+  "config": {
+    "$comment": "Configuration for one schematic-arm measurement series. Recorded into every run's meta.json with its sha256, so a run says which configuration produced it. Change it between series, never between trials of one series. Series 2 (2026-10-16) is the BEM house style; series 1 evidence stays under experiments/schematic-arm/<condition>/. Series 2 gate-on registers check-applied-appearance (harness/bem-phase-2-gate-spec.md). Series 3 (2026-10-16) is layout-only app stylesheets; gate-on adds check-app-css and check-src-after-bash (harness/bem-phase-3-layout-only-spec.md). Series 4 (2026-10-17) is the schematic arm on substrate/schematic-arm-4 (harness/schematic-spec-s3-addendum.md); gates frozen as in series 3 round 1. Series 5 (2026-10-17) is Decision G of the addendum: in the schematic condition only, stages 2, 4, 5 and 6 read this mod's prompts (schematic.stagePrompts) and the gates are harness/gate/s4-schematic.settings.json (series 3 round 1 gate-on plus route-to-generator); reached is recorded per kind and the preserved shape of generated files is measured. Series 4 holds discovery trial t0.",
+    "model": "claude-haiku-5-5",
+    "series": 5,
+    "repoRoot": "D:\\Repos\\angular-jig",
+    "substrate": "substrate/schematic-arm-4",
+    "stagesRef": "e617dca26e4caaa29cf609d80da1a17f222f2ff5",
+    "gateSettings": "harness/gate/s3-gate-on.settings.json",
+    "gateOffSettings": "harness/gate/s3-gate-off.settings.json",
+    "settingSources": "project",
+    "requiredOnSubstrate": [
+      "prototype/capstone-build-spec.md",
+      ".claude/hooks/protect-enforcement.mjs",
+      ".claude/hooks/check-applied-appearance.mjs",
+      ".claude/skills/house-style/SKILL.md",
+      ".agents/skills/house-style/SKILL.md",
+      ".claude/hooks/check-app-css.mjs",
+      ".claude/hooks/check-src-after-bash.mjs",
+      "harness/gate/app-css/index.mjs",
+      "harness/rules/app-css-layout-only.md",
+      "libs/ui/typography/src/index.ts",
+      "libs/ui/icon/src/index.ts"
+    ],
+    "schematic": {
+      "$comment": "commandPattern must name the schematic itself, so a spartan `ng g @spartan-ng/cli:ui` install is not counted as generation. The schematic arm refuses to start while it is empty or while any requiredOnSubstrate path is missing from the substrate. gateSettings overrides the top-level gateSettings in the schematic condition only. stagePrompts maps a stage number to a prompt file in this mod that replaces that stage's capstone prompt in the schematic condition only; gate-off and gate-on keep reading the capstone prompts at stagesRef.",
+      "specPath": "specs/hero.json",
+      "specSchemaPath": "schematics/slice/spec.schema.json",
+      "commandPattern": "\\bng\\s+(--\\s+)?(g|generate)\\s+(\\S+:)?slice\\b",
+      "gateSettings": "harness/gate/s4-schematic.settings.json",
+      "stagePrompts": {
+        "2": "prompts/stage-2-domain.md",
+        "4": "prompts/stage-4-roster.md",
+        "5": "prompts/stage-5-detail.md",
+        "6": "prompts/stage-6-integrate.md"
+      },
+      "requiredOnSubstrate": [
+        "schematics/collection.json",
+        "schematics/slice/index.cjs",
+        "schematics/slice/spec.schema.json",
+        ".claude/skills/slice-generator/SKILL.md",
+        ".agents/skills/slice-generator/SKILL.md",
+        "schematics/verify-arrives-green.mjs",
+        ".claude/hooks/route-to-generator.mjs"
+      ],
+      "protectedPaths": [
+        "schematics/"
+      ]
+    }
+  },
+  "configSha256": "fab0713163c187f586b898f04b2236e0584cb616502f6ed761b851761c990eb7",
+  "startBranch": "research/schematic-arm",
+  "startSha": "5b4ac45b80952c6c971aee465e20fa84d17d5646",
+  "substrate": {
+    "ref": "substrate/schematic-arm-4",
+    "sha": "a745bb37320e7176866a11f40eb11859ede9e565"
+  },
+  "stagesRef": {
+    "ref": "e617dca26e4caaa29cf609d80da1a17f222f2ff5",
+    "sha": "e617dca26e4caaa29cf609d80da1a17f222f2ff5",
+    "moduleSha256": "98d86f04faae82ad3b499fa5c38b701ba769c41bb480f8360a47ce6be957885e"
+  },
+  "branch": "run/schematic-arm-schematic-t3-2026-10-17_21-13-27",
+  "settingsPath": "C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27\\gate.settings.json",
+  "settingsFile": "harness/gate/s4-schematic.settings.json",
+  "settingsSha256": "80ef4a094070764d4f4dc49c152423da244c743d2d5069293b8eaa2425971c4e",
+  "projectSettingsAfterControl": "{\n  \"$comment\": \"Series 5 schematic condition (harness/schematic-spec-s3-addendum.md, Decision G4): exactly s3-gate-on.settings.json, the series 3 round 1 gate-on hooks, plus route-to-generator, PreToolUse on Write (deny creating a generator-owned file or writing over a slice:placeholder file) and PostToolUse on Bash|PowerShell (report generator-owned TypeScript files without the generator header). Every hook is registered through $CLAUDE_PROJECT_DIR so it loads after the subject has cd'd into a subfolder. Used by the schematic arm through schematic.gateSettings; gate-off and gate-on keep their s3 files.\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-enforcement.mjs\\\"\" }]\n      },\n      {\n        \"matcher\": \"Write\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/route-to-generator.mjs\\\"\" }]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Write|Edit|MultiEdit\",\n        \"hooks\": [\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/seal-templates.mjs\\\"\" },\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-layout.mjs\\\"\" },\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-component-shape.mjs\\\"\" },\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-freeloader.mjs\\\"\" },\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-applied-appearance.mjs\\\"\" },\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-app-css.mjs\\\"\" }\n        ]\n      },\n      {\n        \"matcher\": \"Bash|PowerShell\",\n        \"hooks\": [\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-src-after-bash.mjs\\\"\" },\n          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/route-to-generator.mjs\\\"\" }\n        ]\n      }\n    ]\n  }\n}\n",
+  "hookLog": "C:\\Users\\psati\\AppData\\Local\\Temp\\schematic-arm\\schematic-t3-2026-10-17_21-13-27\\hook-firings.jsonl",
+  "auditRoutes": [
+    "dashboard",
+    "roster",
+    "detail/11"
+  ],
+  "auditAnchor": "body",
+  "plan": [
+    {
+      "n": 0,
+      "name": "spec",
+      "promptFile": "mod:prompts/stage-0-spec.md",
+      "promptSha256": "2b2e689e24a1a223a25095f119cce744892035ff8c5afcb2ba8c809b9d6f4427",
+      "promptBytes": 961
+    },
+    {
+      "n": 1,
+      "name": "shell",
+      "promptFile": "capstone/stage-1-shell.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "d3dc761d91e260486e2f6313d96b9e3a79c53512f6656d267d4122c5549f4c6d",
+      "promptBytes": 2394
+    },
+    {
+      "n": 2,
+      "name": "domain",
+      "promptFile": "mod:prompts/stage-2-domain.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "bc2f84cee119576c7350e3895b467532cec316caee1f49bd7992381099bec68d",
+      "promptBytes": 2516
+    },
+    {
+      "n": 3,
+      "name": "dashboard",
+      "promptFile": "capstone/stage-3-dashboard.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "d8e22f145fea8b52a0043f0c167b19b10f3956081cd60a1204b674f68fdf6816",
+      "promptBytes": 1637
+    },
+    {
+      "n": 4,
+      "name": "roster",
+      "promptFile": "mod:prompts/stage-4-roster.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "58614ad5e057b4c7adabbf436e0b7397b5aa4325a42401dc5311732b561cfa88",
+      "promptBytes": 2520
+    },
+    {
+      "n": 5,
+      "name": "detail",
+      "promptFile": "mod:prompts/stage-5-detail.md",
+      "responsiveGateApplied": false,
+      "promptSha256": "c6b6a27b03738cd25bd25b9b37204fb9567dd8d4fc332df16e5be068fd1f36a2",
+      "promptBytes": 2430
+    },
+    {
+      "n": 6,
+      "name": "integrate",
+      "promptFile": "mod:prompts/stage-6-integrate.md",
+      "responsiveGateApplied": true,
+      "promptSha256": "fb5049aab62542029fb3d15e462d98db5f31b4ecca52b5c7b15fdda288f72317",
+      "promptBytes": 3568
+    }
+  ],
+  "records": [
+    {
+      "stage": 0,
+      "name": "spec",
+      "promptFile": "mod:prompts/stage-0-spec.md",
+      "promptSha256": "2b2e689e24a1a223a25095f119cce744892035ff8c5afcb2ba8c809b9d6f4427",
+      "promptBytes": 961,
+      "responsiveGateApplied": false,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 10,
+      "resultCount": 1,
+      "costUsd": 0.01975599,
+      "durationMs": 62319,
+      "durationApiMs": 57501,
+      "sessionId": "58ae4edb-632e-425e-a345-219c9b09221a",
+      "usage": {
+        "input_tokens": 14,
+        "cache_creation_input_tokens": 49889,
+        "cache_read_input_tokens": 348079,
+        "output_tokens": 12592,
+        "output_tokens_details": {
+          "thinking_tokens": 8194
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 49889,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 2024,
+            "cache_read_input_tokens": 68129,
+            "cache_creation_input_tokens": 732,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 732
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 66213,
+      "hookFiringsAfter": 1,
+      "toolCounts": {
+        "Read": 3,
+        "Glob": 1,
+        "Bash": 3,
+        "Grep": 1,
+        "Write": 1
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    },
+    {
+      "stage": 1,
+      "name": "shell",
+      "promptFile": "capstone/stage-1-shell.md",
+      "promptSha256": "d3dc761d91e260486e2f6313d96b9e3a79c53512f6656d267d4122c5549f4c6d",
+      "promptBytes": 2394,
+      "responsiveGateApplied": false,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 49,
+      "resultCount": 1,
+      "costUsd": 0.22954932,
+      "durationMs": 364636,
+      "durationApiMs": 214658,
+      "sessionId": "e801bccb-d178-4757-9943-d8ad5944cbce",
+      "usage": {
+        "input_tokens": 72,
+        "cache_creation_input_tokens": 108262,
+        "cache_read_input_tokens": 3272360,
+        "output_tokens": 47792,
+        "output_tokens_details": {
+          "thinking_tokens": 29335
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 108262,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1347,
+            "cache_read_input_tokens": 126696,
+            "cache_creation_input_tokens": 538,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 538
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 368448,
+      "hookFiringsAfter": 1,
+      "toolCounts": {
+        "Bash": 18,
+        "ToolSearch": 1,
+        "mcp__spartan-ui__spartan_components_get": 2,
+        "Read": 2,
+        "Write": 23,
+        "Edit": 2
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    },
+    {
+      "stage": 2,
+      "name": "domain",
+      "promptFile": "mod:prompts/stage-2-domain.md",
+      "promptSha256": "bc2f84cee119576c7350e3895b467532cec316caee1f49bd7992381099bec68d",
+      "promptBytes": 2516,
+      "responsiveGateApplied": false,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 7,
+      "resultCount": 1,
+      "costUsd": 0.0091676,
+      "durationMs": 28167,
+      "durationApiMs": 10012,
+      "sessionId": "1b3abaa3-9922-4ab9-82a9-3825d22cd865",
+      "usage": {
+        "input_tokens": 10,
+        "cache_creation_input_tokens": 32141,
+        "cache_read_input_tokens": 195590,
+        "output_tokens": 1565,
+        "output_tokens_details": {
+          "thinking_tokens": 355
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 32141,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 696,
+            "cache_read_input_tokens": 49459,
+            "cache_creation_input_tokens": 1654,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1654
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 31926,
+      "hookFiringsAfter": 1,
+      "toolCounts": {
+        "Skill": 1,
+        "Bash": 4
+      },
+      "schematicInvocations": [
+        {
+          "tool": "Bash",
+          "command": "cd D:/Repos/angular-jig; npx ng g slice --spec specs/hero.json --kinds entity 2>&1 | tail -40; echo ----; ls src/app/hero; head -3 src/app/hero/*.ts",
+          "created": [
+            "src/app/hero/hero.model.ts",
+            "src/app/hero/hero.schema.ts",
+            "src/app/hero/hero.service.ts",
+            "src/app/hero/hero-example-data.ts",
+            "src/app/hero/hero.service.spec.ts"
+          ]
+        }
+      ],
+      "schematicCreated": [
+        "src/app/hero/hero.model.ts",
+        "src/app/hero/hero.schema.ts",
+        "src/app/hero/hero.service.ts",
+        "src/app/hero/hero-example-data.ts",
+        "src/app/hero/hero.service.spec.ts"
+      ],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    },
+    {
+      "stage": 3,
+      "name": "dashboard",
+      "promptFile": "capstone/stage-3-dashboard.md",
+      "promptSha256": "d8e22f145fea8b52a0043f0c167b19b10f3956081cd60a1204b674f68fdf6816",
+      "promptBytes": 1637,
+      "responsiveGateApplied": false,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 45,
+      "resultCount": 1,
+      "costUsd": 0.18325458000000003,
+      "durationMs": 232745,
+      "durationApiMs": 158131,
+      "sessionId": "19bba469-7895-4a21-8aad-5205f72db31d",
+      "usage": {
+        "input_tokens": 40,
+        "cache_creation_input_tokens": 109762,
+        "cache_read_input_tokens": 1709180,
+        "output_tokens": 34325,
+        "output_tokens_details": {
+          "thinking_tokens": 20213
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 109762,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1347,
+            "cache_read_input_tokens": 127515,
+            "cache_creation_input_tokens": 1219,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1219
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 236475,
+      "hookFiringsAfter": 5,
+      "toolCounts": {
+        "Bash": 11,
+        "Read": 4,
+        "Grep": 5,
+        "ToolSearch": 1,
+        "mcp__spartan-ui__spartan_components_get": 1,
+        "Edit": 4,
+        "Write": 18
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    },
+    {
+      "stage": 4,
+      "name": "roster",
+      "promptFile": "mod:prompts/stage-4-roster.md",
+      "promptSha256": "58614ad5e057b4c7adabbf436e0b7397b5aa4325a42401dc5311732b561cfa88",
+      "promptBytes": 2520,
+      "responsiveGateApplied": false,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 52,
+      "resultCount": 1,
+      "costUsd": 0.13259859000000004,
+      "durationMs": 210050,
+      "durationApiMs": 148559,
+      "sessionId": "ce04509e-0df2-45b0-b3a7-37af325f5daa",
+      "usage": {
+        "input_tokens": 60,
+        "cache_creation_input_tokens": 95699,
+        "cache_read_input_tokens": 2457629,
+        "output_tokens": 28737,
+        "output_tokens_details": {
+          "thinking_tokens": 15840
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 95699,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1883,
+            "cache_read_input_tokens": 113668,
+            "cache_creation_input_tokens": 1003,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1003
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 215742,
+      "hookFiringsAfter": 14,
+      "toolCounts": {
+        "Bash": 10,
+        "Read": 15,
+        "Glob": 5,
+        "Grep": 5,
+        "Edit": 16
+      },
+      "schematicInvocations": [
+        {
+          "tool": "Bash",
+          "command": "cd D:/Repos/angular-jig && npx ng g slice --spec specs/hero.json --kinds form,manage 2>&1 | tail -60",
+          "created": [
+            "src/app/ui/hero-form/hero-form.ts",
+            "src/app/ui/hero-form/hero-form.html",
+            "src/app/ui/hero-form/hero-form.css",
+            "src/app/heroes/heroes.view-model.ts",
+            "src/app/heroes/heroes.view-model.spec.ts",
+            "src/app/heroes/heroes.ts",
+            "src/app/heroes/heroes.html",
+            "src/app/heroes/heroes.css"
+          ]
+        }
+      ],
+      "schematicCreated": [
+        "src/app/ui/hero-form/hero-form.ts",
+        "src/app/ui/hero-form/hero-form.html",
+        "src/app/ui/hero-form/hero-form.css",
+        "src/app/heroes/heroes.view-model.ts",
+        "src/app/heroes/heroes.view-model.spec.ts",
+        "src/app/heroes/heroes.ts",
+        "src/app/heroes/heroes.html",
+        "src/app/heroes/heroes.css"
+      ],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    },
+    {
+      "stage": 5,
+      "name": "detail",
+      "promptFile": "mod:prompts/stage-5-detail.md",
+      "promptSha256": "c6b6a27b03738cd25bd25b9b37204fb9567dd8d4fc332df16e5be068fd1f36a2",
+      "promptBytes": 2430,
+      "responsiveGateApplied": false,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 21,
+      "resultCount": 1,
+      "costUsd": 0.11489047000000002,
+      "durationMs": 177292,
+      "durationApiMs": 128035,
+      "sessionId": "866911d2-8854-4652-a510-3c33929e8262",
+      "usage": {
+        "input_tokens": 38,
+        "cache_creation_input_tokens": 95578,
+        "cache_read_input_tokens": 1599829,
+        "output_tokens": 28147,
+        "output_tokens_details": {
+          "thinking_tokens": 16883
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 95578,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1341,
+            "cache_read_input_tokens": 113917,
+            "cache_creation_input_tokens": 633,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 633
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 181059,
+      "hookFiringsAfter": 16,
+      "toolCounts": {
+        "Bash": 11,
+        "Read": 2,
+        "ToolSearch": 1,
+        "mcp__spartan-ui__spartan_components_get": 1,
+        "Grep": 1,
+        "Write": 4
+      },
+      "schematicInvocations": [
+        {
+          "tool": "Bash",
+          "command": "cd D:/Repos/angular-jig && npx ng g slice --spec specs/hero.json --kinds form 2>&1 | tail -30; echo \"EXIT ${PIPESTATUS[0]}\"; git status --short src/app/ui/hero-form src/app/hero",
+          "created": []
+        }
+      ],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    },
+    {
+      "stage": 6,
+      "name": "integrate",
+      "promptFile": "mod:prompts/stage-6-integrate.md",
+      "promptSha256": "fb5049aab62542029fb3d15e462d98db5f31b4ecca52b5c7b15fdda288f72317",
+      "promptBytes": 3568,
+      "responsiveGateApplied": true,
+      "model": {
+        "requested": "claude-haiku-5-5",
+        "resolved": "claude-haiku-5-5"
+      },
+      "exitCode": 0,
+      "spawnError": null,
+      "isError": false,
+      "subtype": "success",
+      "numTurns": 50,
+      "resultCount": 1,
+      "costUsd": 0.45064225999999996,
+      "durationMs": 653927,
+      "durationApiMs": 297292,
+      "sessionId": "54c4026c-d80d-4759-9825-5d9fb26695a6",
+      "usage": {
+        "input_tokens": 76,
+        "cache_creation_input_tokens": 152033,
+        "cache_read_input_tokens": 4764354,
+        "output_tokens": 66792,
+        "output_tokens_details": {
+          "thinking_tokens": 36988
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 152033,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1316,
+            "cache_read_input_tokens": 168478,
+            "cache_creation_input_tokens": 2527,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2527
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "parseError": false,
+      "wallMs": 657698,
+      "hookFiringsAfter": 18,
+      "toolCounts": {
+        "Bash": 34,
+        "Read": 2,
+        "Write": 13
+      },
+      "schematicInvocations": [],
+      "schematicCreated": [],
+      "loaded": {
+        "plugins": [
+          {
+            "name": "cc-plugin-agents-md",
+            "path": "builtin",
+            "source": "cc-plugin-agents-md@builtin"
+          },
+          {
+            "name": "cc-plugin-telemetry",
+            "path": "builtin",
+            "source": "cc-plugin-telemetry@builtin"
+          },
+          {
+            "name": "cc-plugin-plugin-authoring",
+            "path": "builtin",
+            "source": "cc-plugin-plugin-authoring@builtin"
+          }
+        ],
+        "mcpServers": [
+          {
+            "name": "angular-cli",
+            "status": "connected",
+            "source": "dynamic"
+          },
+          {
+            "name": "spartan-ui",
+            "status": "connected",
+            "source": "dynamic"
+          }
+        ],
+        "outputStyle": "default",
+        "slashCommands": 62,
+        "tools": 57
+      },
+      "ok": true
+    }
+  ],
+  "spec": {
+    "path": "specs/hero.json",
+    "exists": true,
+    "parses": true,
+    "otherFilesWritten": []
+  },
+  "review": {
+    "startedAt": "2026-10-17T21:14:38.017Z",
+    "endedAt": "2026-10-17T21:18:41.827Z",
+    "minutes": 4.06,
+    "unchanged": false,
+    "proposedParsed": true,
+    "fieldsChanged": 4,
+    "detail": [
+      {
+        "change": "field-changed",
+        "name": "powerClass"
+      },
+      {
+        "change": "field-changed",
+        "name": "power"
+      },
+      {
+        "change": "field-changed",
+        "name": "clearance"
+      },
+      {
+        "change": "key-changed",
+        "name": "manage"
+      }
+    ],
+    "approvedSha256": "1bcca049b0af52c9a29070f8c098e4b78ce24d6c6acc38012cf8dea075792bdc"
+  },
+  "startedAt": "2026-10-17T21:13:28.236Z",
+  "subjectPid": null
+}

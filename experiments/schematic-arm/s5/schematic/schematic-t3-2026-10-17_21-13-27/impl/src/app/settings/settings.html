@@ -1,0 +1,35 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Preferences for this console on this device.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
+      <p hlmCardDescription>
+        Until you choose a theme, the console follows your system setting.
+      </p>
+    </div>
+    <div hlmCardContent class="settings__choices">
+      <button
+        hlmBtn
+        [variant]="vm.dark() ? 'outline' : 'default'"
+        [attr.aria-pressed]="!vm.dark()"
+        (click)="vm.choose('light')"
+      >
+        <ng-icon hlmIcon name="lucideSun" />
+        <span>Light</span>
+      </button>
+      <button
+        hlmBtn
+        [variant]="vm.dark() ? 'default' : 'outline'"
+        [attr.aria-pressed]="vm.dark()"
+        (click)="vm.choose('dark')"
+      >
+        <ng-icon hlmIcon name="lucideMoon" />
+        <span>Dark</span>
+      </button>
+    </div>
+  </section>
+</section>

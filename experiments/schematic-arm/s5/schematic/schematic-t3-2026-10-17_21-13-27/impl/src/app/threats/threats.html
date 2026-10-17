@@ -1,0 +1,55 @@
+<section class="threats">
+  <header class="threats__header">
+    <div class="threats__title">
+      <ng-icon hlmIcon name="lucideShieldAlert" tone="primary" />
+      <h1 hlmH1>Threats</h1>
+    </div>
+    <p hlmMuted>{{ vm.summary() }}</p>
+  </header>
+
+  <ul class="threats__grid">
+    @for (threat of vm.threats(); track threat.id) {
+      <li>
+        <article hlmCard>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ threat.title }}</h2>
+            <p hlmCardDescription>{{ threat.location }}</p>
+          </div>
+          <div hlmCardContent class="threats__body">
+            <div class="threats__badges">
+              <span hlmBadge variant="outline">Needs {{ threat.requiredClearance }}</span>
+              <span hlmBadge [variant]="vm.statusVariant(threat.status)">{{ threat.status }}</span>
+            </div>
+          </div>
+          @if (threat.status !== 'Resolved') {
+            <div hlmCardFooter class="threats__actions">
+              @if (threat.status === 'Open') {
+                <button
+                  hlmBtn
+                  size="sm"
+                  variant="outline"
+                  [attr.aria-label]="'Contain ' + threat.title"
+                  (click)="vm.contain(threat.id)"
+                >
+                  <ng-icon hlmIcon name="lucideShield" />
+                  <span>Contain</span>
+                </button>
+              }
+              <button
+                hlmBtn
+                size="sm"
+                [attr.aria-label]="'Resolve ' + threat.title"
+                (click)="vm.resolve(threat.id)"
+              >
+                <ng-icon hlmIcon name="lucideCircleCheck" />
+                <span>Resolve</span>
+              </button>
+            </div>
+          }
+        </article>
+      </li>
+    } @empty {
+      <li><p hlmMuted>No threats on the register.</p></li>
+    }
+  </ul>
+</section>

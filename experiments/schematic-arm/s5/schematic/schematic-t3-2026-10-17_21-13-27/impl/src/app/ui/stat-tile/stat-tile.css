@@ -1,0 +1,4 @@
+@reference "../../../styles.css";
+
+.stat-tile { @apply grid gap-2; }
+.stat-tile__top { @apply flex items-center justify-between gap-2; }

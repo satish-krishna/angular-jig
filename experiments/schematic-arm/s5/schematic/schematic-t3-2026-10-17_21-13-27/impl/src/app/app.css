@@ -1,0 +1,5 @@
+@reference "../styles.css";
+
+.app { @apply w-full min-w-0; }
+.app__main { @apply flex min-w-0 flex-1 flex-col; }
+.app__user { @apply flex items-center gap-2; }

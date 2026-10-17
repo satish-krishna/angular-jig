@@ -1,0 +1,40 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {}
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 9,
+      "messages": 9,
+      "byHook": {
+        "protect-enforcement": 9
+      }
+    },
+    "ui": {
+      "firings": 1,
+      "messages": 2,
+      "byHook": {
+        "seal-templates": 1
+      }
+    },
+    "heroes": {
+      "firings": 6,
+      "messages": 12,
+      "byHook": {
+        "check-app-css": 2,
+        "check-applied-appearance": 4
+      }
+    },
+    "src-other": {
+      "firings": 2,
+      "messages": 12,
+      "byHook": {
+        "check-src-after-bash": 2
+      }
+    }
+  }
+}
