@@ -1,0 +1,10 @@
+@reference "../../styles.css";
+
+/* min-w-0 on the grid children keeps the table's scroll container from widening the page past the viewport. */
+.threats { @apply grid grid-cols-1 min-w-0 gap-8 p-6; }
+.threats__header { @apply grid gap-1; }
+.threats__section { @apply grid min-w-0 gap-4; }
+.threats__cards { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
+.threats__scroll { @apply min-w-0; }
+.threats__caption { @apply sr-only; }
+.threats__empty { @apply text-center; }

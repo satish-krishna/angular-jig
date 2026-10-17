@@ -1,0 +1,17 @@
+@reference "../../styles.css";
+
+/* min-w-0 on the grid children keeps the table's scroll container from widening the page past the viewport. */
+.roster { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
+.roster__header { @apply grid gap-1; }
+.roster__filters { @apply flex flex-wrap items-center gap-3; }
+.roster__label { @apply sr-only; }
+.roster__search { @apply w-full sm:w-64; }
+.roster__class-trigger { @apply w-full sm:w-48; }
+.roster__recruit { @apply ms-auto shrink-0; }
+.roster__scroll { @apply min-w-0; }
+.roster__caption { @apply sr-only; }
+.roster__actions-head { @apply text-end; }
+.roster__hero { @apply flex items-center gap-3; }
+.roster__identity { @apply grid min-w-0; }
+.roster__empty { @apply text-center; }
+.roster__footer { @apply flex flex-wrap items-center justify-between gap-2; }

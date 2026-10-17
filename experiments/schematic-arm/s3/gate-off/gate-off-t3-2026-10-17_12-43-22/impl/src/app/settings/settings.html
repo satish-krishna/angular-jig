@@ -1,0 +1,49 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Appearance for this browser, and the example data behind the console.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
+      <p hlmCardDescription>The navigation rail stays dark in both themes.</p>
+    </div>
+    <div hlmCardContent class="settings__body">
+      <div class="settings__row">
+        <label hlmLabel for="settings-dark">Dark theme</label>
+        <hlm-switch
+          inputId="settings-dark"
+          [checked]="vm.isDark()"
+          (checkedChange)="vm.setDark($event)"
+        />
+      </div>
+      <div class="settings__row">
+        @if (vm.following()) {
+          <p hlmMuted>Following your system setting.</p>
+        } @else {
+          <p hlmMuted>Your choice is saved in this browser.</p>
+        }
+        <button hlmBtn variant="outline" [disabled]="vm.following()" (click)="vm.followSystem()">
+          Follow system setting
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-heading">Example data</h2>
+      <p hlmCardDescription>Edits, recruits, and mission results last until the page reloads.</p>
+    </div>
+    <div hlmCardContent class="settings__body">
+      <div class="settings__row">
+        <p hlmMuted>Reset returns every hero and mission to the example data.</p>
+        <button hlmBtn variant="outline" (click)="vm.resetData()">
+          <ng-icon hlmIcon name="lucideRotateCcw" />
+          Reset example data
+        </button>
+      </div>
+    </div>
+  </section>
+</section>

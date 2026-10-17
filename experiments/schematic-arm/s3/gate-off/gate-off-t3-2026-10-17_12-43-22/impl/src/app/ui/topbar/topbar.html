@@ -1,0 +1,59 @@
+<header class="topbar">
+  <button hlmSidebarTrigger></button>
+
+  <nav aria-label="Breadcrumb" class="topbar__crumbs">
+    <ol class="topbar__crumb-list">
+      @for (crumb of crumbs(); track $index; let last = $last) {
+        <li class="topbar__crumb" hlmSmall>
+          @if (crumb.link && !last) {
+            <a [routerLink]="crumb.link">{{ crumb.label }}</a>
+          } @else {
+            <span aria-current="page">{{ crumb.label }}</span>
+          }
+          @if (!last) {
+            <ng-icon hlmIcon name="lucideChevronRight" tone="muted" />
+          }
+        </li>
+      }
+    </ol>
+  </nav>
+
+  <form
+    class="topbar__search"
+    role="search"
+    (submit)="$event.preventDefault(); searched.emit(query.value)"
+  >
+    <ng-icon hlmIcon name="lucideSearch" tone="muted" />
+    <input
+      #query
+      hlmInput
+      type="search"
+      class="topbar__search-input"
+      placeholder="Search heroes"
+      aria-label="Search heroes"
+    />
+  </form>
+
+  <div class="topbar__actions">
+    <button hlmBtn variant="ghost" size="icon" aria-label="Notifications" hlmTooltip="Notifications">
+      <ng-icon hlmIcon name="lucideBell" />
+    </button>
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      [hlmTooltip]="isDark() ? 'Light theme' : 'Dark theme'"
+      (click)="themeToggled.emit()"
+    >
+      @if (isDark()) {
+        <ng-icon hlmIcon name="lucideSun" />
+      } @else {
+        <ng-icon hlmIcon name="lucideMoon" />
+      }
+    </button>
+    <hlm-avatar role="img" aria-label="Commander account">
+      <span hlmAvatarFallback>CO</span>
+    </hlm-avatar>
+  </div>
+</header>

@@ -1,0 +1,28 @@
+@reference "../../styles.css";
+
+/* min-w-0 on the grid children keeps wide content from pushing the page past the viewport. */
+.hero-detail { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
+.hero-detail__back { @apply justify-self-start; }
+.hero-detail__header { @apply flex flex-wrap items-start justify-between gap-4; }
+.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
+.hero-detail__names { @apply grid min-w-0 gap-1; }
+.hero-detail__badges { @apply flex flex-wrap gap-2; }
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__tabs { @apply grid min-w-0 w-full gap-6; }
+.hero-detail__tab-list { @apply max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply grid min-w-0; }
+.hero-detail__summary { @apply grid grid-cols-1 min-w-0 gap-6 md:grid-cols-2; }
+.hero-detail__stats { @apply grid grid-cols-1 gap-3 sm:grid-cols-3; }
+.hero-detail__stat { @apply grid gap-1; }
+.hero-detail__dossier { @apply grid gap-3; }
+.hero-detail__fact { @apply grid min-w-0 gap-0.5; }
+.hero-detail__powers { @apply grid gap-3; }
+.hero-detail__form { @apply grid grid-cols-1 min-w-0 gap-4 md:grid-cols-2; }
+.hero-detail__field { @apply min-w-0; }
+.hero-detail__select { @apply w-full; }
+.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2 md:col-span-2; }
+.hero-detail__not-found { @apply max-w-xl; }
+.hero-detail__wide { @apply md:col-span-2; }
+.hero-detail__switch { @apply flex flex-wrap items-center justify-between gap-4; }
+.hero-detail__deployments { @apply grid gap-2; }
+.hero-detail__deployment { @apply flex flex-wrap items-center gap-2; }

@@ -1,0 +1,53 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>Heroes who cannot take the field, and live missions by threat tier. Example data.</p>
+  </header>
+
+  <section class="threats__section" aria-labelledby="at-risk-heading">
+    <h2 hlmH3 id="at-risk-heading">Heroes at risk</h2>
+    @if (vm.atRisk().length) {
+      <div class="threats__cards">
+        @for (hero of vm.atRisk(); track hero.id) {
+          <app-hero-card [hero]="hero" />
+        }
+      </div>
+    } @else {
+      <p hlmMuted>No hero is injured or MIA.</p>
+    }
+  </section>
+
+  <section class="threats__section" aria-labelledby="open-threats-heading">
+    <h2 hlmH3 id="open-threats-heading">Open threats</h2>
+    <!-- 375px: the table scrolls inside its own container, so the page never does. -->
+    <div hlmTableContainer class="threats__scroll">
+      <table hlmTable>
+        <caption hlmTableCaption class="threats__caption">Live missions, highest threat first</caption>
+        <thead hlmTableHeader>
+          <tr hlmTableRow>
+            <th hlmTableHead scope="col">Mission</th>
+            <th hlmTableHead scope="col">Hero</th>
+            <th hlmTableHead scope="col">Threat</th>
+            <th hlmTableHead scope="col">Location</th>
+          </tr>
+        </thead>
+        <tbody hlmTableBody>
+          @for (row of vm.openThreats(); track row.mission.id) {
+            <tr hlmTableRow>
+              <td hlmTableCell>{{ row.mission.codename }}</td>
+              <td hlmTableCell>{{ row.heroName }}</td>
+              <td hlmTableCell>
+                <span hlmBadge variant="outline">Tier {{ row.mission.threatTier }}</span>
+              </td>
+              <td hlmTableCell>{{ row.mission.location }}</td>
+            </tr>
+          } @empty {
+            <tr hlmTableRow>
+              <td hlmTableCell colspan="4" class="threats__empty">No live missions.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

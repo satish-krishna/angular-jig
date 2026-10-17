@@ -1,0 +1,9 @@
+@reference "../../../styles.css";
+
+.topbar { @apply flex flex-wrap items-center gap-2 p-3 sm:p-4; }
+.topbar__crumbs { @apply min-w-0 flex-1; }
+.topbar__crumb-list { @apply flex min-w-0 flex-wrap items-center gap-1; }
+.topbar__crumb { @apply flex min-w-0 items-center gap-1; }
+.topbar__search { @apply order-last flex basis-full items-center gap-2 sm:order-none sm:basis-auto sm:w-64; }
+.topbar__search-input { @apply min-w-0 flex-1; }
+.topbar__actions { @apply ms-auto flex shrink-0 items-center gap-1; }

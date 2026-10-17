@@ -1,0 +1,2973 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+index 4028128..23de329 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -1,38 +1,10 @@
+ {
+-  "$comment": "All house gates, armed. Every edit-time hook this project defines runs here: the sealed primitive vocabulary and the icon rule, the layout grammar, component shape and MVVM, the framework-freeloader rules, and the enforcement guard that keeps this configuration read-only. The boot and responsive checks are separate commands the build is told to run (npm run check:boot, npm run check:responsive), because they need a rendered application and cannot be a per-edit hook.",
++  "$comment": "Series 3 gate-off: capstone-gate-off.settings.json with the guard registered through $CLAUDE_PROJECT_DIR, because a relative path fails open once the subject cds into a subdirectory (series 3 gate-off t1 discard). Capstone, gate-OFF condition: the honest baseline. NO house-convention enforcement hooks are registered. The agent still has the entire documented constitution in its context (both MCP servers, the spartan skill, the house-style skill with the sealed vocabulary, the icon rule, the MVVM section and the responsive section, Angular's generated CLAUDE.md) and the build spec it is building to. This is what a capable agent ships from good docs alone. strictTemplates is on in BOTH conditions because it is a tsconfig property of the substrate the agent inherits, not a hook we register; the variable the capstone moves is the house-convention hook set plus the responsive instruction. The capstone is deliberately NOT a single-variable isolation like Parts 1 through 5: it measures the whole apparatus at once, and capstone-spec.md says so. The ONE hook present here is protect-enforcement, which is an experimental control rather than a gate: it stops the agent editing the harness that measures it, and it is registered identically in both conditions so neither arm can tamper. See the note in the hook itself.",
+   "hooks": {
+     "PreToolUse": [
+       {
+         "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell",
+-        "hooks": [
+-          {
+-            "type": "command",
+-            "command": "node .claude/hooks/protect-enforcement.mjs"
+-          }
+-        ]
+-      }
+-    ],
+-    "PostToolUse": [
+-      {
+-        "matcher": "Write|Edit|MultiEdit",
+-        "hooks": [
+-          {
+-            "type": "command",
+-            "command": "node .claude/hooks/seal-templates.mjs"
+-          },
+-          {
+-            "type": "command",
+-            "command": "node .claude/hooks/check-layout.mjs"
+-          },
+-          {
+-            "type": "command",
+-            "command": "node .claude/hooks/check-component-shape.mjs"
+-          },
+-          {
+-            "type": "command",
+-            "command": "node .claude/hooks/check-freeloader.mjs"
+-          }
+-        ]
++        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-enforcement.mjs\"" }]
+       }
+     ]
+   }
+diff --git a/libs/ui/badge/src/lib/hlm-badge.ts b/libs/ui/badge/src/lib/hlm-badge.ts
+index 12e5925..089cee7 100644
+--- a/libs/ui/badge/src/lib/hlm-badge.ts
++++ b/libs/ui/badge/src/lib/hlm-badge.ts
+@@ -12,6 +12,8 @@ const badgeVariants = cva(
+         destructive:
+           'bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20',
+         outline: 'border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground',
++        success: 'bg-success text-success-foreground [a]:hover:bg-success/80',
++        warning: 'bg-warning text-warning-foreground [a]:hover:bg-warning/80',
+         ghost: 'hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50',
+         link: 'text-primary underline-offset-4 hover:underline',
+       },
+diff --git a/src/app/app.config.ts b/src/app/app.config.ts
+index e60fc79..e93e2ab 100644
+--- a/src/app/app.config.ts
++++ b/src/app/app.config.ts
+@@ -1,10 +1,12 @@
+ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+ import { provideRouter } from '@angular/router';
++import { provideSpartanHlm } from '@spartan-ng/helm/utils';
+ import { routes } from './app.routes';
+ 
+ export const appConfig: ApplicationConfig = {
+   providers: [
+     provideBrowserGlobalErrorListeners(),
+-    provideRouter(routes)
++    provideRouter(routes),
++    provideSpartanHlm(),
+   ]
+ };
+diff --git a/src/app/app.css b/src/app/app.css
+index 234a46d..99489f1 100644
+--- a/src/app/app.css
++++ b/src/app/app.css
+@@ -1 +1,4 @@
+ @reference "../styles.css";
++
++/* min-w-0 lets a wide screen shrink inside the column instead of pushing the page sideways. */
++.app-shell__content { @apply min-w-0 flex-1; }
+diff --git a/src/app/app.html b/src/app/app.html
+index 4023545..4a3a26a 100644
+--- a/src/app/app.html
++++ b/src/app/app.html
+@@ -1,7 +1,54 @@
+-<!-- Shell plumbing only. The screens are built into the placeholder components. -->
+-<nav>
+-  <a routerLink="/dashboard">Dashboard</a>
+-  <a routerLink="/heroes">Heroes</a>
+-</nav>
++<div hlmSidebarWrapper>
++  <hlm-sidebar collapsible="icon">
++    <div hlmSidebarHeader>
++      <span hlmLarge>
++        <ng-icon hlmIcon name="lucideRadar" />
++        Hero Ops
++      </span>
++    </div>
+ 
+-<router-outlet />
++    <div hlmSidebarContent>
++      <div hlmSidebarGroup>
++        <div hlmSidebarGroupLabel>Operations</div>
++        <div hlmSidebarGroupContent>
++          <ul hlmSidebarMenu>
++            @for (item of vm.navItems; track item.path) {
++              <li hlmSidebarMenuItem>
++                <a
++                  hlmSidebarMenuButton
++                  [routerLink]="item.path"
++                  routerLinkActive
++                  #active="routerLinkActive"
++                  [isActive]="active.isActive"
++                  [tooltip]="item.label"
++                >
++                  <ng-icon hlmIcon [name]="item.icon" />
++                  <span>{{ item.label }}</span>
++                </a>
++              </li>
++            }
++          </ul>
++        </div>
++      </div>
++    </div>
++
++    <div hlmSidebarFooter>
++      <hlm-avatar size="sm">
++        <span hlmAvatarFallback>CO</span>
++      </hlm-avatar>
++      <span hlmSmall>Commander</span>
++    </div>
++  </hlm-sidebar>
++
++  <main hlmSidebarInset>
++    <app-topbar
++      [crumbs]="vm.crumbs()"
++      [isDark]="vm.isDark()"
++      (themeToggled)="vm.toggleTheme()"
++      (searched)="vm.search($event)"
++    />
++    <div class="app-shell__content">
++      <router-outlet />
++    </div>
++  </main>
++</div>
+diff --git a/src/app/app.routes.ts b/src/app/app.routes.ts
+index 8557fdb..779615b 100644
+--- a/src/app/app.routes.ts
++++ b/src/app/app.routes.ts
+@@ -7,11 +7,27 @@ export const routes: Routes = [
+     loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
+   },
+   {
+-    path: 'heroes',
++    path: 'roster',
+     loadComponent: () => import('./heroes/heroes').then((m) => m.Heroes),
+   },
+   {
+     path: 'detail/:id',
+     loadComponent: () => import('./hero-detail/hero-detail').then((m) => m.HeroDetail),
+   },
++  {
++    path: 'missions',
++    loadComponent: () => import('./missions/missions').then((m) => m.Missions),
++  },
++  {
++    path: 'threats',
++    loadComponent: () => import('./threats/threats').then((m) => m.Threats),
++  },
++  {
++    path: 'recruit',
++    loadComponent: () => import('./recruit/recruit').then((m) => m.Recruit),
++  },
++  {
++    path: 'settings',
++    loadComponent: () => import('./settings/settings').then((m) => m.Settings),
++  },
+ ];
+diff --git a/src/app/app.ts b/src/app/app.ts
+index 43d7fd6..549e931 100644
+--- a/src/app/app.ts
++++ b/src/app/app.ts
+@@ -1,10 +1,50 @@
+-import { Component } from '@angular/core';
+-import { RouterOutlet, RouterLink } from '@angular/router';
++import { Component, inject } from '@angular/core';
++import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import {
++  lucideLayoutDashboard,
++  lucideRadar,
++  lucideSettings,
++  lucideShieldAlert,
++  lucideTarget,
++  lucideUserPlus,
++  lucideUsers,
++} from '@ng-icons/lucide';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { AppViewModel } from './app.view-model';
++import { Topbar } from './ui/topbar/topbar';
+ 
+ @Component({
+   selector: 'app-root',
+-  imports: [RouterOutlet, RouterLink],
++  imports: [
++    RouterOutlet,
++    RouterLink,
++    RouterLinkActive,
++    NgIcon,
++    HlmAvatarImports,
++    HlmIconImports,
++    HlmSidebarImports,
++    HlmTypographyImports,
++    Topbar,
++  ],
++  providers: [
++    AppViewModel,
++    provideIcons({
++      lucideLayoutDashboard,
++      lucideRadar,
++      lucideSettings,
++      lucideShieldAlert,
++      lucideTarget,
++      lucideUserPlus,
++      lucideUsers,
++    }),
++  ],
+   templateUrl: './app.html',
+   styleUrl: './app.css',
+ })
+-export class App {}
++export class App {
++  protected readonly vm = inject(AppViewModel);
++}
+diff --git a/src/app/app.view-model.ts b/src/app/app.view-model.ts
+new file mode 100644
+index 0000000..a568fb1
+--- /dev/null
++++ b/src/app/app.view-model.ts
+@@ -0,0 +1,69 @@
++import { computed, inject, Injectable } from '@angular/core';
++import { toSignal } from '@angular/core/rxjs-interop';
++import { NavigationEnd, Router } from '@angular/router';
++import { filter, map } from 'rxjs';
++import type { Crumb } from './ui/topbar/topbar';
++import { ThemeService } from './theme/theme.service';
++
++export interface NavItem {
++  label: string;
++  path: string;
++  icon: string;
++}
++
++export const NAV_ITEMS: readonly NavItem[] = [
++  { label: 'Dashboard', path: '/dashboard', icon: 'lucideLayoutDashboard' },
++  { label: 'Roster', path: '/roster', icon: 'lucideUsers' },
++  { label: 'Missions', path: '/missions', icon: 'lucideTarget' },
++  { label: 'Threats', path: '/threats', icon: 'lucideShieldAlert' },
++  { label: 'Recruit', path: '/recruit', icon: 'lucideUserPlus' },
++  { label: 'Settings', path: '/settings', icon: 'lucideSettings' },
++];
++
++const SECTION_LABELS: Readonly<Record<string, string>> = {
++  dashboard: 'Dashboard',
++  roster: 'Roster',
++  missions: 'Missions',
++  threats: 'Threats',
++  recruit: 'Recruit',
++  settings: 'Settings',
++};
++
++const HOME: Crumb = { label: 'Hero Ops', link: '/dashboard' };
++
++// Component-scoped: the shell provides it, so each app instance owns its state.
++@Injectable()
++export class AppViewModel {
++  private readonly _theme = inject(ThemeService);
++  private readonly _router = inject(Router);
++
++  public readonly navItems = NAV_ITEMS;
++
++  public readonly isDark = computed(() => this._theme.theme() === 'dark');
++
++  private readonly _url = toSignal(
++    this._router.events.pipe(
++      filter((event) => event instanceof NavigationEnd),
++      map((event) => event.urlAfterRedirects),
++    ),
++    { initialValue: this._router.url },
++  );
++
++  public readonly crumbs = computed<Crumb[]>(() => {
++    const [section = 'dashboard'] = this._url().split(/[/?#]/).filter(Boolean);
++    if (section === 'detail') {
++      return [HOME, { label: SECTION_LABELS['roster'], link: '/roster' }, { label: 'Hero detail' }];
++    }
++    return [HOME, { label: SECTION_LABELS[section] ?? 'Dashboard' }];
++  });
++
++  public toggleTheme(): void {
++    this._theme.toggle();
++  }
++
++  // The topbar search always lands on the roster, which filters by the ?q= it is given.
++  public search(term: string): void {
++    const query = term.trim();
++    void this._router.navigate(['/roster'], { queryParams: { q: query || null } });
++  }
++}
+diff --git a/src/app/dashboard/dashboard.css b/src/app/dashboard/dashboard.css
+index 904e7f9..4b5e31d 100644
+--- a/src/app/dashboard/dashboard.css
++++ b/src/app/dashboard/dashboard.css
+@@ -1 +1,14 @@
+ @reference "../../styles.css";
++
++/* min-w-0 keeps long hero names from widening the region past the viewport. */
++.dashboard { @apply grid min-w-0 gap-6 p-6; }
++.dashboard__header { @apply flex flex-wrap items-center justify-between gap-4; }
++.dashboard__heading { @apply grid min-w-0 gap-1; }
++.dashboard__primary { @apply shrink-0; }
++.dashboard__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
++.dashboard__section { @apply grid gap-4; }
++.dashboard__section-head { @apply flex flex-wrap items-center justify-between gap-3; }
++.dashboard__heroes { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
++/* min-w-0 lets the roster's scroll container shrink inside the grid instead of widening the page. */
++.dashboard__scroll { @apply min-w-0; }
++.dashboard__caption { @apply sr-only; }
+diff --git a/src/app/dashboard/dashboard.html b/src/app/dashboard/dashboard.html
+index 464f78b..7fa4d7f 100644
+--- a/src/app/dashboard/dashboard.html
++++ b/src/app/dashboard/dashboard.html
+@@ -1 +1,74 @@
+-<h1>Dashboard</h1>
++<section class="dashboard">
++  <header class="dashboard__header">
++    <div class="dashboard__heading">
++      <h1 hlmH1>Operations dashboard</h1>
++      <p hlmMuted>Mission control for the agency. Example data.</p>
++    </div>
++    <a hlmBtn routerLink="/recruit" class="dashboard__primary">
++      <ng-icon hlmIcon name="lucideUserPlus" />
++      Recruit
++    </a>
++  </header>
++
++  <div class="dashboard__stats">
++    @for (stat of vm.stats(); track stat.label) {
++      <app-stat-tile
++        [label]="stat.label"
++        [value]="stat.value"
++        [hint]="stat.hint"
++        [icon]="stat.icon"
++      />
++    }
++  </div>
++
++  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
++    <div class="dashboard__section-head">
++      <h2 hlmH3 id="top-heroes-heading">Top heroes this cycle</h2>
++      <a hlmBtn variant="outline" size="sm" routerLink="/roster">
++        <ng-icon hlmIcon name="lucideUsers" />
++        View all roster
++      </a>
++    </div>
++    <div class="dashboard__heroes">
++      @for (hero of vm.topHeroes(); track hero.id) {
++        <app-hero-card [hero]="hero" />
++      }
++    </div>
++  </section>
++
++  <section class="dashboard__section" aria-labelledby="roster-heading">
++    <div class="dashboard__section-head">
++      <h2 hlmH3 id="roster-heading">Roster</h2>
++      <span hlmBadge variant="secondary">{{ vm.heroCount() }} heroes</span>
++    </div>
++    <div hlmTableContainer class="dashboard__scroll">
++      <table hlmTable>
++        <caption hlmTableCaption class="dashboard__caption">Heroes, strongest first</caption>
++        <thead hlmTableHeader>
++          <tr hlmTableRow>
++            <th hlmTableHead scope="col">Hero</th>
++            <th hlmTableHead scope="col">Class</th>
++            <th hlmTableHead scope="col">Power</th>
++            <th hlmTableHead scope="col">Status</th>
++          </tr>
++        </thead>
++        <tbody hlmTableBody>
++          @for (row of vm.roster(); track row.hero.id) {
++            <tr hlmTableRow>
++              <td hlmTableCell>
++                <a [routerLink]="['/detail', row.hero.id]">{{ row.hero.name }}</a>
++              </td>
++              <td hlmTableCell>
++                <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
++              </td>
++              <td hlmTableCell>{{ row.hero.powerIndex }}</td>
++              <td hlmTableCell>
++                <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
++              </td>
++            </tr>
++          }
++        </tbody>
++      </table>
++    </div>
++  </section>
++</section>
+diff --git a/src/app/dashboard/dashboard.ts b/src/app/dashboard/dashboard.ts
+index f4d1dc0..a9145b5 100644
+--- a/src/app/dashboard/dashboard.ts
++++ b/src/app/dashboard/dashboard.ts
+@@ -1,9 +1,33 @@
+-import { Component } from '@angular/core';
++import { Component, inject } from '@angular/core';
++import { RouterLink } from '@angular/router';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideUserPlus, lucideUsers } from '@ng-icons/lucide';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmTableImports } from '@spartan-ng/helm/table';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { HeroCard } from '../ui/hero-card/hero-card';
++import { StatTile } from '../ui/stat-tile/stat-tile';
++import { DashboardViewModel } from './dashboard.view-model';
+ 
+-// Placeholder. The dashboard screen (top-heroes cards, search) is built here.
+ @Component({
+   selector: 'app-dashboard',
++  imports: [
++    RouterLink,
++    NgIcon,
++    HlmBadgeImports,
++    HlmButtonImports,
++    HlmIconImports,
++    HlmTableImports,
++    HlmTypographyImports,
++    HeroCard,
++    StatTile,
++  ],
++  providers: [DashboardViewModel, provideIcons({ lucideUserPlus, lucideUsers })],
+   templateUrl: './dashboard.html',
+   styleUrl: './dashboard.css',
+ })
+-export class Dashboard {}
++export class Dashboard {
++  protected readonly vm = inject(DashboardViewModel);
++}
+diff --git a/src/app/dashboard/dashboard.view-model.ts b/src/app/dashboard/dashboard.view-model.ts
+new file mode 100644
+index 0000000..9b3fd1d
+--- /dev/null
++++ b/src/app/dashboard/dashboard.view-model.ts
+@@ -0,0 +1,59 @@
++import { computed, inject, Injectable } from '@angular/core';
++import { HeroService } from '../domain/hero.service';
++import type { BadgeVariants } from '@spartan-ng/helm/badge';
++import type { Hero } from '../domain/hero.model';
++import { STATUS_VARIANT } from '../ui/hero-card/hero-card';
++import type { StatIcon } from '../ui/stat-tile/stat-tile';
++
++type BadgeVariant = NonNullable<BadgeVariants['variant']>;
++
++export interface DashboardStat {
++  label: string;
++  value: number;
++  hint: string;
++  icon: StatIcon;
++}
++
++export interface DashboardRosterRow {
++  readonly hero: Hero;
++  readonly statusVariant: BadgeVariant;
++}
++
++const TOP_HEROES_COUNT = 4;
++
++// Component-scoped: the dashboard provides it, so each visit gets fresh derived state.
++@Injectable()
++export class DashboardViewModel {
++  private readonly _heroes = inject(HeroService).heroes;
++
++  public readonly heroCount = computed(() => this._heroes().length);
++
++  public readonly stats = computed<DashboardStat[]>(() => {
++    const heroes = this._heroes();
++    const total = heroes.length;
++    const activeCount = heroes.filter((hero) => hero.status === 'Active').length;
++    const missionCount = heroes.reduce((sum, hero) => sum + hero.missions, 0);
++    const powerSum = heroes.reduce((sum, hero) => sum + hero.powerIndex, 0);
++    const atRiskCount = heroes.filter((hero) => hero.status === 'Injured' || hero.status === 'MIA').length;
++
++    return [
++      { label: 'Heroes', value: total, hint: `${activeCount} active`, icon: 'lucideUserCheck' },
++      { label: 'Missions', value: missionCount, hint: 'Logged to date', icon: 'lucideActivity' },
++      {
++        label: 'Average power',
++        value: total > 0 ? Math.round(powerSum / total) : 0,
++        hint: 'Out of 100',
++        icon: 'lucideZap',
++      },
++      { label: 'Threats', value: atRiskCount, hint: 'Injured or MIA', icon: 'lucideShieldAlert' },
++    ];
++  });
++
++  public readonly topHeroes = computed(() => this.strongestFirst().slice(0, TOP_HEROES_COUNT));
++
++  public readonly roster = computed<DashboardRosterRow[]>(() =>
++    this.strongestFirst().map((hero) => ({ hero, statusVariant: STATUS_VARIANT[hero.status] })),
++  );
++
++  private readonly strongestFirst = computed(() => [...this._heroes()].sort((a, b) => b.powerIndex - a.powerIndex));
++}
+diff --git a/src/app/domain/hero.example-data.ts b/src/app/domain/hero.example-data.ts
+new file mode 100644
+index 0000000..ca69836
+--- /dev/null
++++ b/src/app/domain/hero.example-data.ts
+@@ -0,0 +1,18 @@
++import type { Hero } from './hero.model';
++
++// EXAMPLE DATA. The Hero Ops Console is a kitchen-sink demo with no backend.
++// These heroes are invented for illustration and do not describe real people.
++export const EXAMPLE_HEROES: readonly Hero[] = [
++  { id: 'HRO-0007', name: 'Silverwing', alias: 'Ada Voss', powerClass: 'Aerial', powerIndex: 88, status: 'Active', clearanceTier: 4, missions: 64, successRate: 92, notes: 'Aerial response lead. Prefers rooftop extractions.' },
++  { id: 'HRO-0012', name: 'Dr. Ion', alias: 'Marcus Reyes', powerClass: 'Energy', powerIndex: 94, status: 'Active', clearanceTier: 5, missions: 118, successRate: 88, notes: 'Grid stabilisation specialist. Keep surge work off the civilian feeds.' },
++  { id: 'HRO-0021', name: 'Vantablack', alias: 'Unknown', powerClass: 'Psionic', powerIndex: 81, status: 'Reserve', clearanceTier: 3, missions: 29, successRate: 79, notes: 'On psionic standby. Cleared for silent insertions only.' },
++  { id: 'HRO-0033', name: 'Aurora Vale', alias: 'Lena Park', powerClass: 'Cosmic', powerIndex: 97, status: 'Active', clearanceTier: 5, missions: 151, successRate: 90, notes: 'Orbital asset. Every deployment needs a Tier 5 sign-off.' },
++  { id: 'HRO-0040', name: 'Magnetar', alias: 'Idris Kane', powerClass: 'Enhanced', powerIndex: 76, status: 'Injured', clearanceTier: 3, missions: 57, successRate: 84, notes: 'Recovering from a fractured wrist. Medical review due next week.' },
++  { id: 'HRO-0044', name: 'The Tinkerer', alias: 'Sam Okafor', powerClass: 'Tech', powerIndex: 69, status: 'Active', clearanceTier: 2, missions: 22, successRate: 95, notes: 'Builds field kit for the rest of the roster.' },
++  { id: 'HRO-0051', name: 'Halcyon', alias: 'Priya Nair', powerClass: 'Psionic', powerIndex: 85, status: 'Active', clearanceTier: 4, missions: 73, successRate: 87, notes: 'Calms civilian crowds during evacuations.' },
++  { id: 'HRO-0058', name: 'Rift', alias: 'Classified', powerClass: 'Cosmic', powerIndex: 91, status: 'Reserve', clearanceTier: 4, missions: 44, successRate: 82, notes: 'Reserve until the dimensional sensor is recalibrated.' },
++  { id: 'HRO-0063', name: 'Ember Cho', alias: 'Jae Cho', powerClass: 'Energy', powerIndex: 78, status: 'Active', clearanceTier: 3, missions: 48, successRate: 86, notes: 'Fire-zone specialist. Rotate out after two long shifts.' },
++  { id: 'HRO-0070', name: 'Null', alias: 'Unknown', powerClass: 'Mutant', powerIndex: 83, status: 'MIA', clearanceTier: 4, missions: 66, successRate: 80, notes: 'Missing since the Foundry incident. Search teams stood down.' },
++  { id: 'HRO-0075', name: 'Grond', alias: 'Boris Volkov', powerClass: 'Enhanced', powerIndex: 72, status: 'Active', clearanceTier: 2, missions: 31, successRate: 90, notes: 'Heavy lifting and perimeter work.' },
++  { id: 'HRO-0081', name: 'Ms. Meridian', alias: 'Grace Bello', powerClass: 'Tech', powerIndex: 80, status: 'Active', clearanceTier: 3, missions: 59, successRate: 89, notes: 'Runs the logistics feed and the drone relay.' },
++];
+diff --git a/src/app/domain/hero.model.ts b/src/app/domain/hero.model.ts
+new file mode 100644
+index 0000000..b438c52
+--- /dev/null
++++ b/src/app/domain/hero.model.ts
+@@ -0,0 +1,28 @@
++export const POWER_CLASSES = ['Aerial', 'Energy', 'Psionic', 'Tech', 'Mutant', 'Cosmic', 'Enhanced'] as const;
++export type PowerClass = (typeof POWER_CLASSES)[number];
++
++export const HERO_STATUSES = ['Active', 'Injured', 'Reserve', 'MIA'] as const;
++export type HeroStatus = (typeof HERO_STATUSES)[number];
++
++export const CLEARANCE_TIERS = [1, 2, 3, 4, 5] as const;
++export type ClearanceTier = (typeof CLEARANCE_TIERS)[number];
++
++export interface Hero {
++  readonly id: string;
++  readonly name: string;
++  readonly alias: string;
++  readonly powerClass: PowerClass;
++  /** Power index, 0 to 100. */
++  readonly powerIndex: number;
++  readonly status: HeroStatus;
++  readonly clearanceTier: ClearanceTier;
++  readonly missions: number;
++  /** Mission success rate, as a percentage from 0 to 100. */
++  readonly successRate: number;
++  readonly notes: string;
++}
++
++export type HeroChanges = Partial<Omit<Hero, 'id'>>;
++
++/** What a recruit brings to the roster. The console assigns the id, the record, and the starting status. */
++export type HeroDraft = Pick<Hero, 'name' | 'alias' | 'powerClass' | 'powerIndex' | 'clearanceTier' | 'notes'>;
+diff --git a/src/app/domain/hero.service.ts b/src/app/domain/hero.service.ts
+new file mode 100644
+index 0000000..006113e
+--- /dev/null
++++ b/src/app/domain/hero.service.ts
+@@ -0,0 +1,57 @@
++import { Service, signal } from '@angular/core';
++import { EXAMPLE_HEROES } from './hero.example-data';
++import type { Hero, HeroChanges, HeroDraft } from './hero.model';
++import { nextId } from './next-id';
++
++// In-memory store over example data. There is no backend: edits last until reload.
++@Service()
++export class HeroService {
++  private readonly _heroes = signal<readonly Hero[]>(EXAMPLE_HEROES);
++
++  readonly heroes = this._heroes.asReadonly();
++
++  byId(id: string): Hero | undefined {
++    return this._heroes().find((hero) => hero.id === id);
++  }
++
++  // A recruit starts in reserve with an empty record; a deployment moves them to active.
++  add(draft: HeroDraft): Hero {
++    const hero: Hero = {
++      ...draft,
++      id: nextId('HRO', this._heroes().map((existing) => existing.id)),
++      status: 'Reserve',
++      missions: 0,
++      successRate: 0,
++    };
++    this._heroes.update((heroes) => [...heroes, hero]);
++    return hero;
++  }
++
++  update(id: string, changes: HeroChanges): void {
++    this._heroes.update((heroes) => heroes.map((hero) => (hero.id === id ? { ...hero, ...changes } : hero)));
++  }
++
++  // Folds one settled mission into the record. The rate is stored as a percentage, so the
++  // wins so far are rebuilt from it before the new result is counted.
++  recordMission(id: string, success: boolean): void {
++    this._heroes.update((heroes) =>
++      heroes.map((hero) => {
++        if (hero.id !== id) {
++          return hero;
++        }
++        const missions = hero.missions + 1;
++        const wins = Math.round((hero.successRate * hero.missions) / 100) + (success ? 1 : 0);
++        return { ...hero, missions, successRate: Math.round((wins / missions) * 100) };
++      }),
++    );
++  }
++
++  // Retiring takes the hero off the roster; there is no retired status in the model.
++  retire(id: string): void {
++    this._heroes.update((heroes) => heroes.filter((hero) => hero.id !== id));
++  }
++
++  reset(): void {
++    this._heroes.set(EXAMPLE_HEROES);
++  }
++}
+diff --git a/src/app/domain/mission.example-data.ts b/src/app/domain/mission.example-data.ts
+new file mode 100644
+index 0000000..ba5ce60
+--- /dev/null
++++ b/src/app/domain/mission.example-data.ts
+@@ -0,0 +1,13 @@
++import type { Mission } from './mission.model';
++
++// EXAMPLE DATA. Invented missions for the demo. Hero IDs match the example roster.
++export const EXAMPLE_MISSIONS: readonly Mission[] = [
++  { id: 'MSN-0101', codename: 'Glasshouse', heroId: 'HRO-0007', threatTier: 3, status: 'Complete', location: 'Downtown ferry terminal' },
++  { id: 'MSN-0102', codename: 'Cinder Line', heroId: 'HRO-0063', threatTier: 2, status: 'Complete', location: 'Harbor warehouse' },
++  { id: 'MSN-0103', codename: 'Blackout Relay', heroId: 'HRO-0012', threatTier: 5, status: 'In progress', location: 'Grid substation 9' },
++  { id: 'MSN-0104', codename: 'Quiet Orbit', heroId: 'HRO-0033', threatTier: 5, status: 'Planned', location: 'Low orbit station' },
++  { id: 'MSN-0105', codename: 'Static Bloom', heroId: 'HRO-0051', threatTier: 4, status: 'Complete', location: 'Riverside hospital' },
++  { id: 'MSN-0106', codename: 'Tin Mountain', heroId: 'HRO-0044', threatTier: 2, status: 'Failed', location: 'Foundry district' },
++  { id: 'MSN-0107', codename: 'Zero Tide', heroId: 'HRO-0075', threatTier: 4, status: 'Planned', location: 'Coastal barrier' },
++  { id: 'MSN-0108', codename: 'Night Crane', heroId: 'HRO-0081', threatTier: 3, status: 'In progress', location: 'Museum vault' },
++];
+diff --git a/src/app/domain/mission.model.ts b/src/app/domain/mission.model.ts
+new file mode 100644
+index 0000000..cfba884
+--- /dev/null
++++ b/src/app/domain/mission.model.ts
+@@ -0,0 +1,21 @@
++export const THREAT_TIERS = [1, 2, 3, 4, 5] as const;
++export type ThreatTier = (typeof THREAT_TIERS)[number];
++
++export const MISSION_STATUSES = ['Planned', 'In progress', 'Complete', 'Failed'] as const;
++export type MissionStatus = (typeof MISSION_STATUSES)[number];
++
++/** The two ways a mission can be settled. */
++export type MissionOutcome = Extract<MissionStatus, 'Complete' | 'Failed'>;
++
++export interface Mission {
++  readonly id: string;
++  readonly codename: string;
++  readonly heroId: string;
++  readonly threatTier: ThreatTier;
++  readonly status: MissionStatus;
++  readonly location: string;
++}
++
++export function isOpenMission(mission: Mission): boolean {
++  return mission.status === 'Planned' || mission.status === 'In progress';
++}
+diff --git a/src/app/domain/mission.service.ts b/src/app/domain/mission.service.ts
+new file mode 100644
+index 0000000..183abe4
+--- /dev/null
++++ b/src/app/domain/mission.service.ts
+@@ -0,0 +1,49 @@
++import { inject, Service, signal } from '@angular/core';
++import type { Hero } from './hero.model';
++import { HeroService } from './hero.service';
++import { EXAMPLE_MISSIONS } from './mission.example-data';
++import { isOpenMission, type Mission, type MissionOutcome } from './mission.model';
++import { nextId } from './next-id';
++
++const CODENAMES = ['Copper Sky', 'Low Tide', 'Glass Harbor', 'Hollow Pine', 'Amber Gate', 'Night Crane'];
++const DEPLOY_TIER = 3;
++
++// In-memory store over example data, like HeroService. Settling a mission writes its result into the hero's record.
++@Service()
++export class MissionService {
++  private readonly heroes = inject(HeroService);
++
++  private readonly _missions = signal<readonly Mission[]>(EXAMPLE_MISSIONS);
++
++  readonly missions = this._missions.asReadonly();
++
++  deploy(hero: Hero): Mission {
++    const existing = this._missions();
++    const mission: Mission = {
++      id: nextId('MSN', existing.map((item) => item.id)),
++      codename: CODENAMES[existing.length % CODENAMES.length],
++      heroId: hero.id,
++      threatTier: DEPLOY_TIER,
++      status: 'Planned',
++      location: 'To be assigned',
++    };
++    this._missions.update((missions) => [...missions, mission]);
++    return mission;
++  }
++
++  // A settled mission stays settled: only an open one can take a result.
++  resolve(id: string, outcome: MissionOutcome): void {
++    const mission = this._missions().find((item) => item.id === id);
++    if (!mission || !isOpenMission(mission)) {
++      return;
++    }
++    this._missions.update((missions) =>
++      missions.map((item) => (item.id === id ? { ...item, status: outcome } : item)),
++    );
++    this.heroes.recordMission(mission.heroId, outcome === 'Complete');
++  }
++
++  reset(): void {
++    this._missions.set(EXAMPLE_MISSIONS);
++  }
++}
+diff --git a/src/app/domain/next-id.ts b/src/app/domain/next-id.ts
+new file mode 100644
+index 0000000..b55da47
+--- /dev/null
++++ b/src/app/domain/next-id.ts
+@@ -0,0 +1,5 @@
++// The next ID in a prefix-and-number series: HRO-0082 after HRO-0081.
++export function nextId(prefix: string, existing: readonly string[]): string {
++  const highest = existing.reduce((max, id) => Math.max(max, Number(id.split('-')[1]) || 0), 0);
++  return `${prefix}-${String(highest + 1).padStart(4, '0')}`;
++}
+diff --git a/src/app/forms/zod-meta.ts b/src/app/forms/zod-meta.ts
+index 06b7d51..4644941 100644
+--- a/src/app/forms/zod-meta.ts
++++ b/src/app/forms/zod-meta.ts
+@@ -1,6 +1,9 @@
+ import type { z } from 'zod';
+ import type { FormFieldMeta } from './form-field-meta';
+ 
++/** The metadata of each field in a schema, keyed by the same names as the schema's shape. */
++export type FormMeta<S extends z.ZodObject<z.ZodRawShape>> = { readonly [K in keyof S['shape']]: FormFieldMeta };
++
+ /**
+  * Read the FormFieldMeta off each field of a zod object schema. Keeps the label,
+  * control kind, and placeholder on the schema (one source of truth) so a form
+@@ -8,10 +11,10 @@ import type { FormFieldMeta } from './form-field-meta';
+  * from `@angular/forms/signals` for validation, so shape, rules, and labels all
+  * live on the one schema.
+  */
+-export function formMeta(schema: z.ZodObject<z.ZodRawShape>): Record<string, FormFieldMeta> {
++export function formMeta<S extends z.ZodObject<z.ZodRawShape>>(schema: S): FormMeta<S> {
+   const meta: Record<string, FormFieldMeta> = {};
+   for (const [name, field] of Object.entries(schema.shape)) {
+     meta[name] = (field as z.ZodType).meta() as unknown as FormFieldMeta;
+   }
+-  return meta;
++  return meta as FormMeta<S>;
+ }
+diff --git a/src/app/hero-detail/hero-detail.css b/src/app/hero-detail/hero-detail.css
+index 904e7f9..0d23435 100644
+--- a/src/app/hero-detail/hero-detail.css
++++ b/src/app/hero-detail/hero-detail.css
+@@ -1 +1,28 @@
+ @reference "../../styles.css";
++
++/* min-w-0 on the grid children keeps wide content from pushing the page past the viewport. */
++.hero-detail { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
++.hero-detail__back { @apply justify-self-start; }
++.hero-detail__header { @apply flex flex-wrap items-start justify-between gap-4; }
++.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
++.hero-detail__names { @apply grid min-w-0 gap-1; }
++.hero-detail__badges { @apply flex flex-wrap gap-2; }
++.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
++.hero-detail__tabs { @apply grid min-w-0 w-full gap-6; }
++.hero-detail__tab-list { @apply max-w-full overflow-x-auto; }
++.hero-detail__panel { @apply grid min-w-0; }
++.hero-detail__summary { @apply grid grid-cols-1 min-w-0 gap-6 md:grid-cols-2; }
++.hero-detail__stats { @apply grid grid-cols-1 gap-3 sm:grid-cols-3; }
++.hero-detail__stat { @apply grid gap-1; }
++.hero-detail__dossier { @apply grid gap-3; }
++.hero-detail__fact { @apply grid min-w-0 gap-0.5; }
++.hero-detail__powers { @apply grid gap-3; }
++.hero-detail__form { @apply grid grid-cols-1 min-w-0 gap-4 md:grid-cols-2; }
++.hero-detail__field { @apply min-w-0; }
++.hero-detail__select { @apply w-full; }
++.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2 md:col-span-2; }
++.hero-detail__not-found { @apply max-w-xl; }
++.hero-detail__wide { @apply md:col-span-2; }
++.hero-detail__switch { @apply flex flex-wrap items-center justify-between gap-4; }
++.hero-detail__deployments { @apply grid gap-2; }
++.hero-detail__deployment { @apply flex flex-wrap items-center gap-2; }
+diff --git a/src/app/hero-detail/hero-detail.html b/src/app/hero-detail/hero-detail.html
+index f035da4..f9bf491 100644
+--- a/src/app/hero-detail/hero-detail.html
++++ b/src/app/hero-detail/hero-detail.html
+@@ -1 +1,242 @@
+-<h1>Hero detail</h1>
++<section class="hero-detail">
++  <a hlmBtn variant="ghost" routerLink="/roster" class="hero-detail__back">
++    <ng-icon hlmIcon name="lucideChevronLeft" />
++    Back to roster
++  </a>
++
++  @if (vm.hero(); as hero) {
++    <header class="hero-detail__header">
++      <div class="hero-detail__identity">
++        <hlm-avatar size="lg" aria-hidden="true">
++          <span hlmAvatarFallback>{{ initials(hero.name) }}</span>
++        </hlm-avatar>
++        <div class="hero-detail__names">
++          <p hlmMuted>{{ hero.id }}</p>
++          <h1 hlmH2>{{ hero.name }}</h1>
++          <p hlmSmall>{{ hero.alias }}</p>
++          <div class="hero-detail__badges">
++            <span hlmBadge variant="outline">{{ hero.powerClass }}</span>
++            <span hlmBadge [variant]="statusVariant[hero.status]">{{ hero.status }}</span>
++          </div>
++        </div>
++      </div>
++
++      <div class="hero-detail__actions">
++        <button hlmBtn variant="outline" [disabled]="!vm.canDeploy()" (click)="vm.deploy()">
++          <ng-icon hlmIcon name="lucideCrosshair" />
++          Deploy
++        </button>
++
++        <hlm-dialog #retireDialog>
++          <button hlmBtn variant="destructive" hlmDialogTrigger>
++            <ng-icon hlmIcon name="lucideTrash2" />
++            Retire
++          </button>
++          <hlm-dialog-content *hlmDialogPortal>
++            <hlm-dialog-header>
++              <h2 hlmDialogTitle>Retire {{ hero.name }}?</h2>
++              <p hlmDialogDescription>
++                {{ hero.name }} leaves the roster. The change lasts until the page reloads, because the example
++                data is not saved.
++              </p>
++            </hlm-dialog-header>
++            <hlm-dialog-footer>
++              <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
++              <button hlmBtn variant="destructive" (click)="retireDialog.close(); vm.retire()">Retire hero</button>
++            </hlm-dialog-footer>
++          </hlm-dialog-content>
++        </hlm-dialog>
++      </div>
++    </header>
++
++    <hlm-tabs tab="overview" class="hero-detail__tabs">
++      <hlm-tabs-list aria-label="Hero sections" class="hero-detail__tab-list">
++        <button hlmTabsTrigger="overview">Overview</button>
++        <button hlmTabsTrigger="powers">Powers</button>
++        <button hlmTabsTrigger="missions">Missions</button>
++        <button hlmTabsTrigger="edit">Edit</button>
++      </hlm-tabs-list>
++
++      <div hlmTabsContent="overview" class="hero-detail__panel">
++        <div class="hero-detail__summary">
++          <section hlmCard>
++            <div hlmCardHeader>
++              <h2 hlmCardTitle>Field summary</h2>
++            </div>
++            <div hlmCardContent class="hero-detail__stats">
++              <div class="hero-detail__stat">
++                <span hlmMuted>Missions</span>
++                <span hlmLarge>{{ hero.missions }}</span>
++              </div>
++              <div class="hero-detail__stat">
++                <span hlmMuted>Success rate</span>
++                <span hlmLarge>{{ hero.successRate }}%</span>
++              </div>
++              <div class="hero-detail__stat">
++                <span hlmMuted>Clearance</span>
++                <span hlmLarge>Tier {{ hero.clearanceTier }}</span>
++              </div>
++            </div>
++          </section>
++
++          <section hlmCard>
++            <div hlmCardHeader>
++              <h2 hlmCardTitle>Dossier</h2>
++            </div>
++            <dl hlmCardContent class="hero-detail__dossier">
++              <div class="hero-detail__fact">
++                <dt hlmMuted>Hero ID</dt>
++                <dd hlmSmall>{{ hero.id }}</dd>
++              </div>
++              <div class="hero-detail__fact">
++                <dt hlmMuted>Alias</dt>
++                <dd hlmSmall>{{ hero.alias }}</dd>
++              </div>
++              <div class="hero-detail__fact">
++                <dt hlmMuted>Power class</dt>
++                <dd hlmSmall>{{ hero.powerClass }}</dd>
++              </div>
++              <div class="hero-detail__fact">
++                <dt hlmMuted>Status</dt>
++                <dd hlmSmall>{{ hero.status }}</dd>
++              </div>
++            </dl>
++          </section>
++        </div>
++      </div>
++
++      <div hlmTabsContent="powers" class="hero-detail__panel">
++        <div class="hero-detail__summary">
++          <section hlmCard>
++            <div hlmCardHeader>
++              <h2 hlmCardTitle>Power index</h2>
++            </div>
++            <div hlmCardContent class="hero-detail__powers">
++              <app-power-meter [value]="hero.powerIndex" />
++              <p hlmSmall>{{ hero.powerIndex }} out of 100</p>
++            </div>
++          </section>
++
++          <section hlmCard>
++            <div hlmCardHeader>
++              <h2 hlmCardTitle>Abilities</h2>
++            </div>
++            <div hlmCardContent class="hero-detail__badges">
++              <span hlmBadge variant="outline">{{ hero.powerClass }}</span>
++              <span hlmBadge variant="secondary">Clearance {{ hero.clearanceTier }}</span>
++            </div>
++          </section>
++        </div>
++      </div>
++
++      <div hlmTabsContent="missions" class="hero-detail__panel">
++        <section hlmCard>
++          <div hlmCardHeader>
++            <h2 hlmCardTitle>Deployments</h2>
++          </div>
++          <div hlmCardContent class="hero-detail__powers">
++            <p hlmSmall>{{ hero.missions }} missions logged, {{ hero.successRate }}% success.</p>
++            @if (vm.missions().length) {
++              <ul class="hero-detail__deployments">
++                @for (mission of vm.missions(); track mission.id) {
++                  <li class="hero-detail__deployment">
++                    <span hlmSmall>{{ mission.codename }}</span>
++                    <span hlmBadge variant="outline">Tier {{ mission.threatTier }}</span>
++                    <span hlmBadge [variant]="missionStatusVariant[mission.status]">{{ mission.status }}</span>
++                  </li>
++                }
++              </ul>
++            } @else {
++              <p hlmMuted>No deployments on record. Deploy this hero from the header to start one.</p>
++            }
++          </div>
++        </section>
++      </div>
++
++      <div hlmTabsContent="edit" class="hero-detail__panel">
++        <section hlmCard>
++          <div hlmCardHeader>
++            <h2 hlmCardTitle>Edit hero</h2>
++          </div>
++          <form hlmCardContent class="hero-detail__form" (submit)="$event.preventDefault(); vm.save()">
++            <hlm-field class="hero-detail__field">
++              <label hlmFieldLabel for="hero-name">{{ vm.fields.name.label }}</label>
++              <input hlmInput id="hero-name" [formField]="vm.form.name" />
++              @for (e of vm.form.name().errors(); track e.kind) {
++                <hlm-field-error>{{ e.message }}</hlm-field-error>
++              }
++            </hlm-field>
++
++            <hlm-field class="hero-detail__field">
++              <label hlmFieldLabel for="hero-alias">{{ vm.fields.alias.label }}</label>
++              <input hlmInput id="hero-alias" [formField]="vm.form.alias" />
++              @for (e of vm.form.alias().errors(); track e.kind) {
++                <hlm-field-error>{{ e.message }}</hlm-field-error>
++              }
++            </hlm-field>
++
++            <hlm-field class="hero-detail__field">
++              <span hlmFieldLabel id="hero-power-class-label">{{ vm.fields.powerClass.label }}</span>
++              <hlm-select [value]="vm.form.powerClass().value()" (valueChange)="vm.setPowerClass($event)">
++                <hlm-select-trigger class="hero-detail__select" aria-labelledby="hero-power-class-label">
++                  <hlm-select-value />
++                </hlm-select-trigger>
++                <hlm-select-content *hlmSelectPortal>
++                  <hlm-select-group>
++                    @for (option of vm.classOptions; track option.value) {
++                      <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
++                    }
++                  </hlm-select-group>
++                </hlm-select-content>
++              </hlm-select>
++              @for (e of vm.form.powerClass().errors(); track e.kind) {
++                <hlm-field-error>{{ e.message }}</hlm-field-error>
++              }
++            </hlm-field>
++
++            <hlm-field class="hero-detail__field">
++              <label hlmFieldLabel for="hero-power-index">{{ vm.fields.powerIndex.label }}</label>
++              <input hlmInput id="hero-power-index" type="number" [formField]="vm.form.powerIndex" />
++              <p hlmMuted>{{ vm.fields.powerIndex.help }}</p>
++              @for (e of vm.form.powerIndex().errors(); track e.kind) {
++                <hlm-field-error>{{ e.message }}</hlm-field-error>
++              }
++            </hlm-field>
++
++            <hlm-field class="hero-detail__field hero-detail__wide">
++              <label hlmFieldLabel for="hero-notes">{{ vm.fields.notes.label }}</label>
++              <textarea hlmTextarea id="hero-notes" rows="3" [formField]="vm.form.notes"></textarea>
++              @for (e of vm.form.notes().errors(); track e.kind) {
++                <hlm-field-error>{{ e.message }}</hlm-field-error>
++              }
++            </hlm-field>
++
++            <hlm-field class="hero-detail__field hero-detail__wide">
++              <div class="hero-detail__switch">
++                <label hlmFieldLabel for="hero-active">{{ vm.fields.active.label }}</label>
++                <hlm-switch
++                  inputId="hero-active"
++                  [checked]="vm.form.active().value()"
++                  (checkedChange)="vm.setActive($event)"
++                />
++              </div>
++              <p hlmMuted>{{ vm.fields.active.help }}</p>
++            </hlm-field>
++
++            <div class="hero-detail__form-actions">
++              <button hlmBtn type="button" variant="outline" (click)="vm.discard()">Cancel</button>
++              <button hlmBtn type="submit">Save</button>
++            </div>
++          </form>
++        </section>
++      </div>
++    </hlm-tabs>
++  } @else {
++    <section hlmCard class="hero-detail__not-found">
++      <div hlmCardHeader>
++        <h1 hlmCardTitle>No hero with that ID</h1>
++      </div>
++      <p hlmCardContent hlmMuted>The hero may have been retired. Return to the roster to pick another.</p>
++    </section>
++  }
++</section>
+diff --git a/src/app/hero-detail/hero-detail.schema.ts b/src/app/hero-detail/hero-detail.schema.ts
+new file mode 100644
+index 0000000..07252fa
+--- /dev/null
++++ b/src/app/hero-detail/hero-detail.schema.ts
+@@ -0,0 +1,29 @@
++import { z } from 'zod';
++import { POWER_CLASSES } from '../domain/hero.model';
++
++// Single source of truth for the hero edit form: shape, rules, and field labels.
++export const heroSchema = z.object({
++  name: z.string().trim().min(1).meta({ label: 'Name', control: 'text', order: 1 }),
++  alias: z.string().trim().min(1).meta({ label: 'Alias', control: 'text', order: 2 }),
++  powerClass: z.enum(POWER_CLASSES).meta({
++    label: 'Power class',
++    control: 'select',
++    order: 3,
++    options: POWER_CLASSES.map((value) => ({ value, label: value })),
++  }),
++  powerIndex: z.number().int().min(0).max(100).meta({
++    label: 'Power index',
++    control: 'number',
++    order: 4,
++    help: 'Between 0 and 100.',
++  }),
++  notes: z.string().trim().max(500).meta({ label: 'Notes', control: 'textarea', order: 5 }),
++  active: z.boolean().meta({
++    label: 'Active',
++    control: 'checkbox',
++    order: 6,
++    help: 'Turning this off moves an active hero to reserve.',
++  }),
++});
++
++export type HeroModel = z.infer<typeof heroSchema>;
+diff --git a/src/app/hero-detail/hero-detail.ts b/src/app/hero-detail/hero-detail.ts
+index 04ef751..ec965ee 100644
+--- a/src/app/hero-detail/hero-detail.ts
++++ b/src/app/hero-detail/hero-detail.ts
+@@ -1,9 +1,55 @@
+-import { Component } from '@angular/core';
++import { Component, inject } from '@angular/core';
++import { FormField } from '@angular/forms/signals';
++import { RouterLink } from '@angular/router';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideChevronLeft, lucideCrosshair, lucideTrash2 } from '@ng-icons/lucide';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmCardImports } from '@spartan-ng/helm/card';
++import { HlmDialogImports } from '@spartan-ng/helm/dialog';
++import { HlmFieldImports } from '@spartan-ng/helm/field';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmSelectImports } from '@spartan-ng/helm/select';
++import { HlmSwitchImports } from '@spartan-ng/helm/switch';
++import { HlmTabsImports } from '@spartan-ng/helm/tabs';
++import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { MISSION_STATUS_VARIANT } from '../missions/mission-status';
++import { heroInitials, STATUS_VARIANT } from '../ui/hero-card/hero-card';
++import { PowerMeter } from '../ui/power-meter/power-meter';
++import { HeroDetailViewModel } from './hero-detail.view-model';
+ 
+-// Placeholder. The hero detail and edit form screen is built here.
++// One hero in full: the dossier, the powers, the missions, and the edit form.
+ @Component({
+   selector: 'app-hero-detail',
++  imports: [
++    RouterLink,
++    FormField,
++    NgIcon,
++    HlmAvatarImports,
++    HlmBadgeImports,
++    HlmButtonImports,
++    HlmCardImports,
++    HlmDialogImports,
++    HlmFieldImports,
++    HlmIconImports,
++    HlmInputImports,
++    HlmSelectImports,
++    HlmSwitchImports,
++    HlmTabsImports,
++    HlmTextareaImports,
++    HlmTypographyImports,
++    PowerMeter,
++  ],
++  providers: [HeroDetailViewModel, provideIcons({ lucideChevronLeft, lucideCrosshair, lucideTrash2 })],
+   templateUrl: './hero-detail.html',
+   styleUrl: './hero-detail.css',
+ })
+-export class HeroDetail {}
++export class HeroDetail {
++  protected readonly vm = inject(HeroDetailViewModel);
++  protected readonly initials = heroInitials;
++  protected readonly statusVariant = STATUS_VARIANT;
++  protected readonly missionStatusVariant = MISSION_STATUS_VARIANT;
++}
+diff --git a/src/app/hero-detail/hero-detail.view-model.ts b/src/app/hero-detail/hero-detail.view-model.ts
+new file mode 100644
+index 0000000..c35ad0b
+--- /dev/null
++++ b/src/app/hero-detail/hero-detail.view-model.ts
+@@ -0,0 +1,113 @@
++import { Injectable, computed, inject, linkedSignal } from '@angular/core';
++import { toSignal } from '@angular/core/rxjs-interop';
++import { form, submit, validateStandardSchema } from '@angular/forms/signals';
++import { ActivatedRoute, Router } from '@angular/router';
++import { map } from 'rxjs';
++import { POWER_CLASSES, type Hero, type HeroChanges, type HeroStatus, type PowerClass } from '../domain/hero.model';
++import { HeroService } from '../domain/hero.service';
++import { MissionService } from '../domain/mission.service';
++import { formMeta } from '../forms/zod-meta';
++import { heroSchema, type HeroModel } from './hero-detail.schema';
++
++// The draft shown in the edit form. A missing hero gets a blank draft; the screen shows not-found instead.
++function toModel(hero: Hero | undefined): HeroModel {
++  return hero
++    ? {
++        name: hero.name,
++        alias: hero.alias,
++        powerClass: hero.powerClass,
++        powerIndex: hero.powerIndex,
++        notes: hero.notes,
++        active: hero.status === 'Active',
++      }
++    : { name: '', alias: '', powerClass: POWER_CLASSES[0], powerIndex: 0, notes: '', active: false };
++}
++
++// Only an active hero moves to reserve when switched off. An injured or MIA hero keeps that status.
++function toChanges(model: HeroModel, hero: Hero): HeroChanges {
++  const status: HeroStatus = model.active ? 'Active' : hero.status === 'Active' ? 'Reserve' : hero.status;
++  return {
++    name: model.name.trim(),
++    alias: model.alias.trim(),
++    powerClass: model.powerClass,
++    powerIndex: model.powerIndex,
++    notes: model.notes.trim(),
++    status,
++  };
++}
++
++// The select hands its value back as unknown, so narrow it before it reaches the form.
++function isPowerClass(value: unknown): value is PowerClass {
++  return POWER_CLASSES.some((powerClass) => powerClass === value);
++}
++
++// Component-scoped: the detail screen provides it, so each hero gets a fresh draft.
++@Injectable()
++export class HeroDetailViewModel {
++  private readonly heroes = inject(HeroService);
++  private readonly missionLog = inject(MissionService);
++  private readonly router = inject(Router);
++  private readonly route = inject(ActivatedRoute);
++
++  // Read from the observable, not a snapshot, because the router reuses this screen when only the id changes.
++  private readonly _heroId = toSignal(
++    this.route.paramMap.pipe(map((params) => params.get('id') ?? '')),
++    { initialValue: '' },
++  );
++
++  public readonly hero = computed(() => this.heroes.byId(this._heroId()));
++
++  public readonly canDeploy = computed(() => this.hero()?.status === 'Active');
++
++  public readonly missions = computed(() =>
++    this.missionLog.missions().filter((mission) => mission.heroId === this._heroId()),
++  );
++
++  public readonly fields = formMeta(heroSchema);
++
++  public readonly classOptions = POWER_CLASSES.map((powerClass) => ({ value: powerClass, label: powerClass }));
++
++  // Rebuilt from the saved hero whenever the hero changes, so a save or a route change resets the draft.
++  private readonly draft = linkedSignal<HeroModel>(() => toModel(this.hero()));
++
++  public readonly form = form(this.draft, (path) => validateStandardSchema(path, heroSchema));
++
++  public setPowerClass(value: unknown): void {
++    if (isPowerClass(value)) {
++      this.form.powerClass().value.set(value);
++    }
++  }
++
++  public setActive(value: boolean): void {
++    this.form.active().value.set(value);
++  }
++
++  public save(): void {
++    const hero = this.hero();
++    if (!hero) {
++      return;
++    }
++    void submit(this.form, async () => {
++      this.heroes.update(hero.id, toChanges(this.draft(), hero));
++      return undefined;
++    });
++  }
++
++  public discard(): void {
++    this.draft.set(toModel(this.hero()));
++  }
++
++  public deploy(): void {
++    const hero = this.hero();
++    if (!hero || !this.canDeploy()) {
++      return;
++    }
++    this.missionLog.deploy(hero);
++    void this.router.navigate(['/missions']);
++  }
++
++  public retire(): void {
++    this.heroes.retire(this._heroId());
++    void this.router.navigate(['/roster']);
++  }
++}
+diff --git a/src/app/heroes/heroes.css b/src/app/heroes/heroes.css
+index 904e7f9..f779110 100644
+--- a/src/app/heroes/heroes.css
++++ b/src/app/heroes/heroes.css
+@@ -1 +1,17 @@
+ @reference "../../styles.css";
++
++/* min-w-0 on the grid children keeps the table's scroll container from widening the page past the viewport. */
++.roster { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
++.roster__header { @apply grid gap-1; }
++.roster__filters { @apply flex flex-wrap items-center gap-3; }
++.roster__label { @apply sr-only; }
++.roster__search { @apply w-full sm:w-64; }
++.roster__class-trigger { @apply w-full sm:w-48; }
++.roster__recruit { @apply ms-auto shrink-0; }
++.roster__scroll { @apply min-w-0; }
++.roster__caption { @apply sr-only; }
++.roster__actions-head { @apply text-end; }
++.roster__hero { @apply flex items-center gap-3; }
++.roster__identity { @apply grid min-w-0; }
++.roster__empty { @apply text-center; }
++.roster__footer { @apply flex flex-wrap items-center justify-between gap-2; }
+diff --git a/src/app/heroes/heroes.html b/src/app/heroes/heroes.html
+index aea47c2..d4f92c2 100644
+--- a/src/app/heroes/heroes.html
++++ b/src/app/heroes/heroes.html
+@@ -1 +1,100 @@
+-<h1>Heroes</h1>
++<section class="roster">
++  <header class="roster__header">
++    <h1 hlmH1>Roster</h1>
++    <p hlmMuted>Every hero on the books. Example data.</p>
++  </header>
++
++  <div class="roster__filters">
++    <label hlmLabel for="roster-search" class="roster__label">Search heroes</label>
++    <input
++      hlmInput
++      #search
++      id="roster-search"
++      type="search"
++      placeholder="Search name, alias or ID"
++      class="roster__search"
++      [value]="vm.query()"
++      (input)="vm.setQuery(search.value)"
++    />
++
++    <hlm-select [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
++      <hlm-select-trigger class="roster__class-trigger" aria-label="Filter by power class">
++        <hlm-select-value />
++      </hlm-select-trigger>
++      <hlm-select-content *hlmSelectPortal>
++        <hlm-select-group>
++          @for (option of vm.classOptions; track option.value) {
++            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
++          }
++        </hlm-select-group>
++      </hlm-select-content>
++    </hlm-select>
++
++    <a hlmBtn routerLink="/recruit" class="roster__recruit">
++      <ng-icon hlmIcon name="lucideUserPlus" />
++      Recruit
++    </a>
++  </div>
++
++  <!-- 375px: the table scrolls inside its own container, so the page never does. -->
++  <div hlmTableContainer class="roster__scroll">
++    <table hlmTable>
++      <caption hlmTableCaption class="roster__caption">Heroes, strongest first</caption>
++      <thead hlmTableHeader>
++        <tr hlmTableRow>
++          <th hlmTableHead scope="col">Hero</th>
++          <th hlmTableHead scope="col">Class</th>
++          <th hlmTableHead scope="col">Power</th>
++          <th hlmTableHead scope="col">Status</th>
++          <th hlmTableHead scope="col">Clearance</th>
++          <th hlmTableHead scope="col" class="roster__actions-head">Actions</th>
++        </tr>
++      </thead>
++      <tbody hlmTableBody>
++        @for (row of vm.rows(); track row.hero.id) {
++          <tr hlmTableRow>
++            <td hlmTableCell>
++              <div class="roster__hero">
++                <hlm-avatar size="sm" aria-hidden="true">
++                  <span hlmAvatarFallback>{{ row.initials }}</span>
++                </hlm-avatar>
++                <div class="roster__identity">
++                  <span hlmSmall>{{ row.hero.name }}</span>
++                  <span hlmMuted>{{ row.hero.id }}</span>
++                </div>
++              </div>
++            </td>
++            <td hlmTableCell>
++              <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
++            </td>
++            <td hlmTableCell>{{ row.hero.powerIndex }}</td>
++            <td hlmTableCell>
++              <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
++            </td>
++            <td hlmTableCell>Tier {{ row.hero.clearanceTier }}</td>
++            <td hlmTableCell>
++              <a
++                hlmBtn
++                variant="ghost"
++                size="icon-sm"
++                [routerLink]="['/detail', row.hero.id]"
++                [attr.aria-label]="'Edit ' + row.hero.name"
++              >
++                <ng-icon hlmIcon name="lucidePencil" />
++              </a>
++            </td>
++          </tr>
++        } @empty {
++          <tr hlmTableRow>
++            <td hlmTableCell colspan="6" class="roster__empty">No heroes match these filters.</td>
++          </tr>
++        }
++      </tbody>
++    </table>
++  </div>
++
++  <footer class="roster__footer">
++    <p hlmSmall aria-live="polite">{{ vm.visibleCount() }} of {{ vm.totalCount() }} heroes</p>
++    <p hlmMuted>Sorted by power</p>
++  </footer>
++</section>
+diff --git a/src/app/heroes/heroes.ts b/src/app/heroes/heroes.ts
+index 294b085..c66531c 100644
+--- a/src/app/heroes/heroes.ts
++++ b/src/app/heroes/heroes.ts
+@@ -1,9 +1,38 @@
+-import { Component } from '@angular/core';
++import { Component, inject } from '@angular/core';
++import { RouterLink } from '@angular/router';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucidePencil, lucideUserPlus } from '@ng-icons/lucide';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmLabelImports } from '@spartan-ng/helm/label';
++import { HlmSelectImports } from '@spartan-ng/helm/select';
++import { HlmTableImports } from '@spartan-ng/helm/table';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { RosterViewModel } from './heroes.view-model';
+ 
+-// Placeholder. The hero list screen is built here.
++// The roster: every hero in a table, filtered by search and power class.
+ @Component({
+   selector: 'app-heroes',
++  imports: [
++    RouterLink,
++    NgIcon,
++    HlmAvatarImports,
++    HlmBadgeImports,
++    HlmButtonImports,
++    HlmIconImports,
++    HlmInputImports,
++    HlmLabelImports,
++    HlmSelectImports,
++    HlmTableImports,
++    HlmTypographyImports,
++  ],
++  providers: [RosterViewModel, provideIcons({ lucidePencil, lucideUserPlus })],
+   templateUrl: './heroes.html',
+   styleUrl: './heroes.css',
+ })
+-export class Heroes {}
++export class Heroes {
++  protected readonly vm = inject(RosterViewModel);
++}
+diff --git a/src/app/heroes/heroes.view-model.ts b/src/app/heroes/heroes.view-model.ts
+new file mode 100644
+index 0000000..a431955
+--- /dev/null
++++ b/src/app/heroes/heroes.view-model.ts
+@@ -0,0 +1,88 @@
++import { computed, inject, Injectable, linkedSignal, signal } from '@angular/core';
++import { toSignal } from '@angular/core/rxjs-interop';
++import { ActivatedRoute } from '@angular/router';
++import type { BadgeVariants } from '@spartan-ng/helm/badge';
++import { map } from 'rxjs';
++import { POWER_CLASSES, type Hero, type PowerClass } from '../domain/hero.model';
++import { HeroService } from '../domain/hero.service';
++import { heroInitials, STATUS_VARIANT } from '../ui/hero-card/hero-card';
++
++type BadgeVariant = NonNullable<BadgeVariants['variant']>;
++
++export const ALL_CLASSES = 'all';
++export type ClassFilter = PowerClass | typeof ALL_CLASSES;
++
++export interface RosterRow {
++  readonly hero: Hero;
++  readonly initials: string;
++  readonly statusVariant: BadgeVariant;
++}
++
++export interface ClassOption {
++  readonly value: ClassFilter;
++  readonly label: string;
++}
++
++// The class filter's value comes back from the select as unknown, so narrow it here.
++function isClassFilter(value: unknown): value is ClassFilter {
++  return value === ALL_CLASSES || POWER_CLASSES.some((powerClass) => powerClass === value);
++}
++
++// Component-scoped: the roster provides it, so each visit starts with an empty filter.
++@Injectable()
++export class RosterViewModel {
++  private readonly _heroes = inject(HeroService).heroes;
++
++  private readonly _route = inject(ActivatedRoute);
++
++  // The topbar search lands here as ?q=, so a search from any screen filters the roster.
++  private readonly _routeQuery = toSignal(
++    this._route.queryParamMap.pipe(map((params) => params.get('q') ?? '')),
++    { initialValue: '' },
++  );
++
++  private readonly _query = linkedSignal(() => this._routeQuery());
++  private readonly _classFilter = signal<ClassFilter>(ALL_CLASSES);
++
++  public readonly query = this._query.asReadonly();
++  public readonly classFilter = this._classFilter.asReadonly();
++
++  public readonly classOptions: readonly ClassOption[] = [
++    { value: ALL_CLASSES, label: 'All classes' },
++    ...POWER_CLASSES.map((powerClass) => ({ value: powerClass, label: powerClass })),
++  ];
++
++  public readonly totalCount = computed(() => this._heroes().length);
++
++  // Sorted by power, strongest first, so the summary footer's "sorted by power" holds.
++  public readonly rows = computed<RosterRow[]>(() => {
++    const query = this._query().trim().toLowerCase();
++    const powerClass = this._classFilter();
++
++    return this._heroes()
++      .filter((hero) => powerClass === ALL_CLASSES || hero.powerClass === powerClass)
++      .filter(
++        (hero) =>
++          query === '' ||
++          [hero.name, hero.alias, hero.id].some((field) => field.toLowerCase().includes(query)),
++      )
++      .sort((a, b) => b.powerIndex - a.powerIndex)
++      .map((hero) => ({
++        hero,
++        initials: heroInitials(hero.name),
++        statusVariant: STATUS_VARIANT[hero.status],
++      }));
++  });
++
++  public readonly visibleCount = computed(() => this.rows().length);
++
++  public setQuery(value: string): void {
++    this._query.set(value);
++  }
++
++  public setClassFilter(value: unknown): void {
++    if (isClassFilter(value)) {
++      this._classFilter.set(value);
++    }
++  }
++}
+diff --git a/src/app/missions/mission-status.ts b/src/app/missions/mission-status.ts
+new file mode 100644
+index 0000000..0d80e9c
+--- /dev/null
++++ b/src/app/missions/mission-status.ts
+@@ -0,0 +1,12 @@
++import type { BadgeVariants } from '@spartan-ng/helm/badge';
++import type { MissionStatus } from '../domain/mission.model';
++
++type BadgeVariant = NonNullable<BadgeVariants['variant']>;
++
++// A settled result carries meaning, so each status maps to a semantic badge variant.
++export const MISSION_STATUS_VARIANT: Readonly<Record<MissionStatus, BadgeVariant>> = {
++  Planned: 'secondary',
++  'In progress': 'default',
++  Complete: 'success',
++  Failed: 'destructive',
++};
+diff --git a/src/app/missions/missions.css b/src/app/missions/missions.css
+new file mode 100644
+index 0000000..29011f8
+--- /dev/null
++++ b/src/app/missions/missions.css
+@@ -0,0 +1,11 @@
++@reference "../../styles.css";
++
++/* min-w-0 on the grid children keeps the table's scroll container from widening the page past the viewport. */
++.missions { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
++.missions__header { @apply grid gap-1; }
++.missions__scroll { @apply min-w-0; }
++.missions__identity { @apply grid min-w-0; }
++.missions__result { @apply flex flex-wrap gap-2; }
++.missions__empty { @apply text-center; }
++.missions__footer { @apply flex flex-wrap items-center justify-between gap-2; }
++.missions__caption { @apply sr-only; }
+diff --git a/src/app/missions/missions.html b/src/app/missions/missions.html
+new file mode 100644
+index 0000000..a4953a4
+--- /dev/null
++++ b/src/app/missions/missions.html
+@@ -0,0 +1,80 @@
++<section class="missions">
++  <header class="missions__header">
++    <h1 hlmH1>Missions</h1>
++    <p hlmMuted>Every deployment on the books. Settling one logs the result to the hero. Example data.</p>
++  </header>
++
++  <!-- 375px: the table scrolls inside its own container, so the page never does. -->
++  <div hlmTableContainer class="missions__scroll">
++    <table hlmTable>
++      <caption hlmTableCaption class="missions__caption">Missions, open first, then by threat tier</caption>
++      <thead hlmTableHeader>
++        <tr hlmTableRow>
++          <th hlmTableHead scope="col">Mission</th>
++          <th hlmTableHead scope="col">Hero</th>
++          <th hlmTableHead scope="col">Threat</th>
++          <th hlmTableHead scope="col">Status</th>
++          <th hlmTableHead scope="col">Location</th>
++          <th hlmTableHead scope="col">Result</th>
++        </tr>
++      </thead>
++      <tbody hlmTableBody>
++        @for (row of vm.rows(); track row.mission.id) {
++          <tr hlmTableRow>
++            <td hlmTableCell>
++              <div class="missions__identity">
++                <span hlmSmall>{{ row.mission.codename }}</span>
++                <span hlmMuted>{{ row.mission.id }}</span>
++              </div>
++            </td>
++            <td hlmTableCell>{{ row.heroName }}</td>
++            <td hlmTableCell>
++              <span hlmBadge variant="outline">Tier {{ row.mission.threatTier }}</span>
++            </td>
++            <td hlmTableCell>
++              <span hlmBadge [variant]="statusVariant[row.mission.status]">{{ row.mission.status }}</span>
++            </td>
++            <td hlmTableCell>{{ row.mission.location }}</td>
++            <td hlmTableCell>
++              @if (row.open) {
++                <div class="missions__result">
++                  <button
++                    hlmBtn
++                    variant="outline"
++                    size="sm"
++                    [attr.aria-label]="'Mark ' + row.mission.codename + ' complete'"
++                    (click)="vm.resolve(row.mission.id, 'Complete')"
++                  >
++                    <ng-icon hlmIcon name="lucideCircleCheck" />
++                    Complete
++                  </button>
++                  <button
++                    hlmBtn
++                    variant="ghost"
++                    size="sm"
++                    [attr.aria-label]="'Mark ' + row.mission.codename + ' failed'"
++                    (click)="vm.resolve(row.mission.id, 'Failed')"
++                  >
++                    <ng-icon hlmIcon name="lucideX" />
++                    Failed
++                  </button>
++                </div>
++              } @else {
++                <span hlmMuted>Settled</span>
++              }
++            </td>
++          </tr>
++        } @empty {
++          <tr hlmTableRow>
++            <td hlmTableCell colspan="6" class="missions__empty">No missions on the books.</td>
++          </tr>
++        }
++      </tbody>
++    </table>
++  </div>
++
++  <footer class="missions__footer">
++    <p hlmSmall aria-live="polite">{{ vm.openCount() }} open of {{ vm.rows().length }} missions</p>
++    <p hlmMuted>Open missions first</p>
++  </footer>
++</section>
+diff --git a/src/app/missions/missions.ts b/src/app/missions/missions.ts
+new file mode 100644
+index 0000000..f5c0287
+--- /dev/null
++++ b/src/app/missions/missions.ts
+@@ -0,0 +1,30 @@
++import { Component, inject } from '@angular/core';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideCircleCheck, lucideX } from '@ng-icons/lucide';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmTableImports } from '@spartan-ng/helm/table';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { MISSION_STATUS_VARIANT } from './mission-status';
++import { MissionsViewModel } from './missions.view-model';
++
++// The mission log: every deployment, with the result recorded against the hero when it is settled.
++@Component({
++  selector: 'app-missions',
++  imports: [
++    NgIcon,
++    HlmBadgeImports,
++    HlmButtonImports,
++    HlmIconImports,
++    HlmTableImports,
++    HlmTypographyImports,
++  ],
++  providers: [MissionsViewModel, provideIcons({ lucideCircleCheck, lucideX })],
++  templateUrl: './missions.html',
++  styleUrl: './missions.css',
++})
++export class Missions {
++  protected readonly vm = inject(MissionsViewModel);
++  protected readonly statusVariant = MISSION_STATUS_VARIANT;
++}
+diff --git a/src/app/missions/missions.view-model.ts b/src/app/missions/missions.view-model.ts
+new file mode 100644
+index 0000000..eb7bc05
+--- /dev/null
++++ b/src/app/missions/missions.view-model.ts
+@@ -0,0 +1,39 @@
++import { computed, inject, Injectable } from '@angular/core';
++import { HeroService } from '../domain/hero.service';
++import { isOpenMission, type Mission, type MissionOutcome } from '../domain/mission.model';
++import { MissionService } from '../domain/mission.service';
++
++export interface MissionRow {
++  readonly mission: Mission;
++  readonly heroName: string;
++  readonly open: boolean;
++}
++
++// Component-scoped: the missions screen provides it, so each visit reads the live log.
++@Injectable()
++export class MissionsViewModel {
++  private readonly heroes = inject(HeroService);
++  private readonly missionLog = inject(MissionService);
++
++  private readonly heroNames = computed(
++    () => new Map(this.heroes.heroes().map((hero) => [hero.id, hero.name] as const)),
++  );
++
++  // Open missions first, then the highest threat tier first.
++  public readonly rows = computed<MissionRow[]>(() => {
++    const names = this.heroNames();
++    return [...this.missionLog.missions()]
++      .sort((a, b) => Number(isOpenMission(b)) - Number(isOpenMission(a)) || b.threatTier - a.threatTier)
++      .map((mission) => ({
++        mission,
++        heroName: names.get(mission.heroId) ?? 'Not on roster',
++        open: isOpenMission(mission),
++      }));
++  });
++
++  public readonly openCount = computed(() => this.rows().filter((row) => row.open).length);
++
++  public resolve(id: string, outcome: MissionOutcome): void {
++    this.missionLog.resolve(id, outcome);
++  }
++}
+diff --git a/src/app/recruit/recruit.css b/src/app/recruit/recruit.css
+new file mode 100644
+index 0000000..01d7ad8
+--- /dev/null
++++ b/src/app/recruit/recruit.css
+@@ -0,0 +1,11 @@
++@reference "../../styles.css";
++
++/* min-w-0 on the grid children keeps long text fields from pushing the page past the viewport. */
++.recruit { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
++.recruit__header { @apply grid gap-1; }
++.recruit__card { @apply max-w-3xl; }
++.recruit__form { @apply grid grid-cols-1 min-w-0 gap-4 md:grid-cols-2; }
++.recruit__field { @apply min-w-0; }
++.recruit__wide { @apply md:col-span-2; }
++.recruit__select { @apply w-full; }
++.recruit__actions { @apply flex flex-wrap justify-end gap-2 md:col-span-2; }
+diff --git a/src/app/recruit/recruit.html b/src/app/recruit/recruit.html
+new file mode 100644
+index 0000000..b95c140
+--- /dev/null
++++ b/src/app/recruit/recruit.html
+@@ -0,0 +1,94 @@
++<section class="recruit">
++  <header class="recruit__header">
++    <h1 hlmH1>Recruit</h1>
++    <p hlmMuted>Bring a new hero onto the roster. They join in reserve. Example data.</p>
++  </header>
++
++  <section hlmCard class="recruit__card" aria-labelledby="recruit-form-heading">
++    <div hlmCardHeader>
++      <h2 hlmCardTitle id="recruit-form-heading">New recruit</h2>
++    </div>
++    <form hlmCardContent class="recruit__form" (submit)="$event.preventDefault(); vm.save()">
++      <hlm-field class="recruit__field">
++        <label hlmFieldLabel for="recruit-name">{{ vm.fields.name.label }}</label>
++        <input hlmInput id="recruit-name" [formField]="vm.form.name" />
++        @for (e of vm.form.name().errors(); track e.kind) {
++          <hlm-field-error>{{ e.message }}</hlm-field-error>
++        }
++      </hlm-field>
++
++      <hlm-field class="recruit__field">
++        <label hlmFieldLabel for="recruit-alias">{{ vm.fields.alias.label }}</label>
++        <input hlmInput id="recruit-alias" [formField]="vm.form.alias" />
++        @for (e of vm.form.alias().errors(); track e.kind) {
++          <hlm-field-error>{{ e.message }}</hlm-field-error>
++        }
++      </hlm-field>
++
++      <hlm-field class="recruit__field">
++        <span hlmFieldLabel id="recruit-power-class-label">{{ vm.fields.powerClass.label }}</span>
++        <hlm-select [value]="vm.form.powerClass().value()" (valueChange)="vm.setPowerClass($event)">
++          <hlm-select-trigger class="recruit__select" aria-labelledby="recruit-power-class-label">
++            <hlm-select-value />
++          </hlm-select-trigger>
++          <hlm-select-content *hlmSelectPortal>
++            <hlm-select-group>
++              @for (option of vm.classOptions; track option.value) {
++                <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
++              }
++            </hlm-select-group>
++          </hlm-select-content>
++        </hlm-select>
++        @for (e of vm.form.powerClass().errors(); track e.kind) {
++          <hlm-field-error>{{ e.message }}</hlm-field-error>
++        }
++      </hlm-field>
++
++      <hlm-field class="recruit__field">
++        <label hlmFieldLabel for="recruit-power-index">{{ vm.fields.powerIndex.label }}</label>
++        <input hlmInput id="recruit-power-index" type="number" [formField]="vm.form.powerIndex" />
++        <p hlmMuted>{{ vm.fields.powerIndex.help }}</p>
++        @for (e of vm.form.powerIndex().errors(); track e.kind) {
++          <hlm-field-error>{{ e.message }}</hlm-field-error>
++        }
++      </hlm-field>
++
++      <hlm-field class="recruit__field">
++        <span hlmFieldLabel id="recruit-clearance-label">{{ vm.fields.clearanceTier.label }}</span>
++        <hlm-select [value]="vm.form.clearanceTier().value()" (valueChange)="vm.setClearance($event)">
++          <hlm-select-trigger class="recruit__select" aria-labelledby="recruit-clearance-label">
++            <hlm-select-value />
++          </hlm-select-trigger>
++          <hlm-select-content *hlmSelectPortal>
++            <hlm-select-group>
++              @for (option of vm.clearanceOptions; track option.value) {
++                <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
++              }
++            </hlm-select-group>
++          </hlm-select-content>
++        </hlm-select>
++        <p hlmMuted>{{ vm.fields.clearanceTier.help }}</p>
++        @for (e of vm.form.clearanceTier().errors(); track e.kind) {
++          <hlm-field-error>{{ e.message }}</hlm-field-error>
++        }
++      </hlm-field>
++
++      <hlm-field class="recruit__field recruit__wide">
++        <label hlmFieldLabel for="recruit-notes">{{ vm.fields.notes.label }}</label>
++        <textarea hlmTextarea id="recruit-notes" rows="3" [formField]="vm.form.notes"></textarea>
++        @for (e of vm.form.notes().errors(); track e.kind) {
++          <hlm-field-error>{{ e.message }}</hlm-field-error>
++        }
++      </hlm-field>
++
++      <div class="recruit__actions">
++        <a hlmBtn variant="outline" routerLink="/roster">Cancel</a>
++        <button hlmBtn type="button" variant="ghost" (click)="vm.discard()">Clear form</button>
++        <button hlmBtn type="submit">
++          <ng-icon hlmIcon name="lucideUserPlus" />
++          Recruit hero
++        </button>
++      </div>
++    </form>
++  </section>
++</section>
+diff --git a/src/app/recruit/recruit.schema.ts b/src/app/recruit/recruit.schema.ts
+new file mode 100644
+index 0000000..768eabd
+--- /dev/null
++++ b/src/app/recruit/recruit.schema.ts
+@@ -0,0 +1,31 @@
++import { z } from 'zod';
++import { CLEARANCE_TIERS, POWER_CLASSES } from '../domain/hero.model';
++
++// Single source of truth for the recruit form: shape, rules, and field labels.
++export const recruitSchema = z.object({
++  name: z.string().trim().min(1).meta({ label: 'Name', control: 'text', order: 1 }),
++  alias: z.string().trim().min(1).meta({ label: 'Alias', control: 'text', order: 2 }),
++  powerClass: z.enum(POWER_CLASSES).meta({
++    label: 'Power class',
++    control: 'select',
++    order: 3,
++    options: POWER_CLASSES.map((value) => ({ value, label: value })),
++  }),
++  powerIndex: z.number().int().min(0).max(100).meta({
++    label: 'Power index',
++    control: 'number',
++    order: 4,
++    help: 'Between 0 and 100.',
++  }),
++  clearanceTier: z.literal(CLEARANCE_TIERS).meta({
++    label: 'Clearance tier',
++    control: 'select',
++    order: 5,
++    help: 'Tier 1 is the lowest clearance, Tier 5 the highest.',
++  }),
++  notes: z.string().trim().max(500).meta({ label: 'Notes', control: 'textarea', order: 6 }),
++});
++
++export type RecruitModel = z.infer<typeof recruitSchema>;
++
++export const CLEARANCE_OPTIONS = CLEARANCE_TIERS.map((tier) => ({ value: tier, label: `Tier ${tier}` }));
+diff --git a/src/app/recruit/recruit.ts b/src/app/recruit/recruit.ts
+new file mode 100644
+index 0000000..dbabc3f
+--- /dev/null
++++ b/src/app/recruit/recruit.ts
+@@ -0,0 +1,38 @@
++import { Component, inject } from '@angular/core';
++import { FormField } from '@angular/forms/signals';
++import { RouterLink } from '@angular/router';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideUserPlus } from '@ng-icons/lucide';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmCardImports } from '@spartan-ng/helm/card';
++import { HlmFieldImports } from '@spartan-ng/helm/field';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmSelectImports } from '@spartan-ng/helm/select';
++import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { RecruitViewModel } from './recruit.view-model';
++
++// Recruit: a new hero goes onto the roster in reserve, and their record opens straight away.
++@Component({
++  selector: 'app-recruit',
++  imports: [
++    RouterLink,
++    FormField,
++    NgIcon,
++    HlmButtonImports,
++    HlmCardImports,
++    HlmFieldImports,
++    HlmIconImports,
++    HlmInputImports,
++    HlmSelectImports,
++    HlmTextareaImports,
++    HlmTypographyImports,
++  ],
++  providers: [RecruitViewModel, provideIcons({ lucideUserPlus })],
++  templateUrl: './recruit.html',
++  styleUrl: './recruit.css',
++})
++export class Recruit {
++  protected readonly vm = inject(RecruitViewModel);
++}
+diff --git a/src/app/recruit/recruit.view-model.ts b/src/app/recruit/recruit.view-model.ts
+new file mode 100644
+index 0000000..2a2ba76
+--- /dev/null
++++ b/src/app/recruit/recruit.view-model.ts
+@@ -0,0 +1,77 @@
++import { Injectable, inject, signal } from '@angular/core';
++import { form, submit, validateStandardSchema } from '@angular/forms/signals';
++import { Router } from '@angular/router';
++import { CLEARANCE_TIERS, POWER_CLASSES, type ClearanceTier, type PowerClass } from '../domain/hero.model';
++import { HeroService } from '../domain/hero.service';
++import { formMeta } from '../forms/zod-meta';
++import { CLEARANCE_OPTIONS, recruitSchema, type RecruitModel } from './recruit.schema';
++
++function blankRecruit(): RecruitModel {
++  return {
++    name: '',
++    alias: '',
++    powerClass: POWER_CLASSES[0],
++    powerIndex: 50,
++    clearanceTier: CLEARANCE_TIERS[0],
++    notes: '',
++  };
++}
++
++// The selects hand their values back as unknown, so narrow them before they reach the form.
++function isPowerClass(value: unknown): value is PowerClass {
++  return POWER_CLASSES.some((powerClass) => powerClass === value);
++}
++
++function isClearanceTier(value: unknown): value is ClearanceTier {
++  return CLEARANCE_TIERS.some((tier) => tier === value);
++}
++
++// Component-scoped: the recruit screen provides it, so each visit starts with a blank form.
++@Injectable()
++export class RecruitViewModel {
++  private readonly heroes = inject(HeroService);
++  private readonly router = inject(Router);
++
++  public readonly fields = formMeta(recruitSchema);
++
++  public readonly classOptions = POWER_CLASSES.map((powerClass) => ({ value: powerClass, label: powerClass }));
++
++  public readonly clearanceOptions = CLEARANCE_OPTIONS;
++
++  private readonly model = signal<RecruitModel>(blankRecruit());
++
++  public readonly form = form(this.model, (path) => validateStandardSchema(path, recruitSchema));
++
++  public setPowerClass(value: unknown): void {
++    if (isPowerClass(value)) {
++      this.form.powerClass().value.set(value);
++    }
++  }
++
++  public setClearance(value: unknown): void {
++    if (isClearanceTier(value)) {
++      this.form.clearanceTier().value.set(value);
++    }
++  }
++
++  // A recruit joins the roster in reserve, and the console opens their new record.
++  public save(): void {
++    void submit(this.form, async () => {
++      const { name, alias, powerClass, powerIndex, clearanceTier, notes } = this.model();
++      const hero = this.heroes.add({
++        name: name.trim(),
++        alias: alias.trim(),
++        powerClass,
++        powerIndex,
++        clearanceTier,
++        notes: notes.trim(),
++      });
++      void this.router.navigate(['/detail', hero.id]);
++      return undefined;
++    });
++  }
++
++  public discard(): void {
++    this.model.set(blankRecruit());
++  }
++}
+diff --git a/src/app/settings/settings.css b/src/app/settings/settings.css
+new file mode 100644
+index 0000000..5f3dffa
+--- /dev/null
++++ b/src/app/settings/settings.css
+@@ -0,0 +1,8 @@
++@reference "../../styles.css";
++
++/* min-w-0 on the grid children keeps long descriptions from pushing the page past the viewport. */
++.settings { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
++.settings__header { @apply grid gap-1; }
++.settings__card { @apply max-w-3xl; }
++.settings__body { @apply grid gap-4; }
++.settings__row { @apply flex min-w-0 flex-wrap items-center justify-between gap-4; }
+diff --git a/src/app/settings/settings.html b/src/app/settings/settings.html
+new file mode 100644
+index 0000000..3ae626a
+--- /dev/null
++++ b/src/app/settings/settings.html
+@@ -0,0 +1,49 @@
++<section class="settings">
++  <header class="settings__header">
++    <h1 hlmH1>Settings</h1>
++    <p hlmMuted>Appearance for this browser, and the example data behind the console.</p>
++  </header>
++
++  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
++    <div hlmCardHeader>
++      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
++      <p hlmCardDescription>The navigation rail stays dark in both themes.</p>
++    </div>
++    <div hlmCardContent class="settings__body">
++      <div class="settings__row">
++        <label hlmLabel for="settings-dark">Dark theme</label>
++        <hlm-switch
++          inputId="settings-dark"
++          [checked]="vm.isDark()"
++          (checkedChange)="vm.setDark($event)"
++        />
++      </div>
++      <div class="settings__row">
++        @if (vm.following()) {
++          <p hlmMuted>Following your system setting.</p>
++        } @else {
++          <p hlmMuted>Your choice is saved in this browser.</p>
++        }
++        <button hlmBtn variant="outline" [disabled]="vm.following()" (click)="vm.followSystem()">
++          Follow system setting
++        </button>
++      </div>
++    </div>
++  </section>
++
++  <section hlmCard class="settings__card" aria-labelledby="data-heading">
++    <div hlmCardHeader>
++      <h2 hlmCardTitle id="data-heading">Example data</h2>
++      <p hlmCardDescription>Edits, recruits, and mission results last until the page reloads.</p>
++    </div>
++    <div hlmCardContent class="settings__body">
++      <div class="settings__row">
++        <p hlmMuted>Reset returns every hero and mission to the example data.</p>
++        <button hlmBtn variant="outline" (click)="vm.resetData()">
++          <ng-icon hlmIcon name="lucideRotateCcw" />
++          Reset example data
++        </button>
++      </div>
++    </div>
++  </section>
++</section>
+diff --git a/src/app/settings/settings.ts b/src/app/settings/settings.ts
+new file mode 100644
+index 0000000..803dceb
+--- /dev/null
++++ b/src/app/settings/settings.ts
+@@ -0,0 +1,30 @@
++import { Component, inject } from '@angular/core';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideRotateCcw } from '@ng-icons/lucide';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmCardImports } from '@spartan-ng/helm/card';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmLabelImports } from '@spartan-ng/helm/label';
++import { HlmSwitchImports } from '@spartan-ng/helm/switch';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { SettingsViewModel } from './settings.view-model';
++
++// Settings: the light or dark choice, and a way back to the example data.
++@Component({
++  selector: 'app-settings',
++  imports: [
++    NgIcon,
++    HlmButtonImports,
++    HlmCardImports,
++    HlmIconImports,
++    HlmLabelImports,
++    HlmSwitchImports,
++    HlmTypographyImports,
++  ],
++  providers: [SettingsViewModel, provideIcons({ lucideRotateCcw })],
++  templateUrl: './settings.html',
++  styleUrl: './settings.css',
++})
++export class Settings {
++  protected readonly vm = inject(SettingsViewModel);
++}
+diff --git a/src/app/settings/settings.view-model.ts b/src/app/settings/settings.view-model.ts
+new file mode 100644
+index 0000000..963abb2
+--- /dev/null
++++ b/src/app/settings/settings.view-model.ts
+@@ -0,0 +1,29 @@
++import { computed, inject, Injectable } from '@angular/core';
++import { HeroService } from '../domain/hero.service';
++import { MissionService } from '../domain/mission.service';
++import { ThemeService } from '../theme/theme.service';
++
++// Component-scoped: the settings screen provides it. It owns the appearance choice and the example-data reset.
++@Injectable()
++export class SettingsViewModel {
++  private readonly theme = inject(ThemeService);
++  private readonly heroes = inject(HeroService);
++  private readonly missions = inject(MissionService);
++
++  public readonly isDark = computed(() => this.theme.theme() === 'dark');
++
++  public readonly following = this.theme.following;
++
++  public setDark(value: boolean): void {
++    this.theme.set(value ? 'dark' : 'light');
++  }
++
++  public followSystem(): void {
++    this.theme.followSystem();
++  }
++
++  public resetData(): void {
++    this.heroes.reset();
++    this.missions.reset();
++  }
++}
+diff --git a/src/app/theme/theme.service.ts b/src/app/theme/theme.service.ts
+new file mode 100644
+index 0000000..6d350c0
+--- /dev/null
++++ b/src/app/theme/theme.service.ts
+@@ -0,0 +1,59 @@
++import { computed, DOCUMENT, effect, inject, Service, signal } from '@angular/core';
++
++export type Theme = 'light' | 'dark';
++
++const STORAGE_KEY = 'hero-ops-theme';
++const DARK_QUERY = '(prefers-color-scheme: dark)';
++
++/**
++ * Owns the light/dark choice. The `.dark` class on <html> is the only switch the
++ * stylesheet reads. An explicit choice is persisted; with no choice the system
++ * preference is followed, live.
++ */
++@Service()
++export class ThemeService {
++  private readonly _document = inject(DOCUMENT);
++  private readonly _window = this._document.defaultView;
++
++  private readonly _choice = signal<Theme | null>(this.readStoredChoice());
++  private readonly _system = signal<Theme>(this.systemTheme());
++
++  public readonly theme = computed<Theme>(() => this._choice() ?? this._system());
++
++  /** True while no choice is stored, so the system preference decides. */
++  public readonly following = computed(() => this._choice() === null);
++
++  constructor() {
++    const query = this._window?.matchMedia?.(DARK_QUERY);
++    query?.addEventListener('change', (event) => {
++      this._system.set(event.matches ? 'dark' : 'light');
++    });
++
++    effect(() => {
++      this._document.documentElement.classList.toggle('dark', this.theme() === 'dark');
++    });
++  }
++
++  public toggle(): void {
++    this.set(this.theme() === 'dark' ? 'light' : 'dark');
++  }
++
++  public set(theme: Theme): void {
++    this._choice.set(theme);
++    this._window?.localStorage.setItem(STORAGE_KEY, theme);
++  }
++
++  public followSystem(): void {
++    this._choice.set(null);
++    this._window?.localStorage.removeItem(STORAGE_KEY);
++  }
++
++  private readStoredChoice(): Theme | null {
++    const stored = this._window?.localStorage.getItem(STORAGE_KEY);
++    return stored === 'light' || stored === 'dark' ? stored : null;
++  }
++
++  private systemTheme(): Theme {
++    return this._window?.matchMedia?.(DARK_QUERY).matches ? 'dark' : 'light';
++  }
++}
+diff --git a/src/app/threats/threats.css b/src/app/threats/threats.css
+new file mode 100644
+index 0000000..c3e8a33
+--- /dev/null
++++ b/src/app/threats/threats.css
+@@ -0,0 +1,10 @@
++@reference "../../styles.css";
++
++/* min-w-0 on the grid children keeps the table's scroll container from widening the page past the viewport. */
++.threats { @apply grid grid-cols-1 min-w-0 gap-8 p-6; }
++.threats__header { @apply grid gap-1; }
++.threats__section { @apply grid min-w-0 gap-4; }
++.threats__cards { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
++.threats__scroll { @apply min-w-0; }
++.threats__caption { @apply sr-only; }
++.threats__empty { @apply text-center; }
+diff --git a/src/app/threats/threats.html b/src/app/threats/threats.html
+new file mode 100644
+index 0000000..0d886ae
+--- /dev/null
++++ b/src/app/threats/threats.html
+@@ -0,0 +1,53 @@
++<section class="threats">
++  <header class="threats__header">
++    <h1 hlmH1>Threats</h1>
++    <p hlmMuted>Heroes who cannot take the field, and live missions by threat tier. Example data.</p>
++  </header>
++
++  <section class="threats__section" aria-labelledby="at-risk-heading">
++    <h2 hlmH3 id="at-risk-heading">Heroes at risk</h2>
++    @if (vm.atRisk().length) {
++      <div class="threats__cards">
++        @for (hero of vm.atRisk(); track hero.id) {
++          <app-hero-card [hero]="hero" />
++        }
++      </div>
++    } @else {
++      <p hlmMuted>No hero is injured or MIA.</p>
++    }
++  </section>
++
++  <section class="threats__section" aria-labelledby="open-threats-heading">
++    <h2 hlmH3 id="open-threats-heading">Open threats</h2>
++    <!-- 375px: the table scrolls inside its own container, so the page never does. -->
++    <div hlmTableContainer class="threats__scroll">
++      <table hlmTable>
++        <caption hlmTableCaption class="threats__caption">Live missions, highest threat first</caption>
++        <thead hlmTableHeader>
++          <tr hlmTableRow>
++            <th hlmTableHead scope="col">Mission</th>
++            <th hlmTableHead scope="col">Hero</th>
++            <th hlmTableHead scope="col">Threat</th>
++            <th hlmTableHead scope="col">Location</th>
++          </tr>
++        </thead>
++        <tbody hlmTableBody>
++          @for (row of vm.openThreats(); track row.mission.id) {
++            <tr hlmTableRow>
++              <td hlmTableCell>{{ row.mission.codename }}</td>
++              <td hlmTableCell>{{ row.heroName }}</td>
++              <td hlmTableCell>
++                <span hlmBadge variant="outline">Tier {{ row.mission.threatTier }}</span>
++              </td>
++              <td hlmTableCell>{{ row.mission.location }}</td>
++            </tr>
++          } @empty {
++            <tr hlmTableRow>
++              <td hlmTableCell colspan="4" class="threats__empty">No live missions.</td>
++            </tr>
++          }
++        </tbody>
++      </table>
++    </div>
++  </section>
++</section>
+diff --git a/src/app/threats/threats.ts b/src/app/threats/threats.ts
+new file mode 100644
+index 0000000..89ce5cb
+--- /dev/null
++++ b/src/app/threats/threats.ts
+@@ -0,0 +1,18 @@
++import { Component, inject } from '@angular/core';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmTableImports } from '@spartan-ng/helm/table';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import { HeroCard } from '../ui/hero-card/hero-card';
++import { ThreatsViewModel } from './threats.view-model';
++
++// Threats: the heroes who are out of action, and the live missions ranked by threat tier.
++@Component({
++  selector: 'app-threats',
++  imports: [HlmBadgeImports, HlmTableImports, HlmTypographyImports, HeroCard],
++  providers: [ThreatsViewModel],
++  templateUrl: './threats.html',
++  styleUrl: './threats.css',
++})
++export class Threats {
++  protected readonly vm = inject(ThreatsViewModel);
++}
+diff --git a/src/app/threats/threats.view-model.ts b/src/app/threats/threats.view-model.ts
+new file mode 100644
+index 0000000..3aca362
+--- /dev/null
++++ b/src/app/threats/threats.view-model.ts
+@@ -0,0 +1,32 @@
++import { computed, inject, Injectable } from '@angular/core';
++import type { Hero } from '../domain/hero.model';
++import { HeroService } from '../domain/hero.service';
++import { isOpenMission, type Mission } from '../domain/mission.model';
++import { MissionService } from '../domain/mission.service';
++
++export interface ThreatRow {
++  readonly mission: Mission;
++  readonly heroName: string;
++}
++
++// Component-scoped: the threats screen provides it, so each visit reads the live roster and log.
++@Injectable()
++export class ThreatsViewModel {
++  private readonly heroes = inject(HeroService);
++  private readonly missionLog = inject(MissionService);
++
++  // Heroes who cannot take the field right now.
++  public readonly atRisk = computed<Hero[]>(() =>
++    this.heroes.heroes().filter((hero) => hero.status === 'Injured' || hero.status === 'MIA'),
++  );
++
++  // Live missions, highest threat tier first.
++  public readonly openThreats = computed<ThreatRow[]>(() => {
++    const names = new Map(this.heroes.heroes().map((hero) => [hero.id, hero.name] as const));
++    return this.missionLog
++      .missions()
++      .filter(isOpenMission)
++      .sort((a, b) => b.threatTier - a.threatTier)
++      .map((mission) => ({ mission, heroName: names.get(mission.heroId) ?? 'Not on roster' }));
++  });
++}
+diff --git a/src/app/ui/hero-card/hero-card.css b/src/app/ui/hero-card/hero-card.css
+new file mode 100644
+index 0000000..82ba50d
+--- /dev/null
++++ b/src/app/ui/hero-card/hero-card.css
+@@ -0,0 +1,11 @@
++@reference "../../../styles.css";
++
++/* The stretched link makes the whole card the hit target; the card is the containing block. */
++.hero-card { @apply relative; }
++.hero-card__header { @apply flex items-center gap-3; }
++.hero-card__portrait { @apply shrink-0; }
++.hero-card__identity { @apply grid min-w-0 gap-0.5; }
++.hero-card__link { @apply after:absolute after:inset-0 after:content-[''] break-words; }
++.hero-card__body { @apply grid gap-3; }
++.hero-card__badges { @apply flex flex-wrap gap-2; }
++.hero-card__record { @apply break-words; }
+diff --git a/src/app/ui/hero-card/hero-card.html b/src/app/ui/hero-card/hero-card.html
+new file mode 100644
+index 0000000..b32bd7d
+--- /dev/null
++++ b/src/app/ui/hero-card/hero-card.html
+@@ -0,0 +1,24 @@
++<article hlmCard class="hero-card">
++  <header hlmCardHeader class="hero-card__header">
++    <hlm-avatar class="hero-card__portrait" aria-hidden="true">
++      <span hlmAvatarFallback>{{ initials() }}</span>
++    </hlm-avatar>
++    <div class="hero-card__identity">
++      <h3 hlmCardTitle>
++        <a [routerLink]="detailLink()" class="hero-card__link">{{ hero().name }}</a>
++      </h3>
++      <p hlmMuted>{{ hero().alias }}</p>
++    </div>
++  </header>
++
++  <div hlmCardContent class="hero-card__body">
++    <div class="hero-card__badges">
++      <span hlmBadge variant="outline">{{ hero().powerClass }}</span>
++      <span hlmBadge [variant]="statusVariant()">{{ hero().status }}</span>
++    </div>
++    <app-power-meter [value]="hero().powerIndex" />
++    <p hlmSmall class="hero-card__record">
++      {{ hero().missions }} missions, {{ hero().successRate }}% success, clearance {{ hero().clearanceTier }}
++    </p>
++  </div>
++</article>
+diff --git a/src/app/ui/hero-card/hero-card.ts b/src/app/ui/hero-card/hero-card.ts
+new file mode 100644
+index 0000000..11ea887
+--- /dev/null
++++ b/src/app/ui/hero-card/hero-card.ts
+@@ -0,0 +1,48 @@
++import { Component, computed, input } from '@angular/core';
++import { RouterLink } from '@angular/router';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import type { BadgeVariants } from '@spartan-ng/helm/badge';
++import { HlmBadgeImports } from '@spartan-ng/helm/badge';
++import { HlmCardImports } from '@spartan-ng/helm/card';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++import type { Hero, HeroStatus } from '../../domain/hero.model';
++import { PowerMeter } from '../power-meter/power-meter';
++
++type BadgeVariant = NonNullable<BadgeVariants['variant']>;
++
++// Status carries meaning, so each one maps to a semantic badge variant.
++export const STATUS_VARIANT: Readonly<Record<HeroStatus, BadgeVariant>> = {
++  Active: 'success',
++  Injured: 'warning',
++  Reserve: 'secondary',
++  MIA: 'destructive',
++};
++
++// Two-letter portrait fallback, shared by every screen that draws a hero avatar.
++export function heroInitials(name: string): string {
++  return name
++    .split(/\s+/)
++    .filter(Boolean)
++    .slice(0, 2)
++    .map((word) => word.charAt(0))
++    .join('')
++    .toUpperCase();
++}
++
++// Presentational: one hero as a card. The whole card opens the detail screen
++// through a stretched link on the name, so there is one tab stop per card.
++@Component({
++  selector: 'app-hero-card',
++  imports: [RouterLink, HlmAvatarImports, HlmBadgeImports, HlmCardImports, HlmTypographyImports, PowerMeter],
++  templateUrl: './hero-card.html',
++  styleUrl: './hero-card.css',
++})
++export class HeroCard {
++  public readonly hero = input.required<Hero>();
++
++  protected readonly initials = computed(() => heroInitials(this.hero().name));
++
++  protected readonly statusVariant = computed(() => STATUS_VARIANT[this.hero().status]);
++
++  protected readonly detailLink = computed(() => ['/detail', this.hero().id]);
++}
+diff --git a/src/app/ui/power-meter/power-meter.css b/src/app/ui/power-meter/power-meter.css
+new file mode 100644
+index 0000000..55dac6b
+--- /dev/null
++++ b/src/app/ui/power-meter/power-meter.css
+@@ -0,0 +1,4 @@
++@reference "../../../styles.css";
++
++.power-meter { @apply flex items-center gap-2; }
++.power-meter__bar { @apply h-2 w-full min-w-0 flex-1; }
+diff --git a/src/app/ui/power-meter/power-meter.html b/src/app/ui/power-meter/power-meter.html
+new file mode 100644
+index 0000000..4c9447f
+--- /dev/null
++++ b/src/app/ui/power-meter/power-meter.html
+@@ -0,0 +1,14 @@
++<div class="power-meter">
++  <span hlmSmall>Power</span>
++  <meter
++    class="power-meter__bar"
++    min="0"
++    max="100"
++    low="40"
++    high="80"
++    optimum="100"
++    [value]="value()"
++    [attr.aria-label]="'Power index ' + value() + ' of 100'"
++  ></meter>
++  <span hlmSmall>{{ value() }}</span>
++</div>
+diff --git a/src/app/ui/power-meter/power-meter.ts b/src/app/ui/power-meter/power-meter.ts
+new file mode 100644
+index 0000000..9ea3f83
+--- /dev/null
++++ b/src/app/ui/power-meter/power-meter.ts
+@@ -0,0 +1,14 @@
++import { Component, input } from '@angular/core';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++
++// Presentational: a 0 to 100 power index drawn as a native meter, so the browser
++// supplies the role and value to assistive tech. No progress primitive is installed.
++@Component({
++  selector: 'app-power-meter',
++  imports: [HlmTypographyImports],
++  templateUrl: './power-meter.html',
++  styleUrl: './power-meter.css',
++})
++export class PowerMeter {
++  public readonly value = input.required<number>();
++}
+diff --git a/src/app/ui/stat-tile/stat-tile.css b/src/app/ui/stat-tile/stat-tile.css
+new file mode 100644
+index 0000000..4a9d880
+--- /dev/null
++++ b/src/app/ui/stat-tile/stat-tile.css
+@@ -0,0 +1,3 @@
++@reference "../../../styles.css";
++
++.stat-tile__header { @apply flex items-center justify-between gap-2; }
+diff --git a/src/app/ui/stat-tile/stat-tile.html b/src/app/ui/stat-tile/stat-tile.html
+new file mode 100644
+index 0000000..1cd9aec
+--- /dev/null
++++ b/src/app/ui/stat-tile/stat-tile.html
+@@ -0,0 +1,10 @@
++<article hlmCard class="stat-tile">
++  <div hlmCardHeader class="stat-tile__header">
++    <p hlmCardDescription>{{ label() }}</p>
++    <ng-icon hlmIcon [name]="icon()" tone="muted" />
++  </div>
++  <div hlmCardContent>
++    <p hlmCardTitle emphasis="stat">{{ value() }}</p>
++    <p hlmMuted>{{ hint() }}</p>
++  </div>
++</article>
+diff --git a/src/app/ui/stat-tile/stat-tile.ts b/src/app/ui/stat-tile/stat-tile.ts
+new file mode 100644
+index 0000000..d885d61
+--- /dev/null
++++ b/src/app/ui/stat-tile/stat-tile.ts
+@@ -0,0 +1,23 @@
++import { Component, input } from '@angular/core';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideActivity, lucideShieldAlert, lucideUserCheck, lucideZap } from '@ng-icons/lucide';
++import { HlmCardImports } from '@spartan-ng/helm/card';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++
++export type StatIcon = 'lucideUserCheck' | 'lucideActivity' | 'lucideZap' | 'lucideShieldAlert';
++
++// Presentational: one headline figure with its label and hint. Takes inputs only.
++@Component({
++  selector: 'app-stat-tile',
++  imports: [NgIcon, HlmCardImports, HlmIconImports, HlmTypographyImports],
++  providers: [provideIcons({ lucideActivity, lucideShieldAlert, lucideUserCheck, lucideZap })],
++  templateUrl: './stat-tile.html',
++  styleUrl: './stat-tile.css',
++})
++export class StatTile {
++  public readonly label = input.required<string>();
++  public readonly value = input.required<number>();
++  public readonly hint = input.required<string>();
++  public readonly icon = input.required<StatIcon>();
++}
+diff --git a/src/app/ui/topbar/topbar.css b/src/app/ui/topbar/topbar.css
+new file mode 100644
+index 0000000..aead4d9
+--- /dev/null
++++ b/src/app/ui/topbar/topbar.css
+@@ -0,0 +1,9 @@
++@reference "../../../styles.css";
++
++.topbar { @apply flex flex-wrap items-center gap-2 p-3 sm:p-4; }
++.topbar__crumbs { @apply min-w-0 flex-1; }
++.topbar__crumb-list { @apply flex min-w-0 flex-wrap items-center gap-1; }
++.topbar__crumb { @apply flex min-w-0 items-center gap-1; }
++.topbar__search { @apply order-last flex basis-full items-center gap-2 sm:order-none sm:basis-auto sm:w-64; }
++.topbar__search-input { @apply min-w-0 flex-1; }
++.topbar__actions { @apply ms-auto flex shrink-0 items-center gap-1; }
+diff --git a/src/app/ui/topbar/topbar.html b/src/app/ui/topbar/topbar.html
+new file mode 100644
+index 0000000..571dc8a
+--- /dev/null
++++ b/src/app/ui/topbar/topbar.html
+@@ -0,0 +1,59 @@
++<header class="topbar">
++  <button hlmSidebarTrigger></button>
++
++  <nav aria-label="Breadcrumb" class="topbar__crumbs">
++    <ol class="topbar__crumb-list">
++      @for (crumb of crumbs(); track $index; let last = $last) {
++        <li class="topbar__crumb" hlmSmall>
++          @if (crumb.link && !last) {
++            <a [routerLink]="crumb.link">{{ crumb.label }}</a>
++          } @else {
++            <span aria-current="page">{{ crumb.label }}</span>
++          }
++          @if (!last) {
++            <ng-icon hlmIcon name="lucideChevronRight" tone="muted" />
++          }
++        </li>
++      }
++    </ol>
++  </nav>
++
++  <form
++    class="topbar__search"
++    role="search"
++    (submit)="$event.preventDefault(); searched.emit(query.value)"
++  >
++    <ng-icon hlmIcon name="lucideSearch" tone="muted" />
++    <input
++      #query
++      hlmInput
++      type="search"
++      class="topbar__search-input"
++      placeholder="Search heroes"
++      aria-label="Search heroes"
++    />
++  </form>
++
++  <div class="topbar__actions">
++    <button hlmBtn variant="ghost" size="icon" aria-label="Notifications" hlmTooltip="Notifications">
++      <ng-icon hlmIcon name="lucideBell" />
++    </button>
++    <button
++      hlmBtn
++      variant="ghost"
++      size="icon"
++      [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
++      [hlmTooltip]="isDark() ? 'Light theme' : 'Dark theme'"
++      (click)="themeToggled.emit()"
++    >
++      @if (isDark()) {
++        <ng-icon hlmIcon name="lucideSun" />
++      } @else {
++        <ng-icon hlmIcon name="lucideMoon" />
++      }
++    </button>
++    <hlm-avatar role="img" aria-label="Commander account">
++      <span hlmAvatarFallback>CO</span>
++    </hlm-avatar>
++  </div>
++</header>
+diff --git a/src/app/ui/topbar/topbar.ts b/src/app/ui/topbar/topbar.ts
+new file mode 100644
+index 0000000..a80e100
+--- /dev/null
++++ b/src/app/ui/topbar/topbar.ts
+@@ -0,0 +1,41 @@
++import { Component, input, output } from '@angular/core';
++import { RouterLink } from '@angular/router';
++import { NgIcon, provideIcons } from '@ng-icons/core';
++import { lucideBell, lucideChevronRight, lucideMoon, lucideSearch, lucideSun } from '@ng-icons/lucide';
++import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
++import { HlmButtonImports } from '@spartan-ng/helm/button';
++import { HlmIconImports } from '@spartan-ng/helm/icon';
++import { HlmInputImports } from '@spartan-ng/helm/input';
++import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
++import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
++import { HlmTypographyImports } from '@spartan-ng/helm/typography';
++
++export interface Crumb {
++  label: string;
++  link?: string;
++}
++
++// Presentational: state comes in through inputs, actions go out through outputs.
++@Component({
++  selector: 'app-topbar',
++  imports: [
++    RouterLink,
++    NgIcon,
++    HlmAvatarImports,
++    HlmButtonImports,
++    HlmIconImports,
++    HlmInputImports,
++    HlmSidebarImports,
++    HlmTooltipImports,
++    HlmTypographyImports,
++  ],
++  providers: [provideIcons({ lucideBell, lucideChevronRight, lucideMoon, lucideSearch, lucideSun })],
++  templateUrl: './topbar.html',
++  styleUrl: './topbar.css',
++})
++export class Topbar {
++  public readonly crumbs = input.required<Crumb[]>();
++  public readonly isDark = input.required<boolean>();
++  public readonly themeToggled = output<void>();
++  public readonly searched = output<string>();
++}
+diff --git a/src/styles.css b/src/styles.css
+index a5e9467..a29e78b 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -6,6 +6,13 @@
+ @import '@spartan-ng/brain/hlm-tailwind-preset.css';
+ /* You can add global styles to this file, and also import other style files */
+ 
++/*
++ * Hero Ops Console palette: cool indigo-biased neutrals, an amber-gold action
++ * colour, and a permanently dark navigation rail. Each role is mapped onto the
++ * spartan token it plays (action -> --primary, subtle hover -> --accent, ...).
++ * Semantic colours (success, warning, destructive, info) carry meaning and are
++ * kept separate from the accent.
++ */
+ :root {
+   color-scheme: light;
+ 
+@@ -19,36 +26,38 @@
+   --chart-4: oklch(0.828 0.189 84.429);
+   --chart-5: oklch(0.769 0.188 70.08);
+   --radius: 0.625rem;
+-  --background: oklch(1 0 0);
+-  --foreground: oklch(0.145 0 0);
+-  --card: oklch(1 0 0);
+-  --card-foreground: oklch(0.145 0 0);
+-  --popover: oklch(1 0 0);
+-  --popover-foreground: oklch(0.145 0 0);
+-  --primary: oklch(0.205 0 0);
+-  --primary-foreground: oklch(0.985 0 0);
+-  --secondary: oklch(0.97 0 0);
+-  --secondary-foreground: oklch(0.205 0 0);
+-  --muted: oklch(0.97 0 0);
+-  --muted-foreground: oklch(0.556 0 0);
+-  --accent: oklch(0.97 0 0);
+-  --accent-foreground: oklch(0.205 0 0);
+-  --destructive: oklch(0.577 0.245 27.325);
+-  --border: oklch(0.922 0 0);
+-  --input: oklch(0.922 0 0);
+-  --ring: oklch(0.708 0 0);
+-  --sidebar: oklch(0.985 0 0);
+-  --sidebar-foreground: oklch(0.145 0 0);
+-  --sidebar-primary: oklch(0.205 0 0);
+-  --sidebar-primary-foreground: oklch(0.985 0 0);
+-  --sidebar-accent: oklch(0.97 0 0);
+-  --sidebar-accent-foreground: oklch(0.205 0 0);
+-  --sidebar-border: oklch(0.922 0 0);
+-  --sidebar-ring: oklch(0.708 0 0);
+-  --success: oklch(0.6 0.15 150);
+-  --success-foreground: oklch(0.98 0 0);
+-  --warning: oklch(0.75 0.15 75);
+-  --warning-foreground: oklch(0.2 0 0);
++  --background: #f6f7fa;
++  --foreground: #1b1e2b;
++  --card: #ffffff;
++  --card-foreground: #1b1e2b;
++  --popover: #ffffff;
++  --popover-foreground: #1b1e2b;
++  --primary: #d8891a;
++  --primary-foreground: #241a05;
++  --secondary: #eef0f6;
++  --secondary-foreground: #1b1e2b;
++  --muted: #eef0f6;
++  --muted-foreground: #5b6072;
++  --accent: #eef0f6;
++  --accent-foreground: #1b1e2b;
++  --destructive: #e5484d;
++  --border: #e4e7ef;
++  --input: #e4e7ef;
++  --ring: #d8891a59;
++  --sidebar: #1e2233;
++  --sidebar-foreground: #eceef6;
++  --sidebar-primary: #d8891a;
++  --sidebar-primary-foreground: #241a05;
++  --sidebar-accent: #2a2f45;
++  --sidebar-accent-foreground: #eceef6;
++  --sidebar-border: #2a2f45;
++  --sidebar-ring: #d8891a59;
++  --success: #2fb574;
++  --success-foreground: #0e1018;
++  --warning: #e4802b;
++  --warning-foreground: #0e1018;
++  --info: #4f7cf0;
++  --info-foreground: #0e1018;
+ }
+ 
+ :root.dark {
+@@ -59,36 +68,38 @@
+   --chart-3: oklch(0.769 0.188 70.08);
+   --chart-4: oklch(0.627 0.265 303.9);
+   --chart-5: oklch(0.645 0.246 16.439);
+-  --background: oklch(0.145 0 0);
+-  --foreground: oklch(0.985 0 0);
+-  --card: oklch(0.205 0 0);
+-  --card-foreground: oklch(0.985 0 0);
+-  --popover: oklch(0.205 0 0);
+-  --popover-foreground: oklch(0.985 0 0);
+-  --primary: oklch(0.922 0 0);
+-  --primary-foreground: oklch(0.205 0 0);
+-  --secondary: oklch(0.269 0 0);
+-  --secondary-foreground: oklch(0.985 0 0);
+-  --muted: oklch(0.269 0 0);
+-  --muted-foreground: oklch(0.708 0 0);
+-  --accent: oklch(0.269 0 0);
+-  --accent-foreground: oklch(0.985 0 0);
+-  --destructive: oklch(0.704 0.191 22.216);
+-  --border: oklch(1 0 0 / 10%);
+-  --input: oklch(1 0 0 / 15%);
+-  --ring: oklch(0.556 0 0);
+-  --sidebar: oklch(0.205 0 0);
+-  --sidebar-foreground: oklch(0.985 0 0);
+-  --sidebar-primary: oklch(0.985 0 0);
+-  --sidebar-primary-foreground: oklch(0.205 0 0);
+-  --sidebar-accent: oklch(0.269 0 0);
+-  --sidebar-accent-foreground: oklch(0.985 0 0);
+-  --sidebar-border: oklch(1 0 0 / 10%);
+-  --sidebar-ring: oklch(0.556 0 0);
+-  --success: oklch(0.7 0.15 150);
+-  --success-foreground: oklch(0.15 0 0);
+-  --warning: oklch(0.8 0.15 75);
+-  --warning-foreground: oklch(0.15 0 0);
++  --background: #0e1018;
++  --foreground: #eceef6;
++  --card: #171a26;
++  --card-foreground: #eceef6;
++  --popover: #171a26;
++  --popover-foreground: #eceef6;
++  --primary: #f5b843;
++  --primary-foreground: #241a05;
++  --secondary: #1e2231;
++  --secondary-foreground: #eceef6;
++  --muted: #1e2231;
++  --muted-foreground: #9aa0b4;
++  --accent: #1e2231;
++  --accent-foreground: #eceef6;
++  --destructive: #f2585d;
++  --border: #272b3b;
++  --input: #272b3b;
++  --ring: #f5b84366;
++  --sidebar: #10121c;
++  --sidebar-foreground: #eceef6;
++  --sidebar-primary: #f5b843;
++  --sidebar-primary-foreground: #241a05;
++  --sidebar-accent: #20263c;
++  --sidebar-accent-foreground: #eceef6;
++  --sidebar-border: #20263c;
++  --sidebar-ring: #f5b84366;
++  --success: #3ecb84;
++  --success-foreground: #0e1018;
++  --warning: #f0983f;
++  --warning-foreground: #0e1018;
++  --info: #6f97f6;
++  --info-foreground: #0e1018;
+ }
+ 
+ @theme inline {
+@@ -96,6 +107,8 @@
+   --color-success-foreground: var(--success-foreground);
+   --color-warning: var(--warning);
+   --color-warning-foreground: var(--warning-foreground);
++  --color-info: var(--info);
++  --color-info-foreground: var(--info-foreground);
+ }
+ 
+ @layer base {
+diff --git a/tsconfig.json b/tsconfig.json
+index 6a88235..d322ede 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,33 +12,76 @@
+     "target": "ES2022",
+     "module": "preserve",
+     "paths": {
+-      "@spartan-ng/helm/button": ["./libs/ui/button/src/index.ts"],
+-      "@spartan-ng/helm/utils": ["./libs/ui/utils/src/index.ts"],
+-      "@spartan-ng/helm/card": ["./libs/ui/card/src/index.ts"],
+-      "@spartan-ng/helm/input": ["./libs/ui/input/src/index.ts"],
+-      "@spartan-ng/helm/table": ["./libs/ui/table/src/index.ts"],
+-      "@spartan-ng/helm/select": ["./libs/ui/select/src/index.ts"],
+-      "@spartan-ng/helm/dialog": ["./libs/ui/dialog/src/index.ts"],
+-      "@spartan-ng/helm/tabs": ["./libs/ui/tabs/src/index.ts"],
+-      "@spartan-ng/helm/badge": ["./libs/ui/badge/src/index.ts"],
+-      "@spartan-ng/helm/avatar": ["./libs/ui/avatar/src/index.ts"],
+-      "@spartan-ng/helm/tooltip": ["./libs/ui/tooltip/src/index.ts"],
+-      "@spartan-ng/helm/switch": ["./libs/ui/switch/src/index.ts"],
+-      "@spartan-ng/helm/textarea": ["./libs/ui/textarea/src/index.ts"],
+-      "@spartan-ng/helm/field": ["./libs/ui/field/src/index.ts"],
+-      "@spartan-ng/helm/label": ["./libs/ui/label/src/index.ts"],
+-      "@spartan-ng/helm/separator": ["./libs/ui/separator/src/index.ts"],
+-      "@spartan-ng/helm/sidebar": ["./libs/ui/sidebar/src/index.ts"],
+-      "@spartan-ng/helm/sheet": ["./libs/ui/sheet/src/index.ts"],
+-      "@spartan-ng/helm/icon": ["./libs/ui/icon/src/index.ts"],
+-      "@spartan-ng/helm/skeleton": ["./libs/ui/skeleton/src/index.ts"],
+-      "@spartan-ng/helm/typography": ["./libs/ui/typography/src/index.ts"]
++      "@spartan-ng/helm/button": [
++        "./libs/ui/button/src/index.ts"
++      ],
++      "@spartan-ng/helm/utils": [
++        "./libs/ui/utils/src/index.ts"
++      ],
++      "@spartan-ng/helm/card": [
++        "./libs/ui/card/src/index.ts"
++      ],
++      "@spartan-ng/helm/input": [
++        "./libs/ui/input/src/index.ts"
++      ],
++      "@spartan-ng/helm/table": [
++        "./libs/ui/table/src/index.ts"
++      ],
++      "@spartan-ng/helm/select": [
++        "./libs/ui/select/src/index.ts"
++      ],
++      "@spartan-ng/helm/dialog": [
++        "./libs/ui/dialog/src/index.ts"
++      ],
++      "@spartan-ng/helm/tabs": [
++        "./libs/ui/tabs/src/index.ts"
++      ],
++      "@spartan-ng/helm/badge": [
++        "./libs/ui/badge/src/index.ts"
++      ],
++      "@spartan-ng/helm/avatar": [
++        "./libs/ui/avatar/src/index.ts"
++      ],
++      "@spartan-ng/helm/tooltip": [
++        "./libs/ui/tooltip/src/index.ts"
++      ],
++      "@spartan-ng/helm/switch": [
++        "./libs/ui/switch/src/index.ts"
++      ],
++      "@spartan-ng/helm/textarea": [
++        "./libs/ui/textarea/src/index.ts"
++      ],
++      "@spartan-ng/helm/field": [
++        "./libs/ui/field/src/index.ts"
++      ],
++      "@spartan-ng/helm/label": [
++        "./libs/ui/label/src/index.ts"
++      ],
++      "@spartan-ng/helm/separator": [
++        "./libs/ui/separator/src/index.ts"
++      ],
++      "@spartan-ng/helm/sidebar": [
++        "./libs/ui/sidebar/src/index.ts"
++      ],
++      "@spartan-ng/helm/sheet": [
++        "./libs/ui/sheet/src/index.ts"
++      ],
++      "@spartan-ng/helm/icon": [
++        "./libs/ui/icon/src/index.ts"
++      ],
++      "@spartan-ng/helm/skeleton": [
++        "./libs/ui/skeleton/src/index.ts"
++      ],
++      "@spartan-ng/helm/typography": [
++        "./libs/ui/typography/src/index.ts"
++      ]
+     }
+   },
+   "angularCompilerOptions": {
+     "enableI18nLegacyMessageIdFormat": false,
+     "strictInjectionParameters": true,
+-    "strictInputAccessModifiers": true
++    "strictInputAccessModifiers": true,
++    "strictTemplates": true
+   },
+   "files": [],
+   "references": [

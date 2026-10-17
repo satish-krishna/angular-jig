@@ -1,0 +1,11 @@
+@reference "../../../styles.css";
+
+/* The stretched link makes the whole card the hit target; the card is the containing block. */
+.hero-card { @apply relative; }
+.hero-card__header { @apply flex items-center gap-3; }
+.hero-card__portrait { @apply shrink-0; }
+.hero-card__identity { @apply grid min-w-0 gap-0.5; }
+.hero-card__link { @apply after:absolute after:inset-0 after:content-[''] break-words; }
+.hero-card__body { @apply grid gap-3; }
+.hero-card__badges { @apply flex flex-wrap gap-2; }
+.hero-card__record { @apply break-words; }

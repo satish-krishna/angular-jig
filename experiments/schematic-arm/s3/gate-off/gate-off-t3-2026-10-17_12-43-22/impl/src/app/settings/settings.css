@@ -1,0 +1,8 @@
+@reference "../../styles.css";
+
+/* min-w-0 on the grid children keeps long descriptions from pushing the page past the viewport. */
+.settings { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
+.settings__header { @apply grid gap-1; }
+.settings__card { @apply max-w-3xl; }
+.settings__body { @apply grid gap-4; }
+.settings__row { @apply flex min-w-0 flex-wrap items-center justify-between gap-4; }

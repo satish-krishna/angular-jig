@@ -1,0 +1,54 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar collapsible="icon">
+    <div hlmSidebarHeader>
+      <span hlmLarge>
+        <ng-icon hlmIcon name="lucideRadar" />
+        Hero Ops
+      </span>
+    </div>
+
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <div hlmSidebarGroupContent>
+          <ul hlmSidebarMenu>
+            @for (item of vm.navItems; track item.path) {
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  [routerLink]="item.path"
+                  routerLinkActive
+                  #active="routerLinkActive"
+                  [isActive]="active.isActive"
+                  [tooltip]="item.label"
+                >
+                  <ng-icon hlmIcon [name]="item.icon" />
+                  <span>{{ item.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div hlmSidebarFooter>
+      <hlm-avatar size="sm">
+        <span hlmAvatarFallback>CO</span>
+      </hlm-avatar>
+      <span hlmSmall>Commander</span>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset>
+    <app-topbar
+      [crumbs]="vm.crumbs()"
+      [isDark]="vm.isDark()"
+      (themeToggled)="vm.toggleTheme()"
+      (searched)="vm.search($event)"
+    />
+    <div class="app-shell__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

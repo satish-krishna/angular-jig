@@ -1,0 +1,14 @@
+<div class="power-meter">
+  <span hlmSmall>Power</span>
+  <meter
+    class="power-meter__bar"
+    min="0"
+    max="100"
+    low="40"
+    high="80"
+    optimum="100"
+    [value]="value()"
+    [attr.aria-label]="'Power index ' + value() + ' of 100'"
+  ></meter>
+  <span hlmSmall>{{ value() }}</span>
+</div>

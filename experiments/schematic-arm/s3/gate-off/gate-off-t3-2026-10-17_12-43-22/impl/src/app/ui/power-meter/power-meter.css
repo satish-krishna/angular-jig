@@ -1,0 +1,4 @@
+@reference "../../../styles.css";
+
+.power-meter { @apply flex items-center gap-2; }
+.power-meter__bar { @apply h-2 w-full min-w-0 flex-1; }

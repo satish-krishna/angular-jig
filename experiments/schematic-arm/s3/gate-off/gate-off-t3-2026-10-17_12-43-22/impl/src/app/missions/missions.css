@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+/* min-w-0 on the grid children keeps the table's scroll container from widening the page past the viewport. */
+.missions { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
+.missions__header { @apply grid gap-1; }
+.missions__scroll { @apply min-w-0; }
+.missions__identity { @apply grid min-w-0; }
+.missions__result { @apply flex flex-wrap gap-2; }
+.missions__empty { @apply text-center; }
+.missions__footer { @apply flex flex-wrap items-center justify-between gap-2; }
+.missions__caption { @apply sr-only; }

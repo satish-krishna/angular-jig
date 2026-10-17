@@ -1,0 +1,4 @@
+@reference "../styles.css";
+
+/* min-w-0 lets a wide screen shrink inside the column instead of pushing the page sideways. */
+.app-shell__content { @apply min-w-0 flex-1; }

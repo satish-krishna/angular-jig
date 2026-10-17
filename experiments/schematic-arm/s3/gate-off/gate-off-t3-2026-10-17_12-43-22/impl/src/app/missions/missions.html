@@ -1,0 +1,80 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH1>Missions</h1>
+    <p hlmMuted>Every deployment on the books. Settling one logs the result to the hero. Example data.</p>
+  </header>
+
+  <!-- 375px: the table scrolls inside its own container, so the page never does. -->
+  <div hlmTableContainer class="missions__scroll">
+    <table hlmTable>
+      <caption hlmTableCaption class="missions__caption">Missions, open first, then by threat tier</caption>
+      <thead hlmTableHeader>
+        <tr hlmTableRow>
+          <th hlmTableHead scope="col">Mission</th>
+          <th hlmTableHead scope="col">Hero</th>
+          <th hlmTableHead scope="col">Threat</th>
+          <th hlmTableHead scope="col">Status</th>
+          <th hlmTableHead scope="col">Location</th>
+          <th hlmTableHead scope="col">Result</th>
+        </tr>
+      </thead>
+      <tbody hlmTableBody>
+        @for (row of vm.rows(); track row.mission.id) {
+          <tr hlmTableRow>
+            <td hlmTableCell>
+              <div class="missions__identity">
+                <span hlmSmall>{{ row.mission.codename }}</span>
+                <span hlmMuted>{{ row.mission.id }}</span>
+              </div>
+            </td>
+            <td hlmTableCell>{{ row.heroName }}</td>
+            <td hlmTableCell>
+              <span hlmBadge variant="outline">Tier {{ row.mission.threatTier }}</span>
+            </td>
+            <td hlmTableCell>
+              <span hlmBadge [variant]="statusVariant[row.mission.status]">{{ row.mission.status }}</span>
+            </td>
+            <td hlmTableCell>{{ row.mission.location }}</td>
+            <td hlmTableCell>
+              @if (row.open) {
+                <div class="missions__result">
+                  <button
+                    hlmBtn
+                    variant="outline"
+                    size="sm"
+                    [attr.aria-label]="'Mark ' + row.mission.codename + ' complete'"
+                    (click)="vm.resolve(row.mission.id, 'Complete')"
+                  >
+                    <ng-icon hlmIcon name="lucideCircleCheck" />
+                    Complete
+                  </button>
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="sm"
+                    [attr.aria-label]="'Mark ' + row.mission.codename + ' failed'"
+                    (click)="vm.resolve(row.mission.id, 'Failed')"
+                  >
+                    <ng-icon hlmIcon name="lucideX" />
+                    Failed
+                  </button>
+                </div>
+              } @else {
+                <span hlmMuted>Settled</span>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTableRow>
+            <td hlmTableCell colspan="6" class="missions__empty">No missions on the books.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="missions__footer">
+    <p hlmSmall aria-live="polite">{{ vm.openCount() }} open of {{ vm.rows().length }} missions</p>
+    <p hlmMuted>Open missions first</p>
+  </footer>
+</section>

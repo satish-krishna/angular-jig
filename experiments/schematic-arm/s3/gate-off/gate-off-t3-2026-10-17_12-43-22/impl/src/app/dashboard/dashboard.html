@@ -1,0 +1,74 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__heading">
+      <h1 hlmH1>Operations dashboard</h1>
+      <p hlmMuted>Mission control for the agency. Example data.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit" class="dashboard__primary">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [hint]="stat.hint"
+        [icon]="stat.icon"
+      />
+    }
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH3 id="top-heroes-heading">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" size="sm" routerLink="/roster">
+        <ng-icon hlmIcon name="lucideUsers" />
+        View all roster
+      </a>
+    </div>
+    <div class="dashboard__heroes">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH3 id="roster-heading">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.heroCount() }} heroes</span>
+    </div>
+    <div hlmTableContainer class="dashboard__scroll">
+      <table hlmTable>
+        <caption hlmTableCaption class="dashboard__caption">Heroes, strongest first</caption>
+        <thead hlmTableHeader>
+          <tr hlmTableRow>
+            <th hlmTableHead scope="col">Hero</th>
+            <th hlmTableHead scope="col">Class</th>
+            <th hlmTableHead scope="col">Power</th>
+            <th hlmTableHead scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody hlmTableBody>
+          @for (row of vm.roster(); track row.hero.id) {
+            <tr hlmTableRow>
+              <td hlmTableCell>
+                <a [routerLink]="['/detail', row.hero.id]">{{ row.hero.name }}</a>
+              </td>
+              <td hlmTableCell>
+                <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
+              </td>
+              <td hlmTableCell>{{ row.hero.powerIndex }}</td>
+              <td hlmTableCell>
+                <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

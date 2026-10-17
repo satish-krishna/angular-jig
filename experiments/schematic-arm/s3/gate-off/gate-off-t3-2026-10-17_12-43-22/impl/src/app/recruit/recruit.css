@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+/* min-w-0 on the grid children keeps long text fields from pushing the page past the viewport. */
+.recruit { @apply grid grid-cols-1 min-w-0 gap-6 p-6; }
+.recruit__header { @apply grid gap-1; }
+.recruit__card { @apply max-w-3xl; }
+.recruit__form { @apply grid grid-cols-1 min-w-0 gap-4 md:grid-cols-2; }
+.recruit__field { @apply min-w-0; }
+.recruit__wide { @apply md:col-span-2; }
+.recruit__select { @apply w-full; }
+.recruit__actions { @apply flex flex-wrap justify-end gap-2 md:col-span-2; }
