@@ -8,6 +8,7 @@
 // with the gate; the only counter-side helpers used are the existing nesting
 // resolver and the Sass-concatenation test.
 import postcss from 'postcss';
+import selectorParser from 'postcss-selector-parser';
 import { resolvedSelectors, isConcat } from './stylesheet.mjs';
 
 const EXACT = new Set([
@@ -89,8 +90,23 @@ function classifyProperty(prop) {
 }
 
 const squash = (s) => s.replace(/\s+/g, ' ').trim();
-const blankLiterals = (s) => s.replace(/"[^"]*"|'[^']*'|\[[^\]]*\]/g, '');
-const namesClass = (selector) => /\.-?[_a-zA-Z\\]/.test(blankLiterals(selector));
+// A selector the base-layer exemption covers: every compound is `*` or a tag
+// without a hyphen (a hyphen makes it a custom element, which is a component),
+// joined by combinators, with pseudo-classes and pseudo-elements allowed. A
+// class, id, attribute, nesting or namespace anywhere makes it a component
+// selector. The arguments of :not(), :is() and the like are held to the same rule.
+function isElementOnly(selector) {
+  const ok = (node) =>
+    node.type === 'combinator' ||
+    node.type === 'universal' ||
+    (node.type === 'tag' && !node.namespace && !node.value.includes('-')) ||
+    (node.type === 'pseudo' && node.nodes.every((inner) => inner.nodes.every(ok)));
+  try {
+    return selectorParser().astSync(selector).nodes.every((sel) => sel.nodes.length > 0 && sel.nodes.every(ok));
+  } catch {
+    return false;
+  }
+}
 
 function ruleParent(node) {
   for (let p = node.parent; p; p = p.parent) if (p.type === 'rule') return p;
@@ -139,9 +155,9 @@ export function appCssViolations(css, { stem = null, global = false } = {}) {
     if (!rule) return false;
     // The theme rules: judged on the declaration's own rule, never an ancestor's.
     if (selectors.every((s) => squash(s) === ':root' || squash(s) === ':root.dark')) return true;
-    // Element rules in the base layer: the resolved selectors name no class.
+    // Element rules in the base layer: every resolved selector is element-only.
     const inBase = ats.some((a) => a.name === 'layer' && squash(a.params) === 'base');
-    return inBase && !selectors.some(namesClass);
+    return inBase && selectors.every(isElementOnly);
   };
 
   const report = (node, ctx, token, kind) => {

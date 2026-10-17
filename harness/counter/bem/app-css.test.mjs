@@ -142,8 +142,26 @@ describe('appCssViolations: global stylesheet', () => {
     expect(tokens(g('@layer base { body { .c { color: red; } } }'))).toEqual(['color']);
   });
 
-  it('a dot inside an attribute selector or string names no class', () => {
-    expect(g('@layer base { a[href$=".pdf"] { @apply underline; } }')).toEqual([]);
+  it.each([
+    '* { @apply border-border; }',
+    'body { @apply bg-background text-foreground; }',
+    'a:hover { text-decoration: underline; }',
+    'ul li::marker { color: red; }',
+    'html { color-scheme: light; }',
+    'ul > li:not(:last-child) { color: red; }',
+  ])('an element rule in @layer base is exempt: %s', (rule) => {
+    expect(g(`@layer base { ${rule} }`)).toEqual([]);
+  });
+
+  it.each([
+    ['app-stat-tile p { @apply text-2xl font-bold; }', 2],
+    ['[data-stat] { color: red; }', 1],
+    ['#hero-title { color: red; }', 1],
+    ['p.lead { color: red; }', 1],
+    ['a[href$=".pdf"] { color: red; }', 1],
+    ['p:not(.lead) { color: red; }', 1],
+  ])('a component or attribute selector in @layer base is judged: %s', (rule, count) => {
+    expect(g(`@layer base { ${rule} }`)).toHaveLength(count);
   });
 
   it('element rules outside @layer base are judged', () => {
