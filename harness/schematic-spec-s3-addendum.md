@@ -20,6 +20,17 @@ The kinds and the spec schema are unchanged: `entity`, `form`, `manage`, and the
 - **Appearance comes from primitives.** Headings and text use the typography directives, icons use `<ng-icon hlmIcon>` with a `tone` where the old output set a color, badges use the badge variants the spec names. Where the old output styled something no primitive covers, the emitted code drops it; the generator does not invent variants in `libs/ui`.
 - **Arrives green under series 3.** `verify-arrives-green.mjs` adds `check-app-css` and the `appearance-in-app-css` and `foreign-block` counters to what it runs. Every golden exemplar scores 0 on every counter family, and each emitted stylesheet and template passes the gate's hook entry point.
 
+## Decision B2: the manage kind grows to the list screen the house has written by hand
+
+Today's `manage` kind is search, a single on/off filter (`"Critical only"`), a table with badge columns, row edit and delete, and a create dialog. The list screens the house actually writes need more, and the evidence for what they need is already in hand: all twelve counted trees of series 2 and series 3 round 1 hand-wrote the roster under the same build spec, each with a search box, a select filter on an enum field, a table, and a summary footer. That meets the original spec's admission rule 1 (a shape hand-written at least twice, under gates, in the same shape) for these additions. Each addition is pure data in the spec, validated by the strict schema, with no field that accepts markup, code, a CSS value or a template string.
+
+- **Filters.** `manage.filters`, a list of at most three. Each names a field and a control: `select` on an enum field (an "All" option plus the field's options, labeled from the field), or `toggle` on a boolean field or one enum value (today's filter, kept). The existing single `manage.filter` is replaced by this list; the three fixtures move over.
+- **Sort.** `manage.sort`, a field and a direction, applied in the ViewModel. No clickable column headers.
+- **Summary footer.** `manage.summary: true` emits "N of M <plural label>", plus "sorted by <field label>" when `sort` is set. The wording is fixed by the schematic, not the spec.
+- **Narrow screens.** The table always sits in a scroll container whose own overflow scrolls, the build spec's answer (a). This is not configurable: the house picked it once, and the generator emits it every time.
+
+What stays out: per-column custom cells beyond the existing badge mapping, an avatar column, and stacked cards below 640px. The agent hand-writes any of those it wants, under gates, and that is measured like any other hand-written code.
+
 The golden exemplars (`hero`, `mission`, `threat`) are regenerated from their fixtures under the new emitters and committed. The golden test stays: any byte difference between generated and committed output fails `verify`.
 
 ## Decision C: the mod configuration
@@ -51,5 +62,5 @@ The original spec's model policy stands: the schematic, its tests, the goldens a
 
 ## Out of scope
 
-- New kinds. Roster and detail map onto `manage` and `form` as they did; whatever the stage prompts ask for beyond them (the roster's summary footer, the detail screen's tabs) the agent writes by hand, under gates, and that is part of what the arm measures.
+- New kinds. Roster and detail map onto `manage` (as extended in B2) and `form`; whatever the stage prompts ask for beyond them (the detail screen's back link, header, tabs and retire dialog, the roster's avatar column) the agent writes by hand, under gates, and that is part of what the arm measures.
 - The two gate defects from round 1 (empty `content`, the text-utility remedy message). The gates are frozen as they ran in round 1, so all three arms meet the same gates.
