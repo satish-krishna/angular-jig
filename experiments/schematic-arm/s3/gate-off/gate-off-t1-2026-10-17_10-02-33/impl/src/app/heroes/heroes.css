@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+.roster { @apply grid gap-6; }
+.roster__header { @apply grid gap-1; }
+.roster__filters { @apply flex flex-wrap items-end gap-3; }
+.roster__search { @apply flex w-full min-w-0 items-center gap-2 sm:w-72; }
+.roster__input { @apply min-w-0 grow; }
+.roster__class { @apply grid w-full gap-1.5 sm:w-56; }
+.roster__recruit { @apply ms-auto; }
+.roster__label { @apply sr-only; }
+.roster__summary { @apply flex flex-wrap items-center justify-between gap-2; }

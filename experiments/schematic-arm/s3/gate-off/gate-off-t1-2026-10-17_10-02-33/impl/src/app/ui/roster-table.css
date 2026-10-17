@@ -1,0 +1,9 @@
+@reference "../../styles.css";
+
+.roster-table { @apply w-full overflow-x-auto; }
+.roster-table__table { @apply min-w-[40rem]; }
+.roster-table__caption { @apply sr-only; }
+.roster-table__identity { @apply flex items-center gap-3; }
+.roster-table__names { @apply grid min-w-0 gap-0.5; }
+.roster-table__name { @apply min-w-0 justify-start; }
+.roster-table__actions { @apply flex items-center gap-1; }

@@ -1,0 +1,7 @@
+@reference "../../styles.css";
+
+.recruit { @apply grid gap-6; }
+.recruit__header { @apply grid gap-1; }
+.recruit__card { @apply max-w-2xl; }
+.recruit__form { @apply grid gap-4; }
+.recruit__actions { @apply flex flex-wrap items-center justify-end gap-2; }

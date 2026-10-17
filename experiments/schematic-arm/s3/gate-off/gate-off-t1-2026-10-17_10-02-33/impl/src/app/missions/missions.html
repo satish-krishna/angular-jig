@@ -1,0 +1,38 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH1>Missions</h1>
+    <p hlmMuted>Example data. Deployments run against the threats on the Threats screen.</p>
+  </header>
+
+  @if (vm.filterName(); as name) {
+    <div class="missions__filter" role="status">
+      <p hlmSmall>Showing deployments for {{ name }}.</p>
+      <a hlmBtn variant="outline" size="sm" routerLink="/missions">Show all missions</a>
+    </div>
+  }
+
+  <p hlmSmall aria-live="polite">{{ vm.summary() }}</p>
+
+  @if (vm.entries().length) {
+    <ul class="missions__list">
+      @for (entry of vm.entries(); track entry.id) {
+        <li hlmCard class="missions__item">
+          <div class="missions__main">
+            <span hlmSmall class="missions__id">{{ entry.id }}</span>
+            <h2 hlmCardTitle class="missions__target">{{ entry.target }}</h2>
+            @if (entry.heroName) {
+              <a hlmBtn variant="link" size="sm" class="missions__hero" [routerLink]="['/detail', entry.heroId]">
+                {{ entry.heroName }}
+              </a>
+            } @else {
+              <span hlmMuted>{{ entry.heroId }}, no longer on the roster</span>
+            }
+          </div>
+          <span hlmBadge [variant]="entry.statusVariant">{{ entry.status }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p hlmMuted>No deployments match this view.</p>
+  }
+</section>

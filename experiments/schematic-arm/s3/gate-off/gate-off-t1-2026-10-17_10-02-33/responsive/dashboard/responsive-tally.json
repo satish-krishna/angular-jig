@@ -1,0 +1,544 @@
+{
+  "totals": {
+    "viewport-escape": 1,
+    "element-escape": 79,
+    "element-clip": 6,
+    "all": 86
+  },
+  "byBreakpoint": {
+    "375": {
+      "viewport-escape": 1,
+      "element-escape": 79,
+      "element-clip": 0
+    },
+    "768": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "1280": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 6
+    }
+  },
+  "violations": [
+    {
+      "kind": "viewport-escape",
+      "breakpoint": 375,
+      "selector": "html",
+      "detail": "document scrollWidth 656px exceeds viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > header.dashboard__header > div.dashboard__intro > h1.scroll-m-20.text-4xl",
+      "detail": "right edge 521px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > header.dashboard__header > div.dashboard__intro > p.text-sm.text-muted-foreground",
+      "detail": "right edge 521px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > section.dashboard__section > app-roster-table > div.relative.w-full",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > section.dashboard__section > div.dashboard__heroes > app-hero-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > section.dashboard__section > div.dashboard__heroes > app-hero-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > section.dashboard__section > header.dashboard__section-header > a.focus-visible:border-ring.focus-visible:ring-ring/50",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-dashboard > div.dashboard > section.dashboard__section > header.dashboard__section-header > span.h-5.gap-1",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names > h3.text-base.leading-normal",
+      "detail": "right edge 488px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names > h3.text-base.leading-normal",
+      "detail": "right edge 479px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names > p.text-sm.text-muted-foreground",
+      "detail": "right edge 488px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names > p.text-sm.text-muted-foreground",
+      "detail": "right edge 479px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > hlm-avatar.size-8.rounded-full > span.bg-muted.text-muted-foreground",
+      "detail": "right edge 392px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > hlm-avatar.size-8.rounded-full > span.bg-muted.text-muted-foreground",
+      "detail": "right edge 392px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > div.power-meter__header",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > div.power-meter__header",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > meter.power-meter__bar",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > meter.power-meter__bar",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names > h3.text-base.leading-normal > a",
+      "detail": "right edge 452px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names > h3.text-base.leading-normal > a",
+      "detail": "right edge 479px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > div.dashboard__stats > app-stat-tile",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > header.dashboard__header > a.focus-visible:border-ring.focus-visible:ring-ring/50",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > header.dashboard__header > div.dashboard__intro",
+      "detail": "right edge 521px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > section.dashboard__section > app-roster-table",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > section.dashboard__section > div.dashboard__heroes",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > section.dashboard__section > header.dashboard__section-header",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-dashboard > div.dashboard > section.dashboard__section > header.dashboard__section-header",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard > section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > app-power-meter",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > p.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body > p.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > footer.rounded-b-xl.px-(--card-spacing) > span.h-5.gap-1",
+      "detail": "right edge 423px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > footer.rounded-b-xl.px-(--card-spacing) > span.h-5.gap-1",
+      "detail": "right edge 483px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > footer.rounded-b-xl.px-(--card-spacing) > span.h-5.gap-1",
+      "detail": "right edge 417px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > footer.rounded-b-xl.px-(--card-spacing) > span.h-5.gap-1",
+      "detail": "right edge 477px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names",
+      "detail": "right edge 488px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > div.hero-card__names",
+      "detail": "right edge 479px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > hlm-avatar.size-8.rounded-full",
+      "detail": "right edge 392px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl > hlm-avatar.size-8.rounded-full",
+      "detail": "right edge 392px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-lg.font-semibold",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-lg.font-semibold",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-lg.font-semibold",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-lg.font-semibold",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.dashboard__stats > app-stat-tile > article.ring-foreground/10.bg-card > div.px-(--card-spacing).stat-tile__body > p.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > div.power-meter__header > span.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > div.power-meter__header > span.text-sm.font-medium",
+      "detail": "right edge 632px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > div.power-meter__header > span.text-sm.text-muted-foreground",
+      "detail": "right edge 406px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.px-(--card-spacing).hero-card__body > app-power-meter > div.power-meter > div.power-meter__header > span.text-sm.text-muted-foreground",
+      "detail": "right edge 406px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-dashboard > div.dashboard > div.dashboard__stats",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-dashboard > div.dashboard > header.dashboard__header",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-dashboard > div.dashboard > section.dashboard__section",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-dashboard > div.dashboard > section.dashboard__section",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > div.px-(--card-spacing).hero-card__body",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > footer.rounded-b-xl.px-(--card-spacing)",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > footer.rounded-b-xl.px-(--card-spacing)",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.dashboard__section > div.dashboard__heroes > app-hero-card > article.ring-foreground/10.bg-card > header.gap-1.rounded-t-xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    }
+  ],
+  "bootErrors": []
+}

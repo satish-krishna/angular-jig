@@ -1,0 +1,154 @@
+{
+  "totals": {
+    "template-utility-class": 0,
+    "foreign-block": 19,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "appearance-in-app-css": 4,
+    "all": 23
+  },
+  "violations": [
+    {
+      "kind": "appearance-in-app-css",
+      "file": "src/app/app.css",
+      "line": 9,
+      "detail": ".app__topbar: p-4"
+    },
+    {
+      "kind": "appearance-in-app-css",
+      "file": "src/app/app.css",
+      "line": 21,
+      "detail": ".app__content: p-4"
+    },
+    {
+      "kind": "appearance-in-app-css",
+      "file": "src/app/app.css",
+      "line": 21,
+      "detail": ".app__content: sm:p-6"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 3,
+      "detail": ".roster in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 4,
+      "detail": ".roster__header in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 5,
+      "detail": ".roster__filters in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 6,
+      "detail": ".roster__search in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 7,
+      "detail": ".roster__input in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 8,
+      "detail": ".roster__class in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 9,
+      "detail": ".roster__recruit in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 10,
+      "detail": ".roster__label in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.css",
+      "line": 11,
+      "detail": ".roster__summary in heroes.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 1,
+      "detail": "roster in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 2,
+      "detail": "roster__header in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 7,
+      "detail": "roster__filters in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 8,
+      "detail": "roster__search in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 9,
+      "detail": "roster__label in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 11,
+      "detail": "roster__input in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 23,
+      "detail": "roster__class in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 24,
+      "detail": "roster__label in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 37,
+      "detail": "roster__recruit in heroes"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/heroes/heroes.html",
+      "line": 45,
+      "detail": "roster__summary in heroes"
+    },
+    {
+      "kind": "appearance-in-app-css",
+      "file": "src/app/missions/missions.css",
+      "line": 7,
+      "detail": ".missions__item: p-4"
+    }
+  ]
+}

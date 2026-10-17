@@ -1,0 +1,55 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Preferences for this console. The theme is remembered in this browser.</p>
+  </header>
+
+  <section hlmCard>
+    <header hlmCardHeader>
+      <h2 hlmCardTitle>Appearance</h2>
+    </header>
+    <div hlmCardContent class="settings__row">
+      <label hlmLabel for="settings-theme">Theme</label>
+      <hlm-select class="settings__control" [value]="vm.themeChoice()" (valueChange)="vm.setTheme($event)">
+        <hlm-select-trigger buttonId="settings-theme">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.themeOptions; track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+      <p hlmSmall>Match system follows your operating system's light or dark setting.</p>
+    </div>
+  </section>
+
+  <section hlmCard>
+    <header hlmCardHeader>
+      <h2 hlmCardTitle>Example data</h2>
+    </header>
+    <div hlmCardContent class="settings__row">
+      <p hlmSmall>
+        The roster and deployments are example data held in memory. Restoring them undoes every recruit, edit and
+        retirement made in this session.
+      </p>
+      <hlm-dialog #restoreDialog>
+        <button hlmBtn variant="outline" hlmDialogTrigger class="settings__restore">Restore example data</button>
+        <hlm-dialog-content *hlmDialogPortal>
+          <hlm-dialog-header>
+            <h2 hlmDialogTitle>Restore example data?</h2>
+            <p hlmDialogDescription>
+              This puts back the original roster and deployments. Recruits, edits and retirements are lost.
+            </p>
+          </hlm-dialog-header>
+          <hlm-dialog-footer>
+            <button hlmBtn variant="outline" type="button" hlmDialogClose>Cancel</button>
+            <button hlmBtn variant="destructive" type="button" (click)="restoreDialog.close(); vm.restoreExampleData()">
+              Restore
+            </button>
+          </hlm-dialog-footer>
+        </hlm-dialog-content>
+      </hlm-dialog>
+    </div>
+  </section>
+</section>

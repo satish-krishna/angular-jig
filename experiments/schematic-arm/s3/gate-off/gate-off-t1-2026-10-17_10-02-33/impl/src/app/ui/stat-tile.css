@@ -1,0 +1,5 @@
+@reference "../../styles.css";
+
+.stat-tile { @apply h-full; }
+.stat-tile__header { @apply flex items-center justify-between gap-2; }
+.stat-tile__body { @apply grid gap-1; }

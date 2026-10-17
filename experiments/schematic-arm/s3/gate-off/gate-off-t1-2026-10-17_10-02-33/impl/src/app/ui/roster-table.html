@@ -1,0 +1,60 @@
+<div hlmTableContainer class="roster-table" role="region" aria-label="Roster table" tabindex="0">
+  <table hlmTable class="roster-table__table">
+    <caption hlmCaption class="roster-table__caption">Heroes, strongest first</caption>
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th hlmTh scope="col">Hero</th>
+        <th hlmTh scope="col">Class</th>
+        <th hlmTh scope="col">Power</th>
+        <th hlmTh scope="col">Status</th>
+        <th hlmTh scope="col">Clearance</th>
+        <th hlmTh scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+      @for (row of rows(); track row.hero.id) {
+        <tr hlmTr>
+          <td hlmTd>
+            <div class="roster-table__identity">
+              <hlm-avatar size="sm">
+                <span hlmAvatarFallback>{{ row.initials }}</span>
+              </hlm-avatar>
+              <div class="roster-table__names">
+                <a hlmBtn variant="link" size="sm" class="roster-table__name" [routerLink]="['/detail', row.hero.id]">
+                  {{ row.hero.name }}
+                </a>
+                <span hlmMuted>{{ row.hero.id }}</span>
+              </div>
+            </div>
+          </td>
+          <td hlmTd>
+            <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
+          </td>
+          <td hlmTd>{{ row.hero.powerIndex }}</td>
+          <td hlmTd>
+            <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
+          </td>
+          <td hlmTd>{{ row.hero.clearance }}</td>
+          <td hlmTd>
+            <div class="roster-table__actions">
+              <a
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                hlmTooltip="Edit hero"
+                [routerLink]="['/detail', row.hero.id]"
+                [attr.aria-label]="'Edit ' + row.hero.name"
+              >
+                <ng-icon hlmIcon name="lucidePencil" />
+              </a>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr hlmTr>
+          <td hlmTd colspan="6">No heroes match these filters.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

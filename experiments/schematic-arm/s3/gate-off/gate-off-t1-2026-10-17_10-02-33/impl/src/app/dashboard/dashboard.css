@@ -1,0 +1,12 @@
+@reference "../../styles.css";
+
+.dashboard { @apply grid gap-6; }
+.dashboard__header { @apply flex flex-wrap items-end justify-between gap-3; }
+.dashboard__intro { @apply grid gap-1; }
+.dashboard__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
+.dashboard__section { @apply grid gap-4; }
+.dashboard__section-header { @apply flex flex-wrap items-center justify-between gap-3; }
+.dashboard__heroes {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--spacing) * 58)), 1fr));
+}

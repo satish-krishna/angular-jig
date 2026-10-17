@@ -1,0 +1,154 @@
+{
+  "totals": {
+    "viewport-escape": 1,
+    "element-escape": 14,
+    "element-clip": 6,
+    "all": 21
+  },
+  "byBreakpoint": {
+    "375": {
+      "viewport-escape": 1,
+      "element-escape": 14,
+      "element-clip": 0
+    },
+    "768": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 0
+    },
+    "1280": {
+      "viewport-escape": 0,
+      "element-escape": 0,
+      "element-clip": 6
+    }
+  },
+  "violations": [
+    {
+      "kind": "viewport-escape",
+      "breakpoint": 375,
+      "selector": "html",
+      "detail": "document scrollWidth 656px exceeds viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "app-heroes > section.roster > div.roster__filters > div.roster__class > hlm-select.block",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > app-roster-table > div.relative.w-full",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > div.roster__filters > a.focus-visible:border-ring.focus-visible:ring-ring/50",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > div.roster__filters > div.roster__class",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > div.roster__filters > div.roster__search",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > div.roster__summary > p.text-sm.text-muted-foreground",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > header.roster__header > h1.scroll-m-20.text-4xl",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "div.app__content > app-heroes > section.roster > header.roster__header > p.text-sm.text-muted-foreground",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "input#roster-search",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-heroes > section.roster > app-roster-table",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-heroes > section.roster > div.roster__filters",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-heroes > section.roster > div.roster__summary",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "main.bg-background.md:peer-data-[variant=inset]:m-2 > div.app__content > app-heroes > section.roster > header.roster__header",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-escape",
+      "breakpoint": 375,
+      "selector": "section.roster > div.roster__filters > div.roster__class > hlm-select.block > hlm-select-trigger",
+      "detail": "right edge 656px vs viewport 375px"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    },
+    {
+      "kind": "element-clip",
+      "breakpoint": 1280,
+      "selector": "div.p-2.relative > nav > ul.gap-1.flex > li.group/menu-item.relative > a.ring-sidebar-ring.hover:bg-sidebar-accent",
+      "detail": "content 239x34 clipped to 239x32"
+    }
+  ],
+  "bootErrors": []
+}

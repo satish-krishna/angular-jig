@@ -1,0 +1,73 @@
+<div class="hero-fields">
+  <div hlmField class="hero-fields__field hero-fields__field--wide">
+    <label hlmFieldLabel for="hero-name">{{ meta.name.label }}</label>
+    <input hlmInput id="hero-name" class="hero-fields__control" [formField]="form().name" />
+    @for (error of form().name().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </div>
+
+  <div hlmField class="hero-fields__field hero-fields__field--wide">
+    <label hlmFieldLabel for="hero-alias">{{ meta.alias.label }}</label>
+    <input hlmInput id="hero-alias" class="hero-fields__control" [formField]="form().alias" />
+    @for (error of form().alias().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </div>
+
+  <div hlmField class="hero-fields__field">
+    <label hlmFieldLabel for="hero-power-class">{{ meta.powerClass.label }}</label>
+    <hlm-select
+      class="hero-fields__control"
+      [value]="form().powerClass().value()"
+      (valueChange)="setPowerClass($event)"
+    >
+      <hlm-select-trigger buttonId="hero-power-class">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of meta.powerClass.options ?? []; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    @for (error of form().powerClass().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </div>
+
+  <div hlmField class="hero-fields__field">
+    <label hlmFieldLabel for="hero-power-index">{{ meta.powerIndex.label }}</label>
+    <input
+      hlmInput
+      id="hero-power-index"
+      type="number"
+      class="hero-fields__control"
+      [formField]="form().powerIndex"
+    />
+    @for (error of form().powerIndex().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </div>
+
+  <div hlmField class="hero-fields__field">
+    <label hlmFieldLabel for="hero-clearance">{{ meta.clearance.label }}</label>
+    <hlm-select
+      class="hero-fields__control"
+      [value]="form().clearance().value()"
+      (valueChange)="setClearance($event)"
+    >
+      <hlm-select-trigger buttonId="hero-clearance">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of meta.clearance.options ?? []; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    @for (error of form().clearance().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </div>
+</div>

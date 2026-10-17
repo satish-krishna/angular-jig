@@ -1,0 +1,8 @@
+@reference "../../styles.css";
+
+.hero-card { @apply h-full; }
+.hero-card__identity { @apply flex items-center gap-3; }
+.hero-card__names { @apply grid min-w-0 gap-0.5; }
+.hero-card__name { @apply min-w-0 break-words; }
+.hero-card__body { @apply grid gap-3; }
+.hero-card__badges { @apply flex flex-wrap items-center gap-2; }

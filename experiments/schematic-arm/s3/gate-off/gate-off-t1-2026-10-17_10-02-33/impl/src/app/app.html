@@ -1,0 +1,99 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader class="app__brand">
+      <ng-icon hlmIcon name="lucideRadar" />
+      <span hlmLarge>Hero Ops Console</span>
+    </div>
+
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <nav aria-label="Primary">
+          <ul hlmSidebarMenu>
+            @for (item of vm.nav(); track item.path) {
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  [routerLink]="item.path"
+                  [isActive]="item.active"
+                  [attr.aria-current]="item.active ? 'page' : null"
+                >
+                  <ng-icon hlmIcon [name]="item.icon" />
+                  <span>{{ item.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div hlmSidebarFooter class="app__account">
+      <hlm-avatar size="sm">
+        <span hlmAvatarFallback>OP</span>
+      </hlm-avatar>
+      <span hlmSmall>Operator</span>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <header class="app__topbar">
+      <div class="app__start">
+        <button hlmSidebarTrigger></button>
+        <nav aria-label="Breadcrumb">
+          <ol class="app__crumbs">
+            @for (crumb of vm.crumbs(); track $index; let last = $last) {
+              <li class="app__crumb" [attr.aria-current]="last ? 'page' : null">
+                <span hlmSmall>{{ crumb }}</span>
+                @if (!last) {
+                  <ng-icon hlmIcon name="lucideChevronRight" />
+                }
+              </li>
+            }
+          </ol>
+        </nav>
+      </div>
+
+      <form class="app__search" role="search" (submit)="$event.preventDefault(); vm.search(query.value)">
+        <input
+          #query
+          hlmInput
+          type="search"
+          aria-label="Search heroes"
+          placeholder="Search heroes"
+        />
+      </form>
+
+      <div class="app__actions">
+        <a
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          routerLink="/threats"
+          hlmTooltip="Threat alerts"
+          aria-label="Open threat alerts"
+        >
+          <ng-icon hlmIcon name="lucideBell" />
+        </a>
+        <button
+          hlmBtn
+          type="button"
+          variant="ghost"
+          size="icon"
+          [hlmTooltip]="vm.themeLabel()"
+          [attr.aria-label]="vm.themeLabel()"
+          (click)="vm.toggleTheme()"
+        >
+          <ng-icon hlmIcon [name]="vm.dark() ? 'lucideSun' : 'lucideMoon'" />
+        </button>
+        <hlm-avatar size="sm">
+          <span hlmAvatarFallback>OP</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

@@ -1,0 +1,22 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <h1 hlmH1>Recruit</h1>
+    <p hlmMuted>Enrol a new hero. Recruits start in reserve with no mission record, and appear on the roster at once.</p>
+  </header>
+
+  <section hlmCard class="recruit__card">
+    <header hlmCardHeader>
+      <h2 hlmCardTitle>New recruit</h2>
+    </header>
+    <div hlmCardContent>
+      <form class="recruit__form" (submit)="$event.preventDefault(); vm.enroll()">
+        <app-hero-fields [form]="vm.heroForm" />
+
+        <div class="recruit__actions">
+          <a hlmBtn variant="outline" routerLink="/roster">Cancel</a>
+          <button hlmBtn type="submit">Enrol hero</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,49 @@
+<section class="roster">
+  <header class="roster__header">
+    <h1 hlmH1>Roster</h1>
+    <p hlmMuted>Example data. Every hero on this roster is invented for the demo.</p>
+  </header>
+
+  <div class="roster__filters">
+    <div class="roster__search">
+      <label hlmLabel for="roster-search" class="roster__label">Search heroes</label>
+      <ng-icon hlmIcon name="lucideSearch" tone="muted" />
+      <input
+        hlmInput
+        id="roster-search"
+        type="search"
+        class="roster__input"
+        placeholder="Search name, alias or ID"
+        #search
+        [value]="vm.query()"
+        (input)="vm.setQuery(search.value)"
+      />
+    </div>
+
+    <div class="roster__class">
+      <label hlmLabel for="roster-class" class="roster__label">Power class</label>
+      <hlm-select [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
+        <hlm-select-trigger buttonId="roster-class">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.classOptions; track option) {
+            <hlm-select-item [value]="option">{{ option }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <a hlmBtn routerLink="/recruit" class="roster__recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </div>
+
+  <app-roster-table [rows]="vm.rows()" />
+
+  <div class="roster__summary">
+    <p hlmSmall aria-live="polite">{{ vm.summary() }}</p>
+    <p hlmMuted>Sorted by power</p>
+  </div>
+</section>

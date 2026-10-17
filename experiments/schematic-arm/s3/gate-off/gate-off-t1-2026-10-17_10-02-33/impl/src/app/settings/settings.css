@@ -1,0 +1,6 @@
+@reference "../../styles.css";
+
+.settings { @apply grid gap-6; }
+.settings__header { @apply grid gap-1; }
+.settings__row { @apply grid items-start gap-3; }
+.settings__control { @apply w-full sm:w-56; }

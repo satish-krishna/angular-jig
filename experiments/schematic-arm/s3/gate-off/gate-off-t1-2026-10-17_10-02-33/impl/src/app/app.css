@@ -1,0 +1,21 @@
+@reference "../styles.css";
+
+.app__brand { @apply flex items-center gap-2; }
+
+.app__account { @apply flex items-center gap-2; }
+
+.app__main { @apply min-w-0; }
+
+.app__topbar { @apply flex flex-wrap items-center gap-3 p-4; }
+
+.app__start { @apply flex min-w-0 flex-1 items-center gap-2; }
+
+.app__crumbs { @apply flex min-w-0 flex-wrap items-center gap-1; }
+
+.app__crumb { @apply flex min-w-0 items-center gap-1; }
+
+.app__search { @apply w-full sm:w-64; }
+
+.app__actions { @apply ms-auto flex items-center gap-1; }
+
+.app__content { @apply flex min-w-0 flex-1 flex-col p-4 sm:p-6; }

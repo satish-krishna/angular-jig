@@ -1,0 +1,8 @@
+@reference "../../styles.css";
+
+.threats { @apply grid gap-6; }
+.threats__header { @apply grid gap-1; }
+.threats__grid { @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3; }
+.threats__item { @apply h-full; }
+.threats__identity { @apply grid gap-1; }
+.threats__body { @apply flex flex-wrap items-center gap-2; }

@@ -1,0 +1,36 @@
+{
+  "counters": {
+    "seal": {
+      "missions": {
+        "all": 1,
+        "appearance-on-primitive": 1
+      }
+    },
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {
+      "shell": {
+        "all": 3,
+        "appearance-in-app-css": 3
+      },
+      "heroes": {
+        "all": 19,
+        "foreign-block": 19
+      },
+      "missions": {
+        "all": 1,
+        "appearance-in-app-css": 1
+      }
+    }
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 8,
+      "messages": 8,
+      "byHook": {
+        "protect-enforcement": 8
+      }
+    }
+  }
+}

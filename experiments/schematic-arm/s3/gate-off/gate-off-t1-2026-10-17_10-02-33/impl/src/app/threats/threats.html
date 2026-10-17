@@ -1,0 +1,27 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>Example data. Highest tier first. Live deployments come from the Missions screen.</p>
+  </header>
+
+  <p hlmSmall aria-live="polite">{{ vm.activeCount() }} active threats</p>
+
+  <ul class="threats__grid">
+    @for (threat of vm.threats(); track threat.id) {
+      <li hlmCard class="threats__item">
+        <header hlmCardHeader class="threats__identity">
+          <ng-icon hlmIcon name="lucideShieldAlert" tone="muted" />
+          <h2 hlmCardTitle>{{ threat.name }}</h2>
+          <p hlmMuted>{{ threat.region }}</p>
+        </header>
+        <div hlmCardContent class="threats__body">
+          <span hlmBadge variant="outline">Tier {{ threat.tier }}</span>
+          <span hlmBadge [variant]="threat.statusVariant">{{ threat.status }}</span>
+          <p hlmSmall>
+            {{ threat.liveMissions }} live {{ threat.liveMissions === 1 ? 'deployment' : 'deployments' }}
+          </p>
+        </div>
+      </li>
+    }
+  </ul>
+</section>
