@@ -1,0 +1,86 @@
+{
+  "model": "claude-haiku-5-5",
+  "condition": "schematic",
+  "trial": 2,
+  "stages": [
+    {
+      "stage": 0,
+      "name": "spec",
+      "costUsd": 0.01535324,
+      "numTurns": 7,
+      "durationMs": 50557,
+      "wallMs": 61884,
+      "ok": true,
+      "sessionId": "f25932ff-9ae6-44b7-861c-ebb2d4fe2cac"
+    },
+    {
+      "stage": 1,
+      "name": "shell",
+      "costUsd": 0.22037414000000002,
+      "numTurns": 46,
+      "durationMs": 275291,
+      "wallMs": 279357,
+      "ok": true,
+      "sessionId": "b421a844-0e1f-4d28-9d21-ecf724e31d6a"
+    },
+    {
+      "stage": 2,
+      "name": "domain",
+      "costUsd": 0.011084070000000001,
+      "numTurns": 8,
+      "durationMs": 40242,
+      "wallMs": 43030,
+      "ok": true,
+      "sessionId": "32e928c8-2933-43be-9622-3cf0f08a7f67"
+    },
+    {
+      "stage": 3,
+      "name": "dashboard",
+      "costUsd": 0.23177045000000002,
+      "numTurns": 22,
+      "durationMs": 163376,
+      "wallMs": 166130,
+      "ok": true,
+      "sessionId": "d4b27ee0-4fe4-4b6e-ad4a-9bd974b483a6"
+    },
+    {
+      "stage": 4,
+      "name": "roster",
+      "costUsd": 0.026606069999999996,
+      "numTurns": 14,
+      "durationMs": 106142,
+      "wallMs": 109454,
+      "ok": true,
+      "sessionId": "b5be6df3-6f85-45cf-af02-ea4fc7c21cd7"
+    },
+    {
+      "stage": 5,
+      "name": "detail",
+      "costUsd": 0.14271251,
+      "numTurns": 28,
+      "durationMs": 193669,
+      "wallMs": 196451,
+      "ok": true,
+      "sessionId": "d77cb6e3-1b51-4652-9145-60e586a9a14e"
+    },
+    {
+      "stage": 6,
+      "name": "integrate",
+      "costUsd": 0.18326518000000003,
+      "numTurns": 52,
+      "durationMs": 381838,
+      "wallMs": 384604,
+      "ok": true,
+      "sessionId": "01a92755-fb81-4bba-b9c3-e15de8fe5372"
+    }
+  ],
+  "totals": {
+    "stages": 7,
+    "costUsd": 0.831166,
+    "numTurns": 177,
+    "durationMs": 1211115,
+    "wallMs": 1240910,
+    "stagesOk": 7
+  },
+  "reviewMinutes": 2.51
+}

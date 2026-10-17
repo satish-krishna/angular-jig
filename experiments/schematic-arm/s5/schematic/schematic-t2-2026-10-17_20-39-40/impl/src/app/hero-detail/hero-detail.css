@@ -1,0 +1,20 @@
+@reference "../../styles.css";
+
+.hero-detail { @apply grid gap-6 p-6; }
+.hero-detail__back { @apply justify-self-start; }
+.hero-detail__header { @apply flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between; }
+.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
+.hero-detail__names { @apply grid min-w-0 gap-1; }
+.hero-detail__badges { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__tabs { @apply grid min-w-0 gap-4; }
+.hero-detail__tabs-list { @apply max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply min-w-0; }
+.hero-detail__overview { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+.hero-detail__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-1; }
+.hero-detail__facts { @apply grid gap-4 sm:grid-cols-2; }
+.hero-detail__fact { @apply grid gap-1; }
+.hero-detail__fact--wide { @apply sm:col-span-2; }
+.hero-detail__two-up { @apply grid grid-cols-1 gap-4 md:grid-cols-2; }
+.hero-detail__table { @apply overflow-x-auto; }
+.hero-detail__missing { @apply justify-self-start; }

@@ -1,0 +1,42 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Preferences for this console.</p>
+  </header>
+
+  <section hlmCard aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
+      <p hlmCardDescription>Choose the light or dark theme. The choice is remembered on this device.</p>
+    </div>
+    <div hlmCardContent class="settings__row">
+      <span hlmSmall>Current theme: {{ vm.theme() === 'dark' ? 'Dark' : 'Light' }}</span>
+      <button hlmBtn type="button" variant="outline" (click)="vm.toggleTheme()">
+        <ng-icon hlmIcon [name]="vm.theme() === 'dark' ? 'lucideSun' : 'lucideMoon'" />
+        <span>{{ vm.toggleLabel() }}</span>
+      </button>
+    </div>
+  </section>
+
+  <section hlmCard aria-labelledby="operator-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="operator-heading">Operator</h2>
+      <p hlmCardDescription>The account signed in to this console.</p>
+    </div>
+    <div hlmCardContent class="settings__row">
+      <hlm-avatar>
+        <span hlmAvatarFallback>OC</span>
+      </hlm-avatar>
+      <span hlmSmall>Ops Commander</span>
+    </div>
+  </section>
+
+  <section hlmCard aria-labelledby="data-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-heading">Data</h2>
+    </div>
+    <div hlmCardContent>
+      <p hlmSmall>The roster is example data held in memory. Records you add or change last until the page is reloaded.</p>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,70 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH1>Missions</h1>
+    <p hlmMuted>Deployment board: who is cleared for duty and their record on file. Example data.</p>
+  </header>
+
+  <div class="missions__stats">
+    @for (stat of vm.stats(); track stat.key) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [hint]="stat.hint"
+        [icon]="stat.icon"
+      />
+    }
+  </div>
+
+  <section class="missions__section" aria-labelledby="board-heading">
+    <h2 hlmH2 id="board-heading">Deployment board</h2>
+    <div class="missions__table">
+      <table hlmTable>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh>Hero</th>
+            <th hlmTh>Status</th>
+            <th hlmTh>Clearance</th>
+            <th hlmTh>Missions</th>
+            <th hlmTh>Success</th>
+            <th hlmTh>Deployable</th>
+            <th hlmTh><span class="missions__sr-only">Dossier</span></th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.rows(); track row.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <div class="missions__identity">
+                  <span>{{ row.name }}</span>
+                  <span hlmMuted>{{ row.alias }}</span>
+                </div>
+              </td>
+              <td hlmTd>
+                <span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span>
+              </td>
+              <td hlmTd>{{ row.clearance }}</td>
+              <td hlmTd>{{ row.missions }}</td>
+              <td hlmTd>{{ row.successRate }}%</td>
+              <td hlmTd>
+                <span hlmBadge [variant]="row.deployable ? 'success' : 'outline'">
+                  {{ row.deployable ? 'Ready' : 'Grounded' }}
+                </span>
+              </td>
+              <td hlmTd>
+                <a
+                  hlmBtn
+                  variant="ghost"
+                  size="sm"
+                  [routerLink]="['/detail', row.id]"
+                  [attr.aria-label]="'Open dossier for ' + row.name"
+                >
+                  <ng-icon hlmIcon name="lucideChevronRight" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

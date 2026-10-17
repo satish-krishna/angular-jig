@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-10-17T20:46:15.796Z",
+  "endedAt": "2026-10-17T20:48:46.252Z",
+  "minutes": 2.51,
+  "unchanged": false,
+  "proposedParsed": true,
+  "fieldsChanged": 2,
+  "detail": [
+    {
+      "change": "field-changed",
+      "name": "missions"
+    },
+    {
+      "change": "field-changed",
+      "name": "successRate"
+    }
+  ],
+  "approvedSha256": "e4bdc911f7374a700f79f8a52399c18e7901bb40ce6761a6b6e2ce957d8e92a1"
+}

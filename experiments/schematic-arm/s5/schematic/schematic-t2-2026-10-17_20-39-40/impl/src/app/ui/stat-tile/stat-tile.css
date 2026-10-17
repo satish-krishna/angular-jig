@@ -1,0 +1,4 @@
+@reference "../../../styles.css";
+
+.stat-tile { @apply h-full; }
+.stat-tile__body { @apply grid gap-1; }

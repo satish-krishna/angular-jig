@@ -1,0 +1,39 @@
+{
+  "totalLines": 2615,
+  "linesByScreen": {
+    "shell": 386,
+    "dashboard": 125,
+    "forms": 33,
+    "hero-detail": 352,
+    "hero": 374,
+    "heroes": 527,
+    "missions": 174,
+    "recruit": 62,
+    "settings": 83,
+    "threats": 143,
+    "ui": 356
+  },
+  "generatedFiles": [
+    "src/app/hero/hero.model.ts",
+    "src/app/hero/hero.schema.ts",
+    "src/app/hero/hero.service.ts",
+    "src/app/hero/hero-example-data.ts",
+    "src/app/hero/hero.service.spec.ts",
+    "src/app/ui/hero-form/hero-form.ts",
+    "src/app/ui/hero-form/hero-form.html",
+    "src/app/ui/hero-form/hero-form.css",
+    "src/app/heroes/heroes.view-model.ts",
+    "src/app/heroes/heroes.view-model.spec.ts",
+    "src/app/heroes/heroes.ts",
+    "src/app/heroes/heroes.html",
+    "src/app/heroes/heroes.css"
+  ],
+  "generatedFileLines": 1057,
+  "generatedShare": 0.4042,
+  "generatedScreens": [
+    "hero",
+    "ui",
+    "heroes"
+  ],
+  "note": "Generated lines are the final line counts of the files the schematic reported creating or updating (CREATE and UPDATE lines; the routes edit excluded). A file the agent edited after generation still counts in full, so this is an upper bound on generated code."
+}

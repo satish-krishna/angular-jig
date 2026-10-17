@@ -1,0 +1,130 @@
+{
+  "entity": "Hero",
+  "plural": "heroes",
+  "labels": {
+    "singular": "Hero",
+    "plural": "Heroes"
+  },
+  "kinds": ["entity", "form", "manage"],
+  "fields": [
+    {
+      "name": "name",
+      "label": "Hero name",
+      "required": true,
+      "type": "string",
+      "placeholder": "e.g. Silverwing"
+    },
+    {
+      "name": "alias",
+      "label": "Civilian alias",
+      "required": false,
+      "type": "string",
+      "placeholder": "Secret identity, or Unknown"
+    },
+    {
+      "name": "powerClass",
+      "label": "Power class",
+      "required": true,
+      "type": "enum",
+      "options": ["Aerial", "Energy", "Psionic", "Tech", "Mutant", "Cosmic", "Enhanced"],
+      "default": "Aerial"
+    },
+    {
+      "name": "power",
+      "label": "Power index",
+      "required": true,
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "help": "Scale of 0 to 100."
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "required": true,
+      "type": "enum",
+      "options": ["Active", "Injured", "Reserve", "MIA"],
+      "default": "Active",
+      "inForm": false
+    },
+    {
+      "name": "clearance",
+      "label": "Clearance tier",
+      "required": true,
+      "type": "enum",
+      "options": ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"],
+      "default": "Tier 2",
+      "inForm": false
+    },
+    {
+      "name": "notes",
+      "label": "Dossier notes",
+      "required": false,
+      "type": "text",
+      "help": "Capabilities and deployment guidance."
+    },
+    {
+      "name": "active",
+      "label": "On active roster",
+      "required": true,
+      "type": "boolean",
+      "default": true,
+      "help": "Off keeps the hero on file but out of deployments."
+    },
+    {
+      "name": "missions",
+      "label": "Missions",
+      "required": true,
+      "type": "number",
+      "min": 0,
+      "inForm": false,
+      "default": 0
+    },
+    {
+      "name": "successRate",
+      "label": "Success rate (%)",
+      "required": true,
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "inForm": false,
+      "default": 75
+    }
+  ],
+  "examples": [
+    { "name": "Silverwing", "alias": "Ada Voss", "powerClass": "Aerial", "power": 88, "status": "Active", "clearance": "Tier 4", "notes": "Precision flyer. Excels at extraction and high-altitude recon.", "active": true, "missions": 64, "successRate": 92 },
+    { "name": "Dr. Ion", "alias": "Marcus Reyes", "powerClass": "Energy", "power": 94, "status": "Active", "clearance": "Tier 5", "notes": "Directed-energy specialist. Needs a cooldown window between deployments.", "active": true, "missions": 118, "successRate": 88 },
+    { "name": "Vantablack", "alias": "Unknown", "powerClass": "Psionic", "power": 81, "status": "Reserve", "clearance": "Tier 3", "notes": "Stealth and misdirection. Prefers solo infiltration.", "active": true, "missions": 29, "successRate": 79 },
+    { "name": "Aurora Vale", "alias": "Lena Park", "powerClass": "Cosmic", "power": 97, "status": "Active", "clearance": "Tier 5", "notes": "Cosmic-tier heavy hitter. Reserved for tier-4 and tier-5 threats.", "active": true, "missions": 151, "successRate": 90 },
+    { "name": "Magnetar", "alias": "Idris Kane", "powerClass": "Enhanced", "power": 76, "status": "Injured", "clearance": "Tier 3", "notes": "Magnetic-field control. On medical hold after Harbor Breach.", "active": true, "missions": 57, "successRate": 84 },
+    { "name": "The Tinkerer", "alias": "Sam Okafor", "powerClass": "Tech", "power": 69, "status": "Active", "clearance": "Tier 2", "notes": "Gadget and drone support. Rarely deployed alone.", "active": true, "missions": 22, "successRate": 95 },
+    { "name": "Halcyon", "alias": "Priya Nair", "powerClass": "Psionic", "power": 85, "status": "Active", "clearance": "Tier 4", "notes": "Crowd-calming empath. De-escalation specialist.", "active": true, "missions": 73, "successRate": 87 },
+    { "name": "Rift", "alias": "Classified", "powerClass": "Cosmic", "power": 91, "status": "Reserve", "clearance": "Tier 4", "notes": "Short-range teleport. Flagged for supervised deployment.", "active": true, "missions": 44, "successRate": 82 },
+    { "name": "Ember Cho", "alias": "Jae Cho", "powerClass": "Energy", "power": 78, "status": "Active", "clearance": "Tier 3", "notes": "Thermal projection. Watch collateral on urban ops.", "active": true, "missions": 48, "successRate": 86 },
+    { "name": "Null", "alias": "Unknown", "powerClass": "Mutant", "power": 83, "status": "MIA", "clearance": "Tier 4", "notes": "Power-nullification field. Status unresolved.", "active": false, "missions": 66, "successRate": 80 },
+    { "name": "Grond", "alias": "Boris Volkov", "powerClass": "Enhanced", "power": 72, "status": "Active", "clearance": "Tier 2", "notes": "Raw strength and durability. The wall the team stands behind.", "active": true, "missions": 31, "successRate": 90 },
+    { "name": "Ms. Meridian", "alias": "Grace Bello", "powerClass": "Tech", "power": 80, "status": "Active", "clearance": "Tier 3", "notes": "Tactical AI handler. Coordinates multi-hero ops from the field.", "active": true, "missions": 59, "successRate": 89 }
+  ],
+  "manage": {
+    "icon": "lucideUsers",
+    "createLabel": "Recruit",
+    "createRoute": "/recruit",
+    "columns": [
+      { "field": "name" },
+      { "field": "powerClass", "badge": { "variants": {}, "fallback": "secondary" } },
+      { "field": "power" },
+      {
+        "field": "status",
+        "badge": {
+          "variants": { "Active": "default", "Injured": "outline", "Reserve": "secondary", "MIA": "destructive" },
+          "fallback": "secondary"
+        }
+      },
+      { "field": "clearance" }
+    ],
+    "search": ["name", "alias"],
+    "filters": [{ "field": "powerClass", "control": "select" }],
+    "sort": { "field": "power", "direction": "desc" },
+    "summary": true
+  }
+}

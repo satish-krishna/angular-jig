@@ -1,0 +1,23 @@
+@reference "../styles.css";
+
+.app__brand { @apply flex items-center gap-2; }
+
+.app__operator { @apply flex min-w-0 items-center gap-2; }
+
+.app__main { @apply min-w-0; }
+
+.app__topbar { @apply flex flex-wrap items-center gap-2 m-3 sm:m-4; }
+
+.app__crumbs { @apply me-auto min-w-0; }
+
+.app__crumb-list { @apply flex min-w-0 flex-wrap items-center gap-1; }
+
+.app__crumb { @apply flex items-center gap-1; }
+
+.app__search { @apply order-last flex w-full min-w-0 items-center gap-2 sm:order-none sm:w-64; }
+
+.app__search-input { @apply w-full min-w-0; }
+
+.app__actions { @apply flex items-center gap-1; }
+
+.app__content { @apply grid min-w-0 gap-6 m-4 sm:m-6; }

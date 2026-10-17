@@ -1,0 +1,13 @@
+@reference "../../../styles.css";
+
+.hero-form {
+  @apply grid gap-6;
+}
+
+.hero-form__switch {
+  @apply flex items-center gap-2;
+}
+
+.hero-form__select {
+  @apply w-full;
+}

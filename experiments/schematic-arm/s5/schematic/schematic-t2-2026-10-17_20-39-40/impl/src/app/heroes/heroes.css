@@ -1,0 +1,61 @@
+@reference "../../styles.css";
+
+.heroes {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.heroes__header {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.heroes__title {
+  @apply flex items-center gap-2;
+}
+
+.heroes__dialog {
+  @apply sm:max-w-2xl;
+}
+
+.heroes__dialog--narrow {
+  @apply sm:max-w-sm;
+}
+
+.heroes__filters {
+  @apply flex flex-wrap items-end gap-3;
+}
+
+.heroes__label {
+  @apply sr-only;
+}
+
+.heroes__search {
+  @apply flex w-full items-center gap-2 sm:w-64;
+}
+
+.heroes__search-input {
+  @apply min-w-0 flex-1;
+}
+
+.heroes__name {
+  @apply flex items-center gap-3;
+}
+
+.heroes__identity {
+  @apply flex min-w-0 flex-col;
+}
+
+.heroes__filter {
+  @apply w-full sm:w-48;
+}
+
+.heroes__table {
+  @apply min-w-0 overflow-x-auto;
+}
+
+.heroes__actions {
+  @apply flex gap-2;
+}
+
+.heroes__footer {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}

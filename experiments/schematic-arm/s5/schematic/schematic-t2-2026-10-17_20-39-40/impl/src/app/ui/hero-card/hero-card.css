@@ -1,0 +1,6 @@
+@reference "../../../styles.css";
+
+.hero-card { @apply h-full; }
+.hero-card__body { @apply grid gap-3; }
+.hero-card__badges { @apply flex flex-wrap items-center gap-2; }
+.hero-card__footer { @apply flex flex-wrap items-center justify-between gap-2; }

@@ -1,0 +1,50 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>Clearance tiers and who is cleared to engage at each. Example data.</p>
+  </header>
+
+  <div class="threats__stats">
+    @for (stat of vm.stats(); track stat.key) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [hint]="stat.hint"
+        [icon]="stat.icon"
+        [tone]="stat.tone"
+      />
+    }
+  </div>
+
+  <section class="threats__section" aria-labelledby="tiers-heading">
+    <h2 hlmH2 id="tiers-heading">Clearance tiers</h2>
+    <div class="threats__tiers">
+      @for (tier of vm.tiers(); track tier.clearance) {
+        <section hlmCard class="threats__tier">
+          <div hlmCardHeader>
+            <h3 hlmCardTitle>{{ tier.clearance }}</h3>
+            <p hlmCardDescription>{{ tier.ready }} of {{ tier.heroes.length }} ready to engage</p>
+          </div>
+          <div hlmCardContent class="threats__names">
+            @for (hero of tier.heroes; track hero.id) {
+              <span hlmBadge variant="outline">{{ hero.name }}</span>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </section>
+
+  <section class="threats__section" aria-labelledby="attention-heading">
+    <h2 hlmH2 id="attention-heading">Needs attention</h2>
+    @if (vm.attention().length) {
+      <div class="threats__heroes">
+        @for (hero of vm.attention(); track hero.id) {
+          <app-hero-card [hero]="hero" />
+        }
+      </div>
+    } @else {
+      <p hlmMuted>Every hero is fit for duty.</p>
+    }
+  </section>
+</section>

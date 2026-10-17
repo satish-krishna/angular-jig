@@ -1,0 +1,20 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <h1 hlmH1>Recruit</h1>
+    <p hlmMuted>Enrol a new hero on the roster. Saving opens their dossier.</p>
+  </header>
+
+  <section hlmCard class="recruit__card" aria-labelledby="recruit-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="recruit-heading">New dossier</h2>
+      <p hlmCardDescription>Name, power class and power index are required. Status and clearance start at their defaults.</p>
+    </div>
+    <div hlmCardContent>
+      <app-hero-form
+        submitLabel="Recruit"
+        (saveHero)="vm.recruit($event)"
+        (cancel)="vm.cancel()"
+      />
+    </div>
+  </section>
+</section>
