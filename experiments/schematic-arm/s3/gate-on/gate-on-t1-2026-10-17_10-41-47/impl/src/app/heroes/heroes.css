@@ -1,0 +1,12 @@
+@reference "../../styles.css";
+
+/* min-w-0 on each grid region lets it shrink below its content, so the wide table scrolls inside its own container, not the page. */
+.heroes { @apply grid min-w-0 content-start gap-6 p-6; }
+.heroes__header { @apply grid gap-1; }
+.heroes__filters { @apply flex flex-wrap items-end gap-3; }
+.heroes__search { @apply w-full sm:w-72; }
+.heroes__class { @apply w-full sm:w-48; }
+.heroes__recruit { @apply ms-auto; }
+.heroes__panel { @apply min-w-0; }
+.heroes__footer { @apply flex-wrap justify-between gap-2; }
+.heroes__sr-only { @apply sr-only; }

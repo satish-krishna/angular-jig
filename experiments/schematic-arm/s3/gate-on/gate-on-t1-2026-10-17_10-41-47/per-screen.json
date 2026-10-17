@@ -1,0 +1,32 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {}
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 6,
+      "messages": 6,
+      "byHook": {
+        "protect-enforcement": 6
+      }
+    },
+    "ui": {
+      "firings": 2,
+      "messages": 2,
+      "byHook": {
+        "check-app-css": 2
+      }
+    },
+    "heroes": {
+      "firings": 1,
+      "messages": 1,
+      "byHook": {
+        "check-app-css": 1
+      }
+    }
+  }
+}

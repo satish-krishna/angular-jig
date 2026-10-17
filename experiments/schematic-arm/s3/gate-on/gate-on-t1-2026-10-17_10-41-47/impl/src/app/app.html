@@ -1,0 +1,57 @@
+<hlm-sidebar-wrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader>
+      <span hlmLarge>Hero Ops</span>
+      <span hlmSmall>Mission control</span>
+    </div>
+
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <div hlmSidebarGroupContent>
+          <nav aria-label="Primary">
+            <ul hlmSidebarMenu>
+              @for (item of vm.navItems; track item.path) {
+                <li hlmSidebarMenuItem>
+                  <a
+                    hlmSidebarMenuButton
+                    [routerLink]="item.path"
+                    routerLinkActive
+                    #activeLink="routerLinkActive"
+                    [isActive]="activeLink.isActive"
+                  >
+                    <ng-icon hlmIcon [name]="item.icon" />
+                    <span>{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div hlmSidebarFooter class="app__account">
+      <hlm-avatar>
+        <span hlmAvatarFallback>OP</span>
+      </hlm-avatar>
+      <div class="app__account-text">
+        <span hlmSmall>Ops Commander</span>
+        <span hlmSmall>Clearance Tier 4</span>
+      </div>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <app-topbar
+      [crumbs]="vm.crumbs()"
+      [isDark]="vm.isDark()"
+      (themeToggle)="vm.toggleTheme()"
+      (searched)="vm.search($event)"
+    />
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</hlm-sidebar-wrapper>

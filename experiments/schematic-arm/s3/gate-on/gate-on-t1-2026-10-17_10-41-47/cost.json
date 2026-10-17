@@ -1,0 +1,76 @@
+{
+  "model": "claude-haiku-5-5",
+  "condition": "gate-on",
+  "trial": 1,
+  "stages": [
+    {
+      "stage": 1,
+      "name": "shell",
+      "costUsd": 0.35700315,
+      "numTurns": 46,
+      "durationMs": 343394,
+      "wallMs": 346234,
+      "ok": true,
+      "sessionId": "7a1b9328-ea11-4a39-86b8-388fd8d32554"
+    },
+    {
+      "stage": 2,
+      "name": "domain",
+      "costUsd": 0.027431270000000004,
+      "numTurns": 18,
+      "durationMs": 103519,
+      "wallMs": 106573,
+      "ok": true,
+      "sessionId": "2f21d702-217f-47e1-a8b7-c36f2d7fa2dc"
+    },
+    {
+      "stage": 3,
+      "name": "dashboard",
+      "costUsd": 0.08700256,
+      "numTurns": 36,
+      "durationMs": 153199,
+      "wallMs": 156031,
+      "ok": true,
+      "sessionId": "0c5f64ea-4cad-45fa-ad01-28f946c29938"
+    },
+    {
+      "stage": 4,
+      "name": "roster",
+      "costUsd": 0.11153787999999999,
+      "numTurns": 26,
+      "durationMs": 195504,
+      "wallMs": 199510,
+      "ok": true,
+      "sessionId": "1bfdedfc-4278-4eeb-8526-c26a62be1f4a"
+    },
+    {
+      "stage": 5,
+      "name": "detail",
+      "costUsd": 0.22493212999999998,
+      "numTurns": 33,
+      "durationMs": 229061,
+      "wallMs": 231947,
+      "ok": true,
+      "sessionId": "5596cf13-0a37-4e5e-967a-c9dbd56f66a7"
+    },
+    {
+      "stage": 6,
+      "name": "integrate",
+      "costUsd": 0.5421215600000001,
+      "numTurns": 111,
+      "durationMs": 688714,
+      "wallMs": 691623,
+      "ok": true,
+      "sessionId": "6b6f64d5-fec8-4682-87df-23f997f906e5"
+    }
+  ],
+  "totals": {
+    "stages": 6,
+    "costUsd": 1.350029,
+    "numTurns": 270,
+    "durationMs": 1713391,
+    "wallMs": 1731918,
+    "stagesOk": 6
+  },
+  "reviewMinutes": null
+}

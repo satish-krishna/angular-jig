@@ -1,0 +1,31 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Console preferences for this browser.</p>
+  </header>
+
+  <section hlmCard aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
+      <p hlmCardDescription>Until you choose, the console follows your system theme. Your choice is remembered on this browser.</p>
+    </div>
+    <div hlmCardContent class="settings__row">
+      <span hlmSmall id="dark-theme-label">Dark theme</span>
+      <hlm-switch
+        aria-labelledby="dark-theme-label"
+        [checked]="vm.isDark()"
+        (checkedChange)="vm.setDark($event)"
+      />
+    </div>
+  </section>
+
+  <section hlmCard aria-labelledby="console-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="console-heading">About this console</h2>
+      <p hlmCardDescription>A kitchen-sink demonstration of the Hero Ops Console.</p>
+    </div>
+    <div hlmCardContent class="settings__about">
+      <p hlmSmall>The roster, missions and threat register are example data, held in memory. Changes last until the page reloads.</p>
+    </div>
+  </section>
+</section>

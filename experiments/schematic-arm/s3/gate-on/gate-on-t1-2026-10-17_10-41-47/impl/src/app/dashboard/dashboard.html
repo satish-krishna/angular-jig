@@ -1,0 +1,51 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__title">
+      <h1 hlmH1>Operations Dashboard</h1>
+      <p hlmMuted>Roster status across the agency. Example data.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    <app-stat-tile label="Heroes" [value]="vm.heroCount()" hint="On the roster">
+      <ng-icon hlmIcon name="lucideUserCheck" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Missions on record" [value]="vm.missionsOnRecord()" hint="Across the roster">
+      <ng-icon hlmIcon name="lucideActivity" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Average power" [value]="vm.averagePower()" hint="Power index, 0 to 100">
+      <ng-icon hlmIcon name="lucideZap" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Off duty" [value]="vm.offDuty()" hint="Injured, reserve or MIA">
+      <ng-icon hlmIcon name="lucideTriangleAlert" tone="warning" />
+    </app-stat-tile>
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="top-heroes-heading">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" routerLink="/roster">View all roster</a>
+    </div>
+    <div class="dashboard__heroes">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" (opened)="vm.openHero($event)" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="roster-heading">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.heroCount() }} heroes</span>
+    </div>
+    <div hlmCard class="dashboard__roster">
+      <div hlmCardContent>
+        <app-roster-table [rows]="vm.roster()" (edit)="vm.openHero($event)" />
+      </div>
+    </div>
+  </section>
+</section>

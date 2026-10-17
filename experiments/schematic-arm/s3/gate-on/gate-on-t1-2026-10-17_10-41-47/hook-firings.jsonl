@@ -1,0 +1,9 @@
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-17T10:45:11.985Z"}
+{"hook":"protect-enforcement","file":"harness/","count":1,"messages":["Bash blocked on: harness/"],"ts":"2026-10-17T10:47:02.659Z"}
+{"hook":"protect-enforcement","file":"components.json","count":1,"messages":["Bash blocked on: components.json"],"ts":"2026-10-17T10:49:28.981Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-17T10:49:40.082Z"}
+{"hook":"check-app-css","file":"src/app/ui/power-meter/power-meter.css","count":1,"messages":["src/app/ui/power-meter/power-meter.css:5  .power-meter__value  \"tabular-nums\" is appearance: use a typography directive (hlmH1-hlmH4, hlmP, hlmLead, hlmLarge, hlmSmall, hlmMuted, hlmCode) or, for an icon, <ng-icon hlmIcon tone=\"...\">."],"ts":"2026-10-17T10:51:02.104Z"}
+{"hook":"check-app-css","file":"src/app/ui/stat-tile/stat-tile.css","count":1,"messages":["src/app/ui/stat-tile/stat-tile.css:6  .stat-tile__value  \"tabular-nums\" is appearance: use a typography directive (hlmH1-hlmH4, hlmP, hlmLead, hlmLarge, hlmSmall, hlmMuted, hlmCode) or, for an icon, <ng-icon hlmIcon tone=\"...\">."],"ts":"2026-10-17T10:51:07.397Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-17T10:53:52.799Z"}
+{"hook":"check-app-css","file":"src/app/heroes/heroes.css","count":1,"messages":["src/app/heroes/heroes.css:4  .roster  \"p-6\" is padding off the block root: padding belongs on the block root .heroes (the region's inset) or in a primitive's variant in libs/ui."],"ts":"2026-10-17T10:54:36.033Z"}
+{"hook":"protect-enforcement","file":"tsconfig.json","count":1,"messages":["Bash blocked on: tsconfig.json"],"ts":"2026-10-17T10:55:32.752Z"}

@@ -1,0 +1,9 @@
+@reference "../../../styles.css";
+
+/* The block root carries the region's inset; the controls are primitives and take only layout. */
+.app-topbar { @apply flex flex-wrap items-center gap-3 p-3 sm:p-4; }
+.app-topbar__crumbs { @apply min-w-0 flex-1; }
+.app-topbar__trail { @apply flex min-w-0 flex-wrap items-center gap-1.5; }
+.app-topbar__crumb { @apply flex min-w-0 items-center gap-1.5; }
+.app-topbar__search { @apply order-last w-full basis-full sm:order-none sm:w-56 sm:basis-auto; }
+.app-topbar__actions { @apply ms-auto flex shrink-0 items-center gap-1; }

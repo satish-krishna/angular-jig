@@ -1,0 +1,44 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH1>Missions</h1>
+    <p hlmMuted>Deployments on record and the outcome of each. Example data.</p>
+  </header>
+
+  <div class="missions__stats">
+    <app-stat-tile label="Missions on record" [value]="vm.total()" hint="All deployments">
+      <ng-icon hlmIcon name="lucideUsers" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="In progress" [value]="vm.inProgress()" hint="Live deployments">
+      <ng-icon hlmIcon name="lucideActivity" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Needs attention" [value]="vm.needsAttention()" hint="Partial or failed">
+      <ng-icon hlmIcon name="lucideTriangleAlert" tone="warning" />
+    </app-stat-tile>
+  </div>
+
+  <div class="missions__grid">
+    @for (mission of vm.missions(); track mission.id) {
+      <article hlmCard class="missions__card">
+        <header hlmCardHeader class="missions__card-head">
+          <div class="missions__title">
+            <h2 hlmCardTitle>{{ mission.name }}</h2>
+            <p hlmCardDescription>{{ mission.threatName }} &middot; {{ mission.date }}</p>
+          </div>
+          <span hlmBadge [variant]="mission.variant">{{ mission.outcome }}</span>
+        </header>
+        <div hlmCardContent class="missions__crew">
+          <span hlmMuted>Crew</span>
+          <div class="missions__chips">
+            @for (name of mission.heroNames; track $index) {
+              <span hlmBadge variant="outline">{{ name }}</span>
+            } @empty {
+              <span hlmSmall>No heroes assigned.</span>
+            }
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <p hlmMuted>No missions on record.</p>
+    }
+  </div>
+</section>

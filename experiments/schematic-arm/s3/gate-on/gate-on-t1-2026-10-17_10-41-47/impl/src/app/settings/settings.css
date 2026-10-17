@@ -1,0 +1,6 @@
+@reference "../../styles.css";
+
+.settings { @apply grid min-w-0 content-start gap-6 p-6; }
+.settings__header { @apply grid gap-1; }
+.settings__row { @apply flex items-center justify-between gap-4; }
+.settings__about { @apply grid gap-2; }

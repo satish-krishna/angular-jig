@@ -1,0 +1,21 @@
+<article hlmCard class="hero-card">
+  <header hlmCardHeader class="hero-card__header">
+    <hlm-avatar>
+      <span hlmAvatarFallback>{{ initials() }}</span>
+    </hlm-avatar>
+    <div class="hero-card__identity">
+      <h3 hlmCardTitle>{{ hero().name }}</h3>
+      <p hlmCardDescription>{{ hero().alias }}</p>
+    </div>
+  </header>
+  <div hlmCardContent class="hero-card__body">
+    <div class="hero-card__badges">
+      <span hlmBadge variant="outline">{{ hero().powerClass }}</span>
+      <span hlmBadge [variant]="statusVariant()">{{ hero().status }}</span>
+    </div>
+    <app-power-meter [value]="hero().powerIndex" />
+  </div>
+  <footer hlmCardFooter class="hero-card__footer">
+    <button hlmBtn variant="outline" size="sm" (click)="opened.emit(hero())">Open dossier</button>
+  </footer>
+</article>

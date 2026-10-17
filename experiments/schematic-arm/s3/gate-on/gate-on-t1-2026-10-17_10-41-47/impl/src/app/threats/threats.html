@@ -1,0 +1,38 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>The threat register, highest clearance first. Example data.</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile label="On the register" [value]="vm.total()" hint="Tracked threats">
+      <ng-icon hlmIcon name="lucideShieldAlert" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Open" [value]="vm.open()" hint="Still need a response">
+      <ng-icon hlmIcon name="lucideTriangleAlert" tone="warning" />
+    </app-stat-tile>
+  </div>
+
+  <div class="threats__grid">
+    @for (threat of vm.threats(); track threat.id) {
+      <article hlmCard class="threats__card">
+        <header hlmCardHeader class="threats__card-head">
+          <div class="threats__title">
+            <h2 hlmCardTitle>{{ threat.name }}</h2>
+            <p hlmCardDescription class="threats__location">
+              <ng-icon hlmIcon name="lucideMapPin" tone="muted" />
+              {{ threat.location }}
+            </p>
+          </div>
+          <span hlmBadge [variant]="vm.statusVariant[threat.status]">{{ threat.status }}</span>
+        </header>
+        <div hlmCardContent class="threats__body">
+          <span hlmBadge variant="outline" class="threats__tier">{{ threat.tier }}</span>
+          <p hlmSmall>{{ threat.summary }}</p>
+        </div>
+      </article>
+    } @empty {
+      <p hlmMuted>The register is empty.</p>
+    }
+  </div>
+</section>

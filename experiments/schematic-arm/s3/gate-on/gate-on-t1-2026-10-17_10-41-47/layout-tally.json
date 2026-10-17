@@ -1,0 +1,10 @@
+{
+  "totals": {
+    "raw-palette-color": 0,
+    "space-utility": 0,
+    "raw-css-literal": 0,
+    "nested-flex-grid": 0,
+    "all": 0
+  },
+  "violations": []
+}

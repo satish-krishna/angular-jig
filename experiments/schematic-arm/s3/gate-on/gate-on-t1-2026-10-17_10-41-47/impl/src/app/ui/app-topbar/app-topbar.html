@@ -1,0 +1,59 @@
+<header class="app-topbar">
+  <button hlmSidebarTrigger srOnlyText="Toggle navigation"></button>
+
+  <nav aria-label="Breadcrumb" class="app-topbar__crumbs">
+    <ol class="app-topbar__trail">
+      @for (crumb of crumbs(); track $index; let first = $first, last = $last) {
+        <li class="app-topbar__crumb" [attr.aria-current]="last ? 'page' : null">
+          @if (!first) {
+            <ng-icon hlmIcon name="lucideChevronRight" tone="muted" />
+          }
+          @if (last) {
+            <span hlmLarge>{{ crumb }}</span>
+          } @else {
+            <span hlmMuted>{{ crumb }}</span>
+          }
+        </li>
+      }
+    </ol>
+  </nav>
+
+  <input
+    hlmInput
+    type="search"
+    class="app-topbar__search"
+    aria-label="Search heroes"
+    placeholder="Search heroes"
+    #search
+    (search)="searched.emit(search.value)"
+  />
+
+  <div class="app-topbar__actions">
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      aria-label="Notifications"
+      hlmTooltip="Notifications"
+    >
+      <ng-icon hlmIcon name="lucideBell" />
+    </button>
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      [attr.aria-label]="themeLabel()"
+      [hlmTooltip]="themeLabel()"
+      (click)="themeToggle.emit()"
+    >
+      @if (isDark()) {
+        <ng-icon hlmIcon name="lucideSun" />
+      } @else {
+        <ng-icon hlmIcon name="lucideMoon" />
+      }
+    </button>
+    <hlm-avatar>
+      <span hlmAvatarFallback>OP</span>
+    </hlm-avatar>
+  </div>
+</header>

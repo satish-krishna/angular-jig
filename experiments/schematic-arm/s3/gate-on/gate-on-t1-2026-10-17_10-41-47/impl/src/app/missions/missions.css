@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+.missions { @apply grid min-w-0 content-start gap-6 p-6; }
+.missions__header { @apply grid gap-1; }
+.missions__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.missions__grid { @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3; }
+.missions__card { @apply h-full; }
+.missions__card-head { @apply flex flex-wrap items-start justify-between gap-3; }
+.missions__title { @apply grid min-w-0 gap-1; }
+.missions__crew { @apply grid gap-2; }
+.missions__chips { @apply flex flex-wrap gap-2; }

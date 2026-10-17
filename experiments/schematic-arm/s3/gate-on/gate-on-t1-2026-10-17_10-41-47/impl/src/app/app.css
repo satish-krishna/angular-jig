@@ -1,0 +1,7 @@
+@reference "../styles.css";
+
+/* min-w-0 lets the routed region shrink below its content so the page never scrolls sideways. */
+.app__main { @apply min-w-0; }
+.app__content { @apply grid min-w-0; }
+.app__account { @apply flex items-center gap-2; }
+.app__account-text { @apply grid min-w-0; }

@@ -1,0 +1,58 @@
+<div hlmTableContainer>
+  <table hlmTable aria-label="Hero roster">
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th hlmTh scope="col">Hero</th>
+        <th hlmTh scope="col">Class</th>
+        <th hlmTh scope="col" class="roster-table__num">Power</th>
+        <th hlmTh scope="col">Status</th>
+        <th hlmTh scope="col">Clearance</th>
+        <th hlmTh scope="col">
+          <span class="roster-table__sr-only">Actions</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+      @for (hero of rows(); track hero.id) {
+        <tr hlmTr>
+          <td hlmTd>
+            <div class="roster-table__hero">
+              <hlm-avatar>
+                <span hlmAvatarFallback>{{ initialsOf(hero) }}</span>
+              </hlm-avatar>
+              <div class="roster-table__identity">
+                <span hlmSmall>{{ hero.name }}</span>
+                <span hlmMuted>{{ hero.id }}</span>
+              </div>
+            </div>
+          </td>
+          <td hlmTd>
+            <span hlmBadge variant="outline">{{ hero.powerClass }}</span>
+          </td>
+          <td hlmTd class="roster-table__num">{{ hero.powerIndex }}</td>
+          <td hlmTd>
+            <span hlmBadge [variant]="statusVariant[hero.status]">{{ hero.status }}</span>
+          </td>
+          <td hlmTd>{{ hero.clearanceTier }}</td>
+          <td hlmTd>
+            <button
+              hlmBtn
+              variant="ghost"
+              size="icon"
+              type="button"
+              [attr.aria-label]="'Edit ' + hero.name"
+              [hlmTooltip]="'Edit ' + hero.name"
+              (click)="edit.emit(hero)"
+            >
+              <ng-icon hlmIcon name="lucidePencil" />
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr hlmTr>
+          <td hlmTd colspan="6">{{ emptyText() }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
