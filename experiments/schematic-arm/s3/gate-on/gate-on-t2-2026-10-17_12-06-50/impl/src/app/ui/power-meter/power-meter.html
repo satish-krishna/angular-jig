@@ -1,0 +1,6 @@
+<div class="power-meter">
+  <meter class="power-meter__bar" min="0" max="100" [value]="value()" [attr.aria-label]="label()">
+    {{ value() }}
+  </meter>
+  <span hlmSmall class="power-meter__value">{{ value() }}</span>
+</div>

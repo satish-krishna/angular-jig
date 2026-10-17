@@ -1,0 +1,13 @@
+@reference "../../../styles.css";
+
+.power-meter {
+  @apply flex items-center gap-3;
+}
+
+.power-meter__bar {
+  @apply min-w-0 flex-1;
+}
+
+.power-meter__value {
+  @apply w-8 shrink-0 text-end;
+}

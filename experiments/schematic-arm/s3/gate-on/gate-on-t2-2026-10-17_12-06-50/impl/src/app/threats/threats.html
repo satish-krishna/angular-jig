@@ -1,0 +1,26 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH2>Threats</h1>
+    <p hlmMuted>Open threats, most severe first. Example data, invented for the demo.</p>
+  </header>
+
+  <ul class="threats__grid">
+    @for (card of vm.cards(); track card.threat.id) {
+      <li class="threats__item">
+        <article hlmCard class="threats__card">
+          <div hlmCardHeader class="threats__card-header">
+            <div class="threats__names">
+              <h2 hlmCardTitle>{{ card.threat.name }}</h2>
+              <p hlmCardDescription>{{ card.threat.region }}</p>
+            </div>
+            <span hlmBadge [variant]="card.variant">{{ card.threat.level }}</span>
+          </div>
+          <div hlmCardContent class="threats__body">
+            <p hlmSmall>{{ card.threat.summary }}</p>
+            <p hlmMuted>{{ card.responding }} responding now, {{ card.logged }} logged in total</p>
+          </div>
+        </article>
+      </li>
+    }
+  </ul>
+</section>

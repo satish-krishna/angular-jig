@@ -1,0 +1,13 @@
+@reference "../../../styles.css";
+
+.stat-tile__header {
+  @apply flex items-center justify-between gap-2;
+}
+
+.stat-tile__label {
+  @apply min-w-0;
+}
+
+.stat-tile__body {
+  @apply grid gap-1;
+}

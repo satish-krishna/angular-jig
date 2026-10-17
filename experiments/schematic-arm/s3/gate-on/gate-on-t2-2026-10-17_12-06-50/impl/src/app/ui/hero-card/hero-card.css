@@ -1,0 +1,25 @@
+@reference "../../../styles.css";
+
+.hero-card__header {
+  @apply flex items-center gap-3;
+}
+
+.hero-card__avatar {
+  @apply shrink-0;
+}
+
+.hero-card__identity {
+  @apply grid min-w-0 gap-0.5;
+}
+
+.hero-card__body {
+  @apply grid gap-3;
+}
+
+.hero-card__badges {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.hero-card__footer {
+  @apply mt-auto;
+}

@@ -1,0 +1,96 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <h1 hlmH2>Recruit</h1>
+    <p hlmMuted>New recruits start in Reserve with no mission record. Example intake, invented for the demo.</p>
+  </header>
+
+  <section hlmCard class="recruit__card" aria-labelledby="recruit-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="recruit-heading">Hero intake</h2>
+    </div>
+    <div hlmCardContent>
+      <form class="recruit__form" [formRoot]="vm.form">
+        <div hlmFieldGroup class="recruit__form-grid">
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-name">{{ vm.meta.name.label }}</label>
+            <input
+              hlmInput
+              id="recruit-name"
+              type="text"
+              [attr.placeholder]="vm.meta.name.placeholder"
+              [formField]="vm.form.name"
+            />
+            @for (error of vm.form.name().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-alias">{{ vm.meta.alias.label }}</label>
+            <input
+              hlmInput
+              id="recruit-alias"
+              type="text"
+              [attr.placeholder]="vm.meta.alias.placeholder"
+              [formField]="vm.form.alias"
+            />
+            @for (error of vm.form.alias().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-power-class">{{ vm.meta.powerClass.label }}</label>
+            <hlm-select [value]="vm.form.powerClass().value()" (valueChange)="vm.choose('powerClass', $event)">
+              <hlm-select-trigger buttonId="recruit-power-class">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                @for (option of vm.meta.powerClass.options ?? []; track option.value) {
+                  <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+                }
+              </hlm-select-content>
+            </hlm-select>
+            @for (error of vm.form.powerClass().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-power-index">{{ vm.meta.powerIndex.label }}</label>
+            <input hlmInput id="recruit-power-index" type="number" [formField]="vm.form.powerIndex" />
+            <p hlmFieldDescription>{{ vm.meta.powerIndex.help }}</p>
+            @for (error of vm.form.powerIndex().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="recruit-clearance">{{ vm.meta.clearance.label }}</label>
+            <hlm-select [value]="vm.form.clearance().value()" (valueChange)="vm.choose('clearance', $event)">
+              <hlm-select-trigger buttonId="recruit-clearance">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                @for (option of vm.meta.clearance.options ?? []; track option.value) {
+                  <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+                }
+              </hlm-select-content>
+            </hlm-select>
+            @for (error of vm.form.clearance().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+        </div>
+
+        <div class="recruit__actions">
+          <a hlmBtn variant="outline" routerLink="/roster">Cancel</a>
+          <button hlmBtn type="submit">
+            <ng-icon hlmIcon name="lucideUserPlus" />
+            Recruit hero
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</section>

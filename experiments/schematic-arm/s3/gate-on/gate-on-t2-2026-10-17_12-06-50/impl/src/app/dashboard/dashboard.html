@@ -1,0 +1,74 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__intro">
+      <h1 hlmH2>Operations Dashboard</h1>
+      <p hlmMuted>Example roster for the Hero Ops Console. Every figure here is invented.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile
+        [label]="stat.label"
+        [value]="stat.value"
+        [hint]="stat.hint"
+        [icon]="stat.icon"
+        [tone]="stat.tone"
+      />
+    }
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <header class="dashboard__section-header">
+      <h2 hlmH3 id="top-heroes-heading">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" size="sm" routerLink="/roster">View all roster</a>
+    </header>
+    <div class="dashboard__heroes">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" (selected)="vm.openHero($event)" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <header class="dashboard__section-header">
+      <h2 hlmH3 id="roster-heading">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.heroCount() }} heroes</span>
+    </header>
+
+    <!-- At 375px the table is wider than the screen. The primitive's container scrolls sideways; the page does not. -->
+    <div hlmTableContainer>
+      <table hlmTable>
+        <caption hlmCaption class="dashboard__caption">Heroes on the roster, strongest first</caption>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh scope="col">Hero</th>
+            <th hlmTh scope="col">Class</th>
+            <th hlmTh scope="col" class="dashboard__power">Power</th>
+            <th hlmTh scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.roster(); track row.hero.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <a hlmBtn variant="link" size="sm" [routerLink]="['/detail', row.hero.id]">{{ row.hero.name }}</a>
+              </td>
+              <td hlmTd>
+                <span hlmBadge variant="secondary">{{ row.hero.powerClass }}</span>
+              </td>
+              <td hlmTd class="dashboard__power">{{ row.hero.powerIndex }}</td>
+              <td hlmTd>
+                <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

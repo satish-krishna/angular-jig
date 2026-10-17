@@ -1,0 +1,107 @@
+<section class="heroes">
+  <header class="heroes__header">
+    <h1 hlmH2>Roster</h1>
+    <p hlmMuted>Every hero on the books. Example data, invented for the demo.</p>
+  </header>
+
+  <div role="search" class="heroes__filters">
+    <label hlmLabel for="roster-search" class="heroes__label">Search heroes</label>
+    <div class="heroes__search">
+      <ng-icon hlmIcon name="lucideSearch" tone="muted" />
+      <input
+        #search
+        hlmInput
+        id="roster-search"
+        type="search"
+        class="heroes__search-input"
+        placeholder="Search heroes"
+        (input)="vm.setQuery(search.value)"
+      />
+    </div>
+
+    <label hlmLabel for="roster-class" class="heroes__label">Class</label>
+    <hlm-select class="heroes__select" [value]="vm.classFilter()" (valueChange)="vm.setClassFilter($event)">
+      <hlm-select-trigger buttonId="roster-class">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.classOptions; track option) {
+          <hlm-select-item [value]="option">{{ option === 'All' ? 'All classes' : option }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+
+    <a hlmBtn routerLink="/recruit" class="heroes__recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </div>
+
+  <!-- At 375px the table is wider than the screen. The primitive's container scrolls sideways; the page does not. -->
+  <div hlmTableContainer>
+    <table hlmTable>
+      <caption hlmCaption class="heroes__caption">Heroes on the roster, sorted by power</caption>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh scope="col">Hero</th>
+          <th hlmTh scope="col">Class</th>
+          <th hlmTh scope="col" class="heroes__power">Power</th>
+          <th hlmTh scope="col">Status</th>
+          <th hlmTh scope="col">Clearance</th>
+          <th hlmTh scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of vm.rows(); track row.hero.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="heroes__identity">
+                <hlm-avatar>
+                  <span hlmAvatarFallback>{{ row.initials }}</span>
+                </hlm-avatar>
+                <div class="heroes__names">
+                  <p hlmSmall>{{ row.hero.name }}</p>
+                  <p hlmMuted>{{ row.hero.alias }}</p>
+                </div>
+              </div>
+            </td>
+            <td hlmTd>
+              <span hlmBadge variant="secondary">{{ row.hero.powerClass }}</span>
+            </td>
+            <td hlmTd class="heroes__power">{{ row.hero.powerIndex }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
+            </td>
+            <td hlmTd>
+              <span hlmSmall>{{ row.hero.clearance }}</span>
+            </td>
+            <td hlmTd>
+              <div class="heroes__actions">
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  [attr.aria-label]="'Edit ' + row.hero.name"
+                  (click)="vm.openHero(row.hero)"
+                >
+                  <ng-icon hlmIcon name="lucidePencil" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6" class="heroes__empty">
+              <p hlmMuted>No heroes match these filters.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="heroes__summary">
+    <p hlmSmall>{{ vm.visibleCount() }} of {{ vm.totalCount() }} heroes</p>
+    <p hlmMuted>Sorted by power</p>
+  </footer>
+</section>

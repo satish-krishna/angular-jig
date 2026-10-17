@@ -1,0 +1,71 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH2>Settings</h1>
+    <p hlmMuted>Console preferences for this browser.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="appearance-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-heading">Appearance</h2>
+      <p hlmCardDescription>Light or dark. Until you choose, your system setting decides.</p>
+    </div>
+    <div hlmCardContent class="settings__choices">
+      <button
+        hlmBtn
+        [variant]="vm.isDark() ? 'outline' : 'default'"
+        type="button"
+        [attr.aria-pressed]="!vm.isDark()"
+        (click)="vm.chooseTheme('light')"
+      >
+        <ng-icon hlmIcon name="lucideSun" />
+        Light
+      </button>
+      <button
+        hlmBtn
+        [variant]="vm.isDark() ? 'default' : 'outline'"
+        type="button"
+        [attr.aria-pressed]="vm.isDark()"
+        (click)="vm.chooseTheme('dark')"
+      >
+        <ng-icon hlmIcon name="lucideMoon" />
+        Dark
+      </button>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-heading">Example data</h2>
+      <p hlmCardDescription>
+        The roster and mission log live only in this page. Restoring them discards every edit, recruit, retirement,
+        and deployment made since the page loaded.
+      </p>
+    </div>
+    <div hlmCardContent class="settings__choices">
+      <hlm-dialog #restoreDialog>
+        <button hlmDialogTrigger hlmBtn variant="outline" type="button">Restore example data</button>
+        <hlm-dialog-content *hlmDialogPortal>
+          <hlm-dialog-header>
+            <h2 hlmDialogTitle>Restore example data?</h2>
+            <p hlmDialogDescription>Every change made on this visit is discarded. This cannot be undone.</p>
+          </hlm-dialog-header>
+          <hlm-dialog-footer>
+            <button hlmBtn variant="outline" type="button" (click)="restoreDialog.close()">Cancel</button>
+            <button
+              hlmBtn
+              variant="destructive"
+              type="button"
+              (click)="restoreDialog.close(); vm.restoreExamples()"
+            >
+              Restore
+            </button>
+          </hlm-dialog-footer>
+        </hlm-dialog-content>
+      </hlm-dialog>
+
+      @if (vm.restoreStatus()) {
+        <p hlmSmall role="status">{{ vm.restoreStatus() }}</p>
+      }
+    </div>
+  </section>
+</section>

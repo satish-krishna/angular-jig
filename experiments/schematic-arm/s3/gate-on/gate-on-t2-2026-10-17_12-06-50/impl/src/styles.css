@@ -1,0 +1,120 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+/* You can add global styles to this file, and also import other style files */
+
+/*
+ * Hero Ops Console theme. Roles from prototype/capstone-build-spec.md, mapped
+ * onto spartan's own tokens. The sidebar is dark in both themes by design.
+ */
+:root {
+  color-scheme: light;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --chart-1: #d8891a;
+  --chart-2: #4f7cf0;
+  --chart-3: #2fb574;
+  --chart-4: #e5484d;
+  --chart-5: #5b6072;
+  --radius: 0.625rem;
+  --background: #f6f7fa;
+  --foreground: #1b1e2b;
+  --card: #ffffff;
+  --card-foreground: #1b1e2b;
+  --popover: #ffffff;
+  --popover-foreground: #1b1e2b;
+  --primary: #d8891a;
+  /* Spec says #ffffff here, which measures 2.8:1 on the amber. Dark ink clears 4.5:1. */
+  --primary-foreground: #1b1e2b;
+  --secondary: #eef0f6;
+  --secondary-foreground: #1b1e2b;
+  --muted: #eef0f6;
+  --muted-foreground: #5b6072;
+  --accent: #eef0f6;
+  --accent-foreground: #1b1e2b;
+  --destructive: #e5484d;
+  --border: #e4e7ef;
+  --input: #e4e7ef;
+  /* Spec says amber at 35%, which measures about 1.4:1 on the background. A solid darker amber clears 3:1. */
+  --ring: #9a5d0a;
+  --sidebar: #1e2233;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #f5b843;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #2a2f45;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-border: #2a2f45;
+  --sidebar-ring: #f5b843;
+  --success: #2fb574;
+  --success-foreground: #ffffff;
+  --warning: #e4802b;
+  --warning-foreground: #1b1e2b;
+  --info: #4f7cf0;
+  --info-foreground: #ffffff;
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --chart-1: #f5b843;
+  --chart-2: #6f97f6;
+  --chart-3: #3ecb84;
+  --chart-4: #f2585d;
+  --chart-5: #9aa0b4;
+  --background: #0e1018;
+  --foreground: #eceef6;
+  --card: #171a26;
+  --card-foreground: #eceef6;
+  --popover: #171a26;
+  --popover-foreground: #eceef6;
+  --primary: #f5b843;
+  --primary-foreground: #241a05;
+  --secondary: #1e2231;
+  --secondary-foreground: #eceef6;
+  --muted: #1e2231;
+  --muted-foreground: #9aa0b4;
+  --accent: #1e2231;
+  --accent-foreground: #eceef6;
+  --destructive: #f2585d;
+  --border: #272b3b;
+  --input: #272b3b;
+  --ring: #f5b843;
+  --sidebar: #10121c;
+  --sidebar-foreground: #eceef6;
+  --sidebar-primary: #f5b843;
+  --sidebar-primary-foreground: #241a05;
+  --sidebar-accent: #20263c;
+  --sidebar-accent-foreground: #eceef6;
+  --sidebar-border: #20263c;
+  --sidebar-ring: #f5b843;
+  --success: #3ecb84;
+  --success-foreground: #0b1a12;
+  --warning: #f0983f;
+  --warning-foreground: #1b1206;
+  --info: #6f97f6;
+  --info-foreground: #0a1233;
+}
+
+@theme inline {
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

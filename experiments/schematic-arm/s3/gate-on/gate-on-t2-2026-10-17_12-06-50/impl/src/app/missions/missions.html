@@ -1,0 +1,106 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH2>Missions</h1>
+    <p hlmMuted>Deploy a hero against a threat, and review every deployment on record.</p>
+  </header>
+
+  <section hlmCard class="missions__card" aria-labelledby="deploy-heading">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="deploy-heading">Deploy a hero</h2>
+      <p hlmCardDescription>The deployment is logged in progress and appears in the mission log below.</p>
+    </div>
+    <div hlmCardContent>
+      <form class="missions__form" [formRoot]="vm.form">
+        <div hlmFieldGroup class="missions__form-grid">
+          <div hlmField>
+            <label hlmFieldLabel for="deploy-hero">{{ vm.meta.heroId.label }}</label>
+            <hlm-select [value]="vm.form.heroId().value()" (valueChange)="vm.choose('heroId', $event)">
+              <hlm-select-trigger buttonId="deploy-hero">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                @for (option of vm.heroOptions(); track option.value) {
+                  <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+                }
+              </hlm-select-content>
+            </hlm-select>
+            @for (error of vm.form.heroId().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+
+          <div hlmField>
+            <label hlmFieldLabel for="deploy-threat">{{ vm.meta.threatId.label }}</label>
+            <hlm-select [value]="vm.form.threatId().value()" (valueChange)="vm.choose('threatId', $event)">
+              <hlm-select-trigger buttonId="deploy-threat">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                @for (option of vm.threatOptions; track option.value) {
+                  <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+                }
+              </hlm-select-content>
+            </hlm-select>
+            @for (error of vm.form.threatId().errors(); track error.kind) {
+              <hlm-field-error>{{ error.message }}</hlm-field-error>
+            }
+          </div>
+        </div>
+
+        <div class="missions__form-actions">
+          @if (vm.deployStatus()) {
+            <p hlmSmall role="status" class="missions__status">{{ vm.deployStatus() }}</p>
+          }
+          <button hlmBtn type="submit">
+            <ng-icon hlmIcon name="lucideCrosshair" />
+            Deploy
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="missions__log" aria-labelledby="log-heading">
+    <header class="missions__log-header">
+      <h2 hlmH3 id="log-heading">Mission log</h2>
+      <span hlmBadge variant="secondary">{{ vm.rows().length }} missions</span>
+    </header>
+
+    <!-- At 375px the table is wider than the screen. The primitive's container scrolls sideways; the page does not. -->
+    <div hlmTableContainer>
+      <table hlmTable>
+        <caption hlmCaption class="missions__caption">Deployments, newest first</caption>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh scope="col">Mission</th>
+            <th hlmTh scope="col">Hero</th>
+            <th hlmTh scope="col">Threat</th>
+            <th hlmTh scope="col">Launched</th>
+            <th hlmTh scope="col">Outcome</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.rows(); track row.mission.id) {
+            <tr hlmTr>
+              <td hlmTd>{{ row.mission.id }}</td>
+              <td hlmTd>{{ row.heroName }}</td>
+              <td hlmTd>{{ row.threatName }}</td>
+              <td hlmTd>
+                <time [attr.datetime]="row.mission.launched">{{ row.mission.launched }}</time>
+              </td>
+              <td hlmTd>
+                <span hlmBadge [variant]="row.variant">{{ row.mission.outcome }}</span>
+              </td>
+            </tr>
+          } @empty {
+            <tr hlmTr>
+              <td hlmTd colspan="5" class="missions__empty">
+                <p hlmMuted>No missions on record.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

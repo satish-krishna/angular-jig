@@ -1,0 +1,13 @@
+@reference "../../styles.css";
+
+.missions { @apply grid min-w-0 gap-6 p-4 sm:p-6; }
+.missions__header { @apply grid gap-1; }
+.missions__card { @apply min-w-0; }
+.missions__form { @apply grid gap-6; }
+.missions__form-grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.missions__form-actions { @apply flex flex-wrap items-center justify-end gap-2; }
+.missions__status { @apply flex items-center me-auto; }
+.missions__log { @apply grid min-w-0 gap-4; }
+.missions__log-header { @apply flex flex-wrap items-center justify-between gap-3; }
+.missions__caption { @apply sr-only; }
+.missions__empty { @apply text-center; }

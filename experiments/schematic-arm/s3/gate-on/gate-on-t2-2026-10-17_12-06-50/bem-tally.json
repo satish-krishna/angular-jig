@@ -1,0 +1,160 @@
+{
+  "totals": {
+    "template-utility-class": 0,
+    "foreign-block": 24,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "appearance-in-app-css": 0,
+    "all": 24
+  },
+  "violations": [
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 7,
+      "detail": ".app-shell__brand in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 11,
+      "detail": ".app-shell__user in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 15,
+      "detail": ".app-shell__main in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 19,
+      "detail": ".app-shell__topbar in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 23,
+      "detail": ".app-shell__crumbs in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 27,
+      "detail": ".app-shell__crumb-list in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 31,
+      "detail": ".app-shell__crumb in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 35,
+      "detail": ".app-shell__search in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 39,
+      "detail": ".app-shell__search-input in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 43,
+      "detail": ".app-shell__actions in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 47,
+      "detail": ".app-shell__avatar in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.css",
+      "line": 51,
+      "detail": ".app-shell__content in app.css"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 3,
+      "detail": "app-shell__brand in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 32,
+      "detail": "app-shell__user in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 38,
+      "detail": "app-shell__main in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 39,
+      "detail": "app-shell__topbar in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 42,
+      "detail": "app-shell__crumbs in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 43,
+      "detail": "app-shell__crumb-list in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 48,
+      "detail": "app-shell__crumb in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 53,
+      "detail": "app-shell__search in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 54,
+      "detail": "app-shell__search-input in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 63,
+      "detail": "app-shell__actions in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 81,
+      "detail": "app-shell__avatar in app"
+    },
+    {
+      "kind": "foreign-block",
+      "file": "src/app/app.html",
+      "line": 87,
+      "detail": "app-shell__content in app"
+    }
+  ]
+}

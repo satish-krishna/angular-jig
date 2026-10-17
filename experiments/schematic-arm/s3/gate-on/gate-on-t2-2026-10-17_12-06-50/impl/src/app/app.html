@@ -1,0 +1,91 @@
+<hlm-sidebar-wrapper>
+  <hlm-sidebar>
+    <hlm-sidebar-header class="app-shell__brand">
+      <h2 hlmH4>Hero Ops</h2>
+    </hlm-sidebar-header>
+
+    <hlm-sidebar-content>
+      <hlm-sidebar-group>
+        <nav aria-label="Primary">
+          <ul hlmSidebarMenu>
+            @for (item of vm.navItems; track item.path) {
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  size="lg"
+                  [routerLink]="item.path"
+                  routerLinkActive
+                  #active="routerLinkActive"
+                  [isActive]="active.isActive"
+                  [tooltip]="item.label"
+                >
+                  <ng-icon hlmIcon [name]="item.icon" />
+                  <span>{{ item.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      </hlm-sidebar-group>
+    </hlm-sidebar-content>
+
+    <hlm-sidebar-footer class="app-shell__user">
+      <span hlmSmall>Commander</span>
+      <span hlmMuted>Clearance tier 4</span>
+    </hlm-sidebar-footer>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app-shell__main">
+    <header class="app-shell__topbar">
+      <button hlmSidebarTrigger srOnlyText="Toggle navigation"></button>
+
+      <nav aria-label="Breadcrumb" class="app-shell__crumbs">
+        <ol class="app-shell__crumb-list">
+          @for (crumb of vm.crumbs(); track $index; let first = $first, last = $last) {
+            @if (!first) {
+              <li aria-hidden="true">/</li>
+            }
+            <li class="app-shell__crumb" [attr.aria-current]="last ? 'page' : null">{{ crumb }}</li>
+          }
+        </ol>
+      </nav>
+
+      <div role="search" class="app-shell__search">
+        <input
+          hlmInput
+          type="search"
+          class="app-shell__search-input"
+          aria-label="Search the console"
+          placeholder="Search heroes, missions, threats"
+        />
+      </div>
+
+      <div class="app-shell__actions">
+        <button hlmBtn variant="ghost" size="icon" aria-label="Notifications" [hlmTooltip]="'Notifications'">
+          <ng-icon hlmIcon name="lucideBell" />
+        </button>
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          [attr.aria-label]="vm.themeLabel()"
+          [hlmTooltip]="vm.themeLabel()"
+          (click)="vm.toggleTheme()"
+        >
+          @if (vm.isDark()) {
+            <ng-icon hlmIcon name="lucideSun" />
+          } @else {
+            <ng-icon hlmIcon name="lucideMoon" />
+          }
+        </button>
+        <hlm-avatar class="app-shell__avatar">
+          <span hlmAvatarFallback>CO</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="app-shell__content">
+      <router-outlet />
+    </div>
+  </main>
+</hlm-sidebar-wrapper>
