@@ -16,6 +16,7 @@ import * as seal from './counter.mjs';
 import * as layout from './layout-counter.mjs';
 import { loadClassifier, BEM_RE, blockOf } from './bem/classify.mjs';
 import { parseStylesheet, isConcat } from './bem/stylesheet.mjs';
+import { appCssViolations } from './bem/app-css.mjs';
 import { classUses, expandTemplate, normalizeUtility } from './bem/template.mjs';
 import { readComponents, stringValue, stringList } from './bem/components.mjs';
 
@@ -28,6 +29,7 @@ export const BEM_KINDS = [
   'missing-reference',
   'broken-nesting',
   'utility-in-ts',
+  'appearance-in-app-css',
 ];
 
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.git', '.angular', 'coverage']);
@@ -95,6 +97,20 @@ export async function bemTally(paths, { root, styles } = {}) {
     }
   };
 
+  // R7 / R7a: every stylesheet in the walk, claimed by a component or not. An
+  // unparseable one records nothing here (broken-nesting reports bad selectors).
+  const checkAppCss = (file) => {
+    const global = rel(file) === 'src/styles.css';
+    const stem = basename(file, '.css').replace(/\.component$/, '');
+    let found;
+    try {
+      found = appCssViolations(readFileSync(file, 'utf8'), { stem: global ? null : stem, global });
+    } catch {
+      return;
+    }
+    for (const x of found) add('appearance-in-app-css', file, x.line, `${x.selector}: ${x.token}`);
+  };
+
   const claimed = new Set();
   const blocks = new Set();
   for (const tsPath of walkFiles(paths, ['.ts']).filter((p) => !p.endsWith('.spec.ts'))) {
@@ -151,6 +167,7 @@ export async function bemTally(paths, { root, styles } = {}) {
   }
 
   for (const f of walkFiles(paths, ['.html', '.css'])) {
+    if (f.endsWith('.css')) checkAppCss(f);
     if (claimed.has(norm(f))) continue;
     if (/(^|\/)app\//.test(rel(f))) add('missing-triad', f, 1, 'no component claims this file');
     if (f.endsWith('.css')) {

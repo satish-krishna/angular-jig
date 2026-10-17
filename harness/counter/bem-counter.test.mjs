@@ -33,7 +33,7 @@ const CLEAN_HTML = [
   '  <button hlmBtn variant="ghost" class="hero-card__retire">Retire</button>',
   '</article>',
 ].join('\n');
-const CLEAN_CSS = `${REF}\n.hero-card { @apply grid gap-4; }\n.hero-card--retired { @apply opacity-60; }\n.hero-card__name { @apply text-lg font-semibold; }\n.hero-card__retire { @apply ms-auto; }\n`;
+const CLEAN_CSS = `${REF}\n.hero-card { @apply grid gap-4; }\n.hero-card--retired { @apply order-last; }\n.hero-card__name { @apply justify-self-start self-center; }\n.hero-card__retire { @apply ms-auto; }\n`;
 
 const bem = async (files) => {
   const dir = tree(files);
@@ -144,7 +144,7 @@ describe('bemTally', () => {
     const r = await bem({
       ...triad('hero-card', CLEAN_HTML, CLEAN_CSS),
       'app/ext/orphan.html': '<p class="flex"></p>',
-      'app/ext/orphan.css': '.x { color: red; }',
+      'app/ext/orphan.css': '.x { display: block; }',
       'index.html': '<body></body>',
     });
     expect(r.violations.filter((v) => v.kind === 'missing-triad').map((v) => v.file).sort()).toEqual(['app/ext/orphan.css', 'app/ext/orphan.html']);
@@ -163,7 +163,7 @@ describe('bemTally', () => {
   it('foreign-block: a global stylesheet styling a component block', async () => {
     const files = {
       ...triad('hero-card', CLEAN_HTML, CLEAN_CSS),
-      'styles.css': '@import "tailwindcss";\n:root.dark { --x: 1; }\n.hero-card__name { @apply text-gray-700; }\n',
+      'styles.css': '@import "tailwindcss";\n:root.dark { display: none; }\n.hero-card__name { @apply grid; }\n',
     };
     const r = await bem(files);
     expect(r.violations.filter((v) => v.kind === 'foreign-block')).toMatchObject([{ file: 'styles.css', line: 3 }]);
@@ -212,6 +212,38 @@ describe('bemTally', () => {
     const a = JSON.stringify(await bemTally([dir], { root: dir, styles: STYLES }));
     const b = JSON.stringify(await bemTally([dir], { root: dir, styles: STYLES }));
     expect(a).toBe(b);
+  });
+});
+
+describe('bemTally appearance-in-app-css', () => {
+  it('counts one violation per (rule, utility) in a component stylesheet, and layout and block-root padding pass', async () => {
+    const css = `${REF}.widget { @apply grid p-4; }\n.widget__hint { @apply py-2 text-sm; }\n`;
+    const r = await bem(triad('widget', '<p class="widget"></p>', css));
+    const hits = r.violations.filter((v) => v.kind === 'appearance-in-app-css');
+    expect(hits).toMatchObject([
+      { file: 'app/widget/widget.css', line: 3, detail: '.widget__hint: py-2' },
+      { file: 'app/widget/widget.css', line: 3, detail: '.widget__hint: text-sm' },
+    ]);
+    expect(r.totals['appearance-in-app-css']).toBe(2);
+    expect(r.totals.all).toBe(2);
+  });
+
+  it('judges src/styles.css as the global stylesheet, with no block root', async () => {
+    const r = await bem({ 'src/styles.css': ':root { color-scheme: light; }\n@layer base { body { @apply bg-background; } }\n.x { @apply p-4; }\n' });
+    expect(r.violations.filter((v) => v.kind === 'appearance-in-app-css')).toMatchObject([{ file: 'src/styles.css', detail: '.x: p-4' }]);
+  });
+
+  it('completes the tally when a stylesheet is unparseable', async () => {
+    const sass = await bem(triad('widget', '<p class="widget"></p>', `${REF}// header\n.widget { @apply flex; }\n`));
+    expect(sass.totals['broken-nesting']).toBe(1);
+    // A stylesheet postcss rejects outright, reached only by app-css (no component parses it).
+    const r = await bem({
+      'app/a/a.ts': ts('a', "templateUrl: './a.html',\n  styleUrls: ['./a.css', './bad.css'],"),
+      'app/a/a.html': '<p class="a"></p>',
+      'app/a/a.css': REF,
+      'app/a/bad.css': '.a { color: red;\n',
+    });
+    expect(r.totals['appearance-in-app-css']).toBe(0);
   });
 });
 
