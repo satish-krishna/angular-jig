@@ -60,6 +60,16 @@ All three hold: headline. Any one fails: footnote, and the readout says which on
 
 The original spec's model policy stands: the schematic, its tests, the goldens and the skill are the instrument and are built on a capable model, not by the model under test. TDD on the emitters: a failing golden or counter test first, then the emitter change. Each emitter is reviewed against this addendum and the house-style skill before the golden is regenerated.
 
+## Decision F: rulings from the final review (2026-10-17)
+
+Specs written besides the approved one, and changes to the approved spec after approval, are recorded, not void. The mod writes them to `schematic.specDrift` in each trial's `meta.json` (with a diff file in the evidence folder) and the readout reports them per trial. Records are a superset of voids, so a trial can still be excluded later under a stated rule.
+
+The `spec` and `approve` commands validate the spec with the generator's own parser (`parseSpec` from `schematics/slice/spec-schema.cjs`) and refuse an invalid spec with its errors. The reviewer fixes it during review, and the fix shows up in the spec diff.
+
+Bar 3 ("reached") is `generatedFromApprovedSpec` in at least 2 of 3 trials: a slice run whose `--spec` is the approved spec path created the manage screen and the form component for the approved entity. A bare command match is kept as `invoked` but does not count.
+
+The golden fixtures moved to a library domain (book, member, loan), so no fixture is the stage-0 answer and the spec review stays a measurement of the model turning prose into a spec, not a copy check.
+
 ## Out of scope
 
 - New kinds. Roster and detail map onto `manage` (as extended in B2) and `form`; whatever the stage prompts ask for beyond them (the detail screen's back link, header, tabs and retire dialog, the roster's avatar column) the agent writes by hand, under gates, and that is part of what the arm measures.
