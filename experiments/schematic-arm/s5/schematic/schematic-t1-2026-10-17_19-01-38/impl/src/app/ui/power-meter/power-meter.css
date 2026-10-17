@@ -1,0 +1,5 @@
+@reference "../../../styles.css";
+
+.power-meter { @apply grid gap-1; }
+.power-meter__head { @apply flex items-center justify-between gap-2; }
+.power-meter__track { @apply block w-full; }

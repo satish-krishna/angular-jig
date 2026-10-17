@@ -1,0 +1,94 @@
+@reference "../../styles.css";
+
+.hero-detail {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.hero-detail__back {
+  @apply justify-self-start;
+}
+
+.hero-detail__header {
+  @apply flex min-w-0 flex-wrap items-start justify-between gap-4;
+}
+
+.hero-detail__identity {
+  @apply flex min-w-0 items-center gap-4;
+}
+
+.hero-detail__names {
+  @apply grid min-w-0 gap-1;
+}
+
+.hero-detail__name {
+  @apply break-words;
+}
+
+.hero-detail__badges {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.hero-detail__actions {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.hero-detail__hint {
+  @apply basis-full;
+}
+
+.hero-detail__deployments {
+  @apply grid gap-3;
+}
+
+.hero-detail__deployment {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}
+
+.hero-detail__deployment-target {
+  @apply grid min-w-0 gap-0.5;
+}
+
+.hero-detail__dialog {
+  @apply sm:max-w-md;
+}
+
+.hero-detail__tabs {
+  @apply min-w-0;
+}
+
+/* The tab strip is the one intentional scroll container: at 375px four triggers can outrun the viewport. */
+.hero-detail__tabs-list {
+  @apply max-w-full overflow-x-auto;
+}
+
+.hero-detail__panel {
+  @apply grid min-w-0 gap-4;
+}
+
+.hero-detail__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-3;
+}
+
+.hero-detail__stat {
+  @apply min-w-0;
+}
+
+.hero-detail__columns {
+  @apply grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2;
+}
+
+.hero-detail__section {
+  @apply min-w-0;
+}
+
+.hero-detail__dossier {
+  @apply grid gap-3;
+}
+
+.hero-detail__row {
+  @apply flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1;
+}
+
+.hero-detail__missing {
+  @apply grid gap-1;
+}

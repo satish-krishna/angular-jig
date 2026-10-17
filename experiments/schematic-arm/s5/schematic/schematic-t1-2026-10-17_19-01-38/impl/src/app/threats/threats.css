@@ -1,0 +1,37 @@
+@reference "../../styles.css";
+
+.threats {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.threats__header {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.threats__title {
+  @apply flex items-center gap-2;
+}
+
+.threats__grid {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3;
+}
+
+.threats__card {
+  @apply h-full min-w-0;
+}
+
+.threats__card-head {
+  @apply flex flex-wrap items-start justify-between gap-2;
+}
+
+.threats__name {
+  @apply min-w-0 break-words;
+}
+
+.threats__body {
+  @apply grid gap-3;
+}
+
+.threats__contain {
+  @apply w-full;
+}

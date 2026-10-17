@@ -1,0 +1,21 @@
+@reference "../../styles.css";
+
+.missions {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.missions__header {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.missions__title {
+  @apply flex items-center gap-2;
+}
+
+.missions__table {
+  @apply min-w-0 overflow-x-auto;
+}
+
+.missions__footer {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}

@@ -1,0 +1,196 @@
+<section class="hero-detail">
+  <a hlmBtn variant="ghost" routerLink="/roster" class="hero-detail__back">
+    <ng-icon hlmIcon name="lucideChevronLeft" />
+    Back to roster
+  </a>
+
+  @if (vm.hero(); as hero) {
+    <header class="hero-detail__header">
+      <div class="hero-detail__identity">
+        <hlm-avatar size="lg">
+          <span hlmAvatarFallback>{{ vm.initials() }}</span>
+        </hlm-avatar>
+        <div class="hero-detail__names">
+          <p hlmMuted>#{{ hero.id }}</p>
+          <h1 hlmH2 class="hero-detail__name">{{ hero.name }}</h1>
+          <p hlmMuted>{{ hero.alias }}</p>
+          <div class="hero-detail__badges">
+            <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
+            <span hlmBadge [variant]="vm.statusVariant(hero.status)">{{ hero.status }}</span>
+            <span hlmBadge variant="outline">{{ hero.clearance }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-detail__actions">
+        <button
+          hlmBtn
+          variant="outline"
+          type="button"
+          [disabled]="!vm.canDeploy()"
+          (click)="vm.deploy()"
+          data-testid="deploy-hero"
+        >
+          <ng-icon hlmIcon name="lucideCrosshair" />
+          Deploy
+        </button>
+        <hlm-dialog>
+          <button hlmBtn hlmDialogTrigger variant="destructive">
+            <ng-icon hlmIcon name="lucideTrash2" />
+            Retire
+          </button>
+          <hlm-dialog-content *hlmDialogPortal class="hero-detail__dialog">
+            <hlm-dialog-header>
+              <h2 hlmDialogTitle>Retire {{ hero.name }}?</h2>
+              <p hlmDialogDescription>
+                This removes the hero from the roster. This cannot be undone.
+              </p>
+            </hlm-dialog-header>
+            <hlm-dialog-footer>
+              <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+              <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.retire()">
+                Retire
+              </button>
+            </hlm-dialog-footer>
+          </hlm-dialog-content>
+        </hlm-dialog>
+        @if (vm.deployHint()) {
+          <p hlmMuted class="hero-detail__hint">{{ vm.deployHint() }}</p>
+        }
+      </div>
+    </header>
+
+    <hlm-tabs class="hero-detail__tabs" [tab]="vm.activeTab()" (tabActivated)="vm.selectTab($event)">
+      <hlm-tabs-list class="hero-detail__tabs-list">
+        <button hlmTabsTrigger="overview">Overview</button>
+        <button hlmTabsTrigger="powers">Powers</button>
+        <button hlmTabsTrigger="missions">Missions</button>
+        <button hlmTabsTrigger="edit">Edit</button>
+      </hlm-tabs-list>
+
+      <div hlmTabsContent="overview" class="hero-detail__panel">
+        @if (vm.notice()) {
+          <p hlmSmall role="status" class="hero-detail__notice">{{ vm.notice() }}</p>
+        }
+        <div class="hero-detail__stats">
+          <div hlmCard class="hero-detail__stat">
+            <div hlmCardContent>
+              <p hlmMuted>Power index</p>
+              <p hlmLarge>{{ hero.power }}</p>
+            </div>
+          </div>
+          <div hlmCard class="hero-detail__stat">
+            <div hlmCardContent>
+              <p hlmMuted>Status</p>
+              <p><span hlmBadge [variant]="vm.statusVariant(hero.status)">{{ hero.status }}</span></p>
+            </div>
+          </div>
+          <div hlmCard class="hero-detail__stat">
+            <div hlmCardContent>
+              <p hlmMuted>Clearance</p>
+              <p hlmLarge>{{ hero.clearance }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-detail__columns">
+          <section hlmCard class="hero-detail__section" aria-labelledby="hero-detail-summary">
+            <div hlmCardHeader>
+              <h2 hlmH3 id="hero-detail-summary">Field summary</h2>
+            </div>
+            <div hlmCardContent>
+              <p hlmSmall>{{ hero.notes || 'No field notes on file.' }}</p>
+            </div>
+          </section>
+
+          <section hlmCard class="hero-detail__section" aria-labelledby="hero-detail-dossier">
+            <div hlmCardHeader>
+              <h2 hlmH3 id="hero-detail-dossier">Dossier</h2>
+            </div>
+            <div hlmCardContent>
+              <dl class="hero-detail__dossier">
+                <div class="hero-detail__row">
+                  <dt hlmMuted>Codename</dt>
+                  <dd hlmSmall>{{ hero.name }}</dd>
+                </div>
+                <div class="hero-detail__row">
+                  <dt hlmMuted>Alias</dt>
+                  <dd hlmSmall>{{ hero.alias }}</dd>
+                </div>
+                <div class="hero-detail__row">
+                  <dt hlmMuted>Class</dt>
+                  <dd hlmSmall>{{ hero.powerClass }}</dd>
+                </div>
+                <div class="hero-detail__row">
+                  <dt hlmMuted>Clearance</dt>
+                  <dd hlmSmall>{{ hero.clearance }}</dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div hlmTabsContent="powers" class="hero-detail__panel">
+        <div class="hero-detail__columns">
+          <section hlmCard class="hero-detail__section" aria-labelledby="hero-detail-meter">
+            <div hlmCardHeader>
+              <h2 hlmH3 id="hero-detail-meter">Power index</h2>
+            </div>
+            <div hlmCardContent>
+              <app-power-meter [value]="hero.power" [label]="'Power index for ' + hero.name" />
+            </div>
+          </section>
+
+          <section hlmCard class="hero-detail__section" aria-labelledby="hero-detail-abilities">
+            <div hlmCardHeader>
+              <h2 hlmH3 id="hero-detail-abilities">Abilities</h2>
+            </div>
+            <div hlmCardContent class="hero-detail__badges">
+              <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div hlmTabsContent="missions" class="hero-detail__panel">
+        <section hlmCard class="hero-detail__section" aria-labelledby="hero-detail-deployments">
+          <div hlmCardHeader>
+            <h2 hlmH3 id="hero-detail-deployments">Deployments</h2>
+          </div>
+          <div hlmCardContent>
+            @if (vm.missions().length) {
+              <ul class="hero-detail__deployments">
+                @for (mission of vm.missions(); track mission.id) {
+                  <li class="hero-detail__deployment">
+                    <div class="hero-detail__deployment-target">
+                      <p hlmSmall>{{ mission.threatName }}</p>
+                      <p hlmMuted>Tier {{ mission.tier }} · Cycle {{ mission.cycle }}</p>
+                    </div>
+                    <span hlmBadge [variant]="vm.outcomeVariant(mission.outcome)">{{ mission.outcome }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p hlmMuted>No deployments on file for {{ hero.name }}.</p>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div hlmTabsContent="edit" class="hero-detail__panel">
+        <app-hero-form
+          [initialValue]="hero"
+          submitLabel="Save"
+          (saveHero)="vm.save($event)"
+          (cancel)="vm.cancelEdit()"
+        />
+      </div>
+    </hlm-tabs>
+  } @else {
+    <div class="hero-detail__missing">
+      <h1 hlmH2>Hero not found</h1>
+      <p hlmMuted>No hero on the roster has that ID.</p>
+    </div>
+  }
+</section>

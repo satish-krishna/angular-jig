@@ -1,0 +1,28 @@
+<section class="settings">
+  <h1 hlmH3>Settings</h1>
+
+  <section hlmCard class="settings__section" aria-labelledby="settings-appearance">
+    <div hlmCardHeader>
+      <h2 hlmSmall id="settings-appearance">Appearance</h2>
+    </div>
+    <div hlmCardContent class="settings__row">
+      <div class="settings__label">
+        <p hlmSmall>Dark theme</p>
+        <p hlmMuted>Follows your system setting until you choose one here.</p>
+      </div>
+      <hlm-switch aria-label="Dark theme" [checked]="vm.isDark()" (checkedChange)="vm.toggleTheme()" />
+    </div>
+  </section>
+
+  <section hlmCard class="settings__section" aria-labelledby="settings-data">
+    <div hlmCardHeader>
+      <h2 hlmSmall id="settings-data">Example data</h2>
+    </div>
+    <div hlmCardContent>
+      <p hlmMuted>
+        The roster, missions and threats in this console are example data, not real records. Changes
+        last until the page is reloaded.
+      </p>
+    </div>
+  </section>
+</section>

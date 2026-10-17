@@ -1,0 +1,160 @@
+<section class="heroes">
+  <header class="heroes__header">
+    <div class="heroes__title">
+      <ng-icon hlmIcon name="lucideUsers" tone="primary" />
+      <h1 hlmH3>{{ vm.text.title }}</h1>
+    </div>
+    <a hlmBtn [routerLink]="vm.createRoute" data-testid="create-hero">
+      <ng-icon hlmIcon name="lucidePlus" />
+      <span>{{ vm.text.createLabel }}</span>
+    </a>
+  </header>
+
+  <div class="heroes__filters">
+    <label hlmLabel for="heroes-search" class="heroes__label">{{ vm.text.searchLabel }}</label>
+    <input
+      hlmInput
+      id="heroes-search"
+      type="search"
+      class="heroes__search"
+      [placeholder]="vm.text.searchPlaceholder"
+      [value]="vm.searchQuery()"
+      (input)="vm.searchQuery.set($any($event.target).value)"
+    />
+    <label hlmLabel for="heroes-filter-power-class" class="heroes__label">{{
+      vm.text.filters.powerClass
+    }}</label>
+    <hlm-select
+      class="heroes__filter"
+      [value]="vm.powerClassFilter()"
+      (valueChange)="vm.powerClassFilter.set($event ?? '')"
+      [itemToString]="vm.powerClassFilterLabel"
+    >
+      <hlm-select-trigger buttonId="heroes-filter-power-class">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.powerClassFilterOptions; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </div>
+
+  <div hlmTableContainer class="heroes__table">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>{{ vm.text.columns.name }}</th>
+          <th hlmTh>{{ vm.text.columns.powerClass }}</th>
+          <th hlmTh>{{ vm.text.columns.power }}</th>
+          <th hlmTh>{{ vm.text.columns.status }}</th>
+          <th hlmTh>{{ vm.text.columns.clearance }}</th>
+          <th hlmTh>{{ vm.text.actions }}</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (hero of vm.filtered(); track hero.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="heroes__hero">
+                <hlm-avatar>
+                  <span hlmAvatarFallback>{{ vm.initials(hero.name) }}</span>
+                </hlm-avatar>
+                <div class="heroes__identity">
+                  <p hlmSmall>{{ hero.name }}</p>
+                  <p hlmMuted>#{{ hero.id }}</p>
+                </div>
+              </div>
+            </td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.powerClassVariant(hero.powerClass)">
+                {{ hero.powerClass }}
+              </span>
+            </td>
+            <td hlmTd>{{ hero.power }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.statusVariant(hero.status)">
+                {{ hero.status }}
+              </span>
+            </td>
+            <td hlmTd>{{ hero.clearance }}</td>
+            <td hlmTd>
+              <div class="heroes__actions">
+                <hlm-dialog #editDialog="hlmDialog">
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    (click)="vm.startEdit(hero.id)"
+                    data-testid="edit-hero"
+                    [attr.aria-label]="vm.text.edit + ' ' + hero.name"
+                  >
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="heroes__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.editTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.editDescription }}</p>
+                    </hlm-dialog-header>
+                    @if (vm.editingHero(); as hero) {
+                      <app-hero-form
+                        [initialValue]="hero"
+                        submitLabel="Update"
+                        (saveHero)="vm.save($event); editDialog.close()"
+                        (cancel)="vm.cancel(); editDialog.close()"
+                      />
+                    }
+                  </hlm-dialog-content>
+                </hlm-dialog>
+                <hlm-dialog>
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    [attr.aria-label]="vm.text.delete + ' ' + hero.name"
+                  >
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content
+                    *hlmDialogPortal
+                    class="heroes__dialog heroes__dialog--narrow"
+                  >
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.deleteTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.deleteDescription }}</p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button
+                        hlmBtn
+                        variant="destructive"
+                        hlmDialogClose
+                        (click)="vm.remove(hero.id)"
+                      >
+                        {{ vm.text.delete }}
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <p hlmMuted>{{ vm.text.empty }}</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="heroes__footer">
+    <p hlmMuted>{{ vm.filtered().length }} of {{ vm.heroes().length }} {{ vm.text.plural }}</p>
+    <p hlmMuted>{{ vm.text.sortedBy }}</p>
+  </footer>
+</section>

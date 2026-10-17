@@ -1,0 +1,39 @@
+<section class="threats">
+  <header class="threats__header">
+    <div class="threats__title">
+      <ng-icon hlmIcon name="lucideShieldAlert" tone="warning" />
+      <h1 hlmH3>Threats</h1>
+    </div>
+    <p hlmMuted>{{ vm.unresolved() }} of {{ vm.threats().length }} unresolved</p>
+  </header>
+
+  <div class="threats__grid">
+    @for (threat of vm.threats(); track threat.id) {
+      <article hlmCard class="threats__card">
+        <div hlmCardHeader class="threats__card-head">
+          <h2 hlmH4 class="threats__name">{{ threat.name }}</h2>
+          <span hlmBadge variant="outline">Tier {{ threat.tier }}</span>
+        </div>
+        <div hlmCardContent class="threats__body">
+          <p hlmMuted>{{ threat.location }}</p>
+          <span hlmBadge [variant]="vm.statusVariant(threat.status)">{{ threat.status }}</span>
+        </div>
+        <div hlmCardFooter>
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            type="button"
+            class="threats__contain"
+            [disabled]="threat.status === 'Contained'"
+            (click)="vm.contain(threat.id)"
+          >
+            Mark contained
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p hlmMuted>No threats on file.</p>
+    }
+  </div>
+</section>

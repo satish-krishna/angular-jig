@@ -1,0 +1,102 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader class="app__brand">
+      <ng-icon hlmIcon name="lucideShield" />
+      <span hlmLarge>Hero Ops Console</span>
+    </div>
+
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Operations</div>
+        <div hlmSidebarGroupContent>
+          <ul hlmSidebarMenu>
+            @for (item of vm.navItems; track item.path) {
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  [routerLink]="item.path"
+                  routerLinkActive
+                  #active="routerLinkActive"
+                  [isActive]="active.isActive"
+                >
+                  <ng-icon hlmIcon [name]="item.icon" />
+                  <span>{{ item.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div hlmSidebarFooter class="app__account">
+      <hlm-avatar>
+        <span hlmAvatarFallback>OC</span>
+      </hlm-avatar>
+      <span hlmSmall>Ops Commander</span>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset>
+    <header class="app__topbar">
+      <button hlmSidebarTrigger></button>
+
+      <nav aria-label="Breadcrumb" class="app__crumbs">
+        <ol class="app__crumb-list">
+          <li class="app__crumb"><span hlmMuted>Hero Ops</span></li>
+          <li class="app__crumb" aria-current="page">
+            <ng-icon hlmIcon name="lucideChevronRight" tone="muted" />
+            <span>{{ vm.section() }}</span>
+          </li>
+        </ol>
+      </nav>
+
+      <div class="app__actions">
+        <div class="app__search">
+          <ng-icon hlmIcon name="lucideSearch" tone="muted" />
+          <input
+            hlmInput
+            type="search"
+            class="app__search-input"
+            placeholder="Search heroes and missions"
+            aria-label="Search heroes and missions"
+          />
+        </div>
+
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          aria-label="Notifications"
+          hlmTooltip="Notifications"
+        >
+          <ng-icon hlmIcon name="lucideBell" />
+        </button>
+
+        <button
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          aria-label="Dark theme"
+          [attr.aria-pressed]="vm.isDark()"
+          hlmTooltip="Dark theme"
+          (click)="vm.toggleTheme()"
+        >
+          @if (vm.isDark()) {
+            <ng-icon hlmIcon name="lucideSun" />
+          } @else {
+            <ng-icon hlmIcon name="lucideMoon" />
+          }
+        </button>
+
+        <hlm-avatar>
+          <span hlmAvatarFallback>OC</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

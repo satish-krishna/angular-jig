@@ -1,0 +1,17 @@
+@reference "../../styles.css";
+
+.recruit {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.recruit__header {
+  @apply grid min-w-0 gap-2;
+}
+
+.recruit__title {
+  @apply flex items-center gap-2;
+}
+
+.recruit__card {
+  @apply min-w-0 max-w-2xl;
+}

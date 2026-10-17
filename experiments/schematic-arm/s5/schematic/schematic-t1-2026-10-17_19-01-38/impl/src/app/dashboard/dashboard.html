@@ -1,0 +1,69 @@
+<div class="dashboard">
+  <header class="dashboard__header">
+    <h1 hlmH1>Operations Dashboard</h1>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    <app-stat-tile label="Heroes on roster" [value]="vm.rosterCount()" icon="lucideUserCheck" />
+    <app-stat-tile label="Missions live" [value]="vm.liveMissions()" icon="lucideActivity" />
+    <app-stat-tile label="Average power" [value]="vm.averagePower()" icon="lucideZap" />
+    <app-stat-tile
+      label="Open threats"
+      [value]="vm.openThreats()"
+      icon="lucideShieldAlert"
+      tone="warning"
+    />
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="dashboard-top-heroes">
+    <div class="dashboard__section-head">
+      <h2 hlmH3 id="dashboard-top-heroes">Top heroes this cycle</h2>
+      <a hlmBtn variant="ghost" routerLink="/roster">
+        View all roster
+        <ng-icon hlmIcon name="lucideArrowRight" />
+      </a>
+    </div>
+    <div class="dashboard__heroes">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" (open)="openHero($event)" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="dashboard-roster">
+    <div class="dashboard__section-head">
+      <h2 hlmH3 id="dashboard-roster">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.rosterCount() }} heroes</span>
+    </div>
+    <div hlmTableContainer class="dashboard__table">
+      <table hlmTable>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh>Hero</th>
+            <th hlmTh>Class</th>
+            <th hlmTh>Power index</th>
+            <th hlmTh>Status</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (hero of vm.roster(); track hero.id) {
+            <tr hlmTr>
+              <td hlmTd>
+                <a hlmBtn variant="link" size="sm" [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+              </td>
+              <td hlmTd>{{ hero.powerClass }}</td>
+              <td hlmTd>{{ hero.power }}</td>
+              <td hlmTd>
+                <span hlmBadge [variant]="vm.statusVariant(hero.status)">{{ hero.status }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

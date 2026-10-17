@@ -1,0 +1,56 @@
+<section class="missions">
+  <header class="missions__header">
+    <div class="missions__title">
+      <ng-icon hlmIcon name="lucideTarget" tone="primary" />
+      <h1 hlmH3>Missions</h1>
+    </div>
+    <p hlmMuted>{{ vm.live() }} live</p>
+  </header>
+
+  <div hlmTableContainer class="missions__table">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Hero</th>
+          <th hlmTh>Threat</th>
+          <th hlmTh>Tier</th>
+          <th hlmTh>Cycle</th>
+          <th hlmTh>Outcome</th>
+          <th hlmTh>Action</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of vm.rows(); track row.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ row.heroName }}</td>
+            <td hlmTd>{{ row.threatName }}</td>
+            <td hlmTd>{{ row.tier }}</td>
+            <td hlmTd>{{ row.cycle }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.outcomeVariant(row.outcome)">{{ row.outcome }}</span>
+            </td>
+            <td hlmTd>
+              @if (row.outcome === 'Active') {
+                <button hlmBtn size="sm" variant="outline" type="button" (click)="vm.complete(row.id)">
+                  <ng-icon hlmIcon name="lucideCircleCheck" />
+                  Complete
+                </button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <p hlmMuted>No missions on record.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="missions__footer">
+    <p hlmMuted>{{ vm.rows().length }} missions on record</p>
+    <p hlmSmall>Completing a live mission contains its threat.</p>
+  </footer>
+</section>

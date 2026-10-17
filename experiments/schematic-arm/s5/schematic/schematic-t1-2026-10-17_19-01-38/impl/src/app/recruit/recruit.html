@@ -1,0 +1,19 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <div class="recruit__title">
+      <ng-icon hlmIcon name="lucideUserPlus" tone="primary" />
+      <h1 hlmH2>Recruit a hero</h1>
+    </div>
+    <p hlmMuted>New recruits join the roster at Tier 1 clearance and can be deployed once active.</p>
+  </header>
+
+  <div hlmCard class="recruit__card">
+    <div hlmCardContent>
+      <app-hero-form
+        submitLabel="Recruit"
+        (saveHero)="vm.recruit($event)"
+        (cancel)="vm.cancel()"
+      />
+    </div>
+  </div>
+</section>

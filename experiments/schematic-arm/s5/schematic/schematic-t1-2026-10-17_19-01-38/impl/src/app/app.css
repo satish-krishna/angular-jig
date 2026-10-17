@@ -1,0 +1,15 @@
+@reference "../styles.css";
+
+.app__brand { @apply flex items-center gap-2; }
+.app__account { @apply flex items-center gap-2; }
+
+.app__topbar { @apply mx-4 mt-4 flex flex-wrap items-center gap-3; }
+.app__crumbs { @apply min-w-0; }
+.app__crumb-list { @apply flex flex-wrap items-center gap-1; }
+.app__crumb { @apply flex items-center gap-1; }
+
+.app__actions { @apply flex w-full flex-wrap items-center gap-2 sm:w-auto sm:ms-auto; }
+.app__search { @apply flex w-full items-center gap-2 sm:w-64; }
+.app__search-input { @apply min-w-0 w-full; }
+
+.app__content { @apply grid min-w-0 flex-1; }

@@ -1,0 +1,17 @@
+@reference "../../styles.css";
+
+.settings {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.settings__section {
+  @apply min-w-0 max-w-2xl;
+}
+
+.settings__row {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.settings__label {
+  @apply grid min-w-0 gap-1;
+}
