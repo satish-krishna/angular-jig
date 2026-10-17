@@ -1,0 +1,35 @@
+{
+  "$comment": "Series 5 schematic condition (harness/schematic-spec-s3-addendum.md, Decision G4): exactly s3-gate-on.settings.json, the series 3 round 1 gate-on hooks, plus route-to-generator, PreToolUse on Write (deny creating a generator-owned file or writing over a slice:placeholder file) and PostToolUse on Bash|PowerShell (report generator-owned TypeScript files without the generator header). Every hook is registered through $CLAUDE_PROJECT_DIR so it loads after the subject has cd'd into a subfolder. Used by the schematic arm through schematic.gateSettings; gate-off and gate-on keep their s3 files.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-enforcement.mjs\"" }]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/route-to-generator.mjs\"" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/seal-templates.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-layout.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-component-shape.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-freeloader.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-applied-appearance.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-app-css.mjs\"" }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-src-after-bash.mjs\"" },
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/route-to-generator.mjs\"" }
+        ]
+      }
+    ]
+  }
+}
