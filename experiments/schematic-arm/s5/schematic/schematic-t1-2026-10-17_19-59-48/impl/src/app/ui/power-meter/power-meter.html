@@ -1,0 +1,13 @@
+<div class="power-meter">
+  <div class="power-meter__label">
+    <span hlmSmall>Power</span>
+    <span hlmSmall>{{ value() }} / 100</span>
+  </div>
+  <meter
+    class="power-meter__bar"
+    min="0"
+    max="100"
+    [value]="value()"
+    [attr.aria-label]="'Power ' + value() + ' of 100'"
+  >{{ value() }}</meter>
+</div>

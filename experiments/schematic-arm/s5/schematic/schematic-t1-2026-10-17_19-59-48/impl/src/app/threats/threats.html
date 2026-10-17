@@ -1,0 +1,50 @@
+<section class="threats">
+  <header class="threats__intro">
+    <h1 hlmH1>{{ vm.text.title }}</h1>
+    <p hlmMuted>{{ vm.text.intro }}</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile [label]="vm.text.openIncidents" [value]="vm.incidentCount()" [hint]="vm.text.openIncidentsHint">
+      <ng-icon statIcon hlmIcon name="lucideTriangleAlert" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile [label]="vm.text.responders" [value]="vm.tier4Responders()" [hint]="vm.text.respondersHint">
+      <ng-icon statIcon hlmIcon name="lucideUserCheck" tone="muted" />
+    </app-stat-tile>
+  </div>
+
+  <section class="threats__section" aria-labelledby="tiers-heading">
+    <h2 hlmH2 id="tiers-heading">{{ vm.text.tiersTitle }}</h2>
+    <ul class="threats__tiers">
+      @for (row of vm.tiers(); track row.tier) {
+        <li class="threats__tier">
+          <article hlmCard class="threats__card">
+            <header hlmCardHeader class="threats__head">
+              <h3 hlmH3>{{ row.tier }}</h3>
+              <span hlmBadge variant="secondary">{{ row.cleared }} {{ vm.text.cleared }}</span>
+            </header>
+            <div hlmCardContent>
+              <p hlmSmall>{{ row.response }}</p>
+            </div>
+          </article>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="threats__section" aria-labelledby="incidents-heading">
+    <h2 hlmH2 id="incidents-heading">{{ vm.text.incidentsTitle }}</h2>
+    @if (vm.incidents().length) {
+      <ul class="threats__incidents">
+        @for (hero of vm.incidents(); track hero.id) {
+          <li class="threats__incident">
+            <a [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+            <span hlmBadge [variant]="hero.status === 'MIA' ? 'destructive' : 'warning'">{{ hero.status }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p hlmMuted>{{ vm.text.noIncidents }}</p>
+    }
+  </section>
+</section>

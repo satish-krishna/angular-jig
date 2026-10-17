@@ -1,0 +1,91 @@
+<form class="hero-form" [formRoot]="heroForm">
+  <hlm-field-group>
+    <hlm-field>
+      <label hlmFieldLabel for="name">{{ meta['name'].label }}</label>
+      <input
+        hlmInput
+        id="name"
+        [formField]="heroForm.name"
+        [placeholder]="meta['name'].placeholder ?? ''"
+      />
+      <hlm-field-description>{{ meta['name'].help }}</hlm-field-description>
+      @for (error of heroForm.name().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="alias">{{ meta['alias'].label }}</label>
+      <input
+        hlmInput
+        id="alias"
+        [formField]="heroForm.alias"
+        [placeholder]="meta['alias'].placeholder ?? ''"
+      />
+      <hlm-field-description>{{ meta['alias'].help }}</hlm-field-description>
+      @for (error of heroForm.alias().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="heroClass">{{ meta['heroClass'].label }}</label>
+      <hlm-select [formField]="heroForm.heroClass" [itemToString]="heroClassToString">
+        <hlm-select-trigger buttonId="heroClass" class="hero-form__select">
+          <hlm-select-value [placeholder]="meta['heroClass'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['heroClass'].label }}</hlm-select-label>
+            @for (option of heroClassOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of heroForm.heroClass().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="power">{{ meta['power'].label }}</label>
+      <input hlmInput id="power" type="number" [formField]="heroForm.power" />
+      <hlm-field-description>{{ meta['power'].help }}</hlm-field-description>
+      @for (error of heroForm.power().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="notes">{{ meta['notes'].label }}</label>
+      <textarea
+        hlmTextarea
+        id="notes"
+        rows="4"
+        [formField]="heroForm.notes"
+        [placeholder]="meta['notes'].placeholder ?? ''"
+      ></textarea>
+      <hlm-field-description>{{ meta['notes'].help }}</hlm-field-description>
+      @for (error of heroForm.notes().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel class="hero-form__switch">
+        <hlm-switch [formField]="heroForm.active" />
+        {{ meta['active'].label }}
+      </label>
+      <hlm-field-description>{{ meta['active'].help }}</hlm-field-description>
+      @for (error of heroForm.active().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field orientation="horizontal">
+      <button hlmBtn type="submit">{{ submitLabel() }}</button>
+      <button hlmBtn type="button" variant="outline" (click)="cancel.emit()">Cancel</button>
+    </hlm-field>
+  </hlm-field-group>
+</form>

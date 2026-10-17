@@ -1,0 +1,44 @@
+<section class="missions">
+  <header class="missions__intro">
+    <h1 hlmH1>{{ vm.text.title }}</h1>
+    <p hlmMuted>{{ vm.text.intro }}</p>
+  </header>
+
+  <div class="missions__stats">
+    <app-stat-tile [label]="vm.text.deployed" [value]="vm.deployedCount()" [hint]="vm.text.deployedHint">
+      <ng-icon statIcon hlmIcon name="lucideCrosshair" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile [label]="vm.text.logged" [value]="vm.missionsLogged()" [hint]="vm.text.loggedHint">
+      <ng-icon statIcon hlmIcon name="lucideActivity" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile [label]="vm.text.success" [value]="vm.successRate() + '%'" [hint]="vm.text.successHint">
+      <ng-icon statIcon hlmIcon name="lucideZap" tone="muted" />
+    </app-stat-tile>
+  </div>
+
+  <section class="missions__section" aria-labelledby="deployments-heading">
+    <h2 hlmH2 id="deployments-heading">{{ vm.text.listTitle }}</h2>
+    @if (vm.deployed().length) {
+      <ul class="missions__grid">
+        @for (hero of vm.deployed(); track hero.id) {
+          <li class="missions__item">
+            <article hlmCard class="missions__card">
+              <header hlmCardHeader class="missions__head">
+                <h3 hlmH3 class="missions__name">
+                  <a [routerLink]="['/detail', hero.id]">{{ hero.name }}</a>
+                </h3>
+                <span hlmBadge variant="outline">{{ hero.heroClass }}</span>
+              </header>
+              <div hlmCardContent class="missions__meta">
+                <p hlmSmall>{{ hero.missions }} {{ vm.text.missions }}</p>
+                <p hlmSmall>{{ hero.successRate }}% {{ vm.text.won }}</p>
+              </div>
+            </article>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p hlmMuted>{{ vm.text.empty }}</p>
+    }
+  </section>
+</section>

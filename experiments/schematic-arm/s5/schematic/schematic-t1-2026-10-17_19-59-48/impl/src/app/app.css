@@ -1,0 +1,16 @@
+@reference "../styles.css";
+
+.app__brand { @apply flex items-center gap-2; }
+
+.app__main { @apply flex min-w-0 flex-1 flex-col; }
+
+.app__topbar { @apply mx-4 mt-4 flex flex-wrap items-center gap-3 md:mx-6; }
+
+.app__crumbs { @apply min-w-0 flex-1; }
+.app__crumb-list { @apply flex flex-wrap items-center gap-2; }
+.app__crumb { @apply truncate; }
+
+.app__tools { @apply flex flex-wrap items-center gap-2; }
+.app__search { @apply w-full sm:w-64; }
+
+.app__content { @apply mx-4 my-4 min-w-0 md:mx-6; }

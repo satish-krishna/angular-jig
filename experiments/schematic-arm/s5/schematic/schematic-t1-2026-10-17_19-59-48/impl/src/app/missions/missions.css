@@ -1,0 +1,12 @@
+@reference "../../styles.css";
+
+.missions { @apply grid min-w-0 gap-6 p-6; }
+.missions__intro { @apply grid min-w-0 gap-1; }
+.missions__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.missions__section { @apply grid min-w-0 gap-4; }
+.missions__grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3; }
+.missions__item { @apply min-w-0; }
+.missions__card { @apply h-full; }
+.missions__head { @apply flex flex-wrap items-center justify-between gap-2; }
+.missions__name { @apply min-w-0 break-words; }
+.missions__meta { @apply grid gap-1; }

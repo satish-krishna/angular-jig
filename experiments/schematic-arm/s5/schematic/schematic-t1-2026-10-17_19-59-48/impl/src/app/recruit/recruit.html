@@ -1,0 +1,14 @@
+<section class="recruit">
+  <header class="recruit__intro">
+    <h1 hlmH1>{{ vm.text.title }}</h1>
+    <p hlmMuted>{{ vm.text.intro }}</p>
+  </header>
+
+  <div class="recruit__form">
+    <app-hero-form
+      [submitLabel]="vm.text.submit"
+      (saveHero)="vm.recruit($event)"
+      (cancel)="vm.cancel()"
+    />
+  </div>
+</section>

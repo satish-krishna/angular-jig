@@ -1,0 +1,5 @@
+@reference "../../styles.css";
+
+.recruit { @apply grid min-w-0 gap-6 p-6; }
+.recruit__intro { @apply grid min-w-0 gap-1; }
+.recruit__form { @apply max-w-xl; }

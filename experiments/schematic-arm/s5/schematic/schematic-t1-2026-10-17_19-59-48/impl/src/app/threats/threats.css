@@ -1,0 +1,12 @@
+@reference "../../styles.css";
+
+.threats { @apply grid min-w-0 gap-6 p-6; }
+.threats__intro { @apply grid min-w-0 gap-1; }
+.threats__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.threats__section { @apply grid min-w-0 gap-4; }
+.threats__tiers { @apply grid grid-cols-1 gap-3; }
+.threats__tier { @apply min-w-0; }
+.threats__card { @apply grid gap-2; }
+.threats__head { @apply flex flex-wrap items-center justify-between gap-2; }
+.threats__incidents { @apply flex flex-wrap gap-3; }
+.threats__incident { @apply flex flex-wrap items-center gap-2; }

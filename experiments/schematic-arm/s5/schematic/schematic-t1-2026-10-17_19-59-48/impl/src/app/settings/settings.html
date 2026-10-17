@@ -1,0 +1,46 @@
+<section class="settings">
+  <header class="settings__intro">
+    <h1 hlmH1>{{ vm.text.title }}</h1>
+    <p hlmMuted>{{ vm.text.intro }}</p>
+  </header>
+
+  <section class="settings__section" aria-labelledby="appearance-heading">
+    <h2 hlmH2 id="appearance-heading">{{ vm.text.appearance }}</h2>
+    <article hlmCard class="settings__card">
+      <div hlmCardContent class="settings__appearance">
+        <p hlmSmall>
+          <span hlmBadge variant="secondary">{{ vm.isDark() ? vm.text.currentDark : vm.text.currentLight }}</span>
+        </p>
+        <p hlmMuted>{{ vm.text.appearanceHint }}</p>
+        <div>
+          <button hlmBtn variant="outline" type="button" (click)="vm.toggleTheme()">
+            @if (vm.isDark()) {
+              <ng-icon hlmIcon name="lucideSun" />
+              <span>{{ vm.text.switchToLight }}</span>
+            } @else {
+              <ng-icon hlmIcon name="lucideMoon" />
+              <span>{{ vm.text.switchToDark }}</span>
+            }
+          </button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="settings__section" aria-labelledby="clearance-heading">
+    <h2 hlmH2 id="clearance-heading">{{ vm.text.clearance }}</h2>
+    <ul class="settings__rules">
+      @for (rule of vm.clearanceRules; track rule.tier) {
+        <li class="settings__rule">
+          <h3 hlmH3>{{ rule.tier }}</h3>
+          <p hlmSmall>{{ rule.response }}</p>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="settings__section" aria-labelledby="data-heading">
+    <h2 hlmH2 id="data-heading">{{ vm.text.data }}</h2>
+    <p hlmMuted>{{ vm.text.dataHint }}</p>
+  </section>
+</section>

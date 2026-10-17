@@ -1,0 +1,40 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {}
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 12,
+      "messages": 12,
+      "byHook": {
+        "protect-enforcement": 12
+      }
+    },
+    "ui": {
+      "firings": 1,
+      "messages": 1,
+      "byHook": {
+        "seal-templates": 1
+      }
+    },
+    "hero-detail": {
+      "firings": 3,
+      "messages": 11,
+      "byHook": {
+        "check-app-css": 2,
+        "check-applied-appearance": 1
+      }
+    },
+    "missions": {
+      "firings": 1,
+      "messages": 2,
+      "byHook": {
+        "check-app-css": 1
+      }
+    }
+  }
+}

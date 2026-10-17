@@ -1,0 +1,49 @@
+<div class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__intro">
+      <h1 hlmH1 class="dashboard__title">Operations Dashboard</h1>
+      <p hlmMuted>Where the roster stands this cycle. Example data for demonstration.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit" class="dashboard__primary">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    <app-stat-tile label="Heroes on the books" [value]="vm.rosterCount()" [hint]="vm.activeCount() + ' active'">
+      <ng-icon statIcon hlmIcon name="lucideUserCheck" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Missions logged" [value]="vm.missionsLogged()" hint="Across the whole roster">
+      <ng-icon statIcon hlmIcon name="lucideActivity" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Average power" [value]="vm.averagePower()" hint="Out of 100">
+      <ng-icon statIcon hlmIcon name="lucideZap" tone="muted" />
+    </app-stat-tile>
+    <app-stat-tile label="Heroes sidelined" [value]="vm.sidelinedCount()" hint="Injured or missing">
+      <ng-icon statIcon hlmIcon name="lucideShieldAlert" tone="muted" />
+    </app-stat-tile>
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="top-heroes-heading" class="dashboard__section-title">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" routerLink="/roster">View all roster</a>
+    </div>
+    <div class="dashboard__hero-grid">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <a class="dashboard__hero-link" [routerLink]="['/detail', hero.id]">
+          <app-hero-card [hero]="hero" />
+        </a>
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <div class="dashboard__section-head">
+      <h2 hlmH2 id="roster-heading" class="dashboard__section-title">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.rosterCount() }} heroes</span>
+    </div>
+    <p hlmMuted>The full roster table lives on the Roster screen.</p>
+  </section>
+</div>
