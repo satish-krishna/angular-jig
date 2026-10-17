@@ -1,0 +1,104 @@
+<div class="hero-form">
+  <hlm-field>
+    <label hlmFieldLabel for="hero-name">{{ meta['name'].label }}</label>
+    <input
+      hlmInput
+      id="hero-name"
+      [formField]="fields().name"
+      [placeholder]="meta['name'].placeholder ?? ''"
+    />
+    @for (error of fields().name().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </hlm-field>
+
+  <hlm-field>
+    <label hlmFieldLabel for="hero-alias">{{ meta['alias'].label }}</label>
+    <input hlmInput id="hero-alias" [formField]="fields().alias" />
+    <hlm-field-description>{{ meta['alias'].help }}</hlm-field-description>
+    @for (error of fields().alias().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </hlm-field>
+
+  <hlm-field>
+    <label hlmFieldLabel for="hero-power-class">{{ meta['powerClass'].label }}</label>
+    <hlm-select
+      [value]="fields().powerClass().value()"
+      (valueChange)="choiceChange.emit({ field: 'powerClass', value: $event })"
+    >
+      <hlm-select-trigger buttonId="hero-power-class">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of meta['powerClass'].options ?? []; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </hlm-field>
+
+  <hlm-field>
+    <label hlmFieldLabel for="hero-power">{{ meta['power'].label }}</label>
+    <input hlmInput id="hero-power" type="number" [formField]="fields().power" />
+    <hlm-field-description>{{ meta['power'].help }}</hlm-field-description>
+    @for (error of fields().power().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </hlm-field>
+
+  <hlm-field>
+    <label hlmFieldLabel for="hero-status">{{ meta['status'].label }}</label>
+    <hlm-select
+      [value]="fields().status().value()"
+      (valueChange)="choiceChange.emit({ field: 'status', value: $event })"
+    >
+      <hlm-select-trigger buttonId="hero-status">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of meta['status'].options ?? []; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </hlm-field>
+
+  <hlm-field>
+    <label hlmFieldLabel for="hero-clearance">{{ meta['clearance'].label }}</label>
+    <hlm-select
+      [value]="fields().clearance().value()"
+      (valueChange)="choiceChange.emit({ field: 'clearance', value: $event })"
+    >
+      <hlm-select-trigger buttonId="hero-clearance">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of meta['clearance'].options ?? []; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </hlm-field>
+
+  <hlm-field>
+    <div class="hero-form__switch">
+      <hlm-switch inputId="hero-active" [checked]="active()" (checkedChange)="activeChange.emit($event)" />
+      <label hlmFieldLabel for="hero-active">On active duty</label>
+    </div>
+    <hlm-field-description>Off moves the hero to Reserve.</hlm-field-description>
+  </hlm-field>
+
+  <hlm-field class="hero-form__notes">
+    <label hlmFieldLabel for="hero-notes">{{ meta['notes'].label }}</label>
+    <textarea
+      hlmTextarea
+      id="hero-notes"
+      [formField]="fields().notes"
+      [placeholder]="meta['notes'].placeholder ?? ''"
+    ></textarea>
+    @for (error of fields().notes().errors(); track error.kind) {
+      <hlm-field-error>{{ error.message }}</hlm-field-error>
+    }
+  </hlm-field>
+</div>

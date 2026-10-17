@@ -1,0 +1,49 @@
+{
+  "counters": {
+    "seal": {},
+    "layout": {},
+    "shape": {},
+    "freeloader": {},
+    "bem": {
+      "heroes": {
+        "all": 15,
+        "foreign-block": 15
+      }
+    }
+  },
+  "gateFirings": {
+    "other": {
+      "firings": 10,
+      "messages": 10,
+      "byHook": {
+        "protect-enforcement": 10
+      }
+    },
+    "shell": {
+      "firings": 7,
+      "messages": 7,
+      "byHook": {
+        "check-applied-appearance": 2,
+        "check-app-css": 1,
+        "freeloader": 1,
+        "seal-templates": 1,
+        "component-shape": 1,
+        "check-layout": 1
+      }
+    },
+    "ui": {
+      "firings": 1,
+      "messages": 2,
+      "byHook": {
+        "seal-templates": 1
+      }
+    },
+    "threats": {
+      "firings": 1,
+      "messages": 2,
+      "byHook": {
+        "check-app-css": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@reference "../../styles.css";
+
+.dashboard {
+  @apply grid min-w-0 gap-6;
+}
+
+.dashboard__header {
+  @apply flex flex-wrap items-end justify-between gap-4;
+}
+
+.dashboard__intro {
+  @apply grid min-w-0 gap-1;
+}
+
+.dashboard__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.dashboard__section {
+  @apply grid min-w-0 gap-4;
+}
+
+.dashboard__section-header {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.dashboard__heroes {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4;
+}

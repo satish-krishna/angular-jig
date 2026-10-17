@@ -1,0 +1,43 @@
+<section class="settings">
+  <header class="settings__header">
+    <div class="settings__intro">
+      <h1 hlmH1>Settings</h1>
+      <p hlmMuted>Console preferences for this device.</p>
+    </div>
+  </header>
+
+  <section hlmCard aria-labelledby="appearance-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="appearance-title">Appearance</h2>
+      <p hlmCardDescription>Light, dark, or whatever this device is set to. Kept on this device.</p>
+    </div>
+    <div hlmCardContent>
+      <hlm-field>
+        <label hlmFieldLabel for="settings-theme">Theme</label>
+        <hlm-select [value]="vm.themeSelection()" (valueChange)="vm.setTheme($event)">
+          <hlm-select-trigger buttonId="settings-theme">
+            <hlm-select-value placeholder="Match system" />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            @for (option of vm.themeOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+      </hlm-field>
+    </div>
+  </section>
+
+  <section hlmCard aria-labelledby="data-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-title">Data</h2>
+      <p hlmCardDescription>Where the records live.</p>
+    </div>
+    <div hlmCardContent>
+      <p hlmP>
+        Every hero, mission and threat on this console is example data. Records are held in memory,
+        so edits last until the page is reloaded.
+      </p>
+    </div>
+  </section>
+</section>

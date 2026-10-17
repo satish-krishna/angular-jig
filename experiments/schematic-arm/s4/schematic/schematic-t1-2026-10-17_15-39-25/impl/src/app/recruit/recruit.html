@@ -1,0 +1,31 @@
+<section class="recruit">
+  <header class="recruit__header">
+    <div class="recruit__intro">
+      <h1 hlmH1>Recruit a hero</h1>
+      <p hlmMuted>Enlist a new hero onto the roster. Example data, not real records.</p>
+    </div>
+  </header>
+
+  <section hlmCard aria-labelledby="recruit-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="recruit-title">Dossier</h2>
+    </div>
+    <div hlmCardContent>
+      <form class="recruit__form" (submit)="$event.preventDefault(); vm.save()">
+        <app-hero-form
+          [form]="vm.heroForm"
+          (choiceChange)="vm.setChoice($event.field, $event.value)"
+          (activeChange)="vm.setActive($event)"
+        />
+
+        <div class="recruit__actions">
+          <a hlmBtn variant="outline" routerLink="/roster">Cancel</a>
+          <button hlmBtn type="submit">
+            <ng-icon hlmIcon name="lucideUserPlus" />
+            Enlist hero
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</section>

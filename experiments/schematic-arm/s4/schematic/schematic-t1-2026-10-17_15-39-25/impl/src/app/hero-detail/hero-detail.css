@@ -1,0 +1,29 @@
+@reference "../../styles.css";
+
+.hero-detail { @apply grid min-w-0 gap-6 p-6; }
+.hero-detail__back { @apply justify-self-start; }
+
+.hero-detail__header { @apply grid min-w-0 items-start gap-4 md:grid-cols-[1fr_auto]; }
+.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
+.hero-detail__avatar { @apply shrink-0; }
+.hero-detail__text { @apply grid min-w-0 gap-1; }
+.hero-detail__badges { @apply flex flex-wrap gap-2; }
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__notice { @apply m-0; }
+
+.hero-detail__tabs { @apply grid min-w-0 gap-4; }
+.hero-detail__tab-list { @apply flex max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply min-w-0; }
+
+.hero-detail__overview { @apply grid min-w-0 gap-4 lg:grid-cols-[2fr_1fr]; }
+.hero-detail__summary { @apply grid min-w-0 gap-4; }
+.hero-detail__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.hero-detail__dossier-card { @apply min-w-0; }
+.hero-detail__dossier { @apply grid grid-cols-[auto_1fr] gap-x-4 gap-y-2; }
+
+.hero-detail__powers { @apply grid min-w-0 gap-4 md:grid-cols-3; }
+.hero-detail__abilities { @apply min-w-0; }
+.hero-detail__results { @apply grid gap-3; }
+
+.hero-detail__form { @apply grid min-w-0 gap-6; }
+.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2; }

@@ -1,0 +1,60 @@
+<section class="threats">
+  <header class="threats__header">
+    <div class="threats__intro">
+      <h1 hlmH1>Threats</h1>
+      <p hlmMuted>Threat tiers and who can answer them right now. Example data, not real records.</p>
+    </div>
+  </header>
+
+  <section class="threats__stats" aria-label="Threat figures">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [hint]="stat.hint" [icon]="stat.icon" />
+    }
+  </section>
+
+  <div class="threats__layout">
+    <div hlmTableContainer class="threats__table">
+      <table hlmTable aria-label="Threat tiers and coverage">
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh scope="col">Threat tier</th>
+            <th hlmTh scope="col">Level</th>
+            <th hlmTh scope="col">Responders</th>
+            <th hlmTh scope="col">Standby</th>
+            <th hlmTh scope="col">Unavailable</th>
+            <th hlmTh scope="col">Coverage</th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of vm.rows(); track row.tier) {
+            <tr hlmTr>
+              <td hlmTd>{{ row.tier }}</td>
+              <td hlmTd>{{ row.level }}</td>
+              <td hlmTd>{{ row.responders }}</td>
+              <td hlmTd>{{ row.standby }}</td>
+              <td hlmTd>{{ row.unavailable }}</td>
+              <td hlmTd><span hlmBadge [variant]="row.coverageVariant">{{ row.coverage }}</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <section hlmCard class="threats__alerts" aria-labelledby="alerts-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="alerts-title">Open alerts</h2>
+      </div>
+      <div hlmCardContent>
+        @if (vm.alerts().length) {
+          <ul class="threats__list">
+            @for (alert of vm.alerts(); track $index) {
+              <li hlmP>{{ alert }}</li>
+            }
+          </ul>
+        } @else {
+          <p hlmMuted>Every tier has cover and no hero is unaccounted for.</p>
+        }
+      </div>
+    </section>
+  </div>
+</section>

@@ -1,0 +1,29 @@
+@reference "../../styles.css";
+
+.roster {
+  @apply grid min-w-0 gap-6;
+}
+
+.roster__header {
+  @apply flex flex-wrap items-end justify-between gap-4;
+}
+
+.roster__intro {
+  @apply grid min-w-0 gap-1;
+}
+
+.roster__filters {
+  @apply flex flex-wrap items-center gap-3;
+}
+
+.roster__label {
+  @apply sr-only;
+}
+
+.roster__search {
+  @apply w-full sm:w-72;
+}
+
+.roster__class {
+  @apply w-full sm:w-48;
+}

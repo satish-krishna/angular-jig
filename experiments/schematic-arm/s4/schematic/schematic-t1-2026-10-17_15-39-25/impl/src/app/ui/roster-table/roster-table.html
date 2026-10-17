@@ -1,0 +1,63 @@
+<div hlmTableContainer class="roster-table">
+  <table hlmTable aria-label="Hero roster">
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th hlmTh scope="col">Hero</th>
+        <th hlmTh scope="col">Class</th>
+        <th hlmTh scope="col">Power</th>
+        <th hlmTh scope="col">Status</th>
+        <th hlmTh scope="col">Clearance</th>
+        <th hlmTh scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+      @for (row of rows(); track row.id) {
+        <tr hlmTr>
+          <td hlmTd>
+            <div class="roster-table__hero">
+              <hlm-avatar aria-hidden="true">
+                <span hlmAvatarFallback>{{ row.initials }}</span>
+              </hlm-avatar>
+              <div class="roster-table__identity">
+                <a [routerLink]="['/detail', row.id]">{{ row.name }}</a>
+                <span hlmMuted>{{ row.code }}</span>
+              </div>
+            </div>
+          </td>
+          <td hlmTd><span hlmBadge variant="outline">{{ row.powerClass }}</span></td>
+          <td hlmTd>{{ row.power }}</td>
+          <td hlmTd><span hlmBadge [variant]="row.statusVariant">{{ row.status }}</span></td>
+          <td hlmTd>{{ row.clearance }}</td>
+          <td hlmTd>
+            <a
+              hlmBtn
+              variant="ghost"
+              size="icon"
+              [routerLink]="['/detail', row.id]"
+              [attr.aria-label]="'Edit ' + row.name"
+              [hlmTooltip]="'Edit ' + row.name"
+            >
+              <ng-icon hlmIcon name="lucidePencil" />
+            </a>
+          </td>
+        </tr>
+      } @empty {
+        <tr hlmTr>
+          <td hlmTd colspan="6" class="roster-table__empty">
+            <p hlmMuted>No heroes match these filters.</p>
+          </td>
+        </tr>
+      }
+    </tbody>
+    <tfoot hlmTFoot>
+      <tr hlmTr>
+        <td hlmTd colspan="6">
+          <div class="roster-table__summary">
+            <span>{{ rows().length }} of {{ total() }} heroes</span>
+            <span hlmMuted>sorted by power</span>
+          </div>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

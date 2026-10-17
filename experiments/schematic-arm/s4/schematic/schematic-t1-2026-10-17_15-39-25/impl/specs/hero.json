@@ -1,0 +1,264 @@
+{
+  "entity": "Hero",
+  "plural": "heroes",
+  "labels": {
+    "singular": "Hero",
+    "plural": "Heroes"
+  },
+  "kinds": ["entity", "form", "manage"],
+  "fields": [
+    {
+      "name": "name",
+      "label": "Codename",
+      "required": true,
+      "placeholder": "e.g. Silverwing",
+      "type": "string"
+    },
+    {
+      "name": "alias",
+      "label": "Civilian alias",
+      "required": true,
+      "help": "Real name on file. Use Unknown or Classified where applicable.",
+      "type": "string"
+    },
+    {
+      "name": "powerClass",
+      "label": "Power class",
+      "required": true,
+      "type": "enum",
+      "options": ["Aerial", "Energy", "Psionic", "Tech", "Mutant", "Cosmic", "Enhanced"]
+    },
+    {
+      "name": "power",
+      "label": "Power index",
+      "required": true,
+      "help": "0 to 100.",
+      "type": "number",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "required": true,
+      "type": "enum",
+      "options": ["Active", "Injured", "Reserve", "MIA"]
+    },
+    {
+      "name": "clearance",
+      "label": "Clearance tier",
+      "required": true,
+      "type": "enum",
+      "options": ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"]
+    },
+    {
+      "name": "joined",
+      "label": "Joined",
+      "required": true,
+      "inForm": false,
+      "default": "2026-10-17",
+      "type": "date"
+    },
+    {
+      "name": "missions",
+      "label": "Missions",
+      "required": true,
+      "inForm": false,
+      "default": 0,
+      "min": 0,
+      "type": "number"
+    },
+    {
+      "name": "successRate",
+      "label": "Success rate (%)",
+      "required": true,
+      "inForm": false,
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "help": "Percent of missions completed successfully.",
+      "type": "number"
+    },
+    {
+      "name": "notes",
+      "label": "Dossier notes",
+      "required": true,
+      "placeholder": "Role, strengths, deployment limits",
+      "type": "text"
+    }
+  ],
+  "examples": [
+    {
+      "name": "Silverwing",
+      "alias": "Ada Voss",
+      "powerClass": "Aerial",
+      "power": 88,
+      "status": "Active",
+      "clearance": "Tier 4",
+      "joined": "2021-03-14",
+      "missions": 64,
+      "successRate": 92,
+      "notes": "Precision flyer. Excels at extraction and high-altitude recon. Pairs well with ground-anchor heroes on breach ops."
+    },
+    {
+      "name": "Dr. Ion",
+      "alias": "Marcus Reyes",
+      "powerClass": "Energy",
+      "power": 94,
+      "status": "Active",
+      "clearance": "Tier 5",
+      "joined": "2019-06-02",
+      "missions": 118,
+      "successRate": 88,
+      "notes": "Directed-energy specialist. High output, needs a cooldown window between deployments."
+    },
+    {
+      "name": "Vantablack",
+      "alias": "Unknown",
+      "powerClass": "Psionic",
+      "power": 81,
+      "status": "Reserve",
+      "clearance": "Tier 3",
+      "joined": "2022-11-18",
+      "missions": 29,
+      "successRate": 79,
+      "notes": "Stealth and misdirection. Prefers solo infiltration; low profile by design."
+    },
+    {
+      "name": "Aurora Vale",
+      "alias": "Lena Park",
+      "powerClass": "Cosmic",
+      "power": 97,
+      "status": "Active",
+      "clearance": "Tier 5",
+      "joined": "2018-01-27",
+      "missions": 151,
+      "successRate": 90,
+      "notes": "Cosmic-tier heavy hitter. Reserved for tier-4 and tier-5 threat responses only."
+    },
+    {
+      "name": "Magnetar",
+      "alias": "Idris Kane",
+      "powerClass": "Enhanced",
+      "power": 76,
+      "status": "Injured",
+      "clearance": "Tier 3",
+      "joined": "2020-09-09",
+      "missions": 57,
+      "successRate": 84,
+      "notes": "Magnetic-field control. Currently on medical hold after Harbor Breach."
+    },
+    {
+      "name": "The Tinkerer",
+      "alias": "Sam Okafor",
+      "powerClass": "Tech",
+      "power": 69,
+      "status": "Active",
+      "clearance": "Tier 2",
+      "joined": "2023-04-21",
+      "missions": 22,
+      "successRate": 95,
+      "notes": "Gadget and drone support. Force multiplier on any team; rarely deployed alone."
+    },
+    {
+      "name": "Halcyon",
+      "alias": "Priya Nair",
+      "powerClass": "Psionic",
+      "power": 85,
+      "status": "Active",
+      "clearance": "Tier 4",
+      "joined": "2020-02-15",
+      "missions": 73,
+      "successRate": 87,
+      "notes": "Crowd-calming empath. De-escalation specialist for civilian-dense operations."
+    },
+    {
+      "name": "Rift",
+      "alias": "Classified",
+      "powerClass": "Cosmic",
+      "power": 91,
+      "status": "Reserve",
+      "clearance": "Tier 4",
+      "joined": "2021-08-30",
+      "missions": 44,
+      "successRate": 82,
+      "notes": "Short-range teleport. Powerful but unstable; flagged for supervised deployment."
+    },
+    {
+      "name": "Ember Cho",
+      "alias": "Jae Cho",
+      "powerClass": "Energy",
+      "power": 78,
+      "status": "Active",
+      "clearance": "Tier 3",
+      "joined": "2022-05-11",
+      "missions": 48,
+      "successRate": 86,
+      "notes": "Thermal projection. Strong area control, watch collateral on urban ops."
+    },
+    {
+      "name": "Null",
+      "alias": "Unknown",
+      "powerClass": "Mutant",
+      "power": 83,
+      "status": "MIA",
+      "clearance": "Tier 4",
+      "joined": "2019-12-01",
+      "missions": 66,
+      "successRate": 80,
+      "notes": "Power-nullification field. Last seen during Operation Nightfall; status unresolved."
+    },
+    {
+      "name": "Grond",
+      "alias": "Boris Volkov",
+      "powerClass": "Enhanced",
+      "power": 72,
+      "status": "Active",
+      "clearance": "Tier 2",
+      "joined": "2023-01-19",
+      "missions": 31,
+      "successRate": 90,
+      "notes": "Raw strength and durability. The wall the rest of the team stands behind."
+    },
+    {
+      "name": "Ms. Meridian",
+      "alias": "Grace Bello",
+      "powerClass": "Tech",
+      "power": 80,
+      "status": "Active",
+      "clearance": "Tier 3",
+      "joined": "2021-10-05",
+      "missions": 59,
+      "successRate": 89,
+      "notes": "Tactical AI handler. Coordinates multi-hero ops from the field."
+    }
+  ],
+  "manage": {
+    "icon": "lucideUsers",
+    "createLabel": "Recruit hero",
+    "columns": [
+      { "field": "name" },
+      { "field": "powerClass", "badge": { "variants": {}, "fallback": "secondary" } },
+      { "field": "power" },
+      {
+        "field": "status",
+        "badge": {
+          "variants": {
+            "Active": "secondary",
+            "Injured": "default",
+            "Reserve": "outline",
+            "MIA": "destructive"
+          },
+          "fallback": "outline"
+        }
+      },
+      { "field": "clearance" },
+      { "field": "missions" },
+      { "field": "successRate" }
+    ],
+    "search": ["name", "alias"],
+    "filters": [{ "field": "powerClass", "control": "select" }],
+    "sort": { "field": "power", "direction": "desc" },
+    "summary": true
+  }
+}

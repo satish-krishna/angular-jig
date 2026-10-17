@@ -1,0 +1,57 @@
+<section class="missions">
+  <header class="missions__header">
+    <div class="missions__intro">
+      <h1 hlmH1>Missions</h1>
+      <p hlmMuted>Deployment record for every hero on the roster. Example data, not real records.</p>
+    </div>
+  </header>
+
+  <section class="missions__stats" aria-label="Mission figures">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [hint]="stat.hint" [icon]="stat.icon" />
+    }
+  </section>
+
+  <div hlmTableContainer class="missions__table">
+    <table hlmTable aria-label="Deployment record by hero">
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh scope="col">Hero</th>
+          <th hlmTh scope="col">Missions</th>
+          <th hlmTh scope="col">Won</th>
+          <th hlmTh scope="col">Lost</th>
+          <th hlmTh scope="col">Success</th>
+          <th hlmTh scope="col">Result</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of vm.rows(); track row.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <div class="missions__hero">
+                <hlm-avatar aria-hidden="true">
+                  <span hlmAvatarFallback>{{ row.initials }}</span>
+                </hlm-avatar>
+                <div class="missions__identity">
+                  <a [routerLink]="['/detail', row.id]">{{ row.name }}</a>
+                  <span hlmMuted>{{ row.code }}</span>
+                </div>
+              </div>
+            </td>
+            <td hlmTd>{{ row.missions }}</td>
+            <td hlmTd>{{ row.wins }}</td>
+            <td hlmTd>{{ row.losses }}</td>
+            <td hlmTd>{{ row.successRate }}%</td>
+            <td hlmTd><span hlmBadge [variant]="row.resultVariant">{{ row.result }}</span></td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <p hlmMuted>No deployments on file yet.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

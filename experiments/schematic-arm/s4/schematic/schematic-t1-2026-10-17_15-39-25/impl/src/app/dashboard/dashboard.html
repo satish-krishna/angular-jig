@@ -1,0 +1,38 @@
+<div class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__intro">
+      <h1 hlmH1>Operations Dashboard</h1>
+      <p hlmMuted>Roster readout for this cycle. Example data, not real records.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <section class="dashboard__stats" aria-label="Key figures">
+    @for (stat of vm.stats(); track stat.label) {
+      <app-stat-tile [label]="stat.label" [value]="stat.value" [hint]="stat.hint" [icon]="stat.icon" />
+    }
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-title">
+    <div class="dashboard__section-header">
+      <h2 hlmH2 id="top-heroes-title">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" routerLink="/roster">View all roster</a>
+    </div>
+    <div class="dashboard__heroes">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-title">
+    <div class="dashboard__section-header">
+      <h2 hlmH2 id="roster-title">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.heroCount() }} heroes</span>
+    </div>
+    <app-roster-table [rows]="vm.roster()" [total]="vm.heroCount()" />
+  </section>
+</div>

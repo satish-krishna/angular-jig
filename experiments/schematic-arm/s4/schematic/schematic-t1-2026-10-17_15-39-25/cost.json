@@ -1,0 +1,86 @@
+{
+  "model": "claude-haiku-5-5",
+  "condition": "schematic",
+  "trial": 1,
+  "stages": [
+    {
+      "stage": 0,
+      "name": "spec",
+      "costUsd": 0.02081526,
+      "numTurns": 10,
+      "durationMs": 97736,
+      "wallMs": 119680,
+      "ok": true,
+      "sessionId": "23f00fc2-50b1-4f84-bbc1-521215d0f631"
+    },
+    {
+      "stage": 1,
+      "name": "shell",
+      "costUsd": 0.4710678499999999,
+      "numTurns": 71,
+      "durationMs": 507863,
+      "wallMs": 513792,
+      "ok": true,
+      "sessionId": "c17daafd-c921-47a0-80a3-f4e20497afab"
+    },
+    {
+      "stage": 2,
+      "name": "domain",
+      "costUsd": 0.02115568,
+      "numTurns": 12,
+      "durationMs": 144454,
+      "wallMs": 148545,
+      "ok": true,
+      "sessionId": "f9e9a9ac-e35a-47b6-95a9-24790020f663"
+    },
+    {
+      "stage": 3,
+      "name": "dashboard",
+      "costUsd": 0.21709140999999998,
+      "numTurns": 46,
+      "durationMs": 254922,
+      "wallMs": 258981,
+      "ok": true,
+      "sessionId": "1297c5e7-9d06-4441-915f-0b52450e2939"
+    },
+    {
+      "stage": 4,
+      "name": "roster",
+      "costUsd": 0.049123900000000005,
+      "numTurns": 16,
+      "durationMs": 138659,
+      "wallMs": 144395,
+      "ok": true,
+      "sessionId": "120ed77c-a9cb-4894-a0df-c424cd1e5fb2"
+    },
+    {
+      "stage": 5,
+      "name": "detail",
+      "costUsd": 0.17660971000000003,
+      "numTurns": 47,
+      "durationMs": 272606,
+      "wallMs": 276795,
+      "ok": true,
+      "sessionId": "41d39c44-0ccd-4120-bb54-2651d4e62f8d"
+    },
+    {
+      "stage": 6,
+      "name": "integrate",
+      "costUsd": 1.0035728100000005,
+      "numTurns": 109,
+      "durationMs": 1161972,
+      "wallMs": 1166069,
+      "ok": true,
+      "sessionId": "85e93d95-164c-4753-8bf1-82919032823a"
+    }
+  ],
+  "totals": {
+    "stages": 7,
+    "costUsd": 1.959437,
+    "numTurns": 311,
+    "durationMs": 2578212,
+    "wallMs": 2628257,
+    "stagesOk": 7
+  },
+  "reviewMinutes": 2.46
+}

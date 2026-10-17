@@ -1,0 +1,21 @@
+@reference "../../styles.css";
+
+.recruit {
+  @apply grid min-w-0 gap-6;
+}
+
+.recruit__header {
+  @apply flex flex-wrap items-end justify-between gap-4;
+}
+
+.recruit__intro {
+  @apply grid min-w-0 gap-1;
+}
+
+.recruit__form {
+  @apply grid min-w-0 gap-6;
+}
+
+.recruit__actions {
+  @apply flex flex-wrap justify-end gap-2;
+}

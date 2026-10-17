@@ -1,0 +1,17 @@
+@reference "../../../styles.css";
+
+:host {
+  @apply block min-w-0;
+}
+
+.hero-form {
+  @apply grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+.hero-form__notes {
+  @apply sm:col-span-2;
+}
+
+.hero-form__switch {
+  @apply flex items-center gap-3;
+}
