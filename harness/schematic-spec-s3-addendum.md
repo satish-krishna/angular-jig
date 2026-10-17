@@ -39,7 +39,7 @@ Series 4, in `arm.config.json`:
 
 - `substrate`: `substrate/schematic-arm-4`; `gateSettings`: `harness/gate/s3-gate-on.settings.json` (the schematic arm runs gated, as the original spec says); `gateOffSettings` unchanged.
 - `schematic.commandPattern`: a regex that matches an `ng generate` or `ng g` call on the local slice schematic and nothing else, so a spartan `ng g @spartan-ng/cli:ui` install is not counted.
-- `schematic.specPath`: `specs/hero.slice.json`; `schematic.specSchemaPath`: the emitted JSON schema under `schematics/slice/`.
+- `schematic.specPath`: `specs/hero.json`; `schematic.specSchemaPath`: the emitted JSON schema under `schematics/slice/`.
 - `schematic.protectedPaths`: `schematics/`. `schematic.requiredOnSubstrate`: the collection, the spec schema, the skill, and `verify-arrives-green.mjs`.
 
 The stage prompts stay at `e617dca`, unchanged. The stage 0 prompt is the mod's `prompts/stage-0-spec.md`. As the original spec says, no stage prompt tells the agent to run the schematic; the skill has to route it there.
