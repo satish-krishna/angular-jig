@@ -1,0 +1,8 @@
+@reference "../../styles.css";
+
+.settings { @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 p-4 md:p-6; }
+.settings__header { @apply grid min-w-0 gap-1; }
+.settings__sections { @apply grid min-w-0 gap-4 lg:grid-cols-2; }
+.settings__card { @apply min-w-0; }
+.settings__row { @apply flex flex-wrap items-center justify-between gap-3; }
+.settings__stack { @apply grid min-w-0 gap-4; }

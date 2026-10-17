@@ -1,0 +1,4 @@
+@reference "../styles.css";
+
+.app__brand { @apply flex items-center gap-2; }
+.app__user { @apply grid min-w-0; }

@@ -1,0 +1,5 @@
+@reference "../../../styles.css";
+
+.stat-tile { @apply grid gap-2; }
+.stat-tile__header { @apply flex items-center justify-between gap-2; }
+.stat-tile__icon { @apply flex size-8 shrink-0 items-center justify-center; }

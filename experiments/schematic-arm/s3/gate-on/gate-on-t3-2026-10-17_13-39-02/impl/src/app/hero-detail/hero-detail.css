@@ -1,0 +1,25 @@
+@reference "../../styles.css";
+
+.hero-detail { @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 p-4 md:p-6; }
+.hero-detail__back { @apply justify-self-start; }
+.hero-detail__header { @apply flex flex-wrap items-start justify-between gap-4; }
+.hero-detail__identity { @apply flex min-w-0 items-center gap-4; }
+.hero-detail__names { @apply grid min-w-0 gap-1; }
+.hero-detail__badges { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__actions { @apply flex flex-wrap items-center gap-2; }
+.hero-detail__retire { @apply contents; }
+.hero-detail__tabs { @apply min-w-0; }
+.hero-detail__tab-list { @apply max-w-full overflow-x-auto; }
+.hero-detail__panel { @apply grid min-w-0 gap-4; }
+.hero-detail__stats { @apply grid grid-cols-1 gap-3 sm:grid-cols-3; }
+.hero-detail__columns { @apply grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2; }
+.hero-detail__card { @apply min-w-0; }
+.hero-detail__dossier { @apply grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2; }
+.hero-detail__value { @apply min-w-0 break-words text-end; }
+.hero-detail__form { @apply grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2; }
+.hero-detail__field { @apply grid min-w-0 gap-2; }
+.hero-detail__wide { @apply sm:col-span-2; }
+.hero-detail__trigger { @apply w-full; }
+.hero-detail__form-actions { @apply flex flex-wrap justify-end gap-2 sm:col-span-2; }
+.hero-detail__log { @apply grid gap-2; }
+.hero-detail__mission { @apply flex flex-wrap items-center justify-between gap-2; }

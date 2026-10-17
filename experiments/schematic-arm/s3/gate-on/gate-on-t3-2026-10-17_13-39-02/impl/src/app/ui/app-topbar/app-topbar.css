@@ -1,0 +1,13 @@
+@reference "../../../styles.css";
+
+.app-topbar { @apply flex flex-wrap items-center gap-2 p-4 md:px-6; }
+.app-topbar__start { @apply flex min-w-0 flex-1 items-center gap-2; }
+.app-topbar__menu { @apply shrink-0; }
+.app-topbar__crumbs { @apply min-w-0; }
+.app-topbar__crumb-list { @apply flex min-w-0 flex-wrap items-center gap-2; }
+.app-topbar__crumb { @apply min-w-0; }
+.app-topbar__separator { @apply block; }
+.app-topbar__link { @apply truncate; }
+.app-topbar__end { @apply flex w-full flex-wrap items-center gap-2 sm:w-auto; }
+.app-topbar__search { @apply flex min-w-0 flex-1 items-center gap-2 sm:w-64 sm:flex-none; }
+.app-topbar__search-input { @apply min-w-0 flex-1; }

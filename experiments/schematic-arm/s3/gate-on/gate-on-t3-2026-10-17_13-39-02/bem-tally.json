@@ -1,0 +1,15 @@
+{
+  "totals": {
+    "template-utility-class": 0,
+    "foreign-block": 0,
+    "inline-template": 0,
+    "inline-styles": 0,
+    "missing-triad": 0,
+    "missing-reference": 0,
+    "broken-nesting": 0,
+    "utility-in-ts": 0,
+    "appearance-in-app-css": 0,
+    "all": 0
+  },
+  "violations": []
+}

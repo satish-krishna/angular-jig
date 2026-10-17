@@ -1,0 +1,66 @@
+<section class="missions">
+  <header class="missions__header">
+    <div class="missions__heading">
+      <h1 hlmH1>Missions</h1>
+      <p hlmMuted>Example data. Deployments launched from a hero's detail screen are logged here.</p>
+    </div>
+  </header>
+
+  <div class="missions__stats">
+    <app-stat-tile label="Live" [value]="vm.liveCount()" hint="Deployments in the field">
+      <ng-icon hlmIcon name="lucideActivity" />
+    </app-stat-tile>
+    <app-stat-tile label="Succeeded" [value]="vm.succeededCount()" hint="Closed in success">
+      <ng-icon hlmIcon name="lucideCheck" />
+    </app-stat-tile>
+    <app-stat-tile label="Failed" [value]="vm.failedCount()" hint="Closed without success">
+      <ng-icon hlmIcon name="lucideTriangleAlert" />
+    </app-stat-tile>
+    <app-stat-tile label="Success rate" [value]="vm.successRate() + '%'" hint="Of closed missions">
+      <ng-icon hlmIcon name="lucideTarget" />
+    </app-stat-tile>
+  </div>
+
+  <article hlmCard class="missions__card">
+    <div hlmCardContent class="missions__content">
+      <div hlmTableContainer>
+        <table hlmTable>
+          <caption hlmTableCaption class="missions__caption">Mission log, live missions first</caption>
+          <thead hlmTableHeader>
+            <tr hlmTableRow>
+              <th hlmTableHead>Mission</th>
+              <th hlmTableHead>Hero</th>
+              <th hlmTableHead>Threat tier</th>
+              <th hlmTableHead>Cycle</th>
+              <th hlmTableHead>Outcome</th>
+            </tr>
+          </thead>
+          <tbody hlmTableBody>
+            @for (row of vm.rows(); track row.mission.id) {
+              <tr hlmTableRow>
+                <td hlmTableCell>
+                  <div class="missions__mission">
+                    <span hlmSmall>{{ row.mission.codename }}</span>
+                    <span hlmMuted>{{ row.mission.id }}</span>
+                  </div>
+                </td>
+                <td hlmTableCell><a [routerLink]="row.link">{{ row.heroName }}</a></td>
+                <td hlmTableCell>Tier {{ row.mission.threatTier }}</td>
+                <td hlmTableCell>{{ row.mission.cycle }}</td>
+                <td hlmTableCell>
+                  <span hlmBadge [variant]="row.variant">{{ row.mission.status }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr hlmTableRow>
+                <td hlmTableCell colspan="5" class="missions__empty">
+                  <span hlmMuted>No missions logged yet.</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+</section>

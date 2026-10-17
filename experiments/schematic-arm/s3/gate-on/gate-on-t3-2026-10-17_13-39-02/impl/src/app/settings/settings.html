@@ -1,0 +1,37 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Console preferences and example data.</p>
+  </header>
+
+  <div class="settings__sections">
+    <article hlmCard class="settings__card">
+      <div hlmCardHeader>
+        <h2 hlmH4>Appearance</h2>
+      </div>
+      <div hlmCardContent class="settings__row">
+        <label hlmLabel for="settings-dark">Dark theme</label>
+        <hlm-switch
+          inputId="settings-dark"
+          [checked]="vm.dark()"
+          (checkedChange)="vm.toggleTheme()"
+        />
+      </div>
+    </article>
+
+    <article hlmCard class="settings__card">
+      <div hlmCardHeader>
+        <h2 hlmH4>Example data</h2>
+      </div>
+      <div hlmCardContent class="settings__stack">
+        <p hlmMuted>
+          The roster and mission log are in-memory examples. Changes last until the page reloads. Reset puts the
+          example data back as it started.
+        </p>
+        <div>
+          <button hlmBtn variant="outline" (click)="vm.resetExampleData()">Reset example data</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,7 @@
+@reference "../../../styles.css";
+
+.roster-table__caption { @apply sr-only; }
+.roster-table__identity { @apply flex min-w-0 items-center gap-3; }
+.roster-table__names { @apply grid min-w-0 gap-0.5; }
+.roster-table__numeric { @apply text-right; }
+.roster-table__empty { @apply text-center; }

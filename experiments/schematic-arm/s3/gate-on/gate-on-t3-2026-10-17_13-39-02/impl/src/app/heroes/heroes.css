@@ -1,0 +1,11 @@
+@reference "../../styles.css";
+
+.heroes { @apply grid grid-cols-[minmax(0,1fr)] gap-6 p-4 md:p-6; }
+.heroes__header { @apply flex flex-wrap items-end justify-between gap-4; }
+.heroes__heading { @apply grid min-w-0 gap-1; }
+.heroes__card { @apply min-w-0; }
+.heroes__filters { @apply grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_14rem]; }
+.heroes__field { @apply grid min-w-0 gap-1.5; }
+.heroes__trigger { @apply w-full; }
+.heroes__content { @apply min-w-0; }
+.heroes__footer { @apply flex flex-wrap items-center justify-between gap-2; }

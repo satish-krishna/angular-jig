@@ -1,0 +1,237 @@
+<section class="hero-detail">
+  <a hlmBtn variant="ghost" size="sm" routerLink="/roster" class="hero-detail__back">
+    <ng-icon hlmIcon name="lucideChevronLeft" />
+    Back to roster
+  </a>
+
+  @if (vm.hero(); as hero) {
+    <header class="hero-detail__header">
+      <div class="hero-detail__identity">
+        <hlm-avatar size="lg">
+          <span hlmAvatarFallback>{{ vm.initials() }}</span>
+        </hlm-avatar>
+        <div class="hero-detail__names">
+          <p hlmMuted>{{ hero.id }} · {{ hero.alias }}</p>
+          <h1 hlmH2>{{ hero.name }}</h1>
+          <div class="hero-detail__badges">
+            <span hlmBadge variant="outline">{{ hero.powerClass }}</span>
+            <span hlmBadge [variant]="vm.statusVariant()">{{ hero.status }}</span>
+            <span hlmBadge variant="secondary">Tier {{ hero.clearance }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-detail__actions">
+        <button hlmBtn variant="outline" [disabled]="!vm.canDeploy()" (click)="vm.deploy()">
+          <ng-icon hlmIcon name="lucideCrosshair" />
+          Deploy
+        </button>
+        <hlm-dialog #retireDialog class="hero-detail__retire">
+          <button hlmBtn variant="destructive" (click)="retireDialog.open()">
+            <ng-icon hlmIcon name="lucideTrash2" />
+            Retire
+          </button>
+          <hlm-dialog-content *hlmDialogPortal>
+            <hlm-dialog-header>
+              <h2 hlmDialogTitle>Retire {{ hero.name }}?</h2>
+              <p hlmDialogDescription>
+                {{ hero.name }} will be taken off the roster. Example data only: the change lasts until the page reloads.
+              </p>
+            </hlm-dialog-header>
+            <hlm-dialog-footer>
+              <button hlmBtn variant="outline" (click)="retireDialog.close()">Cancel</button>
+              <button hlmBtn variant="destructive" (click)="retireDialog.close(); vm.retire()">
+                Retire hero
+              </button>
+            </hlm-dialog-footer>
+          </hlm-dialog-content>
+        </hlm-dialog>
+      </div>
+    </header>
+
+    <hlm-tabs class="hero-detail__tabs" [tab]="vm.tab()" (tabActivated)="vm.selectTab($event)">
+      <hlm-tabs-list class="hero-detail__tab-list">
+        <button hlmTabsTrigger="overview">Overview</button>
+        <button hlmTabsTrigger="powers">Powers</button>
+        <button hlmTabsTrigger="missions">Missions</button>
+        <button hlmTabsTrigger="edit">Edit</button>
+      </hlm-tabs-list>
+
+      <div hlmTabsContent="overview" class="hero-detail__panel">
+        <div class="hero-detail__stats">
+          <app-stat-tile label="Power index" [value]="hero.powerIndex" hint="Out of 100">
+            <ng-icon hlmIcon name="lucideZap" />
+          </app-stat-tile>
+          <app-stat-tile label="Missions" [value]="hero.missionCount" hint="Completed to date">
+            <ng-icon hlmIcon name="lucideActivity" />
+          </app-stat-tile>
+          <app-stat-tile label="Success rate" [value]="hero.successRate + '%'" hint="Of completed missions">
+            <ng-icon hlmIcon name="lucideCheck" />
+          </app-stat-tile>
+        </div>
+
+        <div class="hero-detail__columns">
+          <article hlmCard class="hero-detail__card">
+            <div hlmCardHeader>
+              <h2 hlmH4>Field summary</h2>
+            </div>
+            <div hlmCardContent>
+              <p hlmP>{{ hero.notes || 'No field notes on file.' }}</p>
+            </div>
+          </article>
+
+          <article hlmCard class="hero-detail__card">
+            <div hlmCardHeader>
+              <h2 hlmH4>Dossier</h2>
+            </div>
+            <div hlmCardContent>
+              <dl class="hero-detail__dossier">
+                <dt hlmMuted>Hero ID</dt>
+                <dd class="hero-detail__value">{{ hero.id }}</dd>
+                <dt hlmMuted>Alias</dt>
+                <dd class="hero-detail__value">{{ hero.alias }}</dd>
+                <dt hlmMuted>Power class</dt>
+                <dd class="hero-detail__value">{{ hero.powerClass }}</dd>
+                <dt hlmMuted>Status</dt>
+                <dd class="hero-detail__value">{{ hero.status }}</dd>
+                <dt hlmMuted>Clearance</dt>
+                <dd class="hero-detail__value">Tier {{ hero.clearance }}</dd>
+              </dl>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div hlmTabsContent="powers" class="hero-detail__panel">
+        <div class="hero-detail__columns">
+          <article hlmCard class="hero-detail__card">
+            <div hlmCardHeader>
+              <h2 hlmH4>Power index</h2>
+            </div>
+            <div hlmCardContent>
+              <app-power-meter [value]="hero.powerIndex" />
+            </div>
+          </article>
+
+          <article hlmCard class="hero-detail__card">
+            <div hlmCardHeader>
+              <h2 hlmH4>Classification</h2>
+            </div>
+            <div hlmCardContent class="hero-detail__badges">
+              <span hlmBadge variant="outline">{{ hero.powerClass }}</span>
+              <span hlmBadge variant="secondary">Tier {{ hero.clearance }}</span>
+              <span hlmBadge [variant]="vm.statusVariant()">{{ hero.status }}</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div hlmTabsContent="missions" class="hero-detail__panel">
+        <article hlmCard class="hero-detail__card">
+          <div hlmCardHeader>
+            <h2 hlmH4>Mission record</h2>
+          </div>
+          <div hlmCardContent class="hero-detail__panel">
+            <div class="hero-detail__badges">
+              <span hlmBadge>Successful ×{{ vm.record().successes }}</span>
+              <span hlmBadge variant="destructive">Failed ×{{ vm.record().failures }}</span>
+            </div>
+            <p hlmMuted>
+              {{ hero.missionCount }} missions completed at a {{ hero.successRate }}% success rate. The log below
+              holds the missions launched in this session.
+            </p>
+            <div class="hero-detail__log">
+              @for (mission of vm.missions(); track mission.id) {
+                <div class="hero-detail__mission">
+                  <span hlmSmall>{{ mission.codename }}</span>
+                  <span hlmMuted>{{ mission.cycle }} · Threat tier {{ mission.threatTier }}</span>
+                  <span hlmBadge [variant]="mission.variant">{{ mission.status }}</span>
+                </div>
+              } @empty {
+                <p hlmMuted>No missions launched for this hero this session.</p>
+              }
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div hlmTabsContent="edit" class="hero-detail__panel">
+        <form class="hero-detail__form" (submit)="$event.preventDefault(); vm.save()">
+          <hlm-field class="hero-detail__field">
+            <label hlmFieldLabel for="hero-name">{{ vm.meta['name'].label }}</label>
+            <input
+              hlmInput
+              id="hero-name"
+              [formField]="vm.form.name"
+              [attr.placeholder]="vm.meta['name'].placeholder"
+            />
+            @for (e of vm.form.name().errors(); track e.kind) {
+              <hlm-field-error>{{ e.message }}</hlm-field-error>
+            }
+          </hlm-field>
+
+          <hlm-field class="hero-detail__field">
+            <label hlmFieldLabel for="hero-alias">{{ vm.meta['alias'].label }}</label>
+            <input
+              hlmInput
+              id="hero-alias"
+              [formField]="vm.form.alias"
+              [attr.placeholder]="vm.meta['alias'].placeholder"
+            />
+            @for (e of vm.form.alias().errors(); track e.kind) {
+              <hlm-field-error>{{ e.message }}</hlm-field-error>
+            }
+          </hlm-field>
+
+          <hlm-field class="hero-detail__field">
+            <label hlmFieldLabel for="hero-power-class">{{ vm.meta['powerClass'].label }}</label>
+            <hlm-select [value]="vm.form.powerClass().value()" (valueChange)="vm.setPowerClass($event)">
+              <hlm-select-trigger class="hero-detail__trigger" buttonId="hero-power-class">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                <hlm-select-group>
+                  @for (option of vm.powerClassOptions; track option.value) {
+                    <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
+            </hlm-select>
+            @for (e of vm.form.powerClass().errors(); track e.kind) {
+              <hlm-field-error>{{ e.message }}</hlm-field-error>
+            }
+          </hlm-field>
+
+          <hlm-field class="hero-detail__field">
+            <label hlmFieldLabel for="hero-power-index">{{ vm.meta['powerIndex'].label }}</label>
+            <input hlmInput id="hero-power-index" type="number" [formField]="vm.form.powerIndex" />
+            <hlm-field-description>{{ vm.meta['powerIndex'].help }}</hlm-field-description>
+            @for (e of vm.form.powerIndex().errors(); track e.kind) {
+              <hlm-field-error>{{ e.message }}</hlm-field-error>
+            }
+          </hlm-field>
+
+          <hlm-field class="hero-detail__field hero-detail__wide">
+            <label hlmFieldLabel for="hero-notes">{{ vm.meta['notes'].label }}</label>
+            <textarea
+              hlmTextarea
+              id="hero-notes"
+              [formField]="vm.form.notes"
+              [attr.placeholder]="vm.meta['notes'].placeholder"
+            ></textarea>
+            @for (e of vm.form.notes().errors(); track e.kind) {
+              <hlm-field-error>{{ e.message }}</hlm-field-error>
+            }
+          </hlm-field>
+
+          <div class="hero-detail__form-actions">
+            <button hlmBtn variant="outline" type="button" (click)="vm.cancel()">Cancel</button>
+            <button hlmBtn type="submit">Save</button>
+          </div>
+        </form>
+      </div>
+    </hlm-tabs>
+  } @else {
+    <p hlmMuted>No hero on the roster has that ID.</p>
+  }
+</section>

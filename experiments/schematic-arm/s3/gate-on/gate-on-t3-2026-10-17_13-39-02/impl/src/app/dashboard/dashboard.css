@@ -1,0 +1,9 @@
+@reference "../../styles.css";
+
+.dashboard { @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 p-4 md:p-6; }
+.dashboard__header { @apply flex flex-wrap items-end justify-between gap-4; }
+.dashboard__heading { @apply grid min-w-0 gap-1; }
+.dashboard__stats { @apply grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4; }
+.dashboard__section { @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4; }
+.dashboard__section-header { @apply flex flex-wrap items-center justify-between gap-3; }
+.dashboard__cards { @apply grid grid-cols-[repeat(auto-fill,minmax(min(100%,14rem),1fr))] gap-4; }

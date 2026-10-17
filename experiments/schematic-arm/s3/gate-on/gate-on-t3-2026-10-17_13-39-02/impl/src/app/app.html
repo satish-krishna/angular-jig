@@ -1,0 +1,47 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar>
+    <div hlmSidebarHeader class="app__brand">
+      <ng-icon hlmIcon name="lucideShieldAlert" />
+      <span>Hero Ops</span>
+    </div>
+    <div hlmSidebarContent>
+      <nav aria-label="Primary">
+        <div hlmSidebarGroup>
+          <div hlmSidebarGroupLabel>Operations</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (item of navItems; track item.path) {
+                <li hlmSidebarMenuItem>
+                  <a
+                    hlmSidebarMenuButton
+                    [routerLink]="item.path"
+                    routerLinkActive
+                    #active="routerLinkActive"
+                    [isActive]="active.isActive"
+                  >
+                    <ng-icon hlmIcon [name]="item.icon" />
+                    <span>{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div hlmSidebarFooter class="app__user">
+      <span>Commander O.</span>
+      <span>Ops lead</span>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset>
+    <app-topbar
+      [crumbs]="vm.crumbs()"
+      [dark]="vm.dark()"
+      (themeToggle)="vm.toggleTheme()"
+      (searchSubmit)="vm.search($event)"
+    />
+    <router-outlet />
+  </main>
+</div>

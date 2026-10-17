@@ -1,0 +1,33 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>Example data. Active threat assessments, highest tier first.</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile label="Open" [value]="vm.openCount()" hint="Awaiting a response">
+      <ng-icon hlmIcon name="lucideShieldAlert" />
+    </app-stat-tile>
+    <app-stat-tile label="Escalated" [value]="vm.escalatedCount()" hint="Needs a senior response">
+      <ng-icon hlmIcon name="lucideTriangleAlert" />
+    </app-stat-tile>
+    <app-stat-tile label="Highest tier" [value]="'Tier ' + vm.topTier()" hint="Across the board">
+      <ng-icon hlmIcon name="lucideZap" />
+    </app-stat-tile>
+  </div>
+
+  <div class="threats__grid">
+    @for (card of vm.cards(); track card.threat.id) {
+      <article hlmCard class="threats__card">
+        <header hlmCardHeader class="threats__card-header">
+          <h2 hlmH4>{{ card.threat.name }}</h2>
+          <span hlmBadge variant="outline">Tier {{ card.threat.tier }}</span>
+        </header>
+        <div hlmCardContent class="threats__card-body">
+          <p hlmMuted>{{ card.threat.zone }} · {{ card.threat.id }}</p>
+          <span hlmBadge [variant]="card.variant">{{ card.threat.status }}</span>
+        </div>
+      </article>
+    }
+  </div>
+</section>

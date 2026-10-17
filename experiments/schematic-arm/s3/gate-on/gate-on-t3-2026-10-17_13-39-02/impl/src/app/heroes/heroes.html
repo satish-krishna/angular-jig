@@ -1,0 +1,57 @@
+<section class="heroes">
+  <header class="heroes__header">
+    <div class="heroes__heading">
+      <h1 hlmH1>Roster</h1>
+      <p hlmMuted>Example data. Nothing here reaches a live system.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <article hlmCard class="heroes__card">
+    <div hlmCardHeader class="heroes__filters">
+      <div class="heroes__field">
+        <label hlmLabel for="heroes-search">Search</label>
+        <input
+          hlmInput
+          id="heroes-search"
+          type="search"
+          placeholder="Name, alias or ID"
+          [value]="vm.query()"
+          #search
+          (input)="vm.setQuery(search.value)"
+        />
+      </div>
+      <div class="heroes__field">
+        <label hlmLabel for="heroes-class">Power class</label>
+        <hlm-select
+          [itemToString]="vm.classLabel"
+          [value]="vm.classFilter()"
+          (valueChange)="vm.setClassFilter($event)"
+        >
+          <hlm-select-trigger class="heroes__trigger" buttonId="heroes-class">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            <hlm-select-group>
+              @for (option of vm.classOptions; track option) {
+                <hlm-select-item [value]="option">{{ vm.classLabel(option) }}</hlm-select-item>
+              }
+            </hlm-select-group>
+          </hlm-select-content>
+        </hlm-select>
+      </div>
+    </div>
+
+    <div hlmCardContent class="heroes__content">
+      <app-roster-table [rows]="vm.rows()" />
+    </div>
+
+    <footer hlmCardFooter class="heroes__footer">
+      <span hlmMuted>{{ vm.rows().length }} of {{ vm.total() }} heroes</span>
+      <span hlmMuted>Sorted by power</span>
+    </footer>
+  </article>
+</section>

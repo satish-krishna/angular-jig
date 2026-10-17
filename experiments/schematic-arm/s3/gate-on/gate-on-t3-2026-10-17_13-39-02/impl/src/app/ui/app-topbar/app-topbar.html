@@ -1,0 +1,55 @@
+<header class="app-topbar">
+  <div class="app-topbar__start">
+    <button hlmSidebarTrigger class="app-topbar__menu"></button>
+    <nav aria-label="Breadcrumb" class="app-topbar__crumbs">
+      <ol class="app-topbar__crumb-list">
+        @for (crumb of crumbs(); track $index) {
+          @if (!$first) {
+            <li class="app-topbar__separator" aria-hidden="true">/</li>
+          }
+          <li class="app-topbar__crumb">
+            @if (crumb.link) {
+              <a [routerLink]="crumb.link" class="app-topbar__link">{{ crumb.label }}</a>
+            } @else {
+              <span aria-current="page">{{ crumb.label }}</span>
+            }
+          </li>
+        }
+      </ol>
+    </nav>
+  </div>
+
+  <div class="app-topbar__end">
+    <form
+      class="app-topbar__search"
+      role="search"
+      (submit)="$event.preventDefault(); searchSubmit.emit(query.value)"
+    >
+      <ng-icon hlmIcon name="lucideSearch" tone="muted" />
+      <input
+        hlmInput
+        #query
+        type="search"
+        class="app-topbar__search-input"
+        placeholder="Search heroes"
+        aria-label="Search heroes"
+      />
+    </form>
+    <button hlmBtn variant="ghost" size="icon" aria-label="Notifications" hlmTooltip="Notifications">
+      <ng-icon hlmIcon name="lucideBell" />
+    </button>
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      [attr.aria-label]="themeLabel()"
+      [hlmTooltip]="themeLabel()"
+      (click)="themeToggle.emit()"
+    >
+      <ng-icon hlmIcon [name]="dark() ? 'lucideSun' : 'lucideMoon'" />
+    </button>
+    <hlm-avatar>
+      <span hlmAvatarFallback>CO</span>
+    </hlm-avatar>
+  </div>
+</header>

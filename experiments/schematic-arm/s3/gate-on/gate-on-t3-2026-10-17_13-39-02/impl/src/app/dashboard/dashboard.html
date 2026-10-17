@@ -1,0 +1,47 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__heading">
+      <h1 hlmH1>Operations Dashboard</h1>
+      <p hlmMuted>Example data. Nothing here reaches a live system.</p>
+    </div>
+    <a hlmBtn routerLink="/recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </header>
+
+  <div class="dashboard__stats">
+    <app-stat-tile label="Heroes active" [value]="vm.activeCount()" [hint]="'Of ' + vm.heroCount() + ' on the books'">
+      <ng-icon hlmIcon name="lucideUserCheck" />
+    </app-stat-tile>
+    <app-stat-tile label="Missions logged" [value]="vm.missionTotal()" hint="Across the whole roster">
+      <ng-icon hlmIcon name="lucideActivity" />
+    </app-stat-tile>
+    <app-stat-tile label="Average power" [value]="vm.averagePower()" hint="Power index, 0 to 100">
+      <ng-icon hlmIcon name="lucideZap" />
+    </app-stat-tile>
+    <app-stat-tile label="Readiness flags" [value]="vm.flaggedCount()" hint="Injured or MIA">
+      <ng-icon hlmIcon name="lucideShieldAlert" />
+    </app-stat-tile>
+  </div>
+
+  <section class="dashboard__section" aria-labelledby="top-heroes-heading">
+    <header class="dashboard__section-header">
+      <h2 hlmH3 id="top-heroes-heading">Top heroes this cycle</h2>
+      <a hlmBtn variant="outline" routerLink="/roster">View all roster</a>
+    </header>
+    <div class="dashboard__cards">
+      @for (hero of vm.topHeroes(); track hero.id) {
+        <app-hero-card [hero]="hero" />
+      }
+    </div>
+  </section>
+
+  <section class="dashboard__section" aria-labelledby="roster-heading">
+    <header class="dashboard__section-header">
+      <h2 hlmH3 id="roster-heading">Roster</h2>
+      <span hlmBadge variant="secondary">{{ vm.heroCount() }} heroes</span>
+    </header>
+    <app-roster-table [rows]="vm.rosterRows()" />
+  </section>
+</section>

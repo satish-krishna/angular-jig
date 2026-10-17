@@ -1,0 +1,57 @@
+<div hlmTableContainer>
+  <table hlmTable>
+    <caption hlmTableCaption class="roster-table__caption">Heroes on the roster, sorted by power</caption>
+    <thead hlmTableHeader>
+      <tr hlmTableRow>
+        <th hlmTableHead>Hero</th>
+        <th hlmTableHead>Class</th>
+        <th hlmTableHead class="roster-table__numeric">Power</th>
+        <th hlmTableHead>Status</th>
+        <th hlmTableHead>Clearance</th>
+        <th hlmTableHead class="roster-table__numeric">Actions</th>
+      </tr>
+    </thead>
+    <tbody hlmTableBody>
+      @for (row of rows(); track row.hero.id) {
+        <tr hlmTableRow>
+          <td hlmTableCell>
+            <div class="roster-table__identity">
+              <hlm-avatar size="sm">
+                <span hlmAvatarFallback>{{ row.initials }}</span>
+              </hlm-avatar>
+              <div class="roster-table__names">
+                <span hlmSmall>{{ row.hero.name }}</span>
+                <span hlmMuted>{{ row.hero.id }} · {{ row.hero.alias }}</span>
+              </div>
+            </div>
+          </td>
+          <td hlmTableCell>
+            <span hlmBadge variant="outline">{{ row.hero.powerClass }}</span>
+          </td>
+          <td hlmTableCell class="roster-table__numeric">{{ row.hero.powerIndex }}</td>
+          <td hlmTableCell>
+            <span hlmBadge [variant]="row.statusVariant">{{ row.hero.status }}</span>
+          </td>
+          <td hlmTableCell>Tier {{ row.hero.clearance }}</td>
+          <td hlmTableCell class="roster-table__numeric">
+            <a
+              hlmBtn
+              variant="ghost"
+              size="icon"
+              [routerLink]="row.link"
+              [attr.aria-label]="'Edit ' + row.hero.name"
+            >
+              <ng-icon hlmIcon name="lucidePencil" />
+            </a>
+          </td>
+        </tr>
+      } @empty {
+        <tr hlmTableRow>
+          <td hlmTableCell colspan="6" class="roster-table__empty">
+            <span hlmMuted>No heroes match these filters.</span>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
