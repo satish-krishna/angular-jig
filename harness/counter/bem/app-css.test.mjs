@@ -93,6 +93,11 @@ describe('appCssViolations: block root (R7a)', () => {
     expect(tokens(appCssViolations('.dashboard__panel { padding: 1rem; }', { stem: 'dashboard' }))).toEqual(['padding']);
   });
 
+  it('the global stylesheet has no block root, :host included', () => {
+    expect(tokens(appCssViolations(':host { @apply p-2; }', { stem: null, global: true }))).toEqual(['p-2']);
+    expect(tokens(appCssViolations('.styles { @apply p-2; }', { stem: 'styles', global: true }))).toEqual(['p-2']);
+  });
+
   it('with no stem only :host is a block root', () => {
     expect(appCssViolations(':host { @apply p-2; }', { stem: null })).toEqual([]);
     expect(tokens(appCssViolations('.x { @apply p-2; }', { stem: null }))).toEqual(['p-2']);

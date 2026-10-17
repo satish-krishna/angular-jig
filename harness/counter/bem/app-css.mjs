@@ -109,7 +109,8 @@ function inConcat(rule) {
   return false;
 }
 
-function isBlockRoot(selector, stem) {
+function isBlockRoot(selector, stem, global) {
+  if (global) return false;
   const s = squash(selector);
   if (s === ':host') return true;
   if (stem == null) return false;
@@ -145,7 +146,7 @@ export function appCssViolations(css, { stem = null, global = false } = {}) {
 
   const report = (node, ctx, token, kind) => {
     if (kind === 'layout') return;
-    if (kind === 'padding' && ctx.rule && ctx.selectors.every((s) => isBlockRoot(s, stem))) return;
+    if (kind === 'padding' && ctx.rule && ctx.selectors.every((s) => isBlockRoot(s, stem, global))) return;
     const id = ctx.key;
     if (!dedupe.has(id)) dedupe.set(id, new Set());
     if (dedupe.get(id).has(token)) return;
