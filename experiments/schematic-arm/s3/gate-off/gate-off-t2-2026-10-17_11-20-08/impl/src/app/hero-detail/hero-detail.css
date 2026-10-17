@@ -1,0 +1,33 @@
+@reference "../../styles.css";
+
+.detail { @apply grid min-w-0 gap-6 p-6; }
+.detail__back { @apply justify-self-start; }
+.detail__header { @apply flex min-w-0 flex-wrap items-center justify-between gap-4; }
+.detail__identity { @apply flex min-w-0 items-center gap-4; }
+.detail__names { @apply grid min-w-0 gap-1; }
+.detail__title { @apply break-words; }
+.detail__badges { @apply flex flex-wrap gap-2; }
+.detail__actions { @apply flex flex-wrap items-center gap-2; }
+
+.detail__tabs-root { @apply min-w-0; }
+.detail__tabs { @apply max-w-full overflow-x-auto; }
+.detail__panel { @apply grid min-w-0; }
+
+.detail__overview,
+.detail__two { @apply grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2; }
+.detail__card { @apply grid min-w-0 gap-4; }
+.detail__stack { @apply grid min-w-0 gap-4; }
+.detail__minis { @apply grid grid-cols-1 gap-4 sm:grid-cols-3; }
+.detail__dossier { @apply grid min-w-0 grid-cols-[max-content_1fr] gap-x-6 gap-y-3; }
+.detail__dossier dd { @apply min-w-0 break-words; }
+.detail__record { @apply grid gap-3; }
+.detail__record-row { @apply flex items-center justify-between gap-2; }
+
+.detail__form { @apply grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2; }
+.detail__wide { @apply sm:col-span-2; }
+.detail__trigger { @apply w-full; }
+.detail__form-actions { @apply flex flex-wrap justify-end gap-2 sm:col-span-2; }
+
+.detail__missing { @apply grid justify-items-start gap-3 p-6; }
+.detail__deployments { @apply grid min-w-0 gap-3; }
+.detail__deployment { @apply flex min-w-0 flex-wrap items-center justify-between gap-2; }

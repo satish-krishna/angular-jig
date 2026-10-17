@@ -1,0 +1,45 @@
+@reference "../../styles.css";
+
+.topbar {
+  @apply flex flex-wrap items-center gap-2 px-4 py-3 sm:px-6;
+}
+
+.topbar__menu {
+  @apply shrink-0;
+}
+
+.topbar__crumbs {
+  @apply min-w-0 flex-1;
+}
+
+.topbar__trail {
+  @apply flex min-w-0 items-center gap-2;
+}
+
+.topbar__crumb {
+  @apply truncate;
+}
+
+.topbar__crumb--current {
+  @apply min-w-0;
+}
+
+.topbar__sep {
+  @apply shrink-0;
+}
+
+.topbar__search {
+  @apply order-last flex w-full items-center gap-2 sm:order-none sm:w-72;
+}
+
+.topbar__input {
+  @apply min-w-0 flex-1;
+}
+
+.topbar__actions {
+  @apply flex shrink-0 items-center gap-1;
+}
+
+.topbar__avatar {
+  @apply ms-1;
+}

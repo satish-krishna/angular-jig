@@ -1,0 +1,9 @@
+<div class="power-meter" role="meter" [attr.aria-label]="label()" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="percent()">
+  <div class="power-meter__head">
+    <span hlmSmall>{{ label() }}</span>
+    <span hlmSmall>{{ percent() }}</span>
+  </div>
+  <div class="power-meter__track">
+    <div class="power-meter__fill" [style.width.%]="percent()"></div>
+  </div>
+</div>

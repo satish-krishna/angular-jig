@@ -1,0 +1,126 @@
+<section class="missions">
+  <header class="missions__header">
+    <h1 hlmH1>Missions</h1>
+    <p hlmMuted>Launch deployments and record their results. Example data only.</p>
+  </header>
+
+  <app-stat-tile label="Live deployments" [value]="vm.liveCount()" hint="Awaiting a result" [icon]="'lucideActivity'" />
+
+  <section hlmCard class="missions__card" aria-labelledby="launch-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="launch-title">Launch a deployment</h2>
+      <p hlmCardDescription>Only Active heroes deploy, and only against an open threat.</p>
+    </div>
+    <div hlmCardContent class="missions__launch">
+      <hlm-field>
+        <label hlmFieldLabel for="launch-hero">Hero</label>
+        <hlm-select [value]="vm.heroId()" (valueChange)="vm.setHero($event)">
+          <hlm-select-trigger buttonId="launch-hero" class="missions__trigger">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            @for (option of vm.heroOptions(); track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+      </hlm-field>
+
+      <hlm-field>
+        <label hlmFieldLabel for="launch-threat">Threat</label>
+        <hlm-select [value]="vm.threatId()" (valueChange)="vm.setThreat($event)">
+          <hlm-select-trigger buttonId="launch-threat" class="missions__trigger">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            @for (option of vm.threatOptions(); track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+      </hlm-field>
+
+      <div class="missions__launch-action">
+        <button hlmBtn type="button" [disabled]="!vm.launchTarget()" (click)="vm.launch()">
+          <ng-icon hlmIcon name="lucideCrosshair" aria-hidden="true" />
+          Deploy
+        </button>
+        @if (vm.launchHint()) {
+          <p hlmMuted>{{ vm.launchHint() }}</p>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section hlmCard class="missions__card" aria-labelledby="log-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="log-title">Deployment log</h2>
+      <p hlmCardDescription>Newest first. Live deployments take a result once they land.</p>
+    </div>
+    <div hlmCardContent>
+      <div hlmTableContainer>
+        <table hlmTable>
+          <caption hlmTableCaption class="missions__sr">Deployments, newest first</caption>
+          <thead hlmTHead>
+            <tr hlmTr>
+              <th hlmTh scope="col">Mission</th>
+              <th hlmTh scope="col">Hero</th>
+              <th hlmTh scope="col">Threat</th>
+              <th hlmTh scope="col">Status</th>
+              <th hlmTh scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody hlmTBody>
+            @for (row of vm.rows(); track row.mission.id) {
+              <tr hlmTr>
+                <td hlmTd>{{ row.mission.id }}</td>
+                <td hlmTd>{{ row.heroName }}</td>
+                <td hlmTd>
+                  <div class="missions__threat">
+                    <span>{{ row.threatName }}</span>
+                    <p hlmMuted>{{ row.tier }}</p>
+                  </div>
+                </td>
+                <td hlmTd>
+                  <span hlmBadge [variant]="row.statusBadge">{{ row.mission.status }}</span>
+                </td>
+                <td hlmTd>
+                  @if (row.mission.status === 'Live') {
+                    <div class="missions__actions">
+                      <button
+                        hlmBtn
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        [attr.aria-label]="'Succeeded: ' + row.mission.id"
+                        (click)="vm.resolve(row.mission.id, 'Succeeded')"
+                      >
+                        Succeeded
+                      </button>
+                      <button
+                        hlmBtn
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        [attr.aria-label]="'Failed: ' + row.mission.id"
+                        (click)="vm.resolve(row.mission.id, 'Failed')"
+                      >
+                        Failed
+                      </button>
+                    </div>
+                  } @else {
+                    <span hlmMuted>Closed</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr hlmTr>
+                <td hlmTd colspan="5">No deployments yet.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>

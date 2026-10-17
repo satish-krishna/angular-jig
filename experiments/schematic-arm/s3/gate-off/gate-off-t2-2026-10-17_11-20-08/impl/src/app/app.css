@@ -1,0 +1,17 @@
+@reference "../styles.css";
+
+.app {
+  @apply min-w-0;
+}
+
+.app__brand {
+  @apply flex items-center gap-2;
+}
+
+.app__main {
+  @apply min-w-0 flex-1;
+}
+
+.app__content {
+  @apply min-w-0 flex-1;
+}

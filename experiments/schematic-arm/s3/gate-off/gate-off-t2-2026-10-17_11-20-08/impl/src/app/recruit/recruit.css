@@ -1,0 +1,9 @@
+@reference "../../styles.css";
+
+.recruit { @apply grid min-w-0 gap-6 p-6; }
+.recruit__header { @apply grid min-w-0 gap-1; }
+.recruit__card { @apply grid min-w-0 gap-4; }
+.recruit__form { @apply grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2; }
+.recruit__wide { @apply sm:col-span-2; }
+.recruit__trigger { @apply w-full; }
+.recruit__actions { @apply flex flex-wrap justify-end gap-2 sm:col-span-2; }

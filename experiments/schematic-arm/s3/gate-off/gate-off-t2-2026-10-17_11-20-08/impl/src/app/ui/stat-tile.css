@@ -1,0 +1,6 @@
+@reference "../../styles.css";
+
+.stat-tile { @apply min-w-0; }
+.stat-tile__head { @apply flex items-center justify-between gap-2; }
+.stat-tile__body { @apply grid gap-1; }
+.stat-tile__value { @apply tabular-nums; }

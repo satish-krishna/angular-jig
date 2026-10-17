@@ -1,0 +1,12 @@
+<div hlmCard size="sm" class="stat-tile">
+  <div hlmCardHeader class="stat-tile__head">
+    <p hlmCardDescription>{{ label() }}</p>
+    <ng-icon hlmIcon [name]="icon()" tone="muted" />
+  </div>
+  <div hlmCardContent class="stat-tile__body">
+    <p hlmCardTitle class="stat-tile__value">{{ value() }}</p>
+    @if (hint()) {
+      <p hlmMuted>{{ hint() }}</p>
+    }
+  </div>
+</div>

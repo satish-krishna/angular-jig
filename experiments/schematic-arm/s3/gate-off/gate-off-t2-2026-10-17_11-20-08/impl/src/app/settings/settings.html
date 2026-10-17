@@ -1,0 +1,56 @@
+<section class="settings">
+  <header class="settings__header">
+    <h1 hlmH1>Settings</h1>
+    <p hlmMuted>Console preferences and example data.</p>
+  </header>
+
+  <section hlmCard class="settings__card" aria-labelledby="data-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="data-title">Example data</h2>
+      <p hlmCardDescription>
+        The console holds {{ vm.heroCount() }} heroes and {{ vm.missionCount() }} deployments in memory.
+        Changes last until the page reloads.
+      </p>
+    </div>
+    <div hlmCardContent class="settings__actions">
+      <hlm-dialog #reset="hlmDialog">
+        <button hlmBtn variant="outline" hlmDialogTrigger>
+          <ng-icon hlmIcon name="lucideRotateCcw" aria-hidden="true" />
+          Reset example data
+        </button>
+        <hlm-dialog-content *hlmDialogPortal>
+          <hlm-dialog-header>
+            <h2 hlmDialogTitle>Reset example data?</h2>
+            <p hlmDialogDescription>
+              Every edit, recruit, retirement and deployment goes back to the starting roster.
+            </p>
+          </hlm-dialog-header>
+          <hlm-dialog-footer>
+            <button hlmBtn variant="outline" type="button" (click)="reset.close()">Cancel</button>
+            <button
+              hlmBtn
+              variant="destructive"
+              type="button"
+              (click)="reset.close(); vm.resetExampleData()"
+            >
+              Reset
+            </button>
+          </hlm-dialog-footer>
+        </hlm-dialog-content>
+      </hlm-dialog>
+    </div>
+  </section>
+
+  <section hlmCard class="settings__card" aria-labelledby="about-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="about-title">About this console</h2>
+    </div>
+    <div hlmCardContent class="settings__stack">
+      <p hlmP>
+        Hero Ops is a kitchen-sink Tour of Heroes: a superhero agency's mission control. Every hero,
+        threat and figure is fictional.
+      </p>
+      <p hlmMuted>The theme follows your system until you choose light or dark from the top bar.</p>
+    </div>
+  </section>
+</section>

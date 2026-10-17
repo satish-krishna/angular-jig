@@ -1,0 +1,53 @@
+<section class="threats">
+  <header class="threats__header">
+    <h1 hlmH1>Threats</h1>
+    <p hlmMuted>Open threats on the board, most severe first. Example data only.</p>
+  </header>
+
+  <div class="threats__stats">
+    <app-stat-tile label="Open threats" [value]="vm.openCount()" hint="Awaiting a response" [icon]="'lucideShieldAlert'" />
+    <app-stat-tile label="Live deployments" [value]="vm.liveCount()" hint="Against any threat" [icon]="'lucideActivity'" />
+  </div>
+
+  <section hlmCard class="threats__card" aria-labelledby="board-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="board-title">Threat board</h2>
+    </div>
+    <div hlmCardContent>
+      <div hlmTableContainer>
+        <table hlmTable>
+          <caption hlmTableCaption class="threats__sr">Threats, most severe first</caption>
+          <thead hlmTHead>
+            <tr hlmTr>
+              <th hlmTh scope="col">Threat</th>
+              <th hlmTh scope="col">Region</th>
+              <th hlmTh scope="col">Tier</th>
+              <th hlmTh scope="col">Status</th>
+              <th hlmTh scope="col">Live deployments</th>
+            </tr>
+          </thead>
+          <tbody hlmTBody>
+            @for (row of vm.rows(); track row.threat.id) {
+              <tr hlmTr>
+                <td hlmTd>
+                  <div class="threats__name">
+                    <span>{{ row.threat.name }}</span>
+                    <p hlmMuted>{{ row.threat.id }}</p>
+                  </div>
+                </td>
+                <td hlmTd>{{ row.threat.region }}</td>
+                <td hlmTd>
+                  <span hlmBadge variant="outline">{{ row.tier }}</span>
+                </td>
+                <td hlmTd>
+                  <span hlmBadge [variant]="row.statusBadge">{{ row.threat.status }}</span>
+                </td>
+                <td hlmTd>{{ row.live }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>

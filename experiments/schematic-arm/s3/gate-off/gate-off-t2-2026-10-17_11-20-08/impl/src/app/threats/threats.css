@@ -1,0 +1,8 @@
+@reference "../../styles.css";
+
+.threats { @apply grid min-w-0 gap-6 p-6; }
+.threats__header { @apply grid min-w-0 gap-1; }
+.threats__stats { @apply grid grid-cols-1 gap-4 sm:grid-cols-2; }
+.threats__card { @apply grid min-w-0 gap-4; }
+.threats__sr { @apply sr-only; }
+.threats__name { @apply grid min-w-0; }

@@ -1,0 +1,15 @@
+@reference "../../styles.css";
+
+.roster { @apply grid min-w-0 gap-6 p-6; }
+.roster__header { @apply grid min-w-0 gap-1; }
+.roster__label { @apply sr-only; }
+.roster__filters { @apply flex flex-wrap items-center gap-3; }
+.roster__search { @apply flex min-w-0 w-full items-center gap-2 sm:w-72; }
+.roster__class { @apply w-full sm:w-48; }
+.roster__trigger { @apply w-full; }
+.roster__recruit { @apply ms-auto; }
+.roster__panel { @apply grid min-w-0; }
+.roster__numeric { @apply text-end; }
+.roster__identity { @apply flex min-w-0 items-center gap-3; }
+.roster__names { @apply grid min-w-0; }
+.roster__footer { @apply flex flex-wrap items-center justify-between gap-2; }

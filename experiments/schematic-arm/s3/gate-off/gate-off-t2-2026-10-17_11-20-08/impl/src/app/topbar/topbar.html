@@ -1,0 +1,59 @@
+<header class="topbar">
+  <button hlmSidebarTrigger class="topbar__menu"></button>
+
+  <nav class="topbar__crumbs" aria-label="Breadcrumb">
+    <ol class="topbar__trail">
+      <li class="topbar__crumb">Hero Ops</li>
+      <li class="topbar__sep" aria-hidden="true">/</li>
+      <li class="topbar__crumb topbar__crumb--current" aria-current="page">{{ vm.crumb() }}</li>
+    </ol>
+  </nav>
+
+  <form role="search" class="topbar__search" (submit)="$event.preventDefault(); vm.search(searchBox.value)">
+    <input
+      #searchBox
+      hlmInput
+      type="search"
+      name="q"
+      class="topbar__input"
+      aria-label="Search heroes and missions"
+      placeholder="Search heroes, missions"
+    />
+    <button hlmBtn type="submit" variant="ghost" size="icon" aria-label="Search">
+      <ng-icon hlmIcon name="lucideSearch" />
+    </button>
+  </form>
+
+  <div class="topbar__actions">
+    <button
+      hlmBtn
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label="Notifications"
+      hlmTooltip="Notifications"
+    >
+      <ng-icon hlmIcon name="lucideBell" />
+    </button>
+
+    <button
+      hlmBtn
+      type="button"
+      variant="ghost"
+      size="icon"
+      [attr.aria-label]="vm.themeAction()"
+      [hlmTooltip]="vm.themeAction()"
+      (click)="vm.toggleTheme()"
+    >
+      @if (vm.dark()) {
+        <ng-icon hlmIcon name="lucideSun" />
+      } @else {
+        <ng-icon hlmIcon name="lucideMoon" />
+      }
+    </button>
+
+    <hlm-avatar class="topbar__avatar" role="img" aria-label="Commander account">
+      <span hlmAvatarFallback>CO</span>
+    </hlm-avatar>
+  </div>
+</header>

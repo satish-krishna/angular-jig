@@ -1,0 +1,38 @@
+<div hlmSidebarWrapper class="app">
+  <hlm-sidebar>
+    <div hlmSidebarHeader class="app__brand">
+      <ng-icon hlmIcon name="lucideCrosshair" tone="primary" />
+      <span hlmLarge>Hero Ops</span>
+    </div>
+
+    <nav hlmSidebarContent aria-label="Primary">
+      <ul hlmSidebarMenu>
+        @for (item of navItems; track item.path) {
+          <li hlmSidebarMenuItem>
+            <a
+              hlmSidebarMenuButton
+              [routerLink]="item.path"
+              [routerLinkActive]="[]"
+              #active="routerLinkActive"
+              [isActive]="active.isActive"
+            >
+              <ng-icon hlmIcon [name]="item.icon" />
+              <span>{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div hlmSidebarFooter class="app__footer">
+      <p hlmSmall>Example data only.</p>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="app__main">
+    <app-topbar />
+    <div class="app__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

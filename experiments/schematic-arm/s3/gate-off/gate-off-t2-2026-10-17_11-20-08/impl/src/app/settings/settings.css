@@ -1,0 +1,7 @@
+@reference "../../styles.css";
+
+.settings { @apply grid min-w-0 gap-6 p-6; }
+.settings__header { @apply grid min-w-0 gap-1; }
+.settings__card { @apply grid min-w-0 gap-4; }
+.settings__actions { @apply flex flex-wrap gap-2; }
+.settings__stack { @apply grid min-w-0 gap-3; }
