@@ -160,9 +160,9 @@ try {
   if (archive.status !== 0) throw new Error(`Could not read harness/counter from git ref "${countersRef}": ${archive.stderr}`);
   const tar = spawnSync('tar', ['-xf', 'counters.tar'], { cwd: tmp, encoding: 'utf8' });
   if (tar.status !== 0) throw new Error(`Could not extract the counters: ${tar.stderr}`);
-  const generated = [...touched].filter((f) => f.startsWith('src/') && existsSync(join(root, f))).map((f) => join(root, f));
+  const written = [...touched].filter((f) => f.startsWith('src/') && existsSync(join(root, f))).map((f) => join(root, f));
   for (const [label, script] of COUNTERS) {
-    const r = spawnSync('node', [join('harness', 'counter', script), '--root', root, ...generated], { cwd: tmp, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    const r = spawnSync('node', [join('harness', 'counter', script), '--root', root, ...written], { cwd: tmp, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
     let totals = null;
     try {
       const json = JSON.parse(r.stdout);
