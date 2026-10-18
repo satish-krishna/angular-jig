@@ -9,7 +9,7 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { HlmTabsImports } from '@spartan-ng/helm/tabs';
-import { HlmH3, HlmMuted } from '@spartan-ng/helm/typography';
+import { HlmLarge, HlmMuted } from '@spartan-ng/helm/typography';
 import { HeroForm } from '../ui/hero-form/hero-form';
 import { PowerMeter } from '../ui/power-meter/power-meter';
 import { HeroDetailViewModel } from './hero-detail.view-model';
@@ -27,7 +27,7 @@ import { HeroDetailViewModel } from './hero-detail.view-model';
     HlmCardImports,
     HlmDialogImports,
     HlmIconImports,
-    HlmH3,
+    HlmLarge,
     HlmMuted,
     HlmTabsImports,
     HeroForm,

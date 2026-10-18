@@ -28,7 +28,7 @@
   @apply flex items-center gap-4;
 }
 
-.missions__sr-only {
+.missions__priority-label {
   @apply sr-only;
 }
 
