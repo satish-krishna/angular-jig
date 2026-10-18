@@ -1,8 +1,8 @@
 import noAppliedAppearanceOnPrimitive from './rules/no-applied-appearance-on-primitive.ts';
 
-// The `applied` eslint plugin. Not part of the `seal` plugin or the repo's
-// eslint.config.mjs: it runs only inside .claude/hooks/check-applied-appearance.mjs
-// and check-src-after-bash.mjs, so `npm run lint` does not run it. Its counter
+// The `applied` eslint plugin. Not part of the `seal` plugin. It runs inside
+// .claude/hooks/check-applied-appearance.mjs and check-src-after-bash.mjs, and is
+// also listed in the repo's eslint.config.mjs so `npm run lint` runs it. Its counter
 // twin is the expanded appearance-on-primitive count in
 // harness/counter/bem-counter.mjs; the two share no code.
 const plugin = {

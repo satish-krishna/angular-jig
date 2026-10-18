@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // PostToolUse sealing gate. When the agent edits a template-bearing file under
-// src/, run the sealing eslint config on it; on any violation, exit 2 and hand
+// src/, run the seal-only eslint config (built in this file) on it; on any violation, exit 2 and hand
 // the agent a corrective message so it self-corrects. eslint-disable does not
 // work (the config sets noInlineConfig), so there is no escape.
 //
@@ -15,8 +15,33 @@
 // through, matching the repo's hook convention.
 
 import { ESLint } from 'eslint';
+import angular from 'angular-eslint';
+import tseslint from 'typescript-eslint';
+import seal from '../../harness/gate/index.mjs';
 import { logFiring } from './_hook-log.mjs';
 import { docsPointersFor, formatDocPointerBlock } from './rule-docs.mjs';
+
+// Seal-only config, built here the way every other hook builds its own. The
+// repo's eslint.config.mjs is the lint config (every ESLint-hosted house rule),
+// so loading it here would fire the layout, freeloader, applied and shape rules
+// a second time under the sealing gate's corrective text, and would contaminate
+// the gate-off experiment conditions that register only some of the hooks.
+const sealEslintConfig = [
+  { ignores: ['dist/**', '.angular/**', 'node_modules/**', 'coverage/**', 'libs/**'] },
+  {
+    files: ['**/*.ts'],
+    languageOptions: { parser: tseslint.parser, parserOptions: { project: false } },
+    processor: angular.processInlineTemplates,
+    linterOptions: { noInlineConfig: true },
+  },
+  {
+    files: ['**/*.html'],
+    languageOptions: { parser: angular.templateParser },
+    plugins: { seal },
+    linterOptions: { noInlineConfig: true },
+    rules: Object.fromEntries(Object.keys(seal.rules).map((r) => [`seal/${r}`, 'error'])),
+  },
+];
 
 async function readStdin() {
   let raw = '';
@@ -47,13 +72,13 @@ if (!/\.(html|ts)$/.test(normalized)) process.exit(0);
 if (!/(^|\/)src\//.test(normalized)) process.exit(0);
 
 // Claude Code runs PostToolUse hooks from the project root, so process.cwd()
-// locates eslint.config.mjs and resolves the edited path reliably.
+// resolves the edited path reliably.
 const cwd = process.cwd();
 
 let eslint;
 let results;
 try {
-  eslint = new ESLint({ cwd });
+  eslint = new ESLint({ cwd, overrideConfigFile: true, overrideConfig: sealEslintConfig });
   results = await eslint.lintFiles([file]);
 } catch (err) {
   process.stderr.write(`seal-templates: eslint failed to run (${err?.message ?? err}).\n`);

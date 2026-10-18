@@ -4,8 +4,9 @@
 // padding only on the block root (R7a). On a template under src/app: no Tailwind
 // utility in a class attribute or [class.x] binding (BEM rule 1).
 //
-// Self-contained: it is not part of eslint.config.mjs, so `npm run lint` does not
-// run it; .claude/settings.json registers it. Fails closed on an unparseable
+// Self-contained: it is not an ESLint plugin. `npm run lint` runs the same checks
+// through harness/gate/check-app-css-all.mjs; .claude/settings.json registers this
+// hook as the edit-time gate. Fails closed on an unparseable
 // payload, stylesheet or template.
 
 import { readFileSync, existsSync } from 'node:fs';

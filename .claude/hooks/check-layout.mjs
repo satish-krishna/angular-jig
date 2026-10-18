@@ -6,8 +6,9 @@
 // literals). On any violation, exit 2 with a corrective message.
 //
 // Self-contained: it builds its own eslint config for the layout rules and does
-// not touch the repo's eslint.config.mjs (which stays the sealing baseline), so
-// the layout rules are enforced only when this hook is registered (gate-on).
+// not load the repo's eslint.config.mjs, so no other hook fires these rules. The
+// same rules are also listed in eslint.config.mjs so `npm run lint` enforces them
+// for a human; this hook is the edit-time gate the gate-on/off experiments toggle.
 // The counter is the independent auditor; this is the enforcement.
 //
 // Fails closed on an unparseable payload.

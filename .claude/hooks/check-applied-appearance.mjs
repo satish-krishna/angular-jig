@@ -6,8 +6,9 @@
 // because changing an @apply changes what lands on the template's primitives.
 //
 // Self-contained, like check-layout.mjs: it builds its own eslint config and
-// does not touch the repo's eslint.config.mjs, so the rule exists only when this
-// hook is registered; .claude/settings.json registers it.
+// does not load the repo's eslint.config.mjs, so no other hook fires this rule.
+// The rule is also listed in eslint.config.mjs so `npm run lint` enforces it for a
+// human; .claude/settings.json registers this hook as the edit-time gate.
 //
 // Fails closed on an unparseable payload or an eslint failure.
 
