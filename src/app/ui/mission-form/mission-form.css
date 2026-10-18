@@ -1,9 +1,5 @@
 @reference "../../../styles.css";
 
-.mission-form {
-  @apply block;
-}
-
 .mission-form__priority {
   @apply flex items-center gap-2;
 }
