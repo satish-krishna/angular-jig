@@ -26,9 +26,9 @@ import applied from './harness/gate/applied-index.mjs';
 // primitive through a sibling stylesheet) each have a Write/Edit hook in
 // .claude/settings.json with exactly the settings below, and each is listed
 // here so that lint and the hooks cannot disagree. Two gates are not ESLint
-// plugins: the app-css gate runs from `npm run lint` as a second command
-// (harness/gate/check-app-css-all.mjs, over every stylesheet and template),
-// and stylelint on stylesheets is run as `npx stylelint "src/**/*.css"`.
+// plugins: the app-css gate and stylelint run from `npm run lint` as second and
+// third commands (harness/gate/check-app-css-all.mjs over every stylesheet and
+// template, then `stylelint "src/**/*.css"`).
 export default [
   {
     ignores: ['dist/**', '.angular/**', 'node_modules/**', 'coverage/**', 'libs/**'],
