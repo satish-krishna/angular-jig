@@ -3,13 +3,15 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSwitchImports } from '@spartan-ng/helm/switch';
+import { HlmH1 } from '@spartan-ng/helm/typography';
 import { SettingsViewModel } from './settings.view-model';
 
 @Component({
   selector: 'app-settings',
   providers: [SettingsViewModel],
-  imports: [HlmCardImports, HlmLabelImports, HlmSelectImports, HlmSwitchImports],
+  imports: [HlmCardImports, HlmLabelImports, HlmSelectImports, HlmSwitchImports, HlmH1],
   templateUrl: './settings.html',
+  styleUrl: './settings.css',
 })
 export class Settings {
   protected readonly vm = inject(SettingsViewModel);

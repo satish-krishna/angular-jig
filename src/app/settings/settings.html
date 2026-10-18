@@ -1,20 +1,20 @@
-<div class="flex flex-col gap-6 p-6">
-  <h1 class="text-3xl font-bold">Settings</h1>
+<div class="settings">
+  <h1 hlmH1 variant="compact">Settings</h1>
 
   <!-- Appearance section -->
   <hlm-card>
     <hlm-card-header>
       <h2 hlmCardTitle>Appearance</h2>
     </hlm-card-header>
-    <div hlmCardContent class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
+    <div hlmCardContent class="settings__content">
+      <div class="settings__field">
         <label hlmLabel for="theme-select">Theme</label>
         <hlm-select
           [value]="vm.theme()"
           (valueChange)="$event && vm.setTheme($event)"
           [itemToString]="themeToString"
         >
-          <hlm-select-trigger buttonId="theme-select" class="w-full">
+          <hlm-select-trigger buttonId="theme-select" width="full">
             <hlm-select-value placeholder="Select a theme" />
           </hlm-select-trigger>
           <hlm-select-content *hlmSelectPortal>
@@ -24,7 +24,7 @@
           </hlm-select-content>
         </hlm-select>
       </div>
-      <label hlmLabel class="flex items-center gap-2">
+      <label hlmLabel>
         <hlm-switch
           [checked]="vm.compactTables()"
           (checkedChange)="vm.setCompactTables($event)"
@@ -40,15 +40,15 @@
     <hlm-card-header>
       <h2 hlmCardTitle>Roster defaults</h2>
     </hlm-card-header>
-    <div hlmCardContent class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
+    <div hlmCardContent class="settings__content">
+      <div class="settings__field">
         <label hlmLabel for="sort-select">Default sort</label>
         <hlm-select
           [value]="vm.rosterSort()"
           (valueChange)="$event && vm.setRosterSort($event)"
           [itemToString]="sortToString"
         >
-          <hlm-select-trigger buttonId="sort-select" class="w-full">
+          <hlm-select-trigger buttonId="sort-select" width="full">
             <hlm-select-value placeholder="Select a sort order" />
           </hlm-select-trigger>
           <hlm-select-content *hlmSelectPortal>
@@ -58,14 +58,14 @@
           </hlm-select-content>
         </hlm-select>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="settings__field">
         <label hlmLabel for="status-select">Default status filter</label>
         <hlm-select
           [value]="vm.rosterStatus()"
           (valueChange)="$event && vm.setRosterStatus($event)"
           [itemToString]="statusToString"
         >
-          <hlm-select-trigger buttonId="status-select" class="w-full">
+          <hlm-select-trigger buttonId="status-select" width="full">
             <hlm-select-value placeholder="Select a status filter" />
           </hlm-select-trigger>
           <hlm-select-content *hlmSelectPortal>
