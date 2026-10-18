@@ -1,5 +1,5 @@
 {
-  "$comment": "All house gates, armed. Every edit-time hook this project defines runs here: the sealed primitive vocabulary and the icon rule, the layout grammar, component shape and MVVM, the framework-freeloader rules, and the enforcement guard that keeps this configuration read-only. The boot and responsive checks are separate commands the build is told to run (npm run check:boot, npm run check:responsive), because they need a rendered application and cannot be a per-edit hook.",
+  "$comment": "All house gates, armed. Every edit-time hook this project defines runs here: the sealed primitive vocabulary and the icon rule, the layout grammar, component shape and MVVM, the framework-freeloader rules, the applied-appearance and layout-only app stylesheet rules (checked again after every shell command, which can write files no Write hook sees), the slice generator routing (deny hand-creating a file the generator owns for an entity with a spec), and the enforcement guard that keeps this configuration read-only. The boot and responsive checks are separate commands the build is told to run (npm run check:boot, npm run check:responsive), because they need a rendered application and cannot be a per-edit hook.",
   "hooks": {
     "PreToolUse": [
       {
@@ -7,7 +7,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/protect-enforcement.mjs"
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-enforcement.mjs\""
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/route-to-generator.mjs\""
           }
         ]
       }
@@ -18,19 +27,40 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/seal-templates.mjs"
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/seal-templates.mjs\""
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/check-layout.mjs"
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-layout.mjs\""
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/check-component-shape.mjs"
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-component-shape.mjs\""
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/check-freeloader.mjs"
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-freeloader.mjs\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-applied-appearance.mjs\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-app-css.mjs\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-src-after-bash.mjs\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/route-to-generator.mjs\""
           }
         ]
       }

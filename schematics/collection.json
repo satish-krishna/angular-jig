@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "slice": {
+      "description": "Generate a domain entity, its schema-driven form, and a CRUD screen from a pure-data JSON spec.",
+      "factory": "./slice/index.cjs#slice",
+      "schema": "./slice/schema.json"
+    }
+  }
+}

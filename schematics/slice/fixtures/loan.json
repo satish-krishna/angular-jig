@@ -1,0 +1,140 @@
+{
+  "entity": "Loan",
+  "plural": "loans",
+  "labels": {
+    "singular": "loan",
+    "plural": "loans"
+  },
+  "kinds": [
+    "entity",
+    "form",
+    "manage"
+  ],
+  "fields": [
+    {
+      "name": "reference",
+      "type": "string",
+      "label": "Reference",
+      "required": true,
+      "placeholder": "Loan reference"
+    },
+    {
+      "name": "branch",
+      "type": "string",
+      "label": "Branch",
+      "required": true,
+      "placeholder": "Pickup branch"
+    },
+    {
+      "name": "status",
+      "type": "enum",
+      "label": "Status",
+      "required": true,
+      "placeholder": "Select a status",
+      "options": [
+        "Requested",
+        "Active",
+        "Returned",
+        "Overdue",
+        "Lost"
+      ],
+      "default": "Requested"
+    },
+    {
+      "name": "extended",
+      "type": "boolean",
+      "label": "Extended loan",
+      "required": true
+    },
+    {
+      "name": "bookId",
+      "type": "ref",
+      "label": "Borrowed Book",
+      "required": false,
+      "placeholder": "No book selected",
+      "ref": {
+        "entity": "Book",
+        "plural": "books",
+        "label": "title"
+      }
+    },
+    {
+      "name": "memberIds",
+      "type": "ref",
+      "label": "Borrowers",
+      "required": false,
+      "inForm": false,
+      "many": true,
+      "default": [],
+      "ref": {
+        "entity": "Member",
+        "plural": "members",
+        "label": "name"
+      }
+    },
+    {
+      "name": "borrowedOn",
+      "type": "date",
+      "label": "Borrowed On",
+      "required": true,
+      "placeholder": "YYYY-MM-DD"
+    },
+    {
+      "name": "remarks",
+      "type": "text",
+      "label": "Remarks",
+      "required": false,
+      "placeholder": "Counter notes"
+    }
+  ],
+  "manage": {
+    "icon": "lucideBookMarked",
+    "createLabel": "New loan",
+    "columns": [
+      {
+        "field": "reference"
+      },
+      {
+        "field": "branch"
+      },
+      {
+        "field": "status",
+        "badge": {
+          "variants": {
+            "Returned": "default",
+            "Overdue": "destructive"
+          },
+          "fallback": "secondary"
+        }
+      },
+      {
+        "field": "extended"
+      },
+      {
+        "field": "borrowedOn"
+      }
+    ],
+    "search": [
+      "reference",
+      "branch"
+    ],
+    "filters": [
+      {
+        "control": "toggle",
+        "field": "extended",
+        "label": "Extended only",
+        "icon": "lucideRefreshCw"
+      }
+    ]
+  },
+  "examples": [
+    {"reference":"LN-0412","branch":"Central","status":"Active","extended":true,"bookId":"1","memberIds":["1","3"],"borrowedOn":"2026-08-02","remarks":""},
+    {"reference":"LN-0413","branch":"Eastside","status":"Active","extended":false,"bookId":"2","memberIds":["5"],"borrowedOn":"2026-07-19","remarks":""},
+    {"reference":"LN-0371","branch":"Central","status":"Returned","extended":false,"bookId":"3","memberIds":["2","4"],"borrowedOn":"2026-02-04","remarks":"Returned a day early."},
+    {"reference":"LN-0420","branch":"Northgate","status":"Requested","extended":true,"bookId":"4","memberIds":[],"borrowedOn":"2026-09-01","remarks":""},
+    {"reference":"LN-0398","branch":"Eastside","status":"Overdue","extended":true,"bookId":"5","memberIds":["6"],"borrowedOn":"2026-05-22","remarks":"Two reminders sent."},
+    {"reference":"LN-0301","branch":"Central","status":"Lost","extended":false,"bookId":null,"memberIds":["2"],"borrowedOn":"2025-09-10","remarks":"Book not recovered; fine waived."},
+    {"reference":"LN-0425","branch":"Northgate","status":"Active","extended":false,"bookId":"7","memberIds":["3"],"borrowedOn":"2026-09-12","remarks":""},
+    {"reference":"LN-0388","branch":"Central","status":"Returned","extended":true,"bookId":"9","memberIds":["1","5"],"borrowedOn":"2026-04-18","remarks":"Renewed once."}
+  ]
+}

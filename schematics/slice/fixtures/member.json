@@ -1,0 +1,149 @@
+{
+  "entity": "Member",
+  "plural": "members",
+  "labels": {
+    "singular": "member",
+    "plural": "members"
+  },
+  "kinds": [
+    "entity",
+    "form",
+    "manage"
+  ],
+  "fields": [
+    {
+      "name": "name",
+      "type": "string",
+      "label": "Full Name",
+      "required": true,
+      "placeholder": "Member name"
+    },
+    {
+      "name": "tier",
+      "type": "enum",
+      "label": "Membership Tier",
+      "required": true,
+      "placeholder": "Select a tier",
+      "options": [
+        "Standard",
+        "Student",
+        "Senior",
+        "Staff",
+        "Patron"
+      ],
+      "default": "Standard"
+    },
+    {
+      "name": "standing",
+      "type": "enum",
+      "label": "Account Standing",
+      "required": true,
+      "placeholder": "Select a standing",
+      "options": [
+        "Good",
+        "Warning",
+        "Restricted",
+        "Blocked"
+      ],
+      "default": "Good"
+    },
+    {
+      "name": "status",
+      "type": "enum",
+      "label": "Status",
+      "required": true,
+      "placeholder": "Select a status",
+      "options": [
+        "Active",
+        "Suspended",
+        "Expired"
+      ]
+    },
+    {
+      "name": "city",
+      "type": "string",
+      "label": "City",
+      "required": true,
+      "placeholder": "City of residence"
+    },
+    {
+      "name": "joinedOn",
+      "type": "date",
+      "label": "Joined",
+      "required": true,
+      "placeholder": "YYYY-MM-DD"
+    },
+    {
+      "name": "loanLimit",
+      "type": "number",
+      "label": "Loan Limit",
+      "required": true,
+      "min": 1,
+      "max": 20,
+      "default": 5
+    },
+    {
+      "name": "notes",
+      "type": "text",
+      "label": "Notes",
+      "required": false,
+      "placeholder": "Front desk notes"
+    }
+  ],
+  "manage": {
+    "icon": "lucideUsers",
+    "createLabel": "Register member",
+    "columns": [
+      {
+        "field": "name"
+      },
+      {
+        "field": "tier"
+      },
+      {
+        "field": "standing",
+        "badge": {
+          "variants": {
+            "Blocked": "destructive",
+            "Restricted": "default"
+          },
+          "fallback": "secondary"
+        }
+      },
+      {
+        "field": "status",
+        "badge": {
+          "variants": {
+            "Active": "default",
+            "Suspended": "secondary"
+          },
+          "fallback": "outline"
+        }
+      },
+      {
+        "field": "city"
+      }
+    ],
+    "search": [
+      "name",
+      "city"
+    ],
+    "filters": [
+      {
+        "control": "toggle",
+        "field": "standing",
+        "value": "Blocked",
+        "label": "Blocked only",
+        "icon": "lucideBan"
+      }
+    ]
+  },
+  "examples": [
+    {"name":"Amara Johnson","tier":"Standard","standing":"Good","status":"Active","city":"Portland","joinedOn":"2024-03-14","loanLimit":5,"notes":"Prefers email reminders."},
+    {"name":"Kenji Watanabe","tier":"Student","standing":"Warning","status":"Active","city":"Seattle","joinedOn":"2025-09-02","loanLimit":8,"notes":"Two overdue returns this term."},
+    {"name":"Rosa Delgado","tier":"Senior","standing":"Good","status":"Active","city":"Tacoma","joinedOn":"2019-01-27","loanLimit":10,"notes":"Large-print requests."},
+    {"name":"Oliver Grant","tier":"Standard","standing":"Restricted","status":"Suspended","city":"Olympia","joinedOn":"2023-05-30","loanLimit":2,"notes":"Unpaid fines over the limit."},
+    {"name":"Zainab Aziz","tier":"Patron","standing":"Good","status":"Active","city":"Portland","joinedOn":"2021-07-11","loanLimit":20,"notes":"Funds the summer reading program."},
+    {"name":"Felix Moreau","tier":"Staff","standing":"Blocked","status":"Expired","city":"Salem","joinedOn":"2022-11-08","loanLimit":1,"notes":"Card lost twice; replacement pending."}
+  ]
+}

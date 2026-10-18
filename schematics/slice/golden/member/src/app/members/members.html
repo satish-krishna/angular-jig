@@ -1,0 +1,149 @@
+<section class="members">
+  <header class="members__header">
+    <div class="members__title">
+      <ng-icon hlmIcon name="lucideUsers" tone="primary" />
+      <h1 hlmH3>{{ vm.text.title }}</h1>
+    </div>
+    <hlm-dialog #createDialog="hlmDialog">
+      <button hlmBtn hlmDialogTrigger (click)="vm.startCreate()" data-testid="create-member">
+        <ng-icon hlmIcon name="lucidePlus" />
+        <span>{{ vm.text.createLabel }}</span>
+      </button>
+      <hlm-dialog-content *hlmDialogPortal class="members__dialog">
+        <hlm-dialog-header>
+          <h2 hlmDialogTitle>{{ vm.text.createTitle }}</h2>
+          <p hlmDialogDescription>{{ vm.text.createDescription }}</p>
+        </hlm-dialog-header>
+        <app-member-form
+          submitLabel="Create"
+          (saveMember)="vm.save($event); createDialog.close()"
+          (cancel)="createDialog.close()"
+        />
+      </hlm-dialog-content>
+    </hlm-dialog>
+  </header>
+
+  <div class="members__filters">
+    <label hlmLabel for="members-search" class="members__label">{{ vm.text.searchLabel }}</label>
+    <input
+      hlmInput
+      id="members-search"
+      type="search"
+      class="members__search"
+      [placeholder]="vm.text.searchPlaceholder"
+      [value]="vm.searchQuery()"
+      (input)="vm.searchQuery.set($any($event.target).value)"
+    />
+    <button
+      hlmBtn
+      [variant]="vm.standingFilterOn() ? 'default' : 'outline'"
+      size="sm"
+      (click)="vm.toggleStandingFilter()"
+    >
+      <ng-icon hlmIcon name="lucideBan" />
+      <span>{{ vm.text.filters.standing }}</span>
+    </button>
+  </div>
+
+  <div class="members__table">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>{{ vm.text.columns.name }}</th>
+          <th hlmTh>{{ vm.text.columns.tier }}</th>
+          <th hlmTh>{{ vm.text.columns.standing }}</th>
+          <th hlmTh>{{ vm.text.columns.status }}</th>
+          <th hlmTh>{{ vm.text.columns.city }}</th>
+          <th hlmTh>{{ vm.text.actions }}</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (member of vm.filtered(); track member.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ member.name }}</td>
+            <td hlmTd>{{ member.tier }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.standingVariant(member.standing)">
+                {{ member.standing }}
+              </span>
+            </td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.statusVariant(member.status)">
+                {{ member.status }}
+              </span>
+            </td>
+            <td hlmTd>{{ member.city }}</td>
+            <td hlmTd>
+              <div class="members__actions">
+                <hlm-dialog #editDialog="hlmDialog">
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    (click)="vm.startEdit(member.id)"
+                    data-testid="edit-member"
+                    [attr.aria-label]="vm.text.edit + ' ' + member.name"
+                  >
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="members__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.editTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.editDescription }}</p>
+                    </hlm-dialog-header>
+                    @if (vm.editingMember(); as member) {
+                      <app-member-form
+                        [initialValue]="member"
+                        submitLabel="Update"
+                        (saveMember)="vm.save($event); editDialog.close()"
+                        (cancel)="editDialog.close()"
+                      />
+                    }
+                  </hlm-dialog-content>
+                </hlm-dialog>
+                <hlm-dialog>
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    [attr.aria-label]="vm.text.delete + ' ' + member.name"
+                  >
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content
+                    *hlmDialogPortal
+                    class="members__dialog members__dialog--narrow"
+                  >
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.deleteTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.deleteDescription }}</p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button
+                        hlmBtn
+                        variant="destructive"
+                        hlmDialogClose
+                        (click)="vm.remove(member.id)"
+                      >
+                        {{ vm.text.delete }}
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <p hlmMuted>{{ vm.text.empty }}</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

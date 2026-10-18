@@ -1,0 +1,111 @@
+<form class="loan-form" [formRoot]="loanForm">
+  <hlm-field-group>
+    <hlm-field>
+      <label hlmFieldLabel for="reference">{{ meta['reference'].label }}</label>
+      <input
+        hlmInput
+        id="reference"
+        [formField]="loanForm.reference"
+        [placeholder]="meta['reference'].placeholder ?? ''"
+      />
+      @for (error of loanForm.reference().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="branch">{{ meta['branch'].label }}</label>
+      <input
+        hlmInput
+        id="branch"
+        [formField]="loanForm.branch"
+        [placeholder]="meta['branch'].placeholder ?? ''"
+      />
+      @for (error of loanForm.branch().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="status">{{ meta['status'].label }}</label>
+      <hlm-select [formField]="loanForm.status" [itemToString]="statusToString">
+        <hlm-select-trigger buttonId="status" class="loan-form__select">
+          <hlm-select-value [placeholder]="meta['status'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['status'].label }}</hlm-select-label>
+            @for (option of statusOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of loanForm.status().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel class="loan-form__switch">
+        <hlm-switch [formField]="loanForm.extended" />
+        {{ meta['extended'].label }}
+      </label>
+      @for (error of loanForm.extended().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="bookId">{{ meta['bookId'].label }}</label>
+      <hlm-select [formField]="loanForm.bookId" [itemToString]="bookIdToString">
+        <hlm-select-trigger buttonId="bookId" class="loan-form__select">
+          <hlm-select-value [placeholder]="meta['bookId'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['bookId'].label }}</hlm-select-label>
+            @for (option of bookIdOptions(); track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of loanForm.bookId().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="borrowedOn">{{ meta['borrowedOn'].label }}</label>
+      <input
+        hlmInput
+        id="borrowedOn"
+        [formField]="loanForm.borrowedOn"
+        [placeholder]="meta['borrowedOn'].placeholder ?? ''"
+      />
+      @for (error of loanForm.borrowedOn().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="remarks">{{ meta['remarks'].label }}</label>
+      <textarea
+        hlmTextarea
+        id="remarks"
+        rows="4"
+        [formField]="loanForm.remarks"
+        [placeholder]="meta['remarks'].placeholder ?? ''"
+      ></textarea>
+      @for (error of loanForm.remarks().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field orientation="horizontal">
+      <button hlmBtn type="submit">{{ submitLabel() }}</button>
+      <button hlmBtn type="button" variant="outline" (click)="cancel.emit()">Cancel</button>
+    </hlm-field>
+  </hlm-field-group>
+</form>

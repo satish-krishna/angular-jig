@@ -1,0 +1,15 @@
+{
+  "entity": "StatusNote",
+  "plural": "status-notes",
+  "labels": { "singular": "status note", "plural": "status notes" },
+  "kinds": ["entity", "form"],
+  "fields": [
+    { "name": "title", "type": "string", "label": "Title", "required": true, "help": "A short headline." },
+    { "name": "body", "type": "text", "label": "Body", "required": true },
+    { "name": "pinned", "type": "boolean", "label": "Pinned", "required": true },
+    { "name": "remindOn", "type": "date", "label": "Remind on", "required": true, "help": "Use the YYYY-MM-DD form." },
+    { "name": "level", "type": "number", "label": "Level", "required": true, "min": 1, "max": 5, "default": 3 },
+    { "name": "tone", "type": "enum", "label": "Tone", "required": true, "options": ["Calm", "Alert"] },
+    { "name": "author", "type": "ref", "label": "Author", "required": true, "ref": { "entity": "Member", "plural": "members", "label": "name" } }
+  ]
+}

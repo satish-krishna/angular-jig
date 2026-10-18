@@ -1,0 +1,41 @@
+@reference "../../styles.css";
+
+.members {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.members__header {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.members__title {
+  @apply flex items-center gap-2;
+}
+
+.members__dialog {
+  @apply sm:max-w-2xl;
+}
+
+.members__dialog--narrow {
+  @apply sm:max-w-sm;
+}
+
+.members__filters {
+  @apply flex flex-wrap items-end gap-3;
+}
+
+.members__label {
+  @apply sr-only;
+}
+
+.members__search {
+  @apply w-full sm:w-64;
+}
+
+.members__table {
+  @apply min-w-0 overflow-x-auto;
+}
+
+.members__actions {
+  @apply flex gap-2;
+}

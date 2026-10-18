@@ -1,0 +1,49 @@
+@reference "../../styles.css";
+
+.books {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.books__header {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.books__title {
+  @apply flex items-center gap-2;
+}
+
+.books__dialog {
+  @apply sm:max-w-2xl;
+}
+
+.books__dialog--narrow {
+  @apply sm:max-w-sm;
+}
+
+.books__filters {
+  @apply flex flex-wrap items-end gap-3;
+}
+
+.books__label {
+  @apply sr-only;
+}
+
+.books__search {
+  @apply w-full sm:w-64;
+}
+
+.books__filter {
+  @apply w-full sm:w-48;
+}
+
+.books__table {
+  @apply min-w-0 overflow-x-auto;
+}
+
+.books__actions {
+  @apply flex gap-2;
+}
+
+.books__footer {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}

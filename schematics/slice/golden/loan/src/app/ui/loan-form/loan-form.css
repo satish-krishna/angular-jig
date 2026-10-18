@@ -1,0 +1,13 @@
+@reference "../../../styles.css";
+
+.loan-form {
+  @apply grid gap-6;
+}
+
+.loan-form__switch {
+  @apply flex items-center gap-2;
+}
+
+.loan-form__select {
+  @apply w-full;
+}

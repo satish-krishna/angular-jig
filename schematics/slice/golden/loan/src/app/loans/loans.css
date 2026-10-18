@@ -1,0 +1,41 @@
+@reference "../../styles.css";
+
+.loans {
+  @apply grid min-w-0 gap-6 p-6;
+}
+
+.loans__header {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.loans__title {
+  @apply flex items-center gap-2;
+}
+
+.loans__dialog {
+  @apply sm:max-w-2xl;
+}
+
+.loans__dialog--narrow {
+  @apply sm:max-w-sm;
+}
+
+.loans__filters {
+  @apply flex flex-wrap items-end gap-3;
+}
+
+.loans__label {
+  @apply sr-only;
+}
+
+.loans__search {
+  @apply w-full sm:w-64;
+}
+
+.loans__table {
+  @apply min-w-0 overflow-x-auto;
+}
+
+.loans__actions {
+  @apply flex gap-2;
+}

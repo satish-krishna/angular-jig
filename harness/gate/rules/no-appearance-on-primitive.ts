@@ -15,7 +15,7 @@ export type Options = [];
 export type MessageIds = 'appearanceOnPrimitive';
 export const RULE_NAME = 'no-appearance-on-primitive';
 
-const isPrimitive = (node: TmplAstElement): boolean =>
+export const isPrimitive = (node: TmplAstElement): boolean =>
   PRIMITIVE_ELEMENTS.has(node.name) || node.attributes.some((a) => PRIMITIVE_ATTRS.has(a.name));
 
 const classTokens = (node: TmplAstElement): string[] => {
@@ -29,7 +29,7 @@ const baseUtil = (t: string): string => (t.includes(':') ? t.slice(t.lastIndexOf
 // (display, flex/grid arrangement, dimensions, margins, position) is layout.
 const APPEARANCE_RE =
   /^(bg-|text-(?!left$|center$|right$|justify$|start$|end$|wrap$|nowrap$|balance$|pretty$|ellipsis$|clip$)|font-|leading-|tracking-|border($|-)|rounded($|-)|shadow($|-)|ring($|-)|p[xytblrse]?-)/;
-const isAppearance = (t: string): boolean => APPEARANCE_RE.test(baseUtil(t));
+export const isAppearance = (t: string): boolean => APPEARANCE_RE.test(baseUtil(t));
 
 export default createRule<Options, MessageIds>({
   name: RULE_NAME,
