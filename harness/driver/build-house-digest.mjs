@@ -26,7 +26,7 @@
 // WHY NOT .claude/rules/. Two reasons, both measured. An @-include inside a
 // .claude/rules/*.md file does not expand -- verified against a canary that was
 // obeyed through CLAUDE.md and missed through a rules file -- so putting them
-// there would mean copying all 27 documents rather than referencing them. And
+// there would mean copying all 28 documents rather than referencing them. And
 // .claude/rules/ is not in protect-enforcement's PROTECTED list, while
 // harness/ is, so the copies would sit outside the guard that keeps rule text
 // from being edited by the thing it constrains.
