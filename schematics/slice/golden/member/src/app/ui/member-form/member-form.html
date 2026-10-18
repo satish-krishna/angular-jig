@@ -16,7 +16,7 @@
     <hlm-field>
       <label hlmFieldLabel for="tier">{{ meta['tier'].label }}</label>
       <hlm-select [formField]="memberForm.tier" [itemToString]="tierToString">
-        <hlm-select-trigger buttonId="tier" class="member-form__select">
+        <hlm-select-trigger buttonId="tier" width="full">
           <hlm-select-value [placeholder]="meta['tier'].placeholder ?? ''" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
@@ -36,7 +36,7 @@
     <hlm-field>
       <label hlmFieldLabel for="standing">{{ meta['standing'].label }}</label>
       <hlm-select [formField]="memberForm.standing" [itemToString]="standingToString">
-        <hlm-select-trigger buttonId="standing" class="member-form__select">
+        <hlm-select-trigger buttonId="standing" width="full">
           <hlm-select-value [placeholder]="meta['standing'].placeholder ?? ''" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
@@ -56,7 +56,7 @@
     <hlm-field>
       <label hlmFieldLabel for="status">{{ meta['status'].label }}</label>
       <hlm-select [formField]="memberForm.status" [itemToString]="statusToString">
-        <hlm-select-trigger buttonId="status" class="member-form__select">
+        <hlm-select-trigger buttonId="status" width="full">
           <hlm-select-value [placeholder]="meta['status'].placeholder ?? ''" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>

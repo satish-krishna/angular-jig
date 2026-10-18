@@ -509,3 +509,17 @@ describe('novel specs (no golden file; type-checked for real by verify-arrives-g
     expect(fields.some((f) => f.type === 'number' && f.min === undefined && f.max === undefined)).toBe(true);
   });
 });
+
+describe('generated selects are sized through the trigger width input', () => {
+  it.each(FIXTURES)('%s: no class on hlm-select-trigger, no __select rule, width="full" on form selects', async (name) => {
+    for (const [path, content] of await generateFixture(name)) {
+      if (path.endsWith('.html')) {
+        expect(content, path).not.toMatch(/<hlm-select-trigger[^>]*\sclass=/);
+        if (path.includes('-form.html')) {
+          for (const m of content.matchAll(/<hlm-select-trigger[^>]*>/g)) expect(m[0], path).toContain('width="full"');
+        }
+      }
+      if (path.endsWith('-form.css')) expect(content, path).not.toContain('__select');
+    }
+  });
+});
