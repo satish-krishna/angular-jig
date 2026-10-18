@@ -1,10 +1,10 @@
 import { Component, computed, input } from '@angular/core';
-import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
+import { HlmProgressImports } from '@spartan-ng/helm/progress';
 import { HlmMuted, HlmSmall } from '@spartan-ng/helm/typography';
 
 @Component({
   selector: 'app-power-meter',
-  imports: [HlmSkeletonImports, HlmMuted, HlmSmall],
+  imports: [HlmProgressImports, HlmMuted, HlmSmall],
   templateUrl: './power-meter.html',
   styleUrl: './power-meter.css',
 })
@@ -13,8 +13,6 @@ export class PowerMeter {
   readonly value = input.required<number>();
   readonly max = input(100);
 
-  protected readonly percent = computed(() => {
-    const max = this.max();
-    return max > 0 ? Math.min(100, Math.max(0, (this.value() / max) * 100)) : 0;
-  });
+  // brn-progress throws when the value leaves 0..max, so clamp before binding.
+  protected readonly clamped = computed(() => Math.min(this.max(), Math.max(0, this.value())));
 }

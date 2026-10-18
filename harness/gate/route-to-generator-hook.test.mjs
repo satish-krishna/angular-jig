@@ -143,7 +143,7 @@ describe('route-to-generator, ownership needs a spec (ruling R4)', () => {
 
   it('still denies the entity of an existing spec under any folder', () => {
     withSpec(heroSpec);
-    for (const f of ['src/app/zz-r2g-probe/hero.model.ts', 'src/app/domain/hero.model.ts', 'src/app/ui/hero-form/hero-form.ts']) {
+    for (const f of ['src/app/zz-r2g-probe/hero.model.ts', 'src/app/domain/hero.model.ts', 'src/app/ui/hero-form/zz-probe.ts']) {
       const r = run(write(join(repoRoot, f)));
       expect(r.status, f).toBe(2);
       expect(r.stderr, f).toContain('specs/hero.json');

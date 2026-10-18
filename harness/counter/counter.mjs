@@ -140,6 +140,8 @@ const PRIMITIVE_ELEMENTS = new Set([
   'hlm-badge',
   'hlm-separator',
   'hlm-skeleton',
+  'hlm-progress',
+  'hlm-progress-indicator',
   'hlm-avatar',
   'hlm-avatar-badge',
   'hlm-avatar-group',

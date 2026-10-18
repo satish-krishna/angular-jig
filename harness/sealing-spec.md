@@ -27,7 +27,7 @@ Primitive attribute directives:
 Primitive element names:
 
 `hlm-card`, `hlm-card-header`, `hlm-card-footer`,
-`hlm-badge`, `hlm-separator`, `hlm-skeleton`,
+`hlm-badge`, `hlm-separator`, `hlm-skeleton`, `hlm-progress`, `hlm-progress-indicator`,
 `hlm-avatar`, `hlm-avatar-badge`, `hlm-avatar-group`, `hlm-avatar-group-count`,
 `hlm-field`, `hlm-field-content`, `hlm-field-description`, `hlm-field-error`, `hlm-field-group`, `hlm-field-label`, `hlm-field-separator`, `hlm-field-title`,
 `hlm-select`, `hlm-select-content`, `hlm-select-group`, `hlm-select-item`, `hlm-select-label`, `hlm-select-multiple`, `hlm-select-placeholder`, `hlm-select-scroll-down`, `hlm-select-scroll-up`, `hlm-select-separator`, `hlm-select-trigger`, `hlm-select-value`, `hlm-select-values-content`,
