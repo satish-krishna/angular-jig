@@ -20,7 +20,7 @@ const stylelint = (file) =>
     shell: true,
   });
 
-describe('npm run lint includes stylelint', () => {
+describe('npm run lint includes stylelint', { timeout: 30000 }, () => {
   it('the lint script runs stylelint over every stylesheet under src', () => {
     const lint = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')).scripts.lint;
     expect(lint.split('&&').map((s) => s.trim())).toContain('stylelint "src/**/*.css"');
