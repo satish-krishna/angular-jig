@@ -7,7 +7,7 @@ const avatarBase =
 
 const avatarVariants = {
   default: 'rounded-full after:rounded-full',
-  primary: 'rounded-lg bg-primary after:hidden',
+  'filled-square': 'rounded-lg bg-primary after:hidden',
 } as const;
 
 @Component({
@@ -29,8 +29,8 @@ const avatarVariants = {
 export class HlmAvatar extends BrnAvatar {
   public readonly size = input<'default' | 'sm' | 'lg'>('default');
 
-  /** 'primary' fills the avatar with the primary color as a rounded square and hides the border overlay. */
-  public readonly variant = input<'default' | 'primary'>('default');
+  /** 'filled-square' is the whole look: a rounded square filled with the primary color, with the border overlay hidden. 'default' is the round avatar with a border. */
+  public readonly variant = input<'default' | 'filled-square'>('default');
 
   constructor() {
     super();
