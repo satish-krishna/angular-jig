@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "SliceSchematic",
+  "title": "Slice schematic options",
+  "type": "object",
+  "properties": {
+    "spec": {
+      "type": "string",
+      "description": "Path to the spec file, relative to the workspace root (for example specs/hero.json)."
+    },
+    "kinds": {
+      "type": "string",
+      "description": "Comma-separated subset of the spec's kinds to generate, for example entity or form,manage. Defaults to every kind the spec lists."
+    }
+  },
+  "required": ["spec"],
+  "additionalProperties": false
+}

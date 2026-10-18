@@ -98,7 +98,8 @@ The `spartan-ui` MCP server is configured and running. Use it. Reading a Helm fi
 
 This is not a style preference. Every fatal runtime defect this repo has measured came from composing a primitive from its source rather than its documentation.
 
-- Follow the `house-style` skill (`.claude/skills/house-style`) for layout and stylesheets, on top of the SpartanNG (`spartan` skill) docs. In short: grid for regions, flex for inline runs, never nest flex to fake a grid; and in any hand-written component stylesheet, colors and lengths are design tokens (`var(--...)`), never raw hex or `px`.
+- Follow the `house-style` skill (`.claude/skills/house-style`) for layout and stylesheets, on top of the SpartanNG (`spartan` skill) docs. In short: every component is a `.ts`/`.html`/`.css` triad; template classes are BEM names only, and Tailwind lives in the component stylesheet through `@apply`, layout utilities only (a primitive's look changes in `libs/ui`, as a variant); grid for regions, flex for inline runs, never nest flex to fake a grid.
+- An entity's domain (model, zod schema, service, example data), its form and its manage screen are generated, not hand-written. Follow the `slice-generator` skill (`.claude/skills/slice-generator`): write `specs/<entity>.json`, check it with `npm run validate:spec -- specs/<entity>.json`, then `ng generate slice --spec specs/<entity>.json`.
 
 ## Templates
 

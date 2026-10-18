@@ -8,3 +8,14 @@
 # unrelated history and bury this branch's diff.
 harness/rules/*.md text eol=lf
 .claude/hooks/*.mjs text eol=lf
+
+# The schematic's golden exemplars, fixtures and generated JSON schema are compared byte for
+# byte. Pin them to LF so core.autocrlf cannot turn a checkout into a false diff.
+schematics/slice/golden/** text eol=lf
+schematics/slice/fixtures/** text eol=lf
+schematics/slice/spec.schema.json text eol=lf
+
+# Node scripts start with a #! line, and vitest fails to load a module whose #! line ends in CRLF
+# ("Invalid or unexpected token"), which core.autocrlf produces on Windows. Pin every script to LF.
+*.mjs text eol=lf
+*.cjs text eol=lf

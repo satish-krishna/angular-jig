@@ -1,0 +1,9 @@
+@reference "../../../styles.css";
+
+.member-form {
+  @apply grid gap-6;
+}
+
+.member-form__select {
+  @apply w-full;
+}

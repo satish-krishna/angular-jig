@@ -1,0 +1,76 @@
+<form class="book-form" [formRoot]="bookForm">
+  <hlm-field-group>
+    <hlm-field>
+      <label hlmFieldLabel for="title">{{ meta['title'].label }}</label>
+      <input
+        hlmInput
+        id="title"
+        [formField]="bookForm.title"
+        [placeholder]="meta['title'].placeholder ?? ''"
+      />
+      @for (error of bookForm.title().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="author">{{ meta['author'].label }}</label>
+      <input
+        hlmInput
+        id="author"
+        [formField]="bookForm.author"
+        [placeholder]="meta['author'].placeholder ?? ''"
+      />
+      @for (error of bookForm.author().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="genre">{{ meta['genre'].label }}</label>
+      <hlm-select [formField]="bookForm.genre" [itemToString]="genreToString">
+        <hlm-select-trigger buttonId="genre" class="book-form__select">
+          <hlm-select-value [placeholder]="meta['genre'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['genre'].label }}</hlm-select-label>
+            @for (option of genreOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of bookForm.genre().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="popularity">{{ meta['popularity'].label }}</label>
+      <input hlmInput id="popularity" type="number" [formField]="bookForm.popularity" />
+      @for (error of bookForm.popularity().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="blurb">{{ meta['blurb'].label }}</label>
+      <textarea
+        hlmTextarea
+        id="blurb"
+        rows="4"
+        [formField]="bookForm.blurb"
+        [placeholder]="meta['blurb'].placeholder ?? ''"
+      ></textarea>
+      @for (error of bookForm.blurb().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field orientation="horizontal">
+      <button hlmBtn type="submit">{{ submitLabel() }}</button>
+      <button hlmBtn type="button" variant="outline" (click)="cancel.emit()">Cancel</button>
+    </hlm-field>
+  </hlm-field-group>
+</form>

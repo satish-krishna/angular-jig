@@ -1,0 +1,148 @@
+<section class="loans">
+  <header class="loans__header">
+    <div class="loans__title">
+      <ng-icon hlmIcon name="lucideBookMarked" tone="primary" />
+      <h1 hlmH3>{{ vm.text.title }}</h1>
+    </div>
+    <hlm-dialog #createDialog="hlmDialog">
+      <button hlmBtn hlmDialogTrigger (click)="vm.startCreate()" data-testid="create-loan">
+        <ng-icon hlmIcon name="lucidePlus" />
+        <span>{{ vm.text.createLabel }}</span>
+      </button>
+      <hlm-dialog-content *hlmDialogPortal class="loans__dialog">
+        <hlm-dialog-header>
+          <h2 hlmDialogTitle>{{ vm.text.createTitle }}</h2>
+          <p hlmDialogDescription>{{ vm.text.createDescription }}</p>
+        </hlm-dialog-header>
+        <app-loan-form
+          [bookIdOptions]="vm.bookIdOptions()"
+          submitLabel="Create"
+          (saveLoan)="vm.save($event); createDialog.close()"
+          (cancel)="createDialog.close()"
+        />
+      </hlm-dialog-content>
+    </hlm-dialog>
+  </header>
+
+  <div class="loans__filters">
+    <label hlmLabel for="loans-search" class="loans__label">{{ vm.text.searchLabel }}</label>
+    <input
+      hlmInput
+      id="loans-search"
+      type="search"
+      class="loans__search"
+      [placeholder]="vm.text.searchPlaceholder"
+      [value]="vm.searchQuery()"
+      (input)="vm.searchQuery.set($any($event.target).value)"
+    />
+    <button
+      hlmBtn
+      [variant]="vm.extendedFilterOn() ? 'default' : 'outline'"
+      size="sm"
+      (click)="vm.toggleExtendedFilter()"
+    >
+      <ng-icon hlmIcon name="lucideRefreshCw" />
+      <span>{{ vm.text.filters.extended }}</span>
+    </button>
+  </div>
+
+  <div class="loans__table">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>{{ vm.text.columns.reference }}</th>
+          <th hlmTh>{{ vm.text.columns.branch }}</th>
+          <th hlmTh>{{ vm.text.columns.status }}</th>
+          <th hlmTh>{{ vm.text.columns.extended }}</th>
+          <th hlmTh>{{ vm.text.columns.borrowedOn }}</th>
+          <th hlmTh>{{ vm.text.actions }}</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (loan of vm.filtered(); track loan.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ loan.reference }}</td>
+            <td hlmTd>{{ loan.branch }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.statusVariant(loan.status)">
+                {{ loan.status }}
+              </span>
+            </td>
+            <td hlmTd>
+              @if (loan.extended) {
+                <span hlmBadge variant="outline">Yes</span>
+              }
+            </td>
+            <td hlmTd>{{ loan.borrowedOn | date: 'mediumDate' }}</td>
+            <td hlmTd>
+              <div class="loans__actions">
+                <hlm-dialog #editDialog="hlmDialog">
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    (click)="vm.startEdit(loan.id)"
+                    data-testid="edit-loan"
+                    [attr.aria-label]="vm.text.edit + ' ' + loan.reference"
+                  >
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="loans__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.editTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.editDescription }}</p>
+                    </hlm-dialog-header>
+                    @if (vm.editingLoan(); as loan) {
+                      <app-loan-form
+                        [initialValue]="loan"
+                        [bookIdOptions]="vm.bookIdOptions()"
+                        submitLabel="Update"
+                        (saveLoan)="vm.save($event); editDialog.close()"
+                        (cancel)="editDialog.close()"
+                      />
+                    }
+                  </hlm-dialog-content>
+                </hlm-dialog>
+                <hlm-dialog>
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    [attr.aria-label]="vm.text.delete + ' ' + loan.reference"
+                  >
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="loans__dialog loans__dialog--narrow">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.deleteTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.deleteDescription }}</p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button
+                        hlmBtn
+                        variant="destructive"
+                        hlmDialogClose
+                        (click)="vm.remove(loan.id)"
+                      >
+                        {{ vm.text.delete }}
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="6">
+              <p hlmMuted>{{ vm.text.empty }}</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

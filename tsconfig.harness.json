@@ -10,5 +10,5 @@
     "verbatimModuleSyntax": true,
     "types": []
   },
-  "include": ["harness/gate/rules/**/*.ts"]
+  "include": ["harness/gate/rules/**/*.ts", "harness/gate/app-css/**/*.ts"]
 }

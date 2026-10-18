@@ -1,11 +1,90 @@
 ---
 name: house-style
-description: The house frontend conventions for this repo, layered on top of the SpartanNG docs. Read before writing or editing any template or component stylesheet. Covers the layout grammar (grid for regions, flex for inline runs, no nested flex faking a grid) and the no-raw-literals rule for hand-written CSS. These extend the spartan docs where spartan is silent; they never contradict them.
+description: The house frontend conventions for this repo, layered on top of the SpartanNG docs. Read before writing or editing any component. Covers BEM markup with Tailwind applied in the component stylesheet, the three-file component, the layout grammar (grid for regions, flex for inline runs, no nested flex faking a grid) and the no-raw-literals rule for hand-written CSS. Where these rules and the spartan docs' examples disagree about where utility classes go, these rules win.
 ---
 
 # House frontend conventions
 
-These are this repo's conventions, layered on top of the SpartanNG docs (the `spartan` skill). They extend the spartan docs where spartan is silent; they never contradict them. Where spartan already has a rule (semantic colors, `class` is for layout only, `gap-*` not `space-*`, `size-*` for equal dimensions), follow the spartan skill; this file adds only what spartan does not cover.
+These are this repo's conventions, layered on top of the SpartanNG docs (the `spartan` skill). They extend the spartan docs where spartan is silent; they never contradict them. Where spartan already has a rule (semantic colors, `class` is for layout only, `gap-*` not `space-*`, `size-*` for equal dimensions), follow the spartan skill; this file adds only what spartan does not cover. One deliberate exception: spartan's examples put Tailwind utilities in the template's `class` attribute. In this repo they never go there; see "Markup is BEM, styling lives in the stylesheet" below. Every other spartan rule stands, including "class is for layout only" on a primitive, which now means the utilities a primitive's BEM class applies must be layout only.
+
+## Markup is BEM, styling lives in the stylesheet
+
+A template says what things are; the stylesheet says how they look. Utility classes in markup turn every template into a wall of `flex items-center gap-3 sm:w-48` that a reader has to decode to find the structure, and they let styling decisions spread across every file that renders the element. So:
+
+1. **Template classes are BEM names only.** Every token in a `class` attribute, every `[class.x]` binding, and every string inside a `[class]` binding is `block`, `block__element`, `block--modifier` or `block__element--modifier`, lowercase kebab-case. No Tailwind utility appears in a template. That includes `sr-only`: write `class="roster__label"` and `@apply sr-only` it.
+2. **One block per component, named after the component file.** `hero-card.ts` owns `.hero-card`, `.hero-card__name`, `.hero-card--retired`, and nothing else. A template must not use another component's block, and a stylesheet must not define one. `:host` is allowed.
+3. **Every component is three files.** `hero-card.ts` with `templateUrl: './hero-card.html'` and `styleUrl: './hero-card.css'`. Never `template:` or `styles:`, however small the component. `ng g component` already produces this shape.
+4. **Stylesheets are plain `.css` with every BEM class written out in full.** Not `.scss`: Tailwind v4 does not support running behind Sass. The first line is always `@reference "../../styles.css";` (adjust the `../` count to the file's depth under `src/app`), which lets `@apply` resolve the theme's tokens and variants. Write `.roster__row { ... }`, never `.roster { &__row { ... } }`: that is Sass syntax, and native CSS compiles it to a selector that matches nothing, with only a warning. Nesting is fine for states and breakpoints on the same element: `&:hover`, `&::before`, `&[aria-expanded="true"]`, `@media`.
+5. **App stylesheets are layout only.** Every utility in `@apply` and every plain declaration in a stylesheet under `src/app`, and every class rule in `src/styles.css`, must be layout: display, flex and grid arrangement, gap, sizing, margin, position, overflow and text alignment (the full list is under "The layout list" below). Color, typography, border, radius, shadow, ring, opacity, transitions, cursor, custom properties and anything not on the list are appearance, and appearance lives in `libs/ui`. Padding is allowed in one place: the component's block root (`.roster`, `.roster--compact`, or `:host`), for the region's inset, and only when that element is not a primitive. Semantic tokens only, `gap-*` not `space-*`, grid for regions. Moving appearance onto a wrapper element, or removing a primitive's directive to keep its look, does not make it allowed.
+6. **No utility classes in TypeScript.** No `cva` variant strings, no `host: { class: '...' }`, no computed class strings. A state that changes appearance is a BEM modifier bound with `[class.block--modifier]`. Never build a class name from data (`roster__row--{{ hero.status }}`): write one modifier per state and bind each with `[class.roster__row--active]`, so every class a template can carry is written out in full.
+
+Helm directives and their inputs are not classes and stay in the template: `variant`, `size` and the directive itself are the primitive's API.
+
+```html
+<!-- roster.html -->
+<section class="roster">
+  <header class="roster__header">
+    <h1 hlmH3>Roster</h1>
+    <p hlmMuted>Every hero on the books.</p>
+  </header>
+  <div class="roster__filters">
+    <label hlmLabel for="roster-search" class="roster__label">Search</label>
+    <input hlmInput id="roster-search" type="search" class="roster__search" />
+    <a hlmBtn routerLink="/recruit" class="roster__recruit">
+      <ng-icon hlmIcon name="lucideUserPlus" />
+      Recruit
+    </a>
+  </div>
+  @for (hero of vm.heroes(); track hero.id) {
+    <div class="roster__row">
+      <ng-icon hlmIcon name="lucideShield" [tone]="hero.retired ? 'muted' : 'primary'" />
+      <span hlmSmall>{{ hero.name }}</span>
+      @if (hero.retired) {
+        <span hlmBadge variant="outline">Retired</span>
+      }
+    </div>
+  }
+</section>
+```
+
+```css
+/* roster.css */
+@reference "../../styles.css";
+
+.roster { @apply grid gap-6 p-6; }
+.roster__header { @apply grid gap-1; }
+.roster__filters { @apply flex flex-wrap items-center gap-3; }
+.roster__label { @apply sr-only; }
+.roster__search { @apply w-full sm:w-64; }
+.roster__recruit { @apply ms-auto; }
+.roster__row { @apply flex items-center gap-2; }
+```
+
+Note what the stylesheet does not say. No rule picks a color, a font size, a weight or a radius: the title is `hlmH3`, the caption `hlmMuted`, the icon's color its `tone`, the retired state a badge variant. `p-6` sits on `.roster`, the block root, as the region's inset. `roster__search` and `roster__recruit` sit on primitives and apply only width and margin.
+
+When no existing variant gives the look you need (an input padded to make room for an icon, a quieter table cell, a rounded panel), add a variant to the primitive itself: edit the owned copy of its component in `libs/ui`, add the variant to its `cva` using semantic tokens only, and select it from the template with the input (`<input hlmInput variant="search" class="roster__search">`). `libs/ui` is the one place `cva` and utility strings in TypeScript belong; rule 6 applies to `src/app`. One variant serves every screen that needs the look, which is the point: a primitive's appearance is decided in one place, not re-decided at every call site.
+
+### The layout list
+
+After any variant prefix (`sm:`, `hover:`, `dark:`) and a `!` marker are removed, these are layout. Anything else is appearance.
+
+- Display and box: `block`, `inline`, `inline-block`, `flex`, `inline-flex`, `grid`, `inline-grid`, `contents`, `hidden`, `sr-only`, `not-sr-only`, `box-border`, `box-content`.
+- Flex and grid: `flex-*`, `grow*`, `shrink*`, `basis-*`, `order-*`, `grid-cols-*`, `grid-rows-*`, `col-*`, `row-*`, `auto-cols-*`, `auto-rows-*`, `grid-flow-*`, `items-*`, `justify-*`, `content-*` (alignment), `self-*`, `place-*`, `gap-*`.
+- Sizing: `w-*`, `h-*`, `size-*`, `min-w-*`, `min-h-*`, `max-w-*`, `max-h-*`, `aspect-*`.
+- Margin: `m-*`, `mx-*`, `my-*`, `mt-*`, `mr-*`, `mb-*`, `ml-*`, `ms-*`, `me-*`, and negatives.
+- Position: `static`, `relative`, `absolute`, `fixed`, `sticky`, `inset-*`, `top-*`, `right-*`, `bottom-*`, `left-*`, `start-*`, `end-*`, `z-*`.
+- Overflow and flow: `overflow-*`, `overscroll-*`, `truncate`, `text-ellipsis`, `text-clip`, `whitespace-*`, `break-*`, `text-left`, `text-center`, `text-right`, `text-start`, `text-end`, `text-justify`, `object-*`, `isolate`, `container`.
+- Padding: only on the block root.
+
+Plain declarations follow the same line: `display`, `flex*`, `grid*`, `gap`, sizing, `margin*`, `position`, `inset*`, `top`/`right`/`bottom`/`left`, `z-index`, `overflow*`, `text-overflow`, `white-space`, `word-break`, `overflow-wrap`, `text-align`, `object-fit`, `object-position`, `isolation`, `order`, `align-*`, `justify-*`, `place-*`. `color: var(--sidebar-primary)` is appearance.
+
+### Where appearance comes from
+
+- **A primitive's look:** its `variant`/`size` inputs; when none fits, a new variant on the primitive in `libs/ui` (above).
+- **Text:** a typography directive from `@spartan-ng/helm/typography`: `hlmH1` to `hlmH4`, `hlmP`, `hlmLead`, `hlmLarge`, `hlmSmall`, `hlmMuted`, `hlmCode`, `hlmBlockquote`, `hlmUl`. `<p hlmMuted>{{ hint }}</p>`, not `<p class="tile__hint">` with `text-sm text-muted-foreground`. When none fits (a stat value, an emphasized table number), add a variant to the closest one in `libs/ui/typography`.
+- **Icon color:** `<ng-icon hlmIcon name="lucideShield" tone="muted" />` from `@spartan-ng/helm/icon`. Tones: `default` (inherits the surrounding color), `muted`, `primary`, `destructive`, `success`, `warning`. Size icons with `ng-icon`'s `size` input or `size-*` in the stylesheet.
+- **A region's inset:** padding on the block root.
+- **Status colors:** `success` and `warning` exist as tokens next to `destructive`; use them through a primitive's variant, a tone, or a typography variant, never from the app stylesheet.
 
 ## The sealed control vocabulary
 
@@ -76,20 +155,29 @@ Bad:
 
 Icons come from `@ng-icons` with the Lucide set, exactly as the spartan icons doc describes: import the icon symbol, register it on the component with `provideIcons`, and render it as `<ng-icon>`.
 
-A raw inline `<svg>` in a template is the drift this rule stops. Pasted SVG markup bypasses the icon registry, cannot be swapped or themed, duplicates a glyph the set already ships, and is the single largest source of unreviewable markup in a hand-built screen. There is no `hlm-icon` wrapper; `<ng-icon>` is the element.
+A raw inline `<svg>` in a template is the drift this rule stops. Pasted SVG markup bypasses the icon registry, cannot be swapped or themed, duplicates a glyph the set already ships, and is the single largest source of unreviewable markup in a hand-built screen. Put `hlmIcon` on every `<ng-icon>` (`<ng-icon hlmIcon name="lucideShield" />`), import `HlmIconImports` from `@spartan-ng/helm/icon` next to `NgIcon`, and color it with `tone`, never with a class.
 
 Good:
 
 ```ts
+// retire-button.ts
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideTrash2 } from '@ng-icons/lucide';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
 
 @Component({
-  imports: [NgIcon],
+  selector: 'app-retire-button',
+  imports: [NgIcon, HlmIconImports],
   providers: [provideIcons({ lucideTrash2 })],
-  template: `<button hlmBtn size="icon" variant="ghost"><ng-icon name="lucideTrash2" /></button>`,
+  templateUrl: './retire-button.html',
+  styleUrl: './retire-button.css',
 })
 export class RetireButton {}
+```
+
+```html
+<!-- retire-button.html -->
+<button hlmBtn size="icon" variant="ghost"><ng-icon hlmIcon name="lucideTrash2" /></button>
 ```
 
 Bad:
@@ -125,8 +213,8 @@ If you are unsure whether a primitive is an attribute or an element, read its `s
 
 A primitive that is present but missing its required parts is a different defect from a primitive that is absent, and the docs call several of these out by name.
 
-- **An overlay needs a title.** spartan's `composition.md`: "Dialog, Sheet, and Alert Dialog must have a title for accessibility. If the design hides it, keep it present and apply `class="sr-only"`." A bare `<h2>` inside `hlm-dialog-content` is not a title; `hlmDialogTitle` is what wires the accessible name.
-- **A form control belongs in a field.** spartan's `forms.md`: "Use `hlmField`, not raw `div`s. Wrap each control in `hlmField`." A `<div class="flex flex-col gap-2">` around a label and an input is the hand-rolled version of a primitive that already exists.
+- **An overlay needs a title.** spartan's `composition.md`: "Dialog, Sheet, and Alert Dialog must have a title for accessibility. If the design hides it, keep it present." The way to hide it visually is a BEM class that applies `sr-only` in the stylesheet, never the utility in the template. A bare `<h2>` inside `hlm-dialog-content` is not a title; `hlmDialogTitle` is what wires the accessible name.
+- **A form control belongs in a field.** spartan's `forms.md`: "Use `hlmField`, not raw `div`s. Wrap each control in `hlmField`." A hand-built `<div>` stacking a label and an input is the hand-rolled version of a primitive that already exists.
 
 ## Icons: register them, and use the standalone import
 
@@ -139,13 +227,16 @@ Two rules, both of which fail silently rather than loudly, which is why they are
 // Good
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideUsers } from '@ng-icons/lucide';
-@Component({ imports: [NgIcon], providers: [provideIcons({ lucideUsers })], /* ... */ })
+import { HlmIconImports } from '@spartan-ng/helm/icon';
+@Component({ imports: [NgIcon, HlmIconImports], providers: [provideIcons({ lucideUsers })], templateUrl: './team.html', styleUrl: './team.css' })
 
 // Bad: the legacy module (throws at bootstrap), and a hand-rolled registration
 // (silently registers nothing)
 @Component({
   imports: [NgIconsModule],
   providers: [{ provide: 'ICONS', useValue: { lucideUsers } }],
+  templateUrl: './team.html',
+  styleUrl: './team.css',
 })
 ```
 
@@ -173,7 +264,7 @@ protected readonly save = () => submit(this.form, async (f) => { /* ... */ });
 
 ## Layout is a grammar
 
-Layout is expressed with a small, fixed vocabulary, so that a screen's structure is decidable rather than a matter of taste.
+Layout is expressed with a small, fixed vocabulary, so that a screen's structure is decidable rather than a matter of taste. The grammar is about what a class applies: the utilities named below go in `@apply` inside a BEM class in the component's stylesheet, never in the template.
 
 - **Grid for regions.** A two-dimensional arrangement (a dashboard of cards, a page split into named areas, anything laid out in both rows and columns) uses CSS grid: `grid`, `grid-cols-*`, `grid-rows-*`, `gap-*`. Reach for grid whenever you are placing blocks in two dimensions.
 - **Flex for inline runs.** `flex` is for a single-axis run of items: a row of buttons, an icon next to a label, a toolbar. One direction, one line of thought.
@@ -182,57 +273,67 @@ Layout is expressed with a small, fixed vocabulary, so that a screen's structure
 Good:
 
 ```html
+<!-- dashboard.html -->
 <!-- a two-dimensional card dashboard: grid -->
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+<div class="dashboard__tiles">
   <section hlmCard>...</section>
   <section hlmCard>...</section>
 </div>
 
 <!-- a single inline run: flex -->
-<div class="flex items-center gap-2">
+<div class="dashboard__actions">
   <button hlmBtn variant="ghost">Cancel</button>
   <button hlmBtn>Save</button>
 </div>
 ```
 
+```css
+/* dashboard.css */
+@reference "../../styles.css";
+
+.dashboard__tiles { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4; }
+.dashboard__actions { @apply flex items-center gap-2; }
+```
+
 Bad:
 
-```html
-<!-- nested flex faking a grid: use grid instead -->
-<div class="flex flex-wrap">
-  <div class="flex flex-col">...</div>
-  <div class="flex flex-col">...</div>
-</div>
+```css
+/* nested flex faking a grid: use grid instead */
+.dashboard__tiles { @apply flex flex-wrap; }
+.dashboard__tile { @apply flex flex-col; }
 ```
 
 ## No raw literals in hand-written CSS
 
-Prefer Tailwind utilities and the spartan primitives over hand-written component stylesheets. When you do write a component stylesheet (an inline `styles: []` block or a `styleUrl` file), every color and length is a design token, never a raw literal:
+Prefer Tailwind utilities and the spartan primitives over hand-written declarations. Every component has a stylesheet, and `@apply` is the default. Rule 5 still applies to anything you write by hand: in an app stylesheet a declaration is layout only, so the properties you may write are the layout properties listed under "The layout list". Those declarations use a design token for every length, never a raw literal, and the same goes for any color you write in `libs/ui`:
 
-- Colors come from the semantic token variables (`var(--primary)`, `var(--border)`, `var(--card)`), never a raw hex, `rgb()`, or `hsl()`.
+- In `libs/ui`, colors come from the semantic token variables (`var(--primary)`, `var(--border)`, `var(--card)`), never a raw hex, `rgb()`, or `hsl()`.
 - Lengths come from a token or the spacing scale, never a raw `px` value.
 
 Good:
 
 ```css
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: var(--spacing-4);
-  border-radius: var(--radius);
+/* hero-panel.css */
+@reference "../../styles.css";
+
+.hero-panel {
+  display: grid;
+  gap: calc(var(--spacing) * 4);
+  padding: calc(var(--spacing) * 4);
+  max-width: calc(var(--spacing) * 160);
 }
 ```
 
 Bad:
 
 ```css
-.panel {
-  background: #3b82f6;
+.hero-panel {
+  gap: 16px;
   padding: 16px;
 }
 ```
 
-This rule is about hand-written CSS, where spartan is silent because it assumes you use Tailwind utilities. It does NOT restrict spartan's own idiomatic Tailwind arbitrary values in templates (for example a one-off `sm:max-w-[425px]` on a dialog), which the spartan docs use and bless. In templates, follow the spartan color rule (semantic tokens, never a raw palette value like `bg-blue-500`); this file governs the stylesheet you write by hand.
+This rule is about hand-written CSS, where spartan is silent because it assumes you use Tailwind utilities. It does NOT restrict Tailwind arbitrary values inside `@apply` (for example a one-off `sm:max-w-[425px]` on a dialog's BEM class), which the spartan docs use and bless. Colors never appear in an app stylesheet, by `@apply` or by hand (rule 5); in `libs/ui`, follow the spartan color rule (semantic tokens, never a raw palette value like `bg-blue-500`). This section governs the declarations you write by hand.
 
 ## Component shape: containers and presentational components
 
@@ -299,11 +400,13 @@ export class HeroDetailViewModel {
 
 ```ts
 // hero-detail.ts: a shell that provides, injects, and binds
+// (hero-detail.html holds <h1 class="hero-detail__title">{{ vm.hero()?.name }}</h1>)
 @Component({
   selector: 'app-hero-detail',
   providers: [HeroDetailViewModel],
   imports: [HlmCardImports],
-  template: `<h1>{{ vm.hero()?.name }}</h1>`,
+  templateUrl: './hero-detail.html',
+  styleUrl: './hero-detail.css',
 })
 export class HeroDetail {
   protected readonly vm = inject(HeroDetailViewModel);
@@ -314,7 +417,7 @@ Bad:
 
 ```ts
 // state in the component class, and the data service injected past the ViewModel
-@Component({ selector: 'app-hero-detail', template: `...` })
+@Component({ selector: 'app-hero-detail', templateUrl: './hero-detail.html', styleUrl: './hero-detail.css' })
 export class HeroDetail {
   private readonly heroes = inject(HeroService);   // belongs in the ViewModel
   readonly hero = signal<Hero | null>(null);       // belongs in the ViewModel
@@ -330,7 +433,7 @@ export class HeroDetailViewModel {}
 ```ts
 // a ViewModel injected but never provided: this is a runtime NullInjectorError,
 // and nothing in the build catches it for you
-@Component({ selector: 'app-roster', template: `...` })  // no providers: [RosterViewModel]
+@Component({ selector: 'app-roster', templateUrl: './roster.html', styleUrl: './roster.css' })  // no providers: [RosterViewModel]
 export class Roster {
   protected readonly vm = inject(RosterViewModel);
 }
@@ -388,7 +491,7 @@ A screen must render without responsive failure at three viewport widths, height
 - **An element escapes the viewport.** An element's right edge is past the viewport width, or its left edge is below zero, and nothing intentionally scrollable contains it. An element sitting inside a container you deliberately made scrollable (`overflow: auto` or `overflow: scroll`) is exempt; a wide element under an `overflow: hidden` ancestor is not, because its content is cut off with no way to reach it. An element that is not being shown to the user at all is also exempt: if it, or any ancestor, is `display: none`, `visibility: hidden`, or `aria-hidden="true"`, there is nothing on screen to escape. That exemption is what makes a closed off-canvas navigation drawer legal, and it is exactly why a closed drawer must really be hidden rather than merely parked off-screen with a transform. A drawer translated out of view is still rendered, still focusable, and still counts as an escape.
 - **An element clips its own content.** An element with `overflow: hidden` or `overflow: clip` holds content larger than its box, so text or controls are truncated. Again, `overflow: auto`/`scroll` is exempt: a scroll container is a design choice, not a defect. The not-being-shown exemption applies here too, for the same reason: content clipped inside something the user cannot see is not a visible defect. An element whose rendered box is at most 1x1 CSS pixel in both dimensions is likewise exempt: that is the screen-reader-only pattern, which works precisely by collapsing a box and clipping its text, and a responsive rule must never push back against labeling an icon-only control for assistive technology.
 
-Build the screen so a narrow width stacks rather than overflows: prefer the layout grammar's responsive grid (`grid-cols-1 sm:grid-cols-2`), let button rows wrap (`flex-wrap`), and avoid fixed pixel widths on inputs and cards that cannot shrink. The detail card, the form field, and the Save/Cancel button row must all fit and remain reachable at 375px.
+Build the screen so a narrow width stacks rather than overflows: prefer the layout grammar's responsive grid (`@apply grid-cols-1 sm:grid-cols-2` on the region's BEM class), let button rows wrap (`@apply flex-wrap`), and avoid fixed pixel widths on inputs and cards that cannot shrink. The detail card, the form field, and the Save/Cancel button row must all fit and remain reachable at 375px.
 
 ## Why these are written down
 

@@ -1,0 +1,21 @@
+{
+  "entity": "Ticket",
+  "plural": "tickets",
+  "labels": { "singular": "ticket", "plural": "tickets" },
+  "kinds": ["entity", "form", "manage"],
+  "fields": [
+    { "name": "title", "type": "string", "label": "Title", "required": true, "placeholder": "Short summary" },
+    { "name": "priority", "type": "number", "label": "Priority", "required": true },
+    { "name": "urgent", "type": "boolean", "label": "Urgent", "required": true },
+    { "name": "due", "type": "date", "label": "Due", "required": false },
+    { "name": "owner", "type": "ref", "label": "Owner", "required": true, "ref": { "entity": "Member", "plural": "members", "label": "name" } },
+    { "name": "summary", "type": "text", "label": "Summary", "required": false }
+  ],
+  "manage": {
+    "icon": "lucideTicket",
+    "createLabel": "Open ticket",
+    "createRoute": "/tickets/new",
+    "columns": [{ "field": "title" }, { "field": "priority" }, { "field": "urgent" }, { "field": "due" }],
+    "search": ["title", "summary"]
+  }
+}

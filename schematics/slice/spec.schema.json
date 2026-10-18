@@ -1,0 +1,686 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "entity": {
+      "type": "string",
+      "maxLength": 40,
+      "pattern": "^[A-Z][a-z0-9]+([A-Z][a-z0-9]+)*$"
+    },
+    "plural": {
+      "type": "string",
+      "maxLength": 40,
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "singular": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+        },
+        "plural": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+        }
+      },
+      "required": [
+        "singular",
+        "plural"
+      ],
+      "additionalProperties": false
+    },
+    "kinds": {
+      "minItems": 1,
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "entity",
+          "form",
+          "manage"
+        ]
+      }
+    },
+    "fields": {
+      "minItems": 1,
+      "maxItems": 24,
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "string"
+              },
+              "default": {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 500,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "default": {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 500,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "default": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "boolean"
+              },
+              "default": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "enum"
+              },
+              "options": {
+                "minItems": 1,
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40,
+                  "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+                }
+              },
+              "default": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type",
+              "options"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "date"
+              },
+              "default": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "inForm": {
+                "default": true,
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "help": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+              },
+              "type": {
+                "type": "string",
+                "const": "ref"
+              },
+              "ref": {
+                "type": "object",
+                "properties": {
+                  "entity": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^[A-Z][a-z0-9]+([A-Z][a-z0-9]+)*$"
+                  },
+                  "plural": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-zA-Z0-9]*$"
+                  }
+                },
+                "required": [
+                  "entity",
+                  "plural",
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "many": {
+                "default": false,
+                "type": "boolean"
+              },
+              "default": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "maxItems": 0,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[0-9]{1,6}$"
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "label",
+              "required",
+              "type",
+              "ref"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "examples": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "additionalProperties": {}
+      }
+    },
+    "manage": {
+      "type": "object",
+      "properties": {
+        "icon": {
+          "type": "string",
+          "maxLength": 60,
+          "pattern": "^lucide[A-Z][A-Za-z0-9]*$"
+        },
+        "createLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+        },
+        "createRoute": {
+          "type": "string",
+          "maxLength": 60,
+          "pattern": "^\\/[a-z0-9]+(-[a-z0-9]+)*(\\/[a-z0-9]+(-[a-z0-9]+)*)*$"
+        },
+        "columns": {
+          "minItems": 1,
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^[a-z][a-zA-Z0-9]*$"
+              },
+              "badge": {
+                "type": "object",
+                "properties": {
+                  "variants": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40,
+                      "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "enum": [
+                        "default",
+                        "secondary",
+                        "success",
+                        "warning",
+                        "destructive",
+                        "outline"
+                      ]
+                    }
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "enum": [
+                      "default",
+                      "secondary",
+                      "success",
+                      "warning",
+                      "destructive",
+                      "outline"
+                    ]
+                  }
+                },
+                "required": [
+                  "variants",
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "field"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "search": {
+          "minItems": 1,
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 40,
+            "pattern": "^[a-z][a-zA-Z0-9]*$"
+          }
+        },
+        "filters": {
+          "minItems": 1,
+          "maxItems": 3,
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-zA-Z0-9]*$"
+                  },
+                  "control": {
+                    "type": "string",
+                    "const": "select"
+                  }
+                },
+                "required": [
+                  "field",
+                  "control"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^[a-z][a-zA-Z0-9]*$"
+                  },
+                  "control": {
+                    "type": "string",
+                    "const": "toggle"
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60,
+                    "pattern": "^[^<>{}`$\\\\\\u0000-\\u001f\\u007f]*$"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "maxLength": 60,
+                    "pattern": "^lucide[A-Z][A-Za-z0-9]*$"
+                  }
+                },
+                "required": [
+                  "field",
+                  "control",
+                  "label",
+                  "icon"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^[a-z][a-zA-Z0-9]*$"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          "required": [
+            "field",
+            "direction"
+          ],
+          "additionalProperties": false
+        },
+        "summary": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "icon",
+        "createLabel",
+        "columns",
+        "search"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "entity",
+    "plural",
+    "labels",
+    "kinds",
+    "fields"
+  ],
+  "additionalProperties": false,
+  "title": "Slice spec",
+  "description": "One slice spec (specs/<entity>.json). Generated from schematics/slice/spec-schema.cjs. Cross-field rules (field references, example rows, kinds) are enforced by the schematic and are not expressible here."
+}

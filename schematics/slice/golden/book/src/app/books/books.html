@@ -1,0 +1,158 @@
+<section class="books">
+  <header class="books__header">
+    <div class="books__title">
+      <ng-icon hlmIcon name="lucideBookOpen" tone="primary" />
+      <h1 hlmH3>{{ vm.text.title }}</h1>
+    </div>
+    <hlm-dialog #createDialog="hlmDialog">
+      <button hlmBtn hlmDialogTrigger (click)="vm.startCreate()" data-testid="create-book">
+        <ng-icon hlmIcon name="lucidePlus" />
+        <span>{{ vm.text.createLabel }}</span>
+      </button>
+      <hlm-dialog-content *hlmDialogPortal class="books__dialog">
+        <hlm-dialog-header>
+          <h2 hlmDialogTitle>{{ vm.text.createTitle }}</h2>
+          <p hlmDialogDescription>{{ vm.text.createDescription }}</p>
+        </hlm-dialog-header>
+        <app-book-form
+          submitLabel="Create"
+          (saveBook)="vm.save($event); createDialog.close()"
+          (cancel)="createDialog.close()"
+        />
+      </hlm-dialog-content>
+    </hlm-dialog>
+  </header>
+
+  <div class="books__filters">
+    <label hlmLabel for="books-search" class="books__label">{{ vm.text.searchLabel }}</label>
+    <input
+      hlmInput
+      id="books-search"
+      type="search"
+      class="books__search"
+      [placeholder]="vm.text.searchPlaceholder"
+      [value]="vm.searchQuery()"
+      (input)="vm.searchQuery.set($any($event.target).value)"
+    />
+    <label hlmLabel for="books-filter-genre" class="books__label">{{
+      vm.text.filters.genre
+    }}</label>
+    <hlm-select
+      class="books__filter"
+      [value]="vm.genreFilter()"
+      (valueChange)="vm.genreFilter.set($event ?? '')"
+      [itemToString]="vm.genreFilterLabel"
+    >
+      <hlm-select-trigger buttonId="books-filter-genre">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.genreFilterOptions; track option.value) {
+          <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </div>
+
+  <div class="books__table">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>{{ vm.text.columns.title }}</th>
+          <th hlmTh>{{ vm.text.columns.author }}</th>
+          <th hlmTh>{{ vm.text.columns.genre }}</th>
+          <th hlmTh>{{ vm.text.columns.popularity }}</th>
+          <th hlmTh>{{ vm.text.columns.availability }}</th>
+          <th hlmTh>{{ vm.text.columns.condition }}</th>
+          <th hlmTh>{{ vm.text.actions }}</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (book of vm.filtered(); track book.id) {
+          <tr hlmTr>
+            <td hlmTd>{{ book.title }}</td>
+            <td hlmTd>{{ book.author }}</td>
+            <td hlmTd>{{ book.genre }}</td>
+            <td hlmTd>{{ book.popularity }}</td>
+            <td hlmTd>
+              <span hlmBadge [variant]="vm.availabilityVariant(book.availability)">
+                {{ book.availability }}
+              </span>
+            </td>
+            <td hlmTd>{{ book.condition }}</td>
+            <td hlmTd>
+              <div class="books__actions">
+                <hlm-dialog #editDialog="hlmDialog">
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    (click)="vm.startEdit(book.id)"
+                    data-testid="edit-book"
+                    [attr.aria-label]="vm.text.edit + ' ' + book.title"
+                  >
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="books__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.editTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.editDescription }}</p>
+                    </hlm-dialog-header>
+                    @if (vm.editingBook(); as book) {
+                      <app-book-form
+                        [initialValue]="book"
+                        submitLabel="Update"
+                        (saveBook)="vm.save($event); editDialog.close()"
+                        (cancel)="editDialog.close()"
+                      />
+                    }
+                  </hlm-dialog-content>
+                </hlm-dialog>
+                <hlm-dialog>
+                  <button
+                    hlmBtn
+                    hlmDialogTrigger
+                    size="sm"
+                    variant="ghost"
+                    [attr.aria-label]="vm.text.delete + ' ' + book.title"
+                  >
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="books__dialog books__dialog--narrow">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>{{ vm.text.deleteTitle }}</h2>
+                      <p hlmDialogDescription>{{ vm.text.deleteDescription }}</p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button
+                        hlmBtn
+                        variant="destructive"
+                        hlmDialogClose
+                        (click)="vm.remove(book.id)"
+                      >
+                        {{ vm.text.delete }}
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr hlmTr>
+            <td hlmTd colspan="7">
+              <p hlmMuted>{{ vm.text.empty }}</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="books__footer">
+    <p hlmMuted>{{ vm.filtered().length }} of {{ vm.books().length }} {{ vm.text.plural }}</p>
+    <p hlmMuted>{{ vm.text.sortedBy }}</p>
+  </footer>
+</section>

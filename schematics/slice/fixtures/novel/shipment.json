@@ -1,0 +1,37 @@
+{
+  "entity": "Shipment",
+  "plural": "shipments",
+  "labels": { "singular": "shipment", "plural": "shipments" },
+  "kinds": ["entity", "form", "manage"],
+  "fields": [
+    { "name": "reference", "type": "string", "label": "Reference", "required": true },
+    { "name": "status", "type": "enum", "label": "Status", "required": true, "options": ["Pending", "Delayed", "Delivered"] },
+    { "name": "quantity", "type": "number", "label": "Quantity", "required": true },
+    { "name": "service", "type": "enum", "label": "Service", "required": true, "inForm": false, "options": ["Standard", "Express", "Freight"], "default": "Standard" },
+    { "name": "fragile", "type": "boolean", "label": "Fragile", "required": true },
+    { "name": "arrivedOn", "type": "date", "label": "Arrived on", "required": true },
+    { "name": "cargo", "type": "text", "label": "Cargo", "required": false },
+    { "name": "origin", "type": "ref", "label": "Origin book", "required": false, "placeholder": "No origin", "ref": { "entity": "Book", "plural": "books", "label": "title" } },
+    { "name": "escorts", "type": "ref", "label": "Escorts", "required": false, "inForm": false, "many": true, "default": [], "ref": { "entity": "Member", "plural": "members", "label": "name" } }
+  ],
+  "manage": {
+    "icon": "lucideTruck",
+    "createLabel": "Log shipment",
+    "columns": [
+      { "field": "reference" },
+      { "field": "status", "badge": { "variants": { "Delivered": "default", "Delayed": "destructive" }, "fallback": "outline" } },
+      { "field": "quantity" },
+      { "field": "arrivedOn" }
+    ],
+    "search": ["reference"],
+    "filters": [
+      { "field": "service", "control": "select" },
+      { "control": "toggle", "field": "status", "value": "Delayed", "label": "Delayed only", "icon": "lucideClock" },
+      { "control": "toggle", "field": "fragile", "label": "Fragile only", "icon": "lucideZap" }
+    ]
+  },
+  "examples": [
+    { "reference": "SH-100", "status": "Pending", "quantity": 12, "service": "Express", "fragile": false, "arrivedOn": "2026-05-01", "cargo": "", "origin": "1", "escorts": ["1"] },
+    { "reference": "SH-101", "status": "Delayed", "quantity": 3, "service": "Standard", "fragile": true, "arrivedOn": "2026-05-09", "cargo": "Fragile", "origin": null, "escorts": [] }
+  ]
+}

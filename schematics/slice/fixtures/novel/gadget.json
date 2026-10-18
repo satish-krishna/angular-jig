@@ -1,0 +1,25 @@
+{
+  "entity": "Gadget",
+  "plural": "gadgets",
+  "labels": { "singular": "gadget", "plural": "gadgets" },
+  "kinds": ["entity"],
+  "fields": [
+    { "name": "label", "type": "string", "label": "Label", "required": true },
+    { "name": "nickname", "type": "string", "label": "Nickname", "required": false },
+    { "name": "notes", "type": "text", "label": "Notes", "required": false },
+    { "name": "weight", "type": "number", "label": "Weight", "required": true },
+    { "name": "rating", "type": "number", "label": "Rating", "required": true, "inForm": false, "default": 0 },
+    { "name": "mode", "type": "enum", "label": "Mode", "required": true, "options": ["Manual", "Auto"] },
+    { "name": "active", "type": "boolean", "label": "Active", "required": true },
+    { "name": "retired", "type": "boolean", "label": "Retired", "required": true, "inForm": false, "default": false },
+    { "name": "builtOn", "type": "date", "label": "Built on", "required": false },
+    { "name": "stamped", "type": "date", "label": "Stamped", "required": false, "inForm": false, "default": "2026-01-01" },
+    { "name": "maker", "type": "ref", "label": "Maker", "required": false, "ref": { "entity": "Member", "plural": "members", "label": "name" } },
+    { "name": "previousMaker", "type": "ref", "label": "Previous maker", "required": false, "inForm": false, "default": null, "ref": { "entity": "Member", "plural": "members", "label": "name" } },
+    { "name": "partners", "type": "ref", "label": "Partners", "required": false, "inForm": false, "many": true, "default": [], "ref": { "entity": "Book", "plural": "books", "label": "title" } }
+  ],
+  "examples": [
+    { "label": "Grappler", "nickname": "", "notes": "", "weight": 2.5, "rating": 4, "mode": "Auto", "active": true, "retired": false, "builtOn": "2026-03-01", "stamped": "2026-03-02", "maker": "1", "previousMaker": null, "partners": ["1", "2"] },
+    { "label": "Cloak", "nickname": "Shade", "notes": "Prototype", "weight": 0.4, "rating": 2, "mode": "Manual", "active": false, "retired": true, "builtOn": "", "stamped": "2026-01-01", "maker": null, "previousMaker": "2", "partners": [] }
+  ]
+}

@@ -5,10 +5,10 @@
 // The primitive sets below are exactly the vocabulary in ../../sealing-spec.md,
 // "The vocabulary, as installed" - the full set of directives/elements
 // installed in libs/ui at this capstone commit. `ng-icon` is deliberately
-// excluded: it is an @ng-icons element, not a Helm primitive, and spartan's
-// own rules/icons.md blesses appearance classes on it (e.g. a decorative
-// icon's text color). Treating it as a primitive would fight that baseline
-// doc, so icons get their own rule (rule 4) instead.
+// excluded: a bare ng-icon is an @ng-icons element, not a Helm primitive, and
+// spartan's own rules/icons.md blesses appearance classes on it (e.g. a
+// decorative icon's text color), so bare icons get their own rule (rule 4).
+// ng-icon[hlmIcon] IS a primitive: its tone owns the color.
 export const PRIMITIVE_ATTRS: ReadonlySet<string> = new Set([
   'hlmBtn',
   'hlmInput',
@@ -110,6 +110,19 @@ export const PRIMITIVE_ATTRS: ReadonlySet<string> = new Set([
   'hlmSidebarSeparator',
   'hlmSidebarTrigger',
   'hlmSidebarWrapper',
+  'hlmH1',
+  'hlmH2',
+  'hlmH3',
+  'hlmH4',
+  'hlmP',
+  'hlmLead',
+  'hlmLarge',
+  'hlmSmall',
+  'hlmMuted',
+  'hlmCode',
+  'hlmBlockquote',
+  'hlmUl',
+  'hlmIcon',
 ]);
 
 export const PRIMITIVE_ELEMENTS: ReadonlySet<string> = new Set([

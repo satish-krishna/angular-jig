@@ -4,12 +4,26 @@ Generated from `harness/rules/*.md` by `harness/driver/build-house-digest.mjs`. 
 
 Each section is the enforced rule's own guidance. The gate quotes the same text when it rejects a write, so this is what you will be told afterwards if you get it wrong now.
 
+### app-css-layout-only
+
+The app stylesheet arranges things; it never decides how they look. For text, use a typography directive (`hlmH1`-`hlmH4`, `hlmP`, `hlmLead`, `hlmLarge`, `hlmSmall`, `hlmMuted`, `hlmCode`) or add a variant to one in `libs/ui/typography`. For an icon's color, use `<ng-icon hlmIcon tone="muted">` (`default`, `muted`, `primary`, `destructive`, `success`, `warning`). For a primitive's look, use its `variant` input, or add a variant to its `cva` in `libs/ui`. For a region's inset, put the padding on the block root (`.<file-stem>`). Moving the utilities onto a wrapper element, or removing a primitive's directive and keeping its look, is the same violation. In a template, use BEM class names only and put any layout utilities in the stylesheet.
+
+    Good: <p hlmMuted>No heroes match.</p>                       .roster__empty { @apply col-span-full; }
+    Bad:  <p class="roster__empty">No heroes match.</p>          .roster__empty { @apply py-8 text-muted-foreground; }
+
 ### no-appearance-on-primitive
 
 Do not fight a primitive's look with a class at the call site. Use its `variant`/`size` input, or edit the owned copy of the component in `libs/ui`.
 
     Good: <button hlmBtn class="w-full">Save</button>
     Bad:  <button hlmBtn class="bg-blue-600 rounded-none">Save</button>
+
+### no-applied-appearance-on-primitive
+
+A primitive takes only layout from the app stylesheet: width, margin, position, grid placement. Its color, typography, border, radius, shadow and padding come from its own `variant` and `size` inputs. When no variant gives the look you need, add one to the primitive itself: edit its owned copy in `libs/ui`, add the variant to its `cva` with semantic tokens, and select it from the template.
+
+    Good: <input hlmInput variant="search" class="roster__search">   .roster__search { @apply w-full sm:w-64; }
+    Bad:  <input hlmInput class="roster__search">                    .roster__search { @apply w-full ps-9; }
 
 ### no-component-subscribe
 

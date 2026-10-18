@@ -1,0 +1,129 @@
+<form class="member-form" [formRoot]="memberForm">
+  <hlm-field-group>
+    <hlm-field>
+      <label hlmFieldLabel for="name">{{ meta['name'].label }}</label>
+      <input
+        hlmInput
+        id="name"
+        [formField]="memberForm.name"
+        [placeholder]="meta['name'].placeholder ?? ''"
+      />
+      @for (error of memberForm.name().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="tier">{{ meta['tier'].label }}</label>
+      <hlm-select [formField]="memberForm.tier" [itemToString]="tierToString">
+        <hlm-select-trigger buttonId="tier" class="member-form__select">
+          <hlm-select-value [placeholder]="meta['tier'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['tier'].label }}</hlm-select-label>
+            @for (option of tierOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of memberForm.tier().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="standing">{{ meta['standing'].label }}</label>
+      <hlm-select [formField]="memberForm.standing" [itemToString]="standingToString">
+        <hlm-select-trigger buttonId="standing" class="member-form__select">
+          <hlm-select-value [placeholder]="meta['standing'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['standing'].label }}</hlm-select-label>
+            @for (option of standingOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of memberForm.standing().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="status">{{ meta['status'].label }}</label>
+      <hlm-select [formField]="memberForm.status" [itemToString]="statusToString">
+        <hlm-select-trigger buttonId="status" class="member-form__select">
+          <hlm-select-value [placeholder]="meta['status'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['status'].label }}</hlm-select-label>
+            @for (option of statusOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of memberForm.status().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="city">{{ meta['city'].label }}</label>
+      <input
+        hlmInput
+        id="city"
+        [formField]="memberForm.city"
+        [placeholder]="meta['city'].placeholder ?? ''"
+      />
+      @for (error of memberForm.city().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="joinedOn">{{ meta['joinedOn'].label }}</label>
+      <input
+        hlmInput
+        id="joinedOn"
+        [formField]="memberForm.joinedOn"
+        [placeholder]="meta['joinedOn'].placeholder ?? ''"
+      />
+      @for (error of memberForm.joinedOn().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="loanLimit">{{ meta['loanLimit'].label }}</label>
+      <input hlmInput id="loanLimit" type="number" [formField]="memberForm.loanLimit" />
+      @for (error of memberForm.loanLimit().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="notes">{{ meta['notes'].label }}</label>
+      <textarea
+        hlmTextarea
+        id="notes"
+        rows="4"
+        [formField]="memberForm.notes"
+        [placeholder]="meta['notes'].placeholder ?? ''"
+      ></textarea>
+      @for (error of memberForm.notes().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field orientation="horizontal">
+      <button hlmBtn type="submit">{{ submitLabel() }}</button>
+      <button hlmBtn type="button" variant="outline" (click)="cancel.emit()">Cancel</button>
+    </hlm-field>
+  </hlm-field-group>
+</form>

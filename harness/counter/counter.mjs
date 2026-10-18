@@ -19,6 +19,19 @@ import ts from 'typescript';
 // this drift from what libs/ui actually ships. `ng-icon` is deliberately NOT
 // a primitive (see the spec) - it gets its own rule, rule 4, instead.
 const PRIMITIVE_ATTRS = new Set([
+  'hlmH1',
+  'hlmH2',
+  'hlmH3',
+  'hlmH4',
+  'hlmP',
+  'hlmLead',
+  'hlmLarge',
+  'hlmSmall',
+  'hlmMuted',
+  'hlmCode',
+  'hlmBlockquote',
+  'hlmUl',
+  'hlmIcon',
   'hlmBtn',
   'hlmInput',
   'hlmTextarea',
