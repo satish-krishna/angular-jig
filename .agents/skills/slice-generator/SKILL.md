@@ -53,7 +53,7 @@ A `ref` field imports the target entity's service. Generate the entity that is r
 `manage` writes, under `src/app/<plural>/`, a routed screen:
 
 - `<plural>.ts`: a thin component with `providers: [<Plural>ViewModel]`, `templateUrl` and `styleUrl`.
-- `<plural>.view-model.ts`: the ViewModel with search, the select and toggle filters, the optional sort, editing state, `startCreate`, `startEdit`, `cancel`, `save`, `remove`, and the option lists for ref fields.
+- `<plural>.view-model.ts`: the ViewModel with search, the select and toggle filters, the optional sort, editing state, `startCreate` (absent when the spec sets `createRoute`: create is then a link to that route), `startEdit`, `cancel`, `save`, `remove`, and the option lists for ref fields.
 - `<plural>.html`: a table in a scroll container (no stacked cards), the select and toggle filters the spec asks for, an edit dialog hosting the generated form, a create dialog hosting it too (or, with `createRoute`, a create link instead), a delete confirmation dialog, an empty state, and, when the spec sets `summary`, a footer with a count, plus a "sorted by" line only when `sort` is also set. Classes are BEM on the `<plural>` block.
 - `<plural>.css`: a layout-only stylesheet for those BEM classes.
 - `<plural>.view-model.spec.ts`: ViewModel tests.

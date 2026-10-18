@@ -1,6 +1,6 @@
 # no-applied-appearance-on-primitive
 
-> Plane: sealing, series 2. Spec: [../bem-phase-2-gate-spec.md](../bem-phase-2-gate-spec.md). messageId: `appliedAppearanceOnPrimitive`. Counter twin: expanded `appearance-on-primitive` (launching branch).
+> Plane: sealing. Spec: the house-style skill, [../../.claude/skills/house-style/SKILL.md](../../.claude/skills/house-style/SKILL.md) ("a primitive's look changes in libs/ui, as a variant"). messageId: `appliedAppearanceOnPrimitive`. Counter twin: the expanded `appearance-on-primitive` in `harness/counter/bem-counter.mjs`.
 
 ## What it forbids
 

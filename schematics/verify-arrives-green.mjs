@@ -2,7 +2,7 @@
 // Proves the schematic's output arrives green. On a throwaway basis it generates the three
 // fixtures into this worktree's own src/app with the real Angular CLI, compares every file to the
 // golden exemplars, then runs the build, lint, stylelint, the unit tests and the five structural
-// counters, the series 3 gate hook on every generated stylesheet and template, a boot check
+// counters, the app-css gate hook on every generated stylesheet and template, a boot check
 // of the generated routes, the routing gate's shell check. It always restores src/app afterwards (git checkout + git clean on src/app only).
 //
 //   node schematics/verify-arrives-green.mjs [--counters-ref <git ref>]
@@ -70,6 +70,8 @@ function walk(dir) {
 
 const hadDist = existsSync(join(root, 'dist'));
 let exitCode = 0;
+const createdSpecs = []; // spec files step 6 adds under specs/, removed again in the restore
+let createdSpecsDir = false;
 try {
   // 1. Generate with the real CLI.
   let generated = 0;
@@ -174,7 +176,7 @@ try {
     record(`counter ${label}`, r.status === 0 && totals?.all === 0, totals ? `all = ${totals.all}` : stripAnsi(r.stderr).slice(0, 300));
   }
 
-  // 5. The series 3 gate hook on every stylesheet and template the generation wrote.
+  // 5. The app-css gate hook on every stylesheet and template the generation wrote.
   const gated = [...touched].filter((f) => /\.(css|html)$/i.test(f) && f.startsWith('src/app/') && existsSync(join(root, f))).sort();
   let gatePass = 0;
   for (const rel of gated) {
@@ -187,17 +189,40 @@ try {
   record('gate hook checked every generated css and html file', gated.length > 0 && gatePass === gated.length, `${gatePass} of ${gated.length} files`);
 
   // 6. The routing gate's shell check: every generator-owned TypeScript file the CLI wrote starts with the header.
-  const routed = spawnSync('node', [join('.claude', 'hooks', 'route-to-generator.mjs')], {
-    cwd: root,
-    input: JSON.stringify({ tool_name: 'Bash', tool_input: { command: 'ls' } }),
-    encoding: 'utf8',
-  });
+  // The hook owns an entity's files only while specs/<entity>.json exists, so the fixtures are put there first;
+  // without them it owns nothing and this check could not fail.
+  if (!existsSync(join(root, 'specs'))) {
+    mkdirSync(join(root, 'specs'));
+    createdSpecsDir = true;
+  }
+  for (const [name, dir] of [...FIXTURES.map((n) => [n, '']), ...NOVEL.map((n) => [n, 'novel'])]) {
+    const target = join(root, 'specs', `${name}.json`);
+    if (existsSync(target)) continue;
+    writeFileSync(target, readFileSync(join(root, 'schematics', 'slice', 'fixtures', dir, `${name}.json`)));
+    createdSpecs.push(target);
+  }
+  const routeCheck = () =>
+    spawnSync('node', [join('.claude', 'hooks', 'route-to-generator.mjs')], {
+      cwd: root,
+      input: JSON.stringify({ tool_name: 'Bash', tool_input: { command: 'ls' } }),
+      encoding: 'utf8',
+    });
+  const routed = routeCheck();
   record('gate hook route-to-generator finds no headerless generator-owned file', routed.status === 0, stripAnsi(`${routed.stdout ?? ''}${routed.stderr ?? ''}`).slice(0, 600));
+  // The negative control: the same check fails once one generated file loses its header.
+  const probe = join(root, 'src', 'app', 'book', 'book.model.ts');
+  const header = readFileSync(probe, 'utf8');
+  writeFileSync(probe, header.split('\n').slice(1).join('\n'));
+  const stripped = routeCheck();
+  writeFileSync(probe, header);
+  record('gate hook route-to-generator reports a generated file without its header', stripped.status === 2 && /book\.model\.ts/.test(stripped.stderr ?? ''), `exit ${stripped.status}`);
 } catch (error) {
   record('verification could not complete', false, String(error.message ?? error).split('\n').slice(0, 20).join('\n'));
 } finally {
   // 7. Restore. Always.
   rmSync(tmp, { recursive: true, force: true });
+  for (const f of createdSpecs) rmSync(f, { force: true });
+  if (createdSpecsDir) rmSync(join(root, 'specs'), { recursive: true, force: true });
   run('git', ['checkout', '--', 'src/app']);
   run('git', ['clean', '-fdq', '--', 'src/app']);
   if (!hadDist) rmSync(join(root, 'dist'), { recursive: true, force: true });

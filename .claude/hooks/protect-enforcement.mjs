@@ -101,8 +101,7 @@ const DENY_MESSAGE =
   'This path defines or enforces the project constitution, or measures conformance to it:\n' +
   '  stylelint.config.mjs, eslint.config.mjs, harness/, schematics/, .claude/hooks/, .claude/skills/,\n' +
   '  .agents/skills/, components.json\n\n' +
-  'Reading them with a read-only command (cat, head, ls, grep, sed -n) is allowed; experiments/\n' +
-  'is not readable at all.\n\n' +
+  'Reading them with a read-only command (cat, head, ls, grep, sed -n) is allowed.\n\n' +
   'If a rule is blocking you, the answer is to change the code so it passes, not to change\n' +
   'the rule so it stops asking. If you believe the rule itself is wrong, say so in your final\n' +
   'response and explain why; do not edit it.\n';
@@ -149,15 +148,23 @@ if (toolName === 'Bash' || toolName === 'PowerShell') {
   // A shell command can rewrite a file without ever naming a file-editing tool.
   // Scan the command text for any protected path, then let through only
   // commands that cannot write (isReadOnlyCommand, below).
-  const cmd = norm(input.command ?? '');
+  const rawCmd = String(input.command ?? '');
+  const cmd = norm(rawCmd);
   hits = PROTECTED.filter((entry) => cmd.includes(entry));
+  // isReadOnlyCommand's quote masking cannot follow an escaped quote (bash runs
+  // `echo \"; rm x; echo \"` as three commands, the masking sees one quoted
+  // string), and its segment split knows only \n while PowerShell also ends a
+  // statement at a bare \r. Neither shape is needed to read a file, so either
+  // makes the command a write. Tested on the raw text, because norm() turns
+  // every backslash into a slash.
+  const readOnly = !/\\['"]|\r/.test(rawCmd) && isReadOnlyCommand(cmd, toolName === 'PowerShell');
   // Prior trials are the answers, so experiments/ stays unreadable. Every
   // other protected path is read-only rather than invisible: schematic-arm
   // gate-on trial 1 was denied 16 times, and every one was a read (cat
   // package.json, cat .claude/skills/house-style/SKILL.md). Denying reads
   // cost the agent the house rules it was told to follow.
-  if (hits.length && !hits.includes('experiments/') && isReadOnlyCommand(cmd, toolName === 'PowerShell')) hits = [];
-  if (!hits.length && !isReadOnlyCommand(cmd, toolName === 'PowerShell')) hits = DENIED_SCRIPTS.filter((script) => cmd.includes(script));
+  if (hits.length && !hits.includes('experiments/') && readOnly) hits = [];
+  if (!hits.length && !readOnly) hits = DENIED_SCRIPTS.filter((script) => cmd.includes(script));
 } else {
   const file = input.file_path ?? input.filePath ?? input.notebook_path ?? null;
   if (file) hits = hitsProtected(file);

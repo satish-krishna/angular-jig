@@ -68,7 +68,7 @@ function addRoute(source, route) {
 
   const elements = [...array.elements];
   if (elements.some((el) => pathOf(el) === route.path)) return { source, added: false, existingPath: route.path };
-  // A shell that already routes another path to this component (stage 1 routes 'roster' to
+  // A shell that already routes another path to this component (for example 'roster' to
   // ./heroes/heroes) keeps that path: a second route would split the screen across two URLs.
   const loading = elements.find((el) => sameModule(importOf(el), route.importPath));
   if (loading) return { source, added: false, existingPath: pathOf(loading) ?? '' };

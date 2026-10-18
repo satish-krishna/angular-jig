@@ -306,7 +306,10 @@ describe('badge variants', () => {
     expect(BADGE_VARIANTS).toEqual(expect.arrayContaining(['success', 'warning']));
   });
 
-  it.each(BADGE_VARIANTS)('%s is a variant libs/ui badge actually ships', (v) => {
-    expect(badgeLib).toMatch(new RegExp(`^\\s+${v}:`, 'm'));
+  it('names exactly the variants libs/ui badge ships, less the two that are not statuses (ghost, link)', () => {
+    const block = /variant:\s*\{([\s\S]*?)\n\s{6}\},/.exec(badgeLib)?.[1] ?? '';
+    const shipped = [...block.matchAll(/^\s{8}([a-z]+):/gm)].map((m) => m[1]);
+    expect(shipped.length).toBeGreaterThan(0);
+    expect([...BADGE_VARIANTS].sort()).toEqual(shipped.filter((v) => v !== 'ghost' && v !== 'link').sort());
   });
 });

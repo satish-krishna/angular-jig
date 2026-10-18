@@ -12,14 +12,13 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ESLint } from 'eslint';
-import angular from 'angular-eslint';
-import applied from '../../harness/gate/applied-index.mjs';
-import { messagesFor, inScope, report } from './check-app-css.mjs';
+// ESLint, angular-eslint and the gates load only once git reports a changed
+// file: this hook runs after every shell command, and on a clean tree the
+// imports alone cost most of a second.
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
-const appliedConfig = [
+const appliedConfig = (angular, applied) => [
   { ignores: ['dist/**', '.angular/**', 'node_modules/**', 'coverage/**', 'libs/**'] },
   {
     files: ['**/*.html'],
@@ -30,7 +29,7 @@ const appliedConfig = [
   },
 ];
 
-export function changedFiles() {
+export async function changedFiles() {
   const r = spawnSync('git', ['-C', ROOT, 'status', '--porcelain=v1', '-z', '-uall', '--', 'src'], { encoding: 'utf8' });
   if (r.status !== 0) throw new Error(`git status failed: ${r.stderr.trim()}`);
   const parts = r.stdout.split('\0').filter(Boolean);
@@ -42,8 +41,12 @@ export function changedFiles() {
     if (status.includes('D')) continue;
     out.push(path);
   }
+  if (out.length === 0) return [];
+  const { inScope } = await import('./check-app-css.mjs');
   return out.filter(inScope).filter((p) => existsSync(join(ROOT, p)));
 }
+
+let report;
 
 async function main() {
   let raw = '';
@@ -56,8 +59,10 @@ async function main() {
   }
   let messages = [];
   try {
-    const files = changedFiles();
+    const files = await changedFiles();
     if (files.length === 0) process.exit(0);
+    const { messagesFor, report: reportFn } = await import('./check-app-css.mjs');
+    report = reportFn;
     const oracleRef = {};
     for (const f of files) messages.push(...(await messagesFor(join(ROOT, f), oracleRef)));
     const templates = new Set();
@@ -66,7 +71,10 @@ async function main() {
       if (/\.html$/i.test(html) && html.startsWith('src/app/') && existsSync(join(ROOT, html))) templates.add(join(ROOT, html));
     }
     if (templates.size) {
-      const eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: appliedConfig });
+      const { ESLint } = await import('eslint');
+      const angular = (await import('angular-eslint')).default;
+      const applied = (await import('../../harness/gate/applied-index.mjs')).default;
+      const eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, errorOnUnmatchedPattern: false, overrideConfig: appliedConfig(angular, applied) });
       for (const r of await eslint.lintFiles([...templates])) {
         const shown = r.filePath.replaceAll('\\', '/').replace(`${ROOT.replaceAll('\\', '/')}/`, '');
         for (const m of r.messages) if (m.severity === 2) messages.push(`${shown}:${m.line}:${m.column}  ${m.message}`);

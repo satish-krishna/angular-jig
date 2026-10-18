@@ -1,6 +1,6 @@
 # app-css-layout-only
 
-> Plane: sealing, series 2 phase 3. Spec: [../bem-phase-3-layout-only-spec.md](../bem-phase-3-layout-only-spec.md) (launching branch). Counter twin: `appearance-in-app-css` (launching branch). Also carries BEM rule 1: no utility class in a template.
+> Plane: sealing. Spec: the house-style skill, [../../.claude/skills/house-style/SKILL.md](../../.claude/skills/house-style/SKILL.md), rules 1 and 5. Counter twin: `appearance-in-app-css` in `harness/counter/bem-counter.mjs`. Also carries BEM rule 1: no utility class in a template.
 
 ## What it forbids
 

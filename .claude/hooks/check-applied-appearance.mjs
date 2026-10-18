@@ -7,8 +7,7 @@
 //
 // Self-contained, like check-layout.mjs: it builds its own eslint config and
 // does not touch the repo's eslint.config.mjs, so the rule exists only when this
-// hook is registered, and only harness/gate/s2-gate-on.settings.json (launching
-// branch) registers it. Present-but-unregistered in gate-off.
+// hook is registered; .claude/settings.json registers it.
 //
 // Fails closed on an unparseable payload or an eslint failure.
 

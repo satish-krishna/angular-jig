@@ -1,13 +1,12 @@
 #!/usr/bin/env node
-// PostToolUse app-css gate (series 2 phase 3, harness/bem-phase-3-layout-only-spec.md
-// on the launching branch). On a Write/Edit/MultiEdit of a stylesheet under src/app
+// PostToolUse app-css gate (harness/rules/app-css-layout-only.md). On a Write/Edit/MultiEdit of a stylesheet under src/app
 // or src/styles.css: every @apply utility and declaration must be layout (R7), with
 // padding only on the block root (R7a). On a template under src/app: no Tailwind
 // utility in a class attribute or [class.x] binding (BEM rule 1).
 //
-// Self-contained: only harness/gate/s3-gate-on.settings.json (launching branch)
-// registers it. Present-but-unregistered in gate-off. Fails closed on an
-// unparseable payload, stylesheet or template.
+// Self-contained: it is not part of eslint.config.mjs, so `npm run lint` does not
+// run it; .claude/settings.json registers it. Fails closed on an unparseable
+// payload, stylesheet or template.
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';

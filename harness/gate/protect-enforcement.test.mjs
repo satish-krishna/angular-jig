@@ -85,6 +85,21 @@ describe('the guard still denies writes to protected paths', () => {
     expect(bash('grep golden:update README.md')).toBe(0);
   });
 
+  it.each([
+    String.raw`echo \"; rm harness/gate/x; echo \"`,
+    String.raw`npm run validate:spec -- specs/a.json \"; rm -rf schematics/; echo \"`,
+    String.raw`cat 'harness/x' \'; rm harness/x; echo \'`,
+    'npm run validate:spec -- specs/a.json && rm harness/x',
+  ])('denies a write hidden from the quote masking: %s', (command) => expect(bash(command)).toBe(2));
+
+  it.each(['npm run validate:spec -- specs/a.json\rRemove-Item harness/x', 'cat harness/x\rRemove-Item harness/x'])(
+    'denies a second statement after a bare carriage return: %j',
+    (command) => {
+      expect(run('PowerShell', { command })).toBe(2);
+      expect(bash(command)).toBe(2);
+    },
+  );
+
   it('denies PowerShell that executes inside an argument', () => {
     expect(run('PowerShell', { command: 'echo (Set-Content package.json x)' })).toBe(2);
     expect(run('PowerShell', { command: 'Get-Content package.json; Set-Content package.json x' })).toBe(2);

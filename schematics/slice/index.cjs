@@ -7,7 +7,7 @@
  *
  * Plain CommonJS, no compile step. Deterministic: the same spec yields byte-identical files.
  *
- * Write policy, per file (harness/schematic-spec-s3-addendum.md Decision G2 on the launching branch):
+ * Write policy, per file:
  * - absent: created.
  * - identical to what the generator emits (line endings aside): skipped and logged as Unchanged.
  * - carrying the placeholder marker: overwritten without --force.

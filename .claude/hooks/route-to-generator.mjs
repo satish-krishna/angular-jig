@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-// route-to-generator (Decision G4 of harness/schematic-spec-s3-addendum.md on the launching
-// branch). One file, two entry points, chosen by the tool in the payload:
+// route-to-generator. One file, two entry points, chosen by the tool in the payload:
 //
 // Write (registered PreToolUse): denies a Write that creates a generator-owned file under src/app
 // (a *.model.ts, *.schema.ts or *-example-data.ts, or anything under ui/<name>-form/), and a Write
 // over any file under src/ that carries the placeholder marker. The message names the spec and the
 // command. Edit is not matched: filling a generated file in place is allowed, and the other gates
 // police what goes into it. Ownership applies only to an entity that has a spec at
-// specs/<entity>.json (ruling R4): hand-written schemas for other features, such as a wizard's
+// specs/<entity>.json: hand-written schemas for other features, such as a wizard's
 // <feature>.schema.ts, stay allowed. Services (*.service.ts and *.service.spec.ts) are deliberately NOT
-// generator-owned here: the shell stage builds a theme switcher and may hand-write theme.service.ts,
+// generator-owned here: an app has services the generator does not make, such as a theme.service.ts,
 // while a hand-built domain still needs a model, a schema and example data, which stay denied.
 //
 // Bash or PowerShell (registered PostToolUse): a shell can create any file without a Write. This
@@ -17,8 +16,7 @@
 // each one whose first line does not carry the generator's header, because the generator did not
 // write it.
 //
-// Registered only by harness/gate/s4-schematic.settings.json on the launching branch, so it runs
-// in the schematic condition only. Fails closed on an unparseable payload, an unreadable file or a
+// Registered by .claude/settings.json. Fails closed on an unparseable payload, an unreadable file or a
 // git failure.
 
 import { spawnSync } from 'node:child_process';
@@ -45,7 +43,7 @@ export function ownerOf(rel) {
   return null;
 }
 
-/** ownerOf, narrowed to entities that have an approved spec at specs/<entity>.json (ruling R4). */
+/** ownerOf, narrowed to entities that have an approved spec at specs/<entity>.json. */
 export function ownedOf(rel, root = ROOT) {
   const owner = ownerOf(rel);
   return owner && existsSync(join(root, 'specs', `${owner.entity}.json`)) ? owner : null;

@@ -2,9 +2,9 @@
 // Checks a slice spec against the same parser the generator uses, without generating anything:
 //   npm run validate:spec -- specs/<entity>.json
 // Exits 0 and says so for a valid spec; exits 1 and prints every problem by path otherwise.
-// The agent runs this before asking for the spec to be approved. Series 5 stage 0 tried to do the
-// same with `node -e "require('./schematics/...')"`, which the enforcement guard refuses because it
-// names schematics/; an npm script names no protected path.
+// The agent runs this before asking for the spec to be approved. Running the parser inline
+// (`node -e "require('./schematics/...')"`) is refused by the enforcement guard, because it names
+// schematics/ and is not a read; .claude/hooks/protect-enforcement.mjs allows this script instead.
 'use strict';
 
 const { existsSync, readFileSync } = require('node:fs');
