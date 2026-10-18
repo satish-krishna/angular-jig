@@ -28,6 +28,10 @@
   @apply flex items-center gap-4;
 }
 
+.missions__sr-only {
+  @apply sr-only;
+}
+
 .missions__table {
   @apply hidden overflow-x-auto sm:block;
 }
