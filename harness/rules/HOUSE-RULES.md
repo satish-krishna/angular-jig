@@ -25,6 +25,13 @@ A primitive takes only layout from the app stylesheet: width, margin, position, 
     Good: <input hlmInput variant="search" class="roster__search">   .roster__search { @apply w-full sm:w-64; }
     Bad:  <input hlmInput class="roster__search">                    .roster__search { @apply w-full ps-9; }
 
+### no-class-on-forwarding-primitive
+
+A primitive that forwards its class inward (`hlm-select-trigger`, `hlm-switch`) takes no `class`, `[class]`, `[class.x]` or `[ngClass]` at all: your stylesheet rule cannot reach the element the class lands on. Use its inputs (`width`, `size`), or add a variant or input to the primitive in `libs/ui`.
+
+    Good: <hlm-select-trigger buttonId="theme-select" width="full">
+    Bad:  <hlm-select-trigger buttonId="theme-select" class="settings__select">
+
 ### no-component-subscribe
 
 Convert an observable at the edge, with `toSignal` or the async pipe, never by calling `.subscribe` inside a component or ViewModel.

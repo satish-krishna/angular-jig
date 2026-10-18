@@ -10,7 +10,7 @@ Two things at once.
 
 **An Angular 22 application.** Seven routes, four of them full CRUD: a roster of heroes, missions with linked threats, a threat register, a recruitment form, a hero dossier on tabs, and a settings screen whose preferences actually change other screens. Signals throughout, no RxJS in a component, Signal Forms driven by zod schemas, and every visual primitive composed from a vendored copy of [spartan/ui](https://www.spartan.ng).
 
-**A test of whether house rules can be enforced instead of hoped for.** Twenty-seven lint rules encode this project's opinions about Angular. They are not advisory: they run as edit-time hooks that reject a write, they are audited by a second engine that shares no code with them, and three browser-based checks cover the defects no static rule can reach. The application was built by a fleet of Haiku subagents under those rules, one task at a time, with a review between each.
+**A test of whether house rules can be enforced instead of hoped for.** Twenty-eight lint rules encode this project's opinions about Angular. They are not advisory: they run as edit-time hooks that reject a write, they are audited by a second engine that shares no code with them, and three browser-based checks cover the defects no static rule can reach. The application was built by a fleet of Haiku subagents under those rules, one task at a time, with a review between each.
 
 | | |
 |---|---|
@@ -25,11 +25,11 @@ Settings is the screen that proves the others are wired together: theme, default
 
 ## The house rules
 
-Twenty-seven rules in four planes. Each has a doc under `harness/rules/` explaining what it forbids, why, the accepted form, and — the part that matters — its known blind spots.
+Twenty-eight rules in four planes. Each has a doc under `harness/rules/` explaining what it forbids, why, the accepted form, and — the part that matters — its known blind spots.
 
 **Sealed vocabulary** (`seal`) — use the design system, do not re-implement it.
 
-`no-raw-control` · `no-appearance-on-primitive` · `no-style-attribute` · `no-raw-icon` · `no-unknown-primitive` · `no-missing-composition-part` · `no-unportalled-overlay`
+`no-raw-control` · `no-appearance-on-primitive` · `no-style-attribute` · `no-raw-icon` · `no-unknown-primitive` · `no-missing-composition-part` · `no-unportalled-overlay` · `no-class-on-forwarding-primitive`
 
 A native `<button>` where a primitive exists is rejected. So is an appearance class on a primitive: colour, typography and padding belong in the vendored component or its `variant` input, never at the call site. Overlays must carry their required title *and* their structural portal — a `hlm-dialog-content` written without `*hlmDialogPortal` compiles, renders, and then silently fails to open.
 
@@ -57,7 +57,7 @@ Three layers, because each catches what the others structurally cannot.
 
 ```mermaid
 flowchart LR
-  A["An edit is written"] --> B{"PostToolUse hooks<br/>27 lint rules"}
+  A["An edit is written"] --> B{"PostToolUse hooks<br/>28 lint rules"}
   B -->|violation| C["Edit rejected, with the rule,<br/>the reason, and a doc pointer"]
   C --> A
   B -->|clean| D["Counters<br/>a second engine, no shared code"]

@@ -20,6 +20,8 @@ A template says what things are; the stylesheet says how they look. Utility clas
 
 Helm directives and their inputs are not classes and stay in the template: `variant`, `size` and the directive itself are the primitive's API.
 
+A component primitive that forwards its `class` to an element inside its own template (`hlm-select-trigger`, `hlm-switch`) takes no `class` at all: no `class="..."`, `[class]`, `[class.x]` or `[ngClass]`. Under emulated encapsulation your stylesheet's rules carry your component's scope attribute, and the inner element has the primitive's, so `.settings__select { @apply w-full }` compiles, ships and matches nothing. Size it with its inputs (`width`, `size`) or add an input or variant in `libs/ui`. The `seal/no-class-on-forwarding-primitive` rule rejects it at edit time. Directives do not forward, so a BEM class on `hlmBtn` or `hlmInput` is fine.
+
 ```html
 <!-- roster.html -->
 <section class="roster">

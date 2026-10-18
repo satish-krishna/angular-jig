@@ -12,7 +12,7 @@
 // redo. The docs were already written; they were just only ever delivered after
 // the mistake.
 //
-// WHY A DIGEST RATHER THAN THE WHOLE DOCS. All 27 rule documents are 74KB. The
+// WHY A DIGEST RATHER THAN THE WHOLE DOCS. All 28 rule documents are 74KB. The
 // `## Agent guidance` sections alone are 15KB, and the guidance section is the
 // part written to be acted on -- the Why and the Known blind spots are for a
 // human deciding whether the rule is right, which is a different reader on a

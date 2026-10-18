@@ -71,6 +71,7 @@ export default [
       'seal/no-unknown-primitive': 'error',
       'seal/no-missing-composition-part': 'error',
       'seal/no-unportalled-overlay': 'error',
+      'seal/no-class-on-forwarding-primitive': 'error',
       'shape/no-ng-model': 'error',
       'shape/no-orphan-ng-submit': 'error',
       'layout/no-raw-palette-color': 'error',

@@ -5,8 +5,9 @@ import noRawIcon from './rules/no-raw-icon.ts';
 import noUnknownPrimitive from './rules/no-unknown-primitive.ts';
 import noMissingCompositionPart from './rules/no-missing-composition-part.ts';
 import noUnportalledOverlay from './rules/no-unportalled-overlay.ts';
+import noClassOnForwardingPrimitive from './rules/no-class-on-forwarding-primitive.ts';
 
-// The `seal` eslint plugin: the seven custom template rules that encode the
+// The `seal` eslint plugin: the eight custom template rules that encode the
 // sealing spec. This is one of the two independent engines; the other is
 // harness/counter/counter.mjs. They share the spec (../sealing-spec.md), not
 // code. Each rule's messageId maps one-to-one onto a counter `kind`:
@@ -16,7 +17,9 @@ import noUnportalledOverlay from './rules/no-unportalled-overlay.ts';
 //   rawIcon                 -> raw-icon
 //   unknownPrimitive        -> unknown-primitive
 //   missingCompositionPart  -> missing-composition-part
-//   unportalledOverlay      -> unportalled-overlay
+//   unportalledOverlay      -> (gate-only, no counter kind)
+//   classOnForwardingPrimitive -> (gate-only, no counter kind)
+// See ../sealing-spec.md for why those two have no counter twin.
 const plugin = {
   meta: { name: 'seal', version: '1.1.0' },
   rules: {
@@ -27,6 +30,7 @@ const plugin = {
     'no-unknown-primitive': noUnknownPrimitive,
     'no-missing-composition-part': noMissingCompositionPart,
     'no-unportalled-overlay': noUnportalledOverlay,
+    'no-class-on-forwarding-primitive': noClassOnForwardingPrimitive,
   },
 };
 
