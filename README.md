@@ -83,7 +83,7 @@ npm start          # http://localhost:4200
 Verification:
 
 ```bash
-npm run lint             # 27 rules over src
+npm run lint             # every house rule over src
 npm test                 # unit tests
 npm run build            # production build
 npm run check:boot       # every route renders without a runtime error
@@ -104,7 +104,7 @@ src/app/            the application
   <entity>/           model, zod schema, service, example data
 libs/ui/            vendored spartan primitives, owned and editable
 harness/
-  gate/rules/         the 27 rules
+  gate/rules/         the rule implementations
   gate/               browser and token checks
   counter/            the independent measuring engine
   rules/              one doc per rule, including its blind spots
