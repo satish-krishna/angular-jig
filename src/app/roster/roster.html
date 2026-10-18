@@ -47,29 +47,31 @@
               </span>
             </td>
             <td hlmTd>{{ hero.clearanceTier }}</td>
-            <td hlmTd class="roster__actions">
-              <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)" [attr.aria-label]="'Edit ' + hero.name">
-                <ng-icon hlmIcon name="lucidePencil" />
-              </button>
-              <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + hero.name">
-                  <ng-icon hlmIcon name="lucideTrash2" />
+            <td hlmTd>
+              <div class="roster__actions-group">
+                <button hlmBtn size="sm" variant="ghost" (click)="vm.editHero(hero.id)" [attr.aria-label]="'Edit ' + hero.name">
+                  <ng-icon hlmIcon name="lucidePencil" />
                 </button>
-                <hlm-dialog-content *hlmDialogPortal class="roster__dialog">
-                  <hlm-dialog-header>
-                    <h2 hlmDialogTitle>Retire hero?</h2>
-                    <p hlmDialogDescription>
-                      This hero will be retired and removed from all active missions. This cannot be undone.
-                    </p>
-                  </hlm-dialog-header>
-                  <hlm-dialog-footer>
-                    <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
-                    <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.retireHero(hero.id)">
-                      Retire
-                    </button>
-                  </hlm-dialog-footer>
-                </hlm-dialog-content>
-              </hlm-dialog>
+                <hlm-dialog>
+                  <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + hero.name">
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="roster__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>Retire hero?</h2>
+                      <p hlmDialogDescription>
+                        This hero will be retired and removed from all active missions. This cannot be undone.
+                      </p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.retireHero(hero.id)">
+                        Retire
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
             </td>
           </tr>
         } @empty {

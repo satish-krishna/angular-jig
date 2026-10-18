@@ -36,7 +36,7 @@
   @apply hidden overflow-x-auto sm:block;
 }
 
-.missions__actions {
+.missions__actions-group {
   @apply flex gap-2;
 }
 

@@ -99,45 +99,47 @@
             </td>
             <td hlmTd>{{ threat.location }}</td>
             <td hlmTd>{{ vm.missionCount(threat.id) }}</td>
-            <td hlmTd class="threats__actions">
-              <hlm-dialog #tableEditDialog="hlmDialog">
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(threat.id)" data-testid="edit-threat" [attr.aria-label]="'Edit ' + threat.designation">
-                  <ng-icon hlmIcon name="lucidePencil" />
-                </button>
-                <hlm-dialog-content *hlmDialogPortal class="threats__dialog">
-                  <hlm-dialog-header>
-                    <h2 hlmDialogTitle>Edit threat</h2>
-                    <p hlmDialogDescription>Change this threat's details and save.</p>
-                  </hlm-dialog-header>
-                  @if (vm.editingThreat(); as threat) {
-                    <app-threat-form
-                      [initialValue]="threat"
-                      submitLabel="Update"
-                      (saveThreat)="vm.save($event); tableEditDialog.close()"
-                      (cancel)="tableEditDialog.close()"
-                    />
-                  }
-                </hlm-dialog-content>
-              </hlm-dialog>
-              <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + threat.designation">
-                  <ng-icon hlmIcon name="lucideTrash2" />
-                </button>
-                <hlm-dialog-content *hlmDialogPortal class="threats__dialog threats__dialog--confirm">
-                  <hlm-dialog-header>
-                    <h2 hlmDialogTitle>Delete threat?</h2>
-                    <p hlmDialogDescription>
-                      This threat will be permanently removed. This cannot be undone.
-                    </p>
-                  </hlm-dialog-header>
-                  <hlm-dialog-footer>
-                    <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
-                    <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(threat.id)">
-                      Delete
-                    </button>
-                  </hlm-dialog-footer>
-                </hlm-dialog-content>
-              </hlm-dialog>
+            <td hlmTd>
+              <div class="threats__actions-group">
+                <hlm-dialog #tableEditDialog="hlmDialog">
+                  <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(threat.id)" data-testid="edit-threat" [attr.aria-label]="'Edit ' + threat.designation">
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="threats__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>Edit threat</h2>
+                      <p hlmDialogDescription>Change this threat's details and save.</p>
+                    </hlm-dialog-header>
+                    @if (vm.editingThreat(); as threat) {
+                      <app-threat-form
+                        [initialValue]="threat"
+                        submitLabel="Update"
+                        (saveThreat)="vm.save($event); tableEditDialog.close()"
+                        (cancel)="tableEditDialog.close()"
+                      />
+                    }
+                  </hlm-dialog-content>
+                </hlm-dialog>
+                <hlm-dialog>
+                  <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + threat.designation">
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="threats__dialog threats__dialog--confirm">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>Delete threat?</h2>
+                      <p hlmDialogDescription>
+                        This threat will be permanently removed. This cannot be undone.
+                      </p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(threat.id)">
+                        Delete
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
             </td>
           </tr>
         } @empty {

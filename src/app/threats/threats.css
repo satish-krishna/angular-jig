@@ -32,7 +32,7 @@
   @apply hidden overflow-x-auto sm:block;
 }
 
-.threats__actions {
+.threats__actions-group {
   @apply flex gap-2;
 }
 
