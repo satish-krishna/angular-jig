@@ -1,0 +1,45 @@
+@reference "../../styles.css";
+
+.roster {
+  @apply flex flex-col gap-6 p-6;
+}
+
+.roster__header {
+  @apply flex items-center justify-between;
+}
+
+.roster__label {
+  @apply sr-only;
+}
+
+.roster__table {
+  @apply hidden overflow-x-auto sm:block;
+}
+
+.roster__actions {
+  @apply flex gap-2;
+}
+
+.roster__dialog {
+  @apply sm:max-w-sm;
+}
+
+.roster__empty {
+  @apply text-center;
+}
+
+.roster__cards {
+  @apply sm:hidden;
+}
+
+.roster__cards-title {
+  @apply sr-only;
+}
+
+.roster__card-list {
+  @apply grid gap-4;
+}
+
+.roster__footer {
+  @apply flex items-center justify-between;
+}
