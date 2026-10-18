@@ -1,0 +1,17 @@
+<div class="power-meter">
+  <div class="power-meter__header">
+    <span hlmMuted>{{ label() }}</span>
+    <span hlmSmall>{{ value() }} / {{ max() }}</span>
+  </div>
+  <div
+    hlmSkeleton
+    variant="track"
+    role="meter"
+    [attr.aria-label]="label()"
+    [attr.aria-valuenow]="value()"
+    aria-valuemin="0"
+    [attr.aria-valuemax]="max()"
+  >
+    <div hlmSkeleton variant="bar" [style.width.%]="percent()"></div>
+  </div>
+</div>

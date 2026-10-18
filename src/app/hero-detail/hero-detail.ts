@@ -8,8 +8,8 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmTabsImports } from '@spartan-ng/helm/tabs';
-import { HeroForm } from '../ui/hero-form';
-import { PowerMeter } from '../ui/power-meter';
+import { HeroForm } from '../ui/hero-form/hero-form';
+import { PowerMeter } from '../ui/power-meter/power-meter';
 import { HeroDetailViewModel } from './hero-detail.view-model';
 
 @Component({

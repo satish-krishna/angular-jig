@@ -7,7 +7,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
-import { HeroCard } from '../ui/hero-card';
+import { HeroCard } from '../ui/hero-card/hero-card';
 import { RosterViewModel } from './roster.view-model';
 
 @Component({

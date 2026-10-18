@@ -7,7 +7,7 @@ import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmTableImports } from '@spartan-ng/helm/table';
-import { ThreatForm } from '../ui/threat-form';
+import { ThreatForm } from '../ui/threat-form/threat-form';
 import { ThreatsViewModel } from './threats.view-model';
 
 @Component({

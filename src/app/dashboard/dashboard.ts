@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { StatTile } from '../ui/stat-tile';
-import { HeroCard } from '../ui/hero-card';
+import { StatTile } from '../ui/stat-tile/stat-tile';
+import { HeroCard } from '../ui/hero-card/hero-card';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { DashboardViewModel } from './dashboard.view-model';
 

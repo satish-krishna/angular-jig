@@ -1,0 +1,23 @@
+<hlm-card class="hero-card">
+  <hlm-card-header>
+    <div class="hero-card__header">
+      <hlm-avatar>
+        <span hlmAvatarFallback>{{ hero().name.substring(0, 2).toUpperCase() }}</span>
+      </hlm-avatar>
+      <div class="hero-card__identity">
+        <h3 hlmCardTitle>{{ hero().name }}</h3>
+        <p hlmCardDescription>{{ hero().alias }}</p>
+      </div>
+    </div>
+  </hlm-card-header>
+  <div hlmCardContent>
+    <div class="hero-card__badges">
+      <span hlmBadge variant="secondary">{{ hero().powerClass }}</span>
+      <span hlmBadge [variant]="statusVariant(hero().status)">{{ hero().status }}</span>
+    </div>
+    <div hlmMuted class="hero-card__power">Power: {{ hero().power }}</div>
+  </div>
+  <hlm-card-footer>
+    <button hlmBtn variant="ghost" size="sm" (click)="select.emit(hero())">View</button>
+  </hlm-card-footer>
+</hlm-card>

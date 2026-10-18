@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { HeroForm } from '../ui/hero-form';
+import { HeroForm } from '../ui/hero-form/hero-form';
 import { RecruitViewModel } from './recruit.view-model';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 

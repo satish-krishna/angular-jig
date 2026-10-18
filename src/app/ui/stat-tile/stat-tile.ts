@@ -1,21 +1,13 @@
 import { Component, input } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
 
 @Component({
   selector: 'app-stat-tile',
-  imports: [NgIcon, HlmCardImports],
-  template: `
-    <hlm-card>
-      <hlm-card-header>
-        <p hlmCardDescription>{{ label() }}</p>
-        <p hlmCardTitle emphasis="stat">{{ value() }}</p>
-        <div hlmCardAction>
-          <ng-icon [name]="icon()" class="size-8 text-muted-foreground" />
-        </div>
-      </hlm-card-header>
-    </hlm-card>
-  `,
+  imports: [NgIcon, HlmCardImports, HlmIconImports],
+  templateUrl: './stat-tile.html',
+  styleUrl: './stat-tile.css',
 })
 export class StatTile {
   readonly label = input.required<string>();

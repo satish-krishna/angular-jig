@@ -1,0 +1,9 @@
+@reference "../../../styles.css";
+
+.power-meter {
+  @apply grid gap-1;
+}
+
+.power-meter__header {
+  @apply flex items-baseline justify-between;
+}

@@ -8,7 +8,7 @@ import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmTableImports } from '@spartan-ng/helm/table';
-import { MissionForm } from '../ui/mission-form';
+import { MissionForm } from '../ui/mission-form/mission-form';
 import { MissionsViewModel } from './missions.view-model';
 
 @Component({
