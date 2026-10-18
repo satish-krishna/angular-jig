@@ -2,6 +2,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { BrnAvatar } from '@spartan-ng/brain/avatar';
 import { classes } from '@spartan-ng/helm/utils';
 
+const avatarBase =
+  'size-8 data-[size=lg]:size-10 data-[size=sm]:size-6 group/avatar after:border-border relative flex shrink-0 select-none after:absolute after:inset-0 after:border after:mix-blend-darken dark:after:mix-blend-lighten';
+
+const avatarVariants = {
+  default: 'rounded-full after:rounded-full',
+  primary: 'rounded-lg bg-primary after:hidden',
+} as const;
+
 @Component({
   selector: 'hlm-avatar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,15 +29,11 @@ import { classes } from '@spartan-ng/helm/utils';
 export class HlmAvatar extends BrnAvatar {
   public readonly size = input<'default' | 'sm' | 'lg'>('default');
 
-  /** 'brand' draws a filled rounded square, used as a logo mark. */
-  public readonly variant = input<'default' | 'brand'>('default');
+  /** 'primary' fills the avatar with the primary color as a rounded square and hides the border overlay. */
+  public readonly variant = input<'default' | 'primary'>('default');
 
   constructor() {
     super();
-    classes(() => [
-      this.variant() === 'brand' ? 'bg-primary after:hidden' : '',
-      this.variant() === 'brand' ? 'rounded-lg' : 'rounded-full',
-      'size-8 after:rounded-full data-[size=lg]:size-10 data-[size=sm]:size-6 group/avatar after:border-border relative flex shrink-0 select-none after:absolute after:inset-0 after:border after:mix-blend-darken dark:after:mix-blend-lighten',
-    ]);
+    classes(() => [avatarBase, avatarVariants[this.variant()]]);
   }
 }

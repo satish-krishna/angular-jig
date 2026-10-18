@@ -16,6 +16,7 @@
   @apply truncate;
 }
 
+/* 63px plus the 1px separator below it makes the 64px topbar. */
 .app__topbar {
   @apply flex h-15.75 items-center justify-between gap-4;
 }

@@ -1,7 +1,7 @@
 <div class="dashboard">
   <!-- Header -->
   <div class="dashboard__header">
-    <h1 hlmH1 variant="page">Operations Dashboard</h1>
+    <h1 hlmH1 variant="compact">Operations Dashboard</h1>
     <a routerLink="/recruit" hlmBtn variant="default">
       <ng-icon hlmIcon name="lucideUserPlus" />
       <span>Recruit</span>
@@ -9,7 +9,7 @@
   </div>
 
   <!-- Stats grid -->
-  <div class="dashboard__tiles">
+  <div class="dashboard__stats">
     <app-stat-tile
       label="Total Heroes"
       [value]="vm.totalHeroes()"
@@ -35,10 +35,10 @@
   <!-- Top heroes section -->
   <div class="dashboard__section">
     <div class="dashboard__section-header">
-      <h2 hlmH3 variant="section">Top Heroes This Cycle</h2>
+      <h2 hlmH4>Top Heroes This Cycle</h2>
       <a routerLink="/roster" hlmSmall variant="link">View all roster</a>
     </div>
-    <div class="dashboard__tiles">
+    <div class="dashboard__heroes">
       @for (hero of vm.topHeroes(); track hero.id) {
         <app-hero-card [hero]="hero" (select)="goToHero($event.id)" />
       }
@@ -47,7 +47,7 @@
 
   <!-- Roster preview section -->
   <div class="dashboard__section">
-    <h2 hlmH3 variant="section">Roster</h2>
+    <h2 hlmH4>Roster</h2>
     <hlm-card>
       <hlm-card-header>
         <p hlmCardDescription>{{ vm.totalHeroes() }} heroes on file</p>
