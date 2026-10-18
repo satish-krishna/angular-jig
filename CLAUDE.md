@@ -63,7 +63,7 @@ Every routed screen is a thin component over a component-scoped ViewModel. This 
 Run these before claiming anything is done. A green board from an earlier state proves nothing about the tree in front of you.
 
 ```bash
-npm run lint             # the 27 house rules
+npm run lint             # every house rule the hooks enforce (eslint plugins + the app-css gate)
 npm test                 # unit tests
 npm run build            # production build
 npm run check:boot       # every route renders without a runtime error

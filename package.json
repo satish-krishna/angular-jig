@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "eslint src",
+    "lint": "eslint src && node harness/gate/check-app-css-all.mjs",
     "test:harness": "vitest run --config harness/vitest.config.mjs",
     "test:schematics": "vitest run --config schematics/vitest.config.mjs",
     "build:spec-schema": "node schematics/slice/build-json-schema.cjs",
