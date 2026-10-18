@@ -15,6 +15,11 @@ export const progressVariants = cva('relative block h-2 w-full overflow-hidden r
 
 export type ProgressVariants = VariantProps<typeof progressVariants>;
 
+/**
+ * Determinate values only. Brain reports a missing value as `indeterminate`, but the
+ * indicator draws it as an empty bar and nothing animates it. Add that state here
+ * before using this primitive for an unknown-duration loading indicator.
+ */
 @Directive({
   selector: 'hlm-progress',
   hostDirectives: [{ directive: BrnProgress, inputs: ['value', 'max', 'getValueLabel'] }],

@@ -3,15 +3,16 @@
 // (.claude/hooks/check-app-css.mjs) judges one file as an agent edits it; ESLint
 // cannot host this gate because it reads stylesheets with PostCSS and judges
 // template classes against Tailwind's own utility oracle. This CLI runs the same
-// checks over every component stylesheet and template under src/app plus
-// src/styles.css, prints violations in the hook's format, and exits 1 on any.
+// checks (it imports the hook's own scope and per-file logic, so the two cannot
+// drift) over every stylesheet under src and every template under src/app, prints
+// violations in the hook's format, and exits 1 on any.
 //
 // Usage: node harness/gate/check-app-css-all.mjs [--root <dir>]   (default: the repo)
 
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readdirSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkStylesheet, stemOf, isGlobalStylesheet, remedyFor, loadUtilityOracle, templateUtilities } from './app-css/index.mjs';
+import { inScope, messagesFor } from '../../.claude/hooks/check-app-css.mjs';
 
 const DOC = 'harness/rules/app-css-layout-only.md';
 
@@ -26,39 +27,10 @@ function walk(dir, out = []) {
 }
 
 export async function checkTree(root) {
-  const files = [join(root, 'src', 'styles.css'), ...walk(join(root, 'src', 'app')).filter((f) => /\.(css|html)$/i.test(f))].filter(existsSync);
+  const files = walk(join(root, 'src')).filter((f) => inScope(relative(root, f).replaceAll('\\', '/')));
   const messages = [];
   const oracleRef = {};
-  for (const abs of files) {
-    const rel = relative(root, abs).replaceAll('\\', '/');
-    const text = readFileSync(abs, 'utf8');
-    if (/\.css$/i.test(rel)) {
-      const global = isGlobalStylesheet(rel);
-      const stem = global ? null : stemOf(rel);
-      let vs;
-      try {
-        vs = checkStylesheet(text, { stem, global });
-      } catch (err) {
-        messages.push(`${rel}: unreadable stylesheet (${err?.message ?? err}); fix the syntax.`);
-        continue;
-      }
-      for (const v of vs) {
-        messages.push(`${rel}:${v.line}  ${v.selector || '(top level)'}  "${v.token}" is ${v.reason === 'padding-off-root' ? 'padding off the block root' : 'appearance'}: ${remedyFor(v, stem)}.`);
-      }
-    } else {
-      oracleRef.isUtility ??= await loadUtilityOracle(join(root, 'src', 'styles.css'));
-      let vs;
-      try {
-        vs = templateUtilities(text, rel, oracleRef.isUtility);
-      } catch (err) {
-        messages.push(`${rel}: unreadable template (${err?.message ?? err}).`);
-        continue;
-      }
-      for (const v of vs) {
-        messages.push(`${rel}:${v.line}  "${v.token}" is a Tailwind utility in a template ${v.via}: give the element a BEM class and @apply layout in its stylesheet.`);
-      }
-    }
-  }
+  for (const abs of files) messages.push(...(await messagesFor(abs, oracleRef, root)));
   return { checked: files.length, messages };
 }
 

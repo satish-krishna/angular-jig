@@ -21,9 +21,10 @@ const DOC = { ruleId: 'app-css/layout-only', url: 'harness/rules/app-css-layout-
 
 export const inScope = (rel) => /^src\/.+\.css$/i.test(rel) || /^src\/app\/.+\.html$/i.test(rel);
 
-// Messages for one file. `oracle` is loaded lazily, once per process.
-export async function messagesFor(absPath, oracleRef) {
-  const rel = relative(ROOT, absPath).replaceAll('\\', '/');
+// Messages for one file. `oracle` is loaded lazily, once per process. `root` is
+// the tree the file belongs to (the repo by default); `npm run lint` passes its own.
+export async function messagesFor(absPath, oracleRef, root = ROOT) {
+  const rel = relative(root, absPath).replaceAll('\\', '/');
   const text = readFileSync(absPath, 'utf8');
   if (/\.css$/i.test(rel)) {
     const global = isGlobalStylesheet(rel);
@@ -36,7 +37,7 @@ export async function messagesFor(absPath, oracleRef) {
     }
     return vs.map((v) => `${rel}:${v.line}  ${v.selector || '(top level)'}  "${v.token}" is ${v.reason === 'padding-off-root' ? 'padding off the block root' : 'appearance'}: ${remedyFor(v, stem)}.`);
   }
-  oracleRef.isUtility ??= await loadUtilityOracle(join(ROOT, 'src', 'styles.css'));
+  oracleRef.isUtility ??= await loadUtilityOracle(join(root, 'src', 'styles.css'));
   let vs;
   try {
     vs = templateUtilities(text, rel, oracleRef.isUtility);

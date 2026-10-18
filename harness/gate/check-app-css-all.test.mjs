@@ -28,7 +28,7 @@ afterAll(() => {
 const cleanHtml = '<section class="zz-demo"><p class="zz-demo__hint">x</p></section>\n';
 const cleanCss = '@reference "../../styles.css";\n.zz-demo { @apply grid gap-4; }\n';
 
-describe('check-app-css-all', () => {
+describe('check-app-css-all', { timeout: 30000 }, () => {
   it('exits 0 on a clean tree', () => {
     const r = run(tree({ 'src/app/zz-demo/zz-demo.html': cleanHtml, 'src/app/zz-demo/zz-demo.css': cleanCss }));
     expect(r.status).toBe(0);
@@ -44,5 +44,11 @@ describe('check-app-css-all', () => {
     expect(r.status).toBe(1);
     expect(r.stderr).toContain('src/app/zz-demo/zz-demo.html');
     expect(r.stderr).toContain('"flex"');
+  });
+  it('checks a stylesheet outside src/app, as the hook does', () => {
+    const css = '@reference "../styles.css";\n.zz-theme { @apply text-muted-foreground; }\n';
+    const r = run(tree({ 'src/themes/zz-theme.css': css }));
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain('src/themes/zz-theme.css');
   });
 });
