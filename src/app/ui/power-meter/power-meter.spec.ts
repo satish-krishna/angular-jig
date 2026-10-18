@@ -41,4 +41,14 @@ describe('PowerMeter', () => {
     const { bar } = await render(42);
     expect(bar.getAttribute('aria-valuetext')).toBe('42 / 100');
   });
+
+  it('is a meter, not a progressbar, with exactly one role', async () => {
+    const { bar } = await render(92, 100);
+    expect(bar.getAttribute('role')).toBe('meter');
+    expect(bar.getAttribute('aria-valuenow')).toBe('92');
+    expect(bar.getAttribute('aria-valuemin')).toBe('0');
+    expect(bar.getAttribute('aria-valuemax')).toBe('100');
+    expect(bar.getAttribute('aria-valuetext')).toBe('92 / 100');
+    expect(bar.getAttributeNames().filter((n) => n === 'role')).toEqual(['role']);
+  });
 });

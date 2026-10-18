@@ -4,6 +4,7 @@
     <span hlmSmall>{{ value() }} / {{ max() }}</span>
   </div>
   <hlm-progress
+    role="meter"
     variant="muted"
     [attr.aria-label]="label()"
     [value]="clamped()"
