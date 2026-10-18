@@ -1,15 +1,15 @@
-<div class="flex flex-col gap-8 p-6">
+<div class="dashboard">
   <!-- Header -->
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Operations Dashboard</h1>
+  <div class="dashboard__header">
+    <h1 hlmH1 variant="page">Operations Dashboard</h1>
     <a routerLink="/recruit" hlmBtn variant="default">
-      <ng-icon name="lucideUserPlus" />
+      <ng-icon hlmIcon name="lucideUserPlus" />
       <span>Recruit</span>
     </a>
   </div>
 
   <!-- Stats grid -->
-  <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="dashboard__tiles">
     <app-stat-tile
       label="Total Heroes"
       [value]="vm.totalHeroes()"
@@ -33,12 +33,12 @@
   </div>
 
   <!-- Top heroes section -->
-  <div class="flex flex-col gap-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-xl font-semibold">Top Heroes This Cycle</h2>
-      <a routerLink="/roster" class="text-sm text-primary hover:underline">View all roster</a>
+  <div class="dashboard__section">
+    <div class="dashboard__section-header">
+      <h2 hlmH3 variant="section">Top Heroes This Cycle</h2>
+      <a routerLink="/roster" hlmSmall variant="link">View all roster</a>
     </div>
-    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="dashboard__tiles">
       @for (hero of vm.topHeroes(); track hero.id) {
         <app-hero-card [hero]="hero" (select)="goToHero($event.id)" />
       }
@@ -46,8 +46,8 @@
   </div>
 
   <!-- Roster preview section -->
-  <div class="flex flex-col gap-4">
-    <h2 class="text-xl font-semibold">Roster</h2>
+  <div class="dashboard__section">
+    <h2 hlmH3 variant="section">Roster</h2>
     <hlm-card>
       <hlm-card-header>
         <p hlmCardDescription>{{ vm.totalHeroes() }} heroes on file</p>

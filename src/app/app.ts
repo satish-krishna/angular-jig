@@ -5,6 +5,9 @@ import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
+import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { HlmLarge, HlmMuted, HlmSmall } from '@spartan-ng/helm/typography';
 import { AppShellViewModel } from './app-shell.view-model';
 
 @Component({
@@ -18,6 +21,11 @@ import { AppShellViewModel } from './app-shell.view-model';
     HlmButtonImports,
     HlmTooltipImports,
     HlmAvatarImports,
+    HlmIconImports,
+    HlmSeparator,
+    HlmLarge,
+    HlmMuted,
+    HlmSmall,
   ],
   providers: [AppShellViewModel],
   templateUrl: './app.html',

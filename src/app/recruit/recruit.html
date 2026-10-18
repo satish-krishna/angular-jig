@@ -1,8 +1,6 @@
-<div class="flex flex-col gap-6 p-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Recruit New Hero</h1>
-  </div>
-  <div class="mx-auto w-full max-w-2xl">
+<div class="recruit">
+  <h1 hlmH1 variant="page">Recruit New Hero</h1>
+  <div class="recruit__form">
     <hlm-card>
       <div hlmCardContent>
         <app-hero-form [initialValue]="vm.newHeroTemplate" submitLabel="Recruit" (saveHero)="vm.createHero($event)" (cancel)="vm.cancel()" />
