@@ -64,19 +64,19 @@
         <div class="hero-detail__stats">
           <div>
             <p hlmMuted>Power Index</p>
-            <p hlmCardTitle emphasis="stat">{{ hero.power }}</p>
+            <p hlmLarge variant="numeric">{{ hero.power }}</p>
           </div>
           <div>
             <p hlmMuted>Clearance Tier</p>
-            <p hlmCardTitle emphasis="stat">{{ hero.clearanceTier }}</p>
+            <p hlmLarge variant="numeric">{{ hero.clearanceTier }}</p>
           </div>
           <div>
             <p hlmMuted>Missions</p>
-            <p hlmCardTitle emphasis="stat">{{ hero.missionsRun }}</p>
+            <p hlmLarge variant="numeric">{{ hero.missionsRun }}</p>
           </div>
           <div>
             <p hlmMuted>Success Rate</p>
-            <p hlmCardTitle emphasis="stat">{{ (hero.successRate * 100).toFixed(0) }}%</p>
+            <p hlmLarge variant="numeric">{{ (hero.successRate * 100).toFixed(0) }}%</p>
           </div>
         </div>
         @if (hero.bio) {

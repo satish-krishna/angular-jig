@@ -2,10 +2,11 @@ import { Component, input } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
+import { HlmLarge } from '@spartan-ng/helm/typography';
 
 @Component({
   selector: 'app-stat-tile',
-  imports: [NgIcon, HlmCardImports, HlmIconImports],
+  imports: [NgIcon, HlmCardImports, HlmIconImports, HlmLarge],
   templateUrl: './stat-tile.html',
   styleUrl: './stat-tile.css',
 })
