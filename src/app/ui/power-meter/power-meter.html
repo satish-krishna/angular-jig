@@ -3,7 +3,13 @@
     <span hlmMuted>{{ label() }}</span>
     <span hlmSmall>{{ value() }} / {{ max() }}</span>
   </div>
-  <hlm-progress variant="muted" [attr.aria-label]="label()" [value]="clamped()" [max]="max()">
+  <hlm-progress
+    variant="muted"
+    [attr.aria-label]="label()"
+    [value]="clamped()"
+    [max]="safeMax()"
+    [getValueLabel]="valueLabel"
+  >
     <hlm-progress-indicator />
   </hlm-progress>
 </div>
