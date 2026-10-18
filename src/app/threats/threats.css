@@ -1,0 +1,65 @@
+@reference "../../styles.css";
+
+.threats {
+  @apply flex flex-col gap-6 p-6;
+}
+
+.threats__header {
+  @apply flex items-center justify-between;
+}
+
+.threats__dialog {
+  @apply sm:max-w-2xl;
+}
+
+.threats__dialog--confirm {
+  @apply sm:max-w-sm;
+}
+
+.threats__filters {
+  @apply flex flex-col gap-4;
+}
+
+.threats__label {
+  @apply sr-only;
+}
+
+.threats__filter-actions {
+  @apply flex items-center gap-4;
+}
+
+.threats__table {
+  @apply hidden overflow-x-auto sm:block;
+}
+
+.threats__actions {
+  @apply flex gap-2;
+}
+
+.threats__empty {
+  @apply text-center;
+}
+
+.threats__cards {
+  @apply grid gap-4 sm:hidden;
+}
+
+.threats__card-body {
+  @apply flex flex-col gap-3;
+}
+
+.threats__row {
+  @apply flex items-center justify-between;
+}
+
+.threats__card-actions {
+  @apply mt-2 flex gap-2;
+}
+
+.threats__card-action {
+  @apply flex-1;
+}
+
+.threats__footer {
+  @apply flex items-center justify-between;
+}
