@@ -1,0 +1,106 @@
+<form class="threat-form" [formRoot]="threatForm">
+  <hlm-field-group>
+    <hlm-field>
+      <label hlmFieldLabel for="designation">{{ meta['designation'].label }}</label>
+      <input hlmInput id="designation" [formField]="threatForm.designation" [placeholder]="meta['designation'].placeholder ?? ''" />
+      @for (error of threatForm.designation().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="category">{{ meta['category'].label }}</label>
+      <hlm-select [formField]="threatForm.category" [itemToString]="categoryToString">
+        <hlm-select-trigger buttonId="category" width="full">
+          <hlm-select-value [placeholder]="meta['category'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['category'].label }}</hlm-select-label>
+            @for (option of categoryOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of threatForm.category().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="level">{{ meta['level'].label }}</label>
+      <hlm-select [formField]="threatForm.level" [itemToString]="levelToString">
+        <hlm-select-trigger buttonId="level" width="full">
+          <hlm-select-value [placeholder]="meta['level'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['level'].label }}</hlm-select-label>
+            @for (option of levelOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of threatForm.level().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="status">{{ meta['status'].label }}</label>
+      <hlm-select [formField]="threatForm.status" [itemToString]="statusToString">
+        <hlm-select-trigger buttonId="status" width="full">
+          <hlm-select-value [placeholder]="meta['status'].placeholder ?? ''" />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          <hlm-select-group>
+            <hlm-select-label>{{ meta['status'].label }}</hlm-select-label>
+            @for (option of statusOptions; track option.value) {
+              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+            }
+          </hlm-select-group>
+        </hlm-select-content>
+      </hlm-select>
+      @for (error of threatForm.status().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="location">{{ meta['location'].label }}</label>
+      <input hlmInput id="location" [formField]="threatForm.location" [placeholder]="meta['location'].placeholder ?? ''" />
+      @for (error of threatForm.location().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="firstSeenOn">{{ meta['firstSeenOn'].label }}</label>
+      <input hlmInput id="firstSeenOn" [formField]="threatForm.firstSeenOn" [placeholder]="meta['firstSeenOn'].placeholder ?? ''" />
+      @for (error of threatForm.firstSeenOn().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field>
+      <label hlmFieldLabel for="notes">{{ meta['notes'].label }}</label>
+      <textarea
+        hlmTextarea
+        id="notes"
+        rows="4"
+        [formField]="threatForm.notes"
+        [placeholder]="meta['notes'].placeholder ?? ''"
+      ></textarea>
+      @for (error of threatForm.notes().errors(); track error) {
+        <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+      }
+    </hlm-field>
+
+    <hlm-field orientation="horizontal">
+      <button hlmBtn type="submit">{{ submitLabel() }}</button>
+      <button hlmBtn type="button" variant="outline" (click)="cancel.emit()">Cancel</button>
+    </hlm-field>
+  </hlm-field-group>
+</form>

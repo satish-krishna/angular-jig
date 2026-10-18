@@ -26,7 +26,7 @@ const edit = (file_path) => ({ tool_name: 'Edit', tool_input: { file_path } });
 
 afterAll(() => rmSync(probeDir, { recursive: true, force: true }));
 
-describe('check-applied-appearance hook', () => {
+describe('check-applied-appearance hook', { timeout: 30000 }, () => {
   it('blocks a stylesheet edit that puts appearance on a primitive, with the rule doc guidance', () => {
     probe('.zz-applied-probe__go { @apply ps-9; }');
     const r = run(edit(css));

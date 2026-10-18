@@ -29,7 +29,7 @@
     <hlm-field>
       <label hlmFieldLabel for="status">{{ meta['status'].label }}</label>
       <hlm-select [formField]="loanForm.status" [itemToString]="statusToString">
-        <hlm-select-trigger buttonId="status" class="loan-form__select">
+        <hlm-select-trigger buttonId="status" width="full">
           <hlm-select-value [placeholder]="meta['status'].placeholder ?? ''" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
@@ -59,7 +59,7 @@
     <hlm-field>
       <label hlmFieldLabel for="bookId">{{ meta['bookId'].label }}</label>
       <hlm-select [formField]="loanForm.bookId" [itemToString]="bookIdToString">
-        <hlm-select-trigger buttonId="bookId" class="loan-form__select">
+        <hlm-select-trigger buttonId="bookId" width="full">
           <hlm-select-value [placeholder]="meta['bookId'].placeholder ?? ''" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>

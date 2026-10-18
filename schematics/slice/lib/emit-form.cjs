@@ -43,7 +43,7 @@ function fieldBlock(ctx, f) {
       const source = f.type === 'enum' ? `${n}Options` : `${n}Options()`;
       out.push(
         `          <hlm-select [formField]="${form}.${n}" [itemToString]="${n}ToString">`,
-        `            <hlm-select-trigger buttonId="${n}" class="${ctx.entityKebab}-form__select">`,
+        `            <hlm-select-trigger buttonId="${n}" width="full">`,
         `              <hlm-select-value [placeholder]="meta['${n}'].placeholder ?? ''" />`,
         '            </hlm-select-trigger>',
         '            <hlm-select-content *hlmSelectPortal>',
@@ -207,7 +207,6 @@ function formStyles(ctx) {
   const b = `${entityKebab}-form`;
   const out = ['@reference "../../../styles.css";', '', `.${b} {`, '  @apply grid gap-6;', '}'];
   if (formFields.some((f) => f.type === 'boolean')) out.push('', `.${b}__switch {`, '  @apply flex items-center gap-2;', '}');
-  if (formFields.some(isSelect)) out.push('', `.${b}__select {`, '  @apply w-full;', '}');
   return file(out);
 }
 

@@ -1,0 +1,17 @@
+@reference "../../../styles.css";
+
+.hero-card__header {
+  @apply flex items-start gap-3;
+}
+
+.hero-card__identity {
+  @apply min-w-0 flex-1;
+}
+
+.hero-card__badges {
+  @apply flex gap-2;
+}
+
+.hero-card__power {
+  @apply mt-2;
+}

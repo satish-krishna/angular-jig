@@ -1,0 +1,53 @@
+@reference "../../styles.css";
+
+.hero-detail {
+  @apply flex flex-col gap-6 p-6;
+}
+
+.hero-detail__toolbar {
+  @apply flex flex-wrap items-center justify-between gap-4;
+}
+
+.hero-detail__actions {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.hero-detail__dialog {
+  @apply sm:max-w-sm;
+}
+
+.hero-detail__badges {
+  @apply flex flex-wrap gap-2;
+}
+
+.hero-detail__tabs {
+  @apply w-full;
+}
+
+.hero-detail__tab-list {
+  @apply grid w-full grid-cols-4;
+}
+
+.hero-detail__stats {
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2;
+}
+
+.hero-detail__bio {
+  @apply mt-6;
+}
+
+.hero-detail__bio-text {
+  @apply mt-2;
+}
+
+.hero-detail__meters {
+  @apply grid gap-4;
+}
+
+.hero-detail__missions {
+  @apply grid gap-3;
+}
+
+.hero-detail__empty {
+  @apply text-center;
+}

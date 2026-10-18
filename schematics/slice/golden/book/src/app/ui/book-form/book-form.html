@@ -29,7 +29,7 @@
     <hlm-field>
       <label hlmFieldLabel for="genre">{{ meta['genre'].label }}</label>
       <hlm-select [formField]="bookForm.genre" [itemToString]="genreToString">
-        <hlm-select-trigger buttonId="genre" class="book-form__select">
+        <hlm-select-trigger buttonId="genre" width="full">
           <hlm-select-value [placeholder]="meta['genre'].placeholder ?? ''" />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>

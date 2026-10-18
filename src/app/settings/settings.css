@@ -1,0 +1,13 @@
+@reference "../../styles.css";
+
+.settings {
+  @apply flex flex-col gap-6 p-6;
+}
+
+.settings__content {
+  @apply flex flex-col gap-4;
+}
+
+.settings__field {
+  @apply flex flex-col gap-2;
+}

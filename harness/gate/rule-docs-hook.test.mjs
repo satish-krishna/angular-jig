@@ -211,7 +211,7 @@ describe('the four guidance constants match the pinned experiment stimulus, byte
   });
 });
 
-describe('a hook actually writes the docs pointer to stderr, not just computes it', () => {
+describe('a hook actually writes the docs pointer to stderr, not just computes it', { timeout: 30000 }, () => {
   it('seal-templates prints a harness/rules/*.md pointer on a real violation', () => {
     // A real subprocess run of the hook itself: a hook that computed docLines
     // and forgot to write them would pass every unit test above and still

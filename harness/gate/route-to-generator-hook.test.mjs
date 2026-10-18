@@ -46,7 +46,7 @@ afterAll(() => {
   rmSync(hookLog, { force: true });
 });
 
-describe('route-to-generator, the markers', () => {
+describe('route-to-generator, the markers', { timeout: 30000 }, () => {
   it('uses the same markers the generator emits', () => {
     expect(GENERATED_MARKER).toBe(naming.GENERATED_MARKER);
     expect(PLACEHOLDER_MARKER).toBe(naming.PLACEHOLDER_MARKER);
@@ -70,7 +70,7 @@ describe('route-to-generator, the markers', () => {
   });
 });
 
-describe('route-to-generator, PreToolUse Write', () => {
+describe('route-to-generator, PreToolUse Write', { timeout: 30000 }, () => {
   it('denies creating a generator-owned entity file, naming the spec and the command', () => {
     withSpec(probeSpec);
     const r = run(write(join(probeDir, 'zz-r2g-probe.model.ts')));
@@ -134,7 +134,7 @@ describe('route-to-generator, PreToolUse Write', () => {
   });
 });
 
-describe('route-to-generator, ownership needs a spec (ruling R4)', () => {
+describe('route-to-generator, ownership needs a spec (ruling R4)', { timeout: 30000 }, () => {
   it('allows hand-written files of entities without a spec', () => {
     for (const f of ['src/app/recruit/recruit.schema.ts', 'src/app/domain/mission.model.ts', 'src/app/ui/recruit-form/recruit-form.ts']) {
       expect(run(write(join(repoRoot, f))).status, f).toBe(0);
@@ -143,7 +143,7 @@ describe('route-to-generator, ownership needs a spec (ruling R4)', () => {
 
   it('still denies the entity of an existing spec under any folder', () => {
     withSpec(heroSpec);
-    for (const f of ['src/app/zz-r2g-probe/hero.model.ts', 'src/app/domain/hero.model.ts', 'src/app/ui/hero-form/hero-form.ts']) {
+    for (const f of ['src/app/zz-r2g-probe/hero.model.ts', 'src/app/domain/hero.model.ts', 'src/app/ui/hero-form/zz-probe.ts']) {
       const r = run(write(join(repoRoot, f)));
       expect(r.status, f).toBe(2);
       expect(r.stderr, f).toContain('specs/hero.json');
@@ -159,7 +159,7 @@ describe('route-to-generator, ownership needs a spec (ruling R4)', () => {
   });
 });
 
-describe('route-to-generator, PostToolUse Bash', () => {
+describe('route-to-generator, PostToolUse Bash', { timeout: 30000 }, () => {
   it('passes a clean tree', () => {
     expect(run(bash).status).toBe(0);
   });

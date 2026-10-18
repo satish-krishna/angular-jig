@@ -1,13 +1,13 @@
-<div class="flex flex-col gap-6 p-6">
+<div class="threats">
   <!-- Header -->
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Threats</h1>
+  <div class="threats__header">
+    <h1 hlmH1 variant="compact">Threats</h1>
     <hlm-dialog #createDialog="hlmDialog">
       <button hlmBtn hlmDialogTrigger variant="default" (click)="vm.startCreate()" data-testid="create-threat">
-        <ng-icon name="lucidePlus" />
+        <ng-icon hlmIcon name="lucidePlus" />
         <span>Log threat</span>
       </button>
-      <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
+      <hlm-dialog-content *hlmDialogPortal class="threats__dialog">
         <hlm-dialog-header>
           <h2 hlmDialogTitle>Create threat</h2>
           <p hlmDialogDescription>Add a new threat to the operations board.</p>
@@ -31,8 +31,8 @@
   </div>
 
   <!-- Filter toolbar -->
-  <div class="flex flex-col gap-4">
-    <label hlmLabel class="sr-only" for="threats-search">Search threats</label>
+  <div class="threats__filters">
+    <label hlmLabel class="threats__label" for="threats-search">Search threats</label>
     <input
       hlmInput
       id="threats-search"
@@ -40,14 +40,14 @@
       [value]="vm.searchQuery()"
       (input)="vm.searchQuery.set(($event.target).value)"
     />
-    <div class="flex items-center gap-4">
+    <div class="threats__filter-actions">
       <button
         hlmBtn
         [variant]="vm.levelFilter() === 'Critical' ? 'default' : 'outline'"
         size="sm"
         (click)="vm.levelFilter.set(vm.levelFilter() === 'Critical' ? 'all' : 'Critical')"
       >
-        <ng-icon name="lucideZap" class="h-4 w-4" />
+        <ng-icon hlmIcon name="lucideZap" />
         <span>Critical only</span>
       </button>
       <button
@@ -56,14 +56,14 @@
         size="sm"
         (click)="vm.statusFilter.set(vm.statusFilter() === 'Active' ? 'all' : 'Active')"
       >
-        <ng-icon name="lucideActivity" class="h-4 w-4" />
+        <ng-icon hlmIcon name="lucideActivity" />
         <span>Active only</span>
       </button>
     </div>
   </div>
 
   <!-- Table (desktop) & Cards (mobile) -->
-  <div class="hidden sm:block overflow-x-auto">
+  <div class="threats__table">
     <table hlmTable>
       <thead hlmTHead>
         <tr hlmTr>
@@ -99,51 +99,53 @@
             </td>
             <td hlmTd>{{ threat.location }}</td>
             <td hlmTd>{{ vm.missionCount(threat.id) }}</td>
-            <td hlmTd class="flex gap-2">
-              <hlm-dialog #tableEditDialog="hlmDialog">
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(threat.id)" data-testid="edit-threat" [attr.aria-label]="'Edit ' + threat.designation">
-                  <ng-icon name="lucidePencil" />
-                </button>
-                <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
-                  <hlm-dialog-header>
-                    <h2 hlmDialogTitle>Edit threat</h2>
-                    <p hlmDialogDescription>Change this threat's details and save.</p>
-                  </hlm-dialog-header>
-                  @if (vm.editingThreat(); as threat) {
-                    <app-threat-form
-                      [initialValue]="threat"
-                      submitLabel="Update"
-                      (saveThreat)="vm.save($event); tableEditDialog.close()"
-                      (cancel)="tableEditDialog.close()"
-                    />
-                  }
-                </hlm-dialog-content>
-              </hlm-dialog>
-              <hlm-dialog>
-                <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + threat.designation">
-                  <ng-icon name="lucideTrash2" />
-                </button>
-                <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
-                  <hlm-dialog-header>
-                    <h2 hlmDialogTitle>Delete threat?</h2>
-                    <p hlmDialogDescription>
-                      This threat will be permanently removed. This cannot be undone.
-                    </p>
-                  </hlm-dialog-header>
-                  <hlm-dialog-footer>
-                    <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
-                    <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(threat.id)">
-                      Delete
-                    </button>
-                  </hlm-dialog-footer>
-                </hlm-dialog-content>
-              </hlm-dialog>
+            <td hlmTd>
+              <div class="threats__actions-group">
+                <hlm-dialog #tableEditDialog="hlmDialog">
+                  <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" (click)="vm.startEdit(threat.id)" data-testid="edit-threat" [attr.aria-label]="'Edit ' + threat.designation">
+                    <ng-icon hlmIcon name="lucidePencil" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="threats__dialog">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>Edit threat</h2>
+                      <p hlmDialogDescription>Change this threat's details and save.</p>
+                    </hlm-dialog-header>
+                    @if (vm.editingThreat(); as threat) {
+                      <app-threat-form
+                        [initialValue]="threat"
+                        submitLabel="Update"
+                        (saveThreat)="vm.save($event); tableEditDialog.close()"
+                        (cancel)="tableEditDialog.close()"
+                      />
+                    }
+                  </hlm-dialog-content>
+                </hlm-dialog>
+                <hlm-dialog>
+                  <button hlmBtn hlmDialogTrigger size="sm" variant="ghost" [attr.aria-label]="'Delete ' + threat.designation">
+                    <ng-icon hlmIcon name="lucideTrash2" />
+                  </button>
+                  <hlm-dialog-content *hlmDialogPortal class="threats__dialog threats__dialog--confirm">
+                    <hlm-dialog-header>
+                      <h2 hlmDialogTitle>Delete threat?</h2>
+                      <p hlmDialogDescription>
+                        This threat will be permanently removed. This cannot be undone.
+                      </p>
+                    </hlm-dialog-header>
+                    <hlm-dialog-footer>
+                      <button hlmBtn variant="outline" hlmDialogClose>Cancel</button>
+                      <button hlmBtn variant="destructive" hlmDialogClose (click)="vm.remove(threat.id)">
+                        Delete
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              </div>
             </td>
           </tr>
         } @empty {
           <tr hlmTr>
             <td hlmTd colspan="7">
-              <div class="text-center text-muted-foreground">
+              <div hlmMuted class="threats__empty">
                 No threats match this filter.
               </div>
             </td>
@@ -154,7 +156,7 @@
   </div>
 
   <!-- Cards (mobile) -->
-  <div class="grid gap-4 sm:hidden">
+  <div class="threats__cards">
     @for (threat of vm.filtered(); track threat.id) {
       <hlm-card>
         <hlm-card-header>
@@ -169,9 +171,9 @@
             </span>
           </div>
         </hlm-card-header>
-        <div hlmCardContent class="flex flex-col gap-3">
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-muted-foreground">Status</span>
+        <div hlmCardContent class="threats__card-body">
+          <div class="threats__row">
+            <span hlmMuted>Status</span>
             <span
               hlmBadge
               [variant]="threat.status === 'Active' ? 'default' : threat.status === 'Contained' ? 'secondary' : 'outline'"
@@ -179,21 +181,21 @@
               {{ threat.status }}
             </span>
           </div>
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-muted-foreground">Location</span>
+          <div class="threats__row">
+            <span hlmMuted>Location</span>
             <span>{{ threat.location }}</span>
           </div>
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-muted-foreground">Missions</span>
+          <div class="threats__row">
+            <span hlmMuted>Missions</span>
             <span>{{ vm.missionCount(threat.id) }}</span>
           </div>
-          <div class="flex gap-2 pt-2">
+          <div class="threats__card-actions">
             <hlm-dialog #cardEditDialog="hlmDialog">
-              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="flex-1" (click)="vm.startEdit(threat.id)" data-testid="edit-threat">
-                <ng-icon name="lucidePencil" />
+              <button hlmBtn hlmDialogTrigger size="sm" variant="outline" class="threats__card-action" (click)="vm.startEdit(threat.id)" data-testid="edit-threat">
+                <ng-icon hlmIcon name="lucidePencil" />
                 <span>Edit</span>
               </button>
-              <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl">
+              <hlm-dialog-content *hlmDialogPortal class="threats__dialog">
                 <hlm-dialog-header>
                   <h2 hlmDialogTitle>Edit threat</h2>
                   <p hlmDialogDescription>Change this threat's details and save.</p>
@@ -209,11 +211,11 @@
               </hlm-dialog-content>
             </hlm-dialog>
             <hlm-dialog>
-              <button hlmBtn hlmDialogTrigger size="sm" variant="destructive" class="flex-1">
-                <ng-icon name="lucideTrash2" />
+              <button hlmBtn hlmDialogTrigger size="sm" variant="destructive" class="threats__card-action">
+                <ng-icon hlmIcon name="lucideTrash2" />
                 <span>Delete</span>
               </button>
-              <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+              <hlm-dialog-content *hlmDialogPortal class="threats__dialog threats__dialog--confirm">
                 <hlm-dialog-header>
                   <h2 hlmDialogTitle>Delete threat?</h2>
                   <p hlmDialogDescription>
@@ -232,14 +234,14 @@
         </div>
       </hlm-card>
     } @empty {
-      <div class="text-center text-muted-foreground">
+      <div hlmMuted class="threats__empty">
         No threats match this filter.
       </div>
     }
   </div>
 
   <!-- Footer -->
-  <div class="flex items-center justify-between text-sm text-muted-foreground">
-    <span>{{ vm.filtered().length }} of {{ vm.threats().length }} threats</span>
+  <div class="threats__footer">
+    <span hlmMuted>{{ vm.filtered().length }} of {{ vm.threats().length }} threats</span>
   </div>
 </div>

@@ -1,0 +1,25 @@
+@reference "../../styles.css";
+
+.dashboard {
+  @apply grid gap-8 p-6;
+}
+
+.dashboard__header {
+  @apply flex items-center justify-between;
+}
+
+.dashboard__stats {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.dashboard__heroes {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.dashboard__section {
+  @apply grid gap-4;
+}
+
+.dashboard__section-header {
+  @apply flex items-center justify-between;
+}

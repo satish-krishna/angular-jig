@@ -1,21 +1,21 @@
-<div class="flex flex-col gap-6 p-6">
+<div class="hero-detail">
   @if (vm.hero(); as hero) {
-    <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="hero-detail__toolbar">
       <button hlmBtn variant="ghost" routerLink="/roster">
-        <ng-icon name="lucideChevronLeft" />
+        <ng-icon hlmIcon name="lucideChevronLeft" />
         <span>Back to Roster</span>
       </button>
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="hero-detail__actions">
         <button hlmBtn variant="outline">
-          <ng-icon name="lucideCrosshair" />
+          <ng-icon hlmIcon name="lucideCrosshair" />
           <span>Deploy</span>
         </button>
         <hlm-dialog>
           <button hlmDialogTrigger hlmBtn variant="destructive">
-            <ng-icon name="lucideTrash2" />
+            <ng-icon hlmIcon name="lucideTrash2" />
             <span>Retire</span>
           </button>
-          <hlm-dialog-content *hlmDialogPortal class="sm:max-w-sm">
+          <hlm-dialog-content *hlmDialogPortal class="hero-detail__dialog">
             <hlm-dialog-header>
               <h2 hlmDialogTitle>Retire {{ hero.name }}?</h2>
               <p hlmDialogDescription>
@@ -43,7 +43,7 @@
         <h1 hlmCardTitle emphasis="title">{{ hero.name }}</h1>
         <p hlmCardDescription>{{ hero.alias }}</p>
       </hlm-card-header>
-      <div hlmCardContent class="flex flex-wrap gap-2">
+      <div hlmCardContent class="hero-detail__badges">
         <span hlmBadge variant="secondary">{{ hero.powerClass }}</span>
         <span hlmBadge [variant]="hero.status === 'Active' ? 'default' : hero.status === 'Injured' ? 'destructive' : 'secondary'">
           {{ hero.status }}
@@ -52,8 +52,8 @@
       </div>
     </hlm-card>
 
-    <hlm-tabs [tab]="vm.tab()" (tabActivated)="vm.tab.set($event)" class="w-full">
-      <hlm-tabs-list class="grid w-full grid-cols-4" aria-label="Hero sections">
+    <hlm-tabs [tab]="vm.tab()" (tabActivated)="vm.tab.set($event)" class="hero-detail__tabs">
+      <hlm-tabs-list class="hero-detail__tab-list" aria-label="Hero sections">
         <button hlmTabsTrigger="overview">Overview</button>
         <button hlmTabsTrigger="powers">Powers</button>
         <button hlmTabsTrigger="missions">Missions</button>
@@ -61,34 +61,34 @@
       </hlm-tabs-list>
 
       <div hlmTabsContent="overview">
-        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2">
+        <div class="hero-detail__stats">
           <div>
-            <p class="text-muted-foreground">Power Index</p>
-            <p class="text-2xl font-bold">{{ hero.power }}</p>
+            <p hlmMuted>Power Index</p>
+            <p hlmH3>{{ hero.power }}</p>
           </div>
           <div>
-            <p class="text-muted-foreground">Clearance Tier</p>
-            <p class="text-2xl font-bold">{{ hero.clearanceTier }}</p>
+            <p hlmMuted>Clearance Tier</p>
+            <p hlmH3>{{ hero.clearanceTier }}</p>
           </div>
           <div>
-            <p class="text-muted-foreground">Missions</p>
-            <p class="text-2xl font-bold">{{ hero.missionsRun }}</p>
+            <p hlmMuted>Missions</p>
+            <p hlmH3>{{ hero.missionsRun }}</p>
           </div>
           <div>
-            <p class="text-muted-foreground">Success Rate</p>
-            <p class="text-2xl font-bold">{{ (hero.successRate * 100).toFixed(0) }}%</p>
+            <p hlmMuted>Success Rate</p>
+            <p hlmH3>{{ (hero.successRate * 100).toFixed(0) }}%</p>
           </div>
         </div>
         @if (hero.bio) {
-          <div class="mt-6">
-            <p class="text-muted-foreground">Bio</p>
-            <p class="mt-2 text-foreground">{{ hero.bio }}</p>
+          <div class="hero-detail__bio">
+            <p hlmMuted>Bio</p>
+            <p class="hero-detail__bio-text">{{ hero.bio }}</p>
           </div>
         }
       </div>
 
       <div hlmTabsContent="powers">
-        <div class="grid gap-4">
+        <div class="hero-detail__meters">
           <app-power-meter label="Power Index" [value]="hero.power" [max]="100" />
           <app-power-meter label="Success Rate" [value]="hero.successRate * 100" [max]="100" />
           <app-power-meter label="Threats Faced" [value]="hero.threatsFaced" [max]="50" />
@@ -97,7 +97,7 @@
 
       <div hlmTabsContent="missions">
         @if (vm.missions().length) {
-          <div class="grid gap-3">
+          <div class="hero-detail__missions">
             @for (mission of vm.missions(); track mission.id) {
               <hlm-card>
                 <hlm-card-header>
@@ -116,7 +116,7 @@
             }
           </div>
         } @else {
-          <p class="text-muted-foreground">No missions on record for this hero.</p>
+          <p hlmMuted>No missions on record for this hero.</p>
         }
       </div>
 
@@ -125,6 +125,6 @@
       </div>
     </hlm-tabs>
   } @else {
-    <p class="text-center text-muted-foreground">Hero not found</p>
+    <p hlmMuted class="hero-detail__empty">Hero not found</p>
   }
 </div>

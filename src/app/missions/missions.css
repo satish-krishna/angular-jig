@@ -1,0 +1,69 @@
+@reference "../../styles.css";
+
+.missions {
+  @apply flex flex-col gap-6 p-6;
+}
+
+.missions__header {
+  @apply flex items-center justify-between;
+}
+
+.missions__dialog {
+  @apply sm:max-w-2xl;
+}
+
+.missions__dialog--confirm {
+  @apply sm:max-w-sm;
+}
+
+.missions__filters {
+  @apply flex flex-col gap-4;
+}
+
+.missions__label {
+  @apply sr-only;
+}
+
+.missions__filter-actions {
+  @apply flex items-center gap-4;
+}
+
+.missions__sr-only {
+  @apply sr-only;
+}
+
+.missions__table {
+  @apply hidden overflow-x-auto sm:block;
+}
+
+.missions__actions-group {
+  @apply flex gap-2;
+}
+
+.missions__empty {
+  @apply text-center;
+}
+
+.missions__cards {
+  @apply grid gap-4 sm:hidden;
+}
+
+.missions__card-body {
+  @apply flex flex-col gap-3;
+}
+
+.missions__row {
+  @apply flex items-center justify-between;
+}
+
+.missions__card-actions {
+  @apply mt-2 flex gap-2;
+}
+
+.missions__card-action {
+  @apply flex-1;
+}
+
+.missions__footer {
+  @apply flex items-center justify-between;
+}

@@ -32,7 +32,8 @@
       "@spartan-ng/helm/sheet": ["./libs/ui/sheet/src/index.ts"],
       "@spartan-ng/helm/icon": ["./libs/ui/icon/src/index.ts"],
       "@spartan-ng/helm/skeleton": ["./libs/ui/skeleton/src/index.ts"],
-      "@spartan-ng/helm/typography": ["./libs/ui/typography/src/index.ts"]
+      "@spartan-ng/helm/typography": ["./libs/ui/typography/src/index.ts"],
+      "@spartan-ng/helm/progress": ["./libs/ui/progress/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

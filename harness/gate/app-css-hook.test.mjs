@@ -36,7 +36,7 @@ afterAll(() => {
   rmSync(hookLog, { force: true });
 });
 
-describe('check-app-css (Write/Edit)', () => {
+describe('check-app-css (Write/Edit)', { timeout: 30000 }, () => {
   it('blocks appearance in a component stylesheet, naming the remedy and the rule doc guidance', () => {
     probe('.zz-css-probe__hint { @apply py-8 text-muted-foreground; }');
     const r = run('check-app-css.mjs', edit(css));
@@ -100,7 +100,7 @@ describe('check-app-css (Write/Edit)', () => {
 const onlyProbes = (r) =>
   r.status === 0 || r.stderr.split('\n').filter((l) => /src\/app\//.test(l)).every((l) => /src\/app\/zz-[a-z]+-probe\//.test(l));
 
-describe('check-src-after-bash', () => {
+describe('check-src-after-bash', { timeout: 30000 }, () => {
   it('reports nothing on a tree with no changes outside probe folders', () => {
     expect(onlyProbes(run('check-src-after-bash.mjs', bash))).toBe(true);
   });

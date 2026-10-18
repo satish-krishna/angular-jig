@@ -4,9 +4,9 @@
     <hlm-sidebar side="left">
       <!-- Brand -->
       <div hlmSidebarHeader>
-        <div class="flex items-center gap-2">
-          <div class="size-8 rounded-lg bg-primary"></div>
-          <span class="font-bold text-lg text-sidebar-foreground">Hero Ops</span>
+        <div class="app__brand">
+          <hlm-avatar variant="primary" />
+          <span hlmLarge>Hero Ops</span>
         </div>
       </div>
 
@@ -23,42 +23,42 @@
                 [attr.aria-current]="rlaDashboard.isActive ? 'page' : null"
                 [routerLinkActiveOptions]="{ exact: true }"
               >
-                <ng-icon name="lucideLayoutDashboard" />
+                <ng-icon hlmIcon name="lucideLayoutDashboard" />
                 <span>Dashboard</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
               <a hlmSidebarMenuButton routerLink="/roster" routerLinkActive #rlaRoster="routerLinkActive" [isActive]="rlaRoster.isActive" [attr.aria-current]="rlaRoster.isActive ? 'page' : null" [routerLinkActiveOptions]="{ exact: true }">
-                <ng-icon name="lucideUsers" />
+                <ng-icon hlmIcon name="lucideUsers" />
                 <span>Roster</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
               <a hlmSidebarMenuButton routerLink="/missions" routerLinkActive #rlaMissions="routerLinkActive" [isActive]="rlaMissions.isActive" [attr.aria-current]="rlaMissions.isActive ? 'page' : null">
-                <ng-icon name="lucideTarget" />
+                <ng-icon hlmIcon name="lucideTarget" />
                 <span>Missions</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
               <a hlmSidebarMenuButton routerLink="/threats" routerLinkActive #rlaThreats="routerLinkActive" [isActive]="rlaThreats.isActive" [attr.aria-current]="rlaThreats.isActive ? 'page' : null">
-                <ng-icon name="lucideShieldAlert" />
+                <ng-icon hlmIcon name="lucideShieldAlert" />
                 <span>Threats</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
               <a hlmSidebarMenuButton routerLink="/recruit" routerLinkActive #rlaRecruit="routerLinkActive" [isActive]="rlaRecruit.isActive" [attr.aria-current]="rlaRecruit.isActive ? 'page' : null">
-                <ng-icon name="lucideUserPlus" />
+                <ng-icon hlmIcon name="lucideUserPlus" />
                 <span>Recruit</span>
               </a>
             </li>
 
             <li hlmSidebarMenuItem>
               <a hlmSidebarMenuButton routerLink="/settings" routerLinkActive #rlaSettings="routerLinkActive" [isActive]="rlaSettings.isActive" [attr.aria-current]="rlaSettings.isActive ? 'page' : null">
-                <ng-icon name="lucideSettings" />
+                <ng-icon hlmIcon name="lucideSettings" />
                 <span>Settings</span>
               </a>
             </li>
@@ -68,13 +68,13 @@
 
       <!-- Footer user section -->
       <div hlmSidebarFooter>
-        <div class="flex items-center gap-2">
+        <div class="app__user">
           <hlm-avatar>
             <span hlmAvatarFallback>HC</span>
           </hlm-avatar>
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-sidebar-foreground">Hero Command</p>
-            <p class="text-xs text-sidebar-muted truncate">admin@heroops.local</p>
+          <div class="app__user-text">
+            <p hlmSmall variant="relaxed">Hero Command</p>
+            <p hlmSmall variant="xs" class="app__user-email">admin@heroops.local</p>
           </div>
         </div>
       </div>
@@ -84,23 +84,23 @@
   <!-- Main content area -->
   <main hlmSidebarInset>
     <!-- Topbar -->
-    <header class="flex h-16 items-center justify-between border-b border-border bg-background px-6 gap-4">
+    <header class="app__topbar">
       <!-- Left: Mobile menu trigger + breadcrumb -->
-      <div class="flex items-center gap-4">
+      <div class="app__topbar-start">
         <button hlmSidebarTrigger aria-label="Toggle sidebar"></button>
-        <span class="text-sm text-muted-foreground">Hero Ops Console</span>
+        <span hlmMuted>Hero Ops Console</span>
       </div>
 
       <!-- Right: Search, notifications, theme, avatar -->
-      <div class="flex items-center gap-2">
+      <div class="app__topbar-end">
         <!-- Search icon -->
         <button hlmBtn size="icon" variant="ghost" [title]="'Search heroes'" hlmTooltip side="bottom" aria-label="Search heroes">
-          <ng-icon name="lucideSearch" />
+          <ng-icon hlmIcon name="lucideSearch" />
         </button>
 
         <!-- Notifications -->
         <button hlmBtn size="icon" variant="ghost" [title]="'Notifications'" hlmTooltip side="bottom" aria-label="Notifications">
-          <ng-icon name="lucideBell" />
+          <ng-icon hlmIcon name="lucideBell" />
         </button>
 
         <!-- Theme toggle -->
@@ -115,9 +115,9 @@
           [attr.aria-label]="vm.isDark() ? 'Light mode' : 'Dark mode'"
         >
           @if (vm.isDark()) {
-            <ng-icon name="lucideSun" />
+            <ng-icon hlmIcon name="lucideSun" />
           } @else {
-            <ng-icon name="lucideMoon" />
+            <ng-icon hlmIcon name="lucideMoon" />
           }
         </button>
 
@@ -127,9 +127,10 @@
         </hlm-avatar>
       </div>
     </header>
+    <hlm-separator />
 
     <!-- Routed screen content (scrollable) -->
-    <div class="flex-1 overflow-y-auto">
+    <div class="app__content">
       <router-outlet />
     </div>
   </main>
